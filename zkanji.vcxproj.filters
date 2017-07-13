@@ -1,0 +1,1558 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{7bc4635b-4e0a-4ec9-a1e8-4e4ed83e83ef}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{9c4ac4f9-994c-4c19-9a4c-e71b70c612b9}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Code">
+      <UniqueIdentifier>{e472b160-5683-4269-b74f-872cab6bc3f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject">
+      <UniqueIdentifier>{265f5b3d-ec43-4582-a324-19cc89d3d4ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\General">
+      <UniqueIdentifier>{7206fc47-e7ca-4159-a04a-a10ad92a9387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\General\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Code\General\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Code\General\Study">
+      <UniqueIdentifier>{7d796ff6-3b4e-4ad2-9814-640b6e4c8eeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\General\Study\Header Files">
+      <UniqueIdentifier>{97d1d248-1dae-4301-9388-fd5c12f54e99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\General\Study\Source Files">
+      <UniqueIdentifier>{c0793443-ce99-451d-a685-331e31390a87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Files with .ui">
+      <UniqueIdentifier>{8d5b62bf-4033-4d06-b38f-23e747205227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Files with .ui\Header Files">
+      <UniqueIdentifier>{f965cbdc-dcd8-49b5-8d3d-4da3fd6e6b7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Files with .ui\Source Files">
+      <UniqueIdentifier>{d6a1a23a-966b-4398-80bf-a292e57b6fec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Files with .ui\Study">
+      <UniqueIdentifier>{dc16ddd3-b70b-4538-95e7-a80c9c37e0d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Files with .ui\Study\Header Files">
+      <UniqueIdentifier>{5f36247c-4867-4211-ba79-bf17b7c1d7b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Files with .ui\Study\Source Files">
+      <UniqueIdentifier>{81e83630-4a4b-41d4-ad27-4635b45a4a1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Legacy Source">
+      <UniqueIdentifier>{6e242b59-8a18-4a45-bd2f-657a404ef813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\Models">
+      <UniqueIdentifier>{79ee7ffe-2b76-4a65-8cd2-57a1ea229917}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\Widgets">
+      <UniqueIdentifier>{fb3a6c61-6e07-48d6-aedb-450a7764c668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\General">
+      <UniqueIdentifier>{5a09d822-ba88-4022-8087-1f65b82910cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\Models\Header Files">
+      <UniqueIdentifier>{9f010c6c-bb2a-4f8c-b059-1db780c9ceaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\Models\Source Files">
+      <UniqueIdentifier>{d0315cbb-ade7-4520-9b0d-8269db9ba5c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\General\Header Files">
+      <UniqueIdentifier>{4f32255b-6869-4cec-97dc-f2fb96a6c157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\General\Source Files">
+      <UniqueIdentifier>{8ba6cfae-24ff-46f5-abaa-b8285a30cb7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\Widgets\Header Files">
+      <UniqueIdentifier>{e948e11a-265c-4bc2-8139-32d1d895cfcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ZObject\Widgets\Source Files">
+      <UniqueIdentifier>{a66a4307-0791-4f8d-9c29-9c15d3208a8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Qxt">
+      <UniqueIdentifier>{d02f6a86-ba4a-4f32-b73b-324dce6f97b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Settings">
+      <UniqueIdentifier>{97d7f701-8868-4b04-b6ff-08ebf78ef61e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="words.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanji.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="romajizer.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanjimain.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="searchtree.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zstrings.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="grammar.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="groups.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qcharstring.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="studydecks.cpp">
+      <Filter>Code\General\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="groupwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="grouppickerform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="radform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="worddeck.cpp">
+      <Filter>Code\General\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjireadingpracticeform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="recognizerform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bits.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="import.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="importreplaceform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="treebuilder.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="groupstudy.cpp">
+      <Filter>Code\General\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="groupexportform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dictionarywidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordgroupwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjigroupwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="globalui.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_resources.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordstudyform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordstudylistform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordtestresultsform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordtestsettingsform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordslegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="groupslegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjilegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="searchtreelegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="groupstudylegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="studydeckslegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="worddecklegacy.cpp">
+      <Filter>Code\Legacy Source</Filter>
+    </ClCompile>
+    <ClCompile Include="zabstracttreemodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zdictionarymodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zgrouptreemodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanjigridmodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zitemscroller.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanalineedit.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanjigridview.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlineedit.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlistview.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zradicalgrid.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ztreeview.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zevents.cpp">
+      <Filter>Code\ZObject\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zflowlayout.cpp">
+      <Filter>Code\ZObject\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="examplewidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zexamplestrip.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sentences.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zscrollarea.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjiinfoform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjistrokes.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="printpreviewform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordattribwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="filtereditorform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="filterlistform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zdictionarylistview.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zui.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordtogroupform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordtodictionaryform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wordeditorform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjisearchwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanjidiagram.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanjiwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zkanjiform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zstackedwidget.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogwindow.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjitogroupform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zdictionarylistview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zdictionarylistview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dialogwindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dialogwindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dictionarywidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dictionarywidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_examplewidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_examplewidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_filtereditorform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_filtereditorform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_filterlistform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_filterlistform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_globalui.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_globalui.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_groupexportform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_groupexportform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_grouppickerform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_grouppickerform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_groups.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_groups.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_groupwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_groupwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_import.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_import.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_importreplaceform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_importreplaceform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjigroupwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjigroupwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjiinfoform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjiinfoform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjireadingpracticeform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjireadingpracticeform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjisearchwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjisearchwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjitogroupform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjitogroupform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_printpreviewform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_printpreviewform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_radform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_radform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_recognizerform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_recognizerform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordattribwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordattribwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_worddeckform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_worddeckform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordeditorform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordeditorform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordgroupwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordgroupwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_words.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_words.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordstudyform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordstudyform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordstudylistform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordstudylistform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordtestresultsform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordtestresultsform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordtestsettingsform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordtestsettingsform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordtodictionaryform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordtodictionaryform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordtogroupform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordtogroupform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zabstracttreemodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zabstracttreemodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zdictionarymodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zdictionarymodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zexamplestrip.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zexamplestrip.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zflowlayout.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zflowlayout.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zgrouptreemodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zgrouptreemodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zitemscroller.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zitemscroller.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zkanalineedit.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zkanalineedit.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zkanjidiagram.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zkanjidiagram.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zkanjiform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zkanjiform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zkanjigridmodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zkanjigridmodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zkanjigridview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zkanjigridview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zkanjiwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zkanjiwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zlineedit.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zlineedit.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zlistview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zlistview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zradicalgrid.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zradicalgrid.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zscrollarea.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zscrollarea.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zstackedwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zstackedwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ztreeview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ztreeview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zui.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zui.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="furigana.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Qxt\qxtglobalshortcut.cpp">
+      <Filter>Code\Qxt</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qxtglobalshortcut.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qxtglobalshortcut.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Qxt\qxtglobal.cpp">
+      <Filter>Code\Qxt</Filter>
+    </ClCompile>
+    <ClCompile Include="Qxt\qxtglobalshortcut_win.cpp">
+      <Filter>Code\Qxt</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_popupdict.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_popupdict.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="popupdict.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="formstate.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_wordtodeckform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_wordtodeckform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="wordtodeckform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="worddeckform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_worddeck.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_worddeck.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zstudylistmodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zstudylistmodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zstudylistmodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zproxytablemodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zproxytablemodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zproxytablemodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_definitionwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="definitionwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_definitionwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="ranges.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="collectwordsform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_collectwordsform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_collectwordsform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zdictionariesmodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zdictionariesmodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zdictionariesmodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="zlistbox.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zlistbox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zlistbox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zcolorcombobox.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zcolorcombobox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zcolorcombobox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_settingsform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_settingsform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.cpp">
+      <Filter>Code\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zcombobox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="zcombobox.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zcombobox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zwindow.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zwindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zwindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_popupkanjisearch.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="popupkanjisearch.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_popupkanjisearch.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="ztooltip.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ztooltip.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ztooltip.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjitooltipwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjitooltipwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjitooltipwidget.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sites.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_sites.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_sites.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanjidefform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanjidefform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="kanjidefform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dictionaryeditorform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dictionaryeditorform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="dictionaryeditorform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zabstracttablemodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="zabstracttablemodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zabstracttablemodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zlistviewitemdelegate.cpp">
+      <Filter>Code\ZObject\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zlistviewitemdelegate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zlistviewitemdelegate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zlistboxmodel.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="zlistboxmodel.cpp">
+      <Filter>Code\ZObject\Models\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zlistboxmodel.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="dictionarystatsform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dictionarystatsform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dictionarystatsform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dictionarytextform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="dictionarytextform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dictionarytextform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="selectdictionarydialog.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_selectdictionarydialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_selectdictionarydialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="dictionaryexportform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dictionaryexportform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dictionaryexportform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="dictionaryimportform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dictionaryimportform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dictionaryimportform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_groupimportform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_groupimportform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="groupimportform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="jlptreplaceform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_jlptreplaceform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_jlptreplaceform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="romajizer.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groupwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groupwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="grouppickerform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="radform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="radform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordstudyform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="worddeck.h">
+      <Filter>Code\General\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjireadingpracticeform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjireadingpracticeform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="recognizer.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="recognizerform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="import.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="import.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="importreplaceform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="importreplaceform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groupexportform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groupexportform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionarywidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionarywidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjiform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjigroupwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordgroupwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordgroupwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjigroupwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="globalui.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="grouppickerform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtestsettingsform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\resources.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtestresultsform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtestresultsform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtestsettingsform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordstudyform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordstudylistform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="worddeckform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordstudylistform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zabstracttreemodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zdictionarymodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zgrouptreemodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjigridmodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zitemscroller.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanalineedit.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjigridview.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zlineedit.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zlistview.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zradicalgrid.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ztreeview.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zflowlayout.h">
+      <Filter>Code\ZObject\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="examplewidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="examplewidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zexamplestrip.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zscrollarea.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="settingsform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjiinfoform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjiinfoform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="printpreviewform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="printpreviewform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordattribwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordattribwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="filtereditorform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="filtereditorform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="filterlistform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="filterlistform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zdictionarylistview.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zui.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="words.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groups.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtogroupform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtogroupform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtodictionaryform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtodictionaryform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordeditorform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordeditorform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjisearchwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjisearchwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjiwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjidiagram.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjiwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zkanjiform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zstackedwidget.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dialogwindow.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjitogroupform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjitogroupform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Qxt\qxtglobalshortcut.h">
+      <Filter>Code\Qxt</Filter>
+    </CustomBuild>
+    <CustomBuild Include="popupdict.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="popupdict.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtodeckform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="wordtodeckform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="worddeckform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zstudylistmodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zproxytablemodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="definitionwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="definitionwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="collectwordsform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="collectwordsform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zdictionariesmodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zlistbox.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zcolorcombobox.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="settingsform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zcombobox.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zwindow.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="popupkanjisearch.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="popupkanjisearch.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ztooltip.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjitooltipwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjitooltipwidget.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="sites.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjidefform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjidefform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionaryeditorform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionaryeditorform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zabstracttablemodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zlistviewitemdelegate.h">
+      <Filter>Code\ZObject\General\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zlistboxmodel.h">
+      <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionarystatsform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionarystatsform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionarytextform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionarytextform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="selectdictionarydialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="selectdictionarydialog.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionaryexportform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionaryexportform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionaryimportform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="dictionaryimportform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groupimportform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="groupimportform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="jlptreplaceform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="jlptreplaceform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="kanji.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zkanjimain.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="searchtree.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zstrings.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grammar.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="smartvector.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qcharstring.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="studydecks.h">
+      <Filter>Code\General\Study\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_groupwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_radform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fastarray.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordstudyform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grammar_enums.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjireadingpracticeform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_recognizer.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bits.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_import.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_importreplaceform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="treebuilder.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="groupstudy.h">
+      <Filter>Code\General\Study\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_groupexportform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_dictionarywidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_zkanjiform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjigroupwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordgroupwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_grouppickerform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordtestsettingsform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordtestresultsform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_worddeckform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordstudylistform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zevents.h">
+      <Filter>Code\ZObject\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_examplewidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sentences.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_settingsform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjiinfoform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kanjistrokes.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_printpreviewform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordattribwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_filtereditorform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_filterlistform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordtogroupform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordtodictionaryform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordeditorform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjisearchwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_zkanjiwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogs.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjitogroupform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="furigana.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Qxt\qxtglobalshortcut_p.h">
+      <Filter>Code\Qxt</Filter>
+    </ClInclude>
+    <ClInclude Include="Qxt\qxtglobal.h">
+      <Filter>Code\Qxt</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_popupdict.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="formstate.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_wordtodeckform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_definitionwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ranges.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_collectwordsform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="printsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="popupsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="recognizersettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="fontsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="colorsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="generalsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="dictionarysettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_popupkanjisearch.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shortcutsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="kanjisettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjitooltipwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="studysettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="groupsettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="datasettings.h">
+      <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanjidefform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_dictionaryeditorform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_dictionarystatsform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_dictionarytextform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_selectdictionarydialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_dictionaryexportform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_dictionaryimportform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_groupimportform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_jlptreplaceform.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

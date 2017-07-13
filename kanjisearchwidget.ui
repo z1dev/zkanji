@@ -1,0 +1,1265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KanjiSearchWidget</class>
+ <widget class="QWidget" name="KanjiSearchWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>424</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="shownLabel">
+        <property name="text">
+         <string>Filters:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f1Button">
+        <property name="text">
+         <string>1</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f2Button">
+        <property name="text">
+         <string>2</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f3Button">
+        <property name="text">
+         <string>3</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f4Button">
+        <property name="text">
+         <string>4</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f5Button">
+        <property name="text">
+         <string>5</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f6Button">
+        <property name="text">
+         <string>6</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f7Button">
+        <property name="text">
+         <string>7</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="f8Button">
+        <property name="text">
+         <string>8</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>8</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="resetButton">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>10</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="optionsWidget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="strokeWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="strokeLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Stroke cnt.:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZLineEdit" name="strokeEdit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="meaningWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="meaningLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Meaning:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZLineEdit" name="meaningEdit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="readingWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="readingLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Reading:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZKanaLineEdit" name="readingEdit"/>
+         </item>
+         <item>
+          <widget class="QComboBox" name="readingCBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>On / Kun</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>On</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Kun</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="okuriganaButton">
+           <property name="text">
+            <string>Oku.</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="jlptWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_20">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="jlptLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>JLPT:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZLineEdit" name="jlptEdit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="jouyouWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_21">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="jouyouLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Jouyou:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="jouyouCBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maxVisibleItems">
+            <number>12</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Any</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Elementary 1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Elementary 2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Elementary 3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Elementary 4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Elementary 5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Elementary 6</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>All Elementary</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Secondary School</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>For Names</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Variant For Names</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="radicalsWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="radicalsLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Radicals:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZComboBox" name="radicalsCBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Select...</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="indexWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_23">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="indexLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Index:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="indexCBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string>Unicode</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>EUC-JP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Shift-JIS</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>JIS X0208</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Kuten code</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Essential K.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Gakken Kanji Dict.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>New J-E ch. dict.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Rem. the Kanji</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Rem. the Kanji 6th</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>R. the Kanji (Fr.)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>A G. to Rem. J. C.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Mdrn R. J-E C. D.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Nelson C. D.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>S&amp;H D.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>S&amp;H K&amp;K</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>J.F.B.P.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Kanji Way</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>J. Kanji. Flashcards</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Comp K. Guide</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Kodansha Kanji D.</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>2001 Kanji</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Guide to R&amp;W</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Guide to R&amp;W 3rd</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>K. in Context</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Learners D. (1999)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Learners D. (2013)</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Tuttle K. Cards</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZLineEdit" name="indexEdit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="skipWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_22">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="skipLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>SKIP:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QToolButton" name="skip1Button">
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/SKIP1.svg</normaloff>:/SKIP1.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="skip2Button">
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/SKIP2.svg</normaloff>:/SKIP2.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="skip3Button">
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/SKIP3.svg</normaloff>:/SKIP3.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="skip4Button">
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/SKIP4.svg</normaloff>:/SKIP4.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">1:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZLineEdit" name="skip1Edit"/>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_21">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string notr="true">2:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZLineEdit" name="skip2Edit"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_25">
+     <property name="spacing">
+      <number>5</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_23">
+       <property name="text">
+        <string>Order:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="sortCBox">
+       <item>
+        <property name="text">
+         <string>Jouyou grade</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>JLPT level</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kanji frequency</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Words with kanji</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Word frequency</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Stroke count</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Radical number</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Unicode</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>EUC/JIS</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_11">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_26">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="label_24">
+       <property name="text">
+        <string>From:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="fromCBox">
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+       </property>
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Clipboard</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Common</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Jouyou</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>JLPT</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Essential Kanji</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Gakken Kanji Dictionary</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>New J-E Character Dictionary</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Remembering the Kanji</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Remembering the Kanji 6th</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Remembering the Kanji (Fr.)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>A Guide to Rem. Japanese Characters</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Modern R. J-E Character Dictionary</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>New Nelson Character Dictionary</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Spahn &amp; Hadamitzky Dictionary</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Spahn &amp; Hadamitzky Kanji and Kana</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kanji and Kana (old)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Japanese For Busy People</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kanji Way</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Japanese Kanji Flashcards</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Compact Kanji Guide</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kodansha Kanji Dictionary</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2001 Kanji</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Guide to Reading and Writing</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Guide to Reading and Writing 3rd</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kanji in Context</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kanji Learners Dictionary (1999)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Kanji Learners Dictionary (2013)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tuttle Kanji Cards</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_12">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZKanjiGridView</class>
+   <extends>QWidget</extends>
+   <header>zkanjigridview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Resources/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,60 @@
+#ifndef WORDTODICTIONARYFORM_H
+#define WORDTODICTIONARYFORM_H
+
+#include <QtCore>
+#include <QMainWindow>
+
+namespace Ui {
+    class WordToDictionaryForm;
+}
+
+class Dictionary;
+class DictionariesProxyModel;
+
+class WordToDictionaryForm : public QMainWindow
+{
+    Q_OBJECT
+public:
+    WordToDictionaryForm(QWidget *parent = nullptr);
+    virtual ~WordToDictionaryForm();
+
+    void exec(Dictionary *d, int windex);
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
+private slots:
+    // Click slot for the button for adding word to a group.
+    void on_addButton_clicked();
+    // Closes the form without adding a word to a group.
+    void on_cancelButton_clicked();
+    // Clicked the button at the top right, to show the add to dictionary form.
+    void on_switchButton_clicked();
+    // A new destination dictionary is selected. Update the word displayed at the bottom.
+    void on_dictCBox_currentIndexChanged(int index);
+    // A definition of an existing destination word has been double clicked. Shows the edit
+    // word dialog with the given definition selected after hiding this form.
+    void on_meaningsTable_wordDoubleClicked(int windex, int dindex);
+    // Notification when the selection in the top table's selection, showing word meanings to
+    // copy, changes. Enables/disables the create/copy button.
+    void wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/);
+
+    void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+private:
+    Ui::WordToDictionaryForm *ui;
+
+    DictionariesProxyModel *proxy;
+
+    // Source dictionary.
+    Dictionary *dict;
+    // Index of word in the source dictionary.
+    int index;
+
+    // Destination dictionary.
+    Dictionary *dest;
+    // Word index in the destination dictionary.
+    int dindex;
+
+    typedef QMainWindow base;
+};
+
+#endif // WORDTODICTIONARYFORM_H
+
