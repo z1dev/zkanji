@@ -98,12 +98,16 @@ extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
 
 NTFSPermissionGuard::NTFSPermissionGuard()
 {
+#ifdef Q_OS_WIN
     ++qt_ntfs_permission_lookup;
+#endif
 }
 
 NTFSPermissionGuard::~NTFSPermissionGuard()
 {
+#ifdef Q_OS_WIN
     --qt_ntfs_permission_lookup;
+#endif
 }
 
 

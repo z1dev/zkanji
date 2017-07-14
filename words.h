@@ -695,7 +695,7 @@ public:
     void clearUserData();
 
     // Returns the last write date of the dictionary. For the base dictionary this is the date
-    // of generation from JMdict. Pass the name of a zkj or zkd file.
+    // of generation from JMdict. Pass the name of a zkj or zkdict file.
     // On error an invalid date is returned.
     static QDateTime fileWriteDate(const QString &filename);
 

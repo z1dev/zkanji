@@ -175,7 +175,7 @@ namespace ZKanji
                 return false;
         }
 
-        QFile f(ZKanji::userFolder() + "/" + lname + ".zkd");
+        QFile f(ZKanji::userFolder() % "/" % lname % ".zkdict");
         if (f.exists())
             return allowused;
 
@@ -297,7 +297,7 @@ namespace ZKanji
     void saveUserData(bool forced)
     {
         if (forced || ZKanji::profile().isModified())
-            ZKanji::profile().save(userFolder() + "/data/student.zpf");
+            ZKanji::profile().save(userFolder() + "/data/student.zkp");
 
 
         for (Dictionary *d : dictionaries)
@@ -311,25 +311,25 @@ namespace ZKanji
                     return;
                 }
 
-                // TODO: get rid of the zkd copy of the main dictionary. The installer should install some other file name
+                // TO-DO: get rid of the zkd copy of the main dictionary. The installer should install some other file name
                 // and replace the base dictionary after the user data update.
 
                 // The main dictionary data should be an exact copy of the file in the program folder.
-                bool exists = QFileInfo::exists(userFolder() + "/data/English.zkd");
+                bool exists = QFileInfo::exists(userFolder() + "/data/English.zkdict");
                 QDateTime basedate = Dictionary::fileWriteDate(ZKanji::appFolder() + "/data/English.zkj");
-                QDateTime writtendate = exists ? Dictionary::fileWriteDate(userFolder() + "/data/English.zkd") : QDateTime();
+                QDateTime writtendate = exists ? Dictionary::fileWriteDate(userFolder() + "/data/English.zkdict") : QDateTime();
                 if (!exists || basedate != writtendate)
                 {
                     if (exists)
                     {
-                        if (!QFile::remove(userFolder() + "/data/English.zkd"))
+                        if (!QFile::remove(userFolder() + "/data/English.zkdict"))
                         {
                             QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't save dictionary. Make sure its folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
                             return;
                         }
                     }
 
-                    if (!QFile::copy(appFolder() + "/data/English.zkj", userFolder() + "/data/English.zkd"))
+                    if (!QFile::copy(appFolder() + "/data/English.zkj", userFolder() + "/data/English.zkdict"))
                     {
                         QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't save user data. Make sure its folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
                         return;
@@ -348,11 +348,11 @@ namespace ZKanji
                 // Making sure user data is saved if dictionary changed.
                 forced = true;
 
-                d->save(userFolder() + QString("/data/%1.zkd").arg(d->name()));
+                d->save(userFolder() + QString("/data/%1.zkdict").arg(d->name()));
             }
 
             if (forced || d->isUserModified())
-                d->saveUserData(userFolder() + QString("/data/%1.zkg").arg(d->name()));
+                d->saveUserData(userFolder() + QString("/data/%1.zkuser").arg(d->name()));
         }
     }
 
@@ -445,14 +445,14 @@ namespace ZKanji
         }
 
         bool fail = false;
-        fail = QFile::exists(ZKanji::userFolder() + "/data/English.zkg") && !QFile::copy(ZKanji::userFolder() + "/data/English.zkg", dir.absolutePath() + "/Engilsh.zkg");
-        fail = (QFile::exists(ZKanji::userFolder() + "/data/student.zpf") && !QFile::copy(ZKanji::userFolder() + "/data/student.zpf", dir.absolutePath() + "/student.zpf")) || fail;
+        fail = QFile::exists(ZKanji::userFolder() + "/data/English.zkuser") && !QFile::copy(ZKanji::userFolder() + "/data/English.zkuser", dir.absolutePath() + "/Engilsh.zkuser");
+        fail = (QFile::exists(ZKanji::userFolder() + "/data/student.zkp") && !QFile::copy(ZKanji::userFolder() + "/data/student.zkp", dir.absolutePath() + "/student.zkp")) || fail;
 
         for (int ix = 1, siz = ZKanji::dictionaryCount(); !fail && ix != siz; ++ix)
         {
             QString n = ZKanji::dictionary(ix)->name();
-            fail = (QFile::exists(ZKanji::userFolder() + QString("/data/%1.zkd").arg(n)) && !QFile::copy(ZKanji::userFolder() + QString("/data/%1.zkd").arg(n), dir.absolutePath() + QString("/%1.zkd").arg(n))) || fail;
-            fail = (QFile::exists(ZKanji::userFolder() + QString("/data/%1.zkg").arg(n)) && !QFile::copy(ZKanji::userFolder() + QString("/data/%1.zkg").arg(n), dir.absolutePath() + QString("/%1.zkg").arg(n))) || fail;
+            fail = (QFile::exists(ZKanji::userFolder() + QString("/data/%1.zkdict").arg(n)) && !QFile::copy(ZKanji::userFolder() + QString("/data/%1.zkdict").arg(n), dir.absolutePath() + QString("/%1.zkdict").arg(n))) || fail;
+            fail = (QFile::exists(ZKanji::userFolder() + QString("/data/%1.zkuser").arg(n)) && !QFile::copy(ZKanji::userFolder() + QString("/data/%1.zkuser").arg(n), dir.absolutePath() + QString("/%1.zkuser").arg(n))) || fail;
         }
 
         if (fail)

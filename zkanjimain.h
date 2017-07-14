@@ -82,7 +82,7 @@ T clamp(T val, T minval, T maxval)
 
 // Structure that increments qt_ntfs_permission_lookup at construction and decrements it at
 // destruction. Create locally in any function that needs to check file permissions using
-// QFileInfo functions.
+// QFileInfo functions on Windows. The class does nothing on other OSes.
 struct NTFSPermissionGuard
 {
     NTFSPermissionGuard(const NTFSPermissionGuard&) = delete;

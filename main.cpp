@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QSharedMemory>
+#include <QStringBuilder>
 #include <initializer_list>
 
 #include "zui.h"
@@ -84,8 +85,8 @@ namespace {
     //    return result;
     //}
 
-    // Returns whether the given path exists, contains previously saved user data,
-    // and can be used for writing.
+    // Returns whether the given path exists, contains previously saved user data, and can be
+    // used for writing.
     bool existsAndWritable(QString path)
     {
         if (path.isEmpty())
@@ -93,12 +94,12 @@ namespace {
 
         NTFSPermissionGuard permissionguard;
 
-        if (QFileInfo::exists(path + "/data/English.zkd") && QFileInfo::exists(path + "/data/English.zkg"))
+        if (QFileInfo::exists(path + "/data/English.zkdict") && QFileInfo::exists(path + "/data/English.zkuser"))
         {
-            QFileInfo finf(path + "/data/English.zkd");
+            QFileInfo finf(path + "/data/English.zkdict");
             if (!finf.isWritable() || !finf.isReadable())
                 return false;
-            finf.setFile(path + "/data/English.zkg");
+            finf.setFile(path + "/data/English.zkuser");
             if (!finf.isWritable() || !finf.isReadable())
                 return false;
 
@@ -114,7 +115,7 @@ namespace {
         if (path.isEmpty())
             return false;
 
-        return QFileInfo::exists(path + "/data/English.zkd") && QFileInfo::exists(path + "/data/English.zkg");
+        return QFileInfo::exists(path + "/data/English.zkdict") && QFileInfo::exists(path + "/data/English.zkuser");
     }
 
     // Returns whether a data sub-dir (or the whole directory tree) can be created at the given location,
@@ -267,56 +268,80 @@ namespace {
 
             if (!ZKanji::noData())
             {
-                int result = showAndReturn(qApp->translate(0, "Running for the first time."),
-                    qApp->translate(0, "Zkanji can import user data written by a previous version."),
-                    qApp->translate(0, "Choose \"Browse...\" to look for the location of the old version (the folder containing the \"data\" folder), or \"Continue\" without importing."),
-                    {
-                        { qApp->translate(0, "Browse..."), QMessageBox::AcceptRole },
-                        { qApp->translate(0, "Continue"), QMessageBox::AcceptRole },
-                        { qApp->translate(0, "Quit"), QMessageBox::RejectRole }
-                    });
-                if (result == 2)
-                    exit(0);
+                // If the zkg and zkd files are found at the default user load location, old
+                // user data will be imported automatically. Otherwise ask the user to browse
+                // there.
 
-                while (result == 0)
+                bool found = false;
+                if (QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkd") || QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkg"))
                 {
-                    result = 1;
-                    QString str;
-                    str = QFileDialog::getExistingDirectory(nullptr, (qApp->translate(0, "Browse...")));
-                    if (!str.isEmpty())
+                    NTFSPermissionGuard permissionguard;
+
+                    found = true;
+                    QFileInfo finf(ZKanji::userFolder() + "/data/English.zkd");
+                    if (!finf.isReadable())
+                        found = false;
+                    if (found)
                     {
-                        bool fail = false;
-                        if (!QFileInfo::exists(str + "/data/English.zkd") || !QFileInfo::exists(str + "/data/English.zkg"))
-                            fail = true;
-                        else
-                        {
-                            NTFSPermissionGuard permissionguard;
+                        finf.setFile(ZKanji::userFolder() + "/data/English.zkg");
+                        if (!finf.isReadable())
+                            found = false;
+                    }
+                }
 
-                            QFileInfo finf(str + "/data/English.zkd");
-                            if (!finf.isReadable())
-                                fail = true;
-                            finf.setFile(str + "/data/English.zkg");
-                            if (!finf.isReadable())
-                                fail = true;
-                        }
+                if (!found)
+                {
+                    int result = showAndReturn(qApp->translate(0, "Running for the first time."),
+                        qApp->translate(0, "Zkanji can import user data written by a previous version."),
+                        qApp->translate(0, "Choose \"Browse...\" to look for the location of the old version (the folder containing the \"data\" folder), or select \"Continue\" without importing."),
+                        {
+                            { qApp->translate(0, "Browse..."), QMessageBox::AcceptRole },
+                            { qApp->translate(0, "Continue"), QMessageBox::AcceptRole },
+                            { qApp->translate(0, "Quit"), QMessageBox::RejectRole }
+                        });
+                    if (result == 2)
+                        exit(0);
 
-                        if (!fail)
+                    while (result == 0)
+                    {
+                        result = 1;
+                        QString str;
+                        str = QFileDialog::getExistingDirectory(nullptr, (qApp->translate(0, "Browse...")));
+                        if (!str.isEmpty())
                         {
-                            //str = str.left(str.length() - 5);
-                            ZKanji::setLoadFolder(str);
-                        }
-                        else
-                        {
-                            result = showAndReturn(qApp->translate(0, "Error"),
-                                qApp->translate(0, "The selected folder is not valid."),
-                                qApp->translate(0, "Would you like to \"Try again...\" to select a different folder, \"Continue\" without importing or \"Quit\" zkanji?"),
-                                {
-                                    { qApp->translate(0, "Try again..."), QMessageBox::AcceptRole },
-                                    { qApp->translate(0, "Continue"), QMessageBox::AcceptRole },
-                                    { qApp->translate(0, "Quit"), QMessageBox::RejectRole }
-                                });
-                            if (result == 2)
-                                exit(0);
+                            bool fail = false;
+                            if (!QFileInfo::exists(str + "/data/English.zkd") || !QFileInfo::exists(str + "/data/English.zkg"))
+                                fail = true;
+                            else
+                            {
+                                NTFSPermissionGuard permissionguard;
+
+                                QFileInfo finf(str + "/data/English.zkd");
+                                if (!finf.isReadable())
+                                    fail = true;
+                                finf.setFile(str + "/data/English.zkg");
+                                if (!finf.isReadable())
+                                    fail = true;
+                            }
+
+                            if (!fail)
+                            {
+                                //str = str.left(str.length() - 5);
+                                ZKanji::setLoadFolder(str);
+                            }
+                            else
+                            {
+                                result = showAndReturn(qApp->translate(0, "Error"),
+                                    qApp->translate(0, "The selected folder is not valid."),
+                                    qApp->translate(0, "Would you like to \"Try again...\" to select a different folder, \"Continue\" without importing or \"Quit\" zkanji?"),
+                                    {
+                                        { qApp->translate(0, "Try again..."), QMessageBox::AcceptRole },
+                                        { qApp->translate(0, "Continue"), QMessageBox::AcceptRole },
+                                        { qApp->translate(0, "Quit"), QMessageBox::RejectRole }
+                                    });
+                                if (result == 2)
+                                    exit(0);
+                            }
                         }
                     }
                 }
@@ -330,6 +355,14 @@ namespace {
         // Creating and loading main dictionary.
         Dictionary *d = ZKanji::addDictionary();
         bool userdir = false;
+        // Dictionary data file extension. Different when loading legacy data. Only used when
+        // the file we look for is on the loadFolder() location. When loading data from the
+        // userFolder() location, it must have the new file extension.
+        QString exdict = "zkdict";
+        // User data file extension. Different when loading legacy data. Only used when the
+        // file we look for is on the loadFolder() location. When loading data from the
+        // userFolder() location, it must have the new file extension.
+        QString exuser = "zkuser";
         try
         {
             d->loadBaseFile(ZKanji::appFolder() + "/data/zdict.zkj");
@@ -340,9 +373,18 @@ namespace {
 
             if (!oldver)
             {
-                if (QFileInfo::exists(ZKanji::loadFolder() + "/data/English.zkd"))
+                if (ZKanji::userFolder() == ZKanji::loadFolder() && QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkdict"))
                 {
                     userdir = true;
+                    d->loadFile(ZKanji::loadFolder() + "/data/English.zkdict", true, false);
+                }
+                else if (QFileInfo::exists(ZKanji::loadFolder() + "/data/English.zkd"))
+                {
+                    userdir = true;
+
+                    exdict = "zkd";
+                    exuser = "zkg";
+
                     d->loadFile(ZKanji::loadFolder() + "/data/English.zkd", true, false);
                 }
                 else
@@ -367,8 +409,8 @@ namespace {
 
         try
         {
-            if (userdir && QFileInfo::exists(ZKanji::loadFolder() + "/data/English.zkg"))
-                d->loadUserDataFile(ZKanji::loadFolder() + "/data/English.zkg");
+            if (userdir && QFileInfo::exists(ZKanji::loadFolder() % "/data/English." % exuser))
+                d->loadUserDataFile(ZKanji::loadFolder() % "/data/English." % exuser);
         }
         catch (const ZException &e)
         {
@@ -414,23 +456,22 @@ namespace {
                         ZKanji::originals.swap(irf.originals());
                         d->swapDictionaries(irf.dictionary(), irf.changes());
 
-                        bool exists = QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkd");
-                        if (exists)
+                        if (QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkdict"))
                         {
-                            if (!QFile::remove(ZKanji::userFolder() + "/data/English.zkd"))
+                            if (!QFile::remove(ZKanji::userFolder() + "/data/English.zkdict"))
                             {
                                 showAndQuit(qApp->translate(0, "Update not finished"), qApp->translate(0, "Couldn't remove old main dictionary data. Make sure its folder exists and is not read-only, and the old file is not write protected."));
                                 return;
                             }
                         }
 
-                        if (!QFile::copy(ZKanji::appFolder() + "/data/English.zkj", ZKanji::userFolder() + "/data/English.zkd"))
+                        if (!QFile::copy(ZKanji::appFolder() + "/data/English.zkj", ZKanji::userFolder() + "/data/English.zkdict"))
                         {
                             showAndQuit(qApp->translate(0, "Update not finished"), qApp->translate(0, "Couldn't save main dictionary data. Make sure its folder exists and is not read-only, and the old file is not write protected."));
                             return;
                         }
 
-                        if (!d->saveUserData(ZKanji::userFolder() + "/data/English.zkg"))
+                        if (!d->saveUserData(ZKanji::userFolder() + "/data/English.zkuser"))
                         {
                             showAndQuit(qApp->translate(0, "Update not finished"), qApp->translate(0, "The user data file for the main dictionary couldn't be saved. The file might be compromised.") % QString("\n\n%1").arg(Error::last()));
                         }
@@ -447,7 +488,7 @@ namespace {
         // Looking for other dictionaries.
 
         QDir dir(ZKanji::loadFolder() + "/data");
-        dir.setNameFilters(QStringList(std::initializer_list<QString>({ QStringLiteral("*.zkd") })));
+        dir.setNameFilters(QStringList(std::initializer_list<QString>({ "*." % exdict })));
         dir.setFilter(QDir::Files | QDir::Readable);
 
         QStringList files = dir.entryList();
@@ -455,19 +496,19 @@ namespace {
         QString loaderrors;
         for (QString &filename : files)
         {
-            if (filename == QStringLiteral("English.zkd"))
+            if (filename == QStringLiteral("English.") % exdict)
                 continue;
 
             d = ZKanji::addDictionary();
-            QString dictname = filename.left(filename.size() - 4);
+            QString dictname = filename.left(filename.size() - exdict.size() - 1);
 
             bool donedict = false;
             bool error = false;
             try
             {
-                d->loadFile(ZKanji::loadFolder() + QString("/data/%1.zkd").arg(dictname), false, true);
+                d->loadFile(ZKanji::loadFolder() + "/data/" % dictname % "." % exdict, false, true);
                 donedict = true;
-                d->loadUserDataFile(ZKanji::loadFolder() + QString("/data/%1.zkg").arg(dictname));
+                d->loadUserDataFile(ZKanji::loadFolder() + "/data/" % dictname % "." % exuser);
             }
             catch (const ZException &e)
             {
@@ -491,7 +532,7 @@ namespace {
                 error = true;
             }
 
-            if (error || (ZKanji::loadFolder() != ZKanji::userFolder() && (!d->save(ZKanji::userFolder() + QString("/data/%1.zkd").arg(dictname)) || !d->saveUserData(ZKanji::userFolder() + QString("/data/%1.zkg").arg(dictname)))))
+            if (error || (exdict != "zkdict" && (!d->save(ZKanji::userFolder() + QString("/data/%1.zkdict").arg(dictname)) || !d->saveUserData(ZKanji::userFolder() + QString("/data/%1.zkuser").arg(dictname)))))
             {
                 if (!error)
                 {
@@ -506,10 +547,12 @@ namespace {
 
         try
         {
-            if (QFileInfo::exists(ZKanji::loadFolder() + "/data/student.zpf"))
+            if (QFileInfo::exists(ZKanji::loadFolder() + "/data/student.zkp"))
+                ZKanji::profile().load(ZKanji::loadFolder() + "/data/student.zkp");
+            else if (QFileInfo::exists(ZKanji::loadFolder() + "/data/student.zpf"))
                 ZKanji::profile().load(ZKanji::loadFolder() + "/data/student.zpf");
-            if (ZKanji::loadFolder() != ZKanji::userFolder())
-                ZKanji::profile().save(ZKanji::userFolder() + "/data/student.zpf");
+            if (ZKanji::loadFolder() != ZKanji::userFolder() || !QFileInfo::exists(ZKanji::userFolder() + "/data/student.zkp"))
+                ZKanji::profile().save(ZKanji::userFolder() + "/data/student.zkp");
         }
         catch (const ZException &e)
         {
@@ -584,7 +627,7 @@ namespace {
 
                 if (!dir.exists())
                 {
-                    showSimpleDialog(qApp->translate(0, "zkanji importer"), qApp->translate(0, "Import folder does not exist."));
+                    showAndQuit("zkanji", qApp->translate(0, "Import folder does not exist."));
                     continue;
                 }
 
@@ -594,7 +637,7 @@ namespace {
                     (QFileInfo(ZKanji::appFolder() + "/data/English.zkj").exists() && !QFileInfo(ZKanji::appFolder() + "/data/English.zkj").isWritable()) ||
                     !QFileInfo(ZKanji::appFolder() + "/data").isWritable())
                 {
-                    showSimpleDialog(qApp->translate(0, "zkanji"), qApp->translate(0, "File permissions do not allow creating and writing data files in the program's data folder."));
+                    showAndQuit("zkanji", qApp->translate(0, "File permissions do not allow creating and writing data files in the program's data folder."));
                     continue;
                 }
 
@@ -622,14 +665,14 @@ namespace {
 
                 if (!dir.exists() || !QFileInfo(d + "/examples.utf").exists() || !QFileInfo(d + "/examples.utf").isReadable())
                 {
-                    showSimpleDialog(qApp->translate(0, "zkanji importer"), qApp->translate(0, "Import folder or file is not accessible."));
+                    showAndQuit("zkanji", qApp->translate(0, "Import folder or examples file not found or not accessible."));
                     continue;
                 }
 
                 if ((QFileInfo(ZKanji::appFolder() + "/data/examples.zkj").exists() && !QFileInfo(ZKanji::appFolder() + "/data/examples.zkj").isWritable()) ||
                     !QFileInfo(ZKanji::appFolder() + "/data").isWritable())
                 {
-                    showSimpleDialog(qApp->translate(0, "zkanji"), qApp->translate(0, "File permissions do not allow creating and writing data files in the program's data folder."));
+                    showAndQuit("zkanji", qApp->translate(0, "File permissions do not allow creating and writing data files in the program's data folder."));
                     continue;
                 }
 

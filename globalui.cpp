@@ -733,15 +733,14 @@ void GlobalUI::importBaseDict()
 {
     NTFSPermissionGuard permissionguard;
 
-    if (/*(QFileInfo(ZKanji::appFolder() + "/data/zdict.zkj").exists() && !QFileInfo(ZKanji::appFolder() + "/data/zdict.zkj").isWritable()) ||*/
-        (QFileInfo(ZKanji::appFolder() + "/data/English.zkj").exists() && !QFileInfo(ZKanji::appFolder() + "/data/English.zkj").isWritable()) ||
+    if ((QFileInfo(ZKanji::appFolder() + "/data/English.zkj").exists() && !QFileInfo(ZKanji::appFolder() + "/data/English.zkj").isWritable()) ||
         !QFileInfo(ZKanji::appFolder() + "/data").isWritable())
     {
         QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("File permissions do not allow creating and writing data files in the program's data folder."));
         return;
     }
 
-    if ((QFileInfo(ZKanji::userFolder() + "/data/English.zkd").exists() && !QFileInfo(ZKanji::userFolder() + "/data/English.zkd").isWritable()) || !QFileInfo(ZKanji::userFolder() + "/data").isWritable())
+    if ((QFileInfo(ZKanji::userFolder() + "/data/English.zkdict").exists() && !QFileInfo(ZKanji::userFolder() + "/data/English.zkdict").isWritable()) || !QFileInfo(ZKanji::userFolder() + "/data").isWritable())
     {
         QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("File permissions do not allow writing files in the user folder."));
         return;
@@ -806,7 +805,7 @@ void GlobalUI::importBaseDict()
     //ZKanji::originals.swap(irf.originals());
     //dict->restoreChanges(importdict.get());
 
-    if (QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkd") && !QFile::remove(ZKanji::userFolder() + "/data/English.zkd"))
+    if (QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkdict") && !QFile::remove(ZKanji::userFolder() + "/data/English.zkdict"))
     {
         ZKanji::originals.swap(irf.originals());
         dict->restoreChanges(importdict.get());
@@ -839,9 +838,9 @@ void GlobalUI::importBaseDict()
         return;
     }
 
-    QFile::copy(ZKanji::appFolder() + "/data/English.zkj", ZKanji::userFolder() + "/data/English.zkd");
+    QFile::copy(ZKanji::appFolder() + "/data/English.zkj", ZKanji::userFolder() + "/data/English.zkdict");
 
-    if (!dict->saveUserData(ZKanji::userFolder() + "/data/English.zkg"))
+    if (!dict->saveUserData(ZKanji::userFolder() + "/data/English.zkuser"))
     {
         saveguard.release();
         hideguard.release();
@@ -984,14 +983,14 @@ void GlobalUI::userImportAction()
     AutoSaveGuard saveguard;
 
     if (f.dictionary()->isUserModified())
-        f.dictionary()->saveUserData(ZKanji::userFolder() + "/data" + f.dictionary()->name() + ".zkg");
+        f.dictionary()->saveUserData(ZKanji::userFolder() + "/data" + f.dictionary()->name() + ".zkuser");
 
     DictImport diform;
     bool result = diform.importUserData(fname, f.dictionary(), f.kanjiCategory(), f.wordsCategory(), f.importKanjiExamples(), f.importWordMeanings());
     diform.hide();
 
     if (!result)
-        f.dictionary()->loadUserDataFile(ZKanji::userFolder() + "/data" + f.dictionary()->name() + ".zkg");
+        f.dictionary()->loadUserDataFile(ZKanji::userFolder() + "/data" + f.dictionary()->name() + ".zkuser");
 
     saveguard.release();
     hideguard.release();
@@ -1067,7 +1066,7 @@ void GlobalUI::dictImportAction()
             d->setName(dname);
             ZKanji::addDictionary(d);
 
-            if (!d->save(ZKanji::userFolder() + QString("/data/%1.zkd").arg(d->name())))
+            if (!d->save(ZKanji::userFolder() + QString("/data/%1.zkdict").arg(d->name())))
             {
                 ZKanji::deleteDictionary(ZKanji::dictionaryIndex(d));
                 saveguard.release();
@@ -1094,7 +1093,7 @@ void GlobalUI::dictImportAction()
         dict->swapDictionaries(importdict.get(), irf.changes());
         dict->setName(dname);
 
-        if (!dict->save(ZKanji::userFolder() + QString("/data/%1.zkd").arg(dict->name())) || !dict->saveUserData(ZKanji::userFolder() + QString("/data/%1.zkg").arg(dict->name())))
+        if (!dict->save(ZKanji::userFolder() + QString("/data/%1.zkdict").arg(dict->name())) || !dict->saveUserData(ZKanji::userFolder() + QString("/data/%1.zkuser").arg(dict->name())))
         {
             dict->restoreChanges(importdict.get());
 
@@ -1118,7 +1117,7 @@ void GlobalUI::dictImportAction()
     hideguard.release();
     if (result)
     {
-        if (!dict->save(ZKanji::userFolder() + QString("/data/%1.zkd").arg(dict->name())) || !dict->saveUserData(ZKanji::userFolder() + QString("/data/%1.zkg").arg(dict->name())))
+        if (!dict->save(ZKanji::userFolder() + QString("/data/%1.zkdict").arg(dict->name())) || !dict->saveUserData(ZKanji::userFolder() + QString("/data/%1.zkuser").arg(dict->name())))
         {
             QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("The dictionary or its user data file couldn't be saved. Depending on the error, the files might be compromised.") % QString("\n\n%1").arg(Error::last()));
             return;

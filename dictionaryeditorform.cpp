@@ -218,9 +218,9 @@ void DictionaryEditorForm::on_delButton_clicked(bool checked)
         return;
 
     QString name = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictView->currentRow()))->name();
-    QFile f(ZKanji::userFolder() + "/data/" + name + ".zkd");
+    QFile f(ZKanji::userFolder() + "/data/" + name + ".zkdict");
     f.remove();
-    f.setFileName(ZKanji::userFolder() + "/data/" + name + ".zkg");
+    f.setFileName(ZKanji::userFolder() + "/data/" + name + ".zkuser");
     f.remove();
 
     ZKanji::deleteDictionary(ZKanji::dictionaryPosition(ui->dictView->currentRow()));
