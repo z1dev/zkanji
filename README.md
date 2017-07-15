@@ -110,7 +110,7 @@ skipped, the old files can only be imported after deleting the generated user fi
 
 ## License
 
-Copyright 2009-2013, 2017 Sólyom Zoltán  
+Copyright 2007-2013, 2017 Sólyom Zoltán
 
 zkanji TEST v1 is licensed under the terms of the GNU GPLv3. See the LICENCE file for
 details. The secion in this README file is just an informal explanation. The files in
