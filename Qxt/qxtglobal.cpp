@@ -1,3 +1,4 @@
+
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
 ** See the Qxt AUTHORS file for a list of authors and copyright holders.
@@ -248,4 +249,3 @@ void MyTestPrivate::doQuux() {
  * This function is only available in a class using QXT_DECLARE_PUBLIC().
  * This overload will be automatically used in const functions.
  */
- 

@@ -1,3 +1,4 @@
+
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
 ** See the Qxt AUTHORS file for a list of authors and copyright holders.
@@ -124,7 +125,7 @@
 #   define BUILD_QXT
 #endif
 
-/*QXT_CORE_EXPORT*/ const char* qxtVersion();
+QXT_CORE_EXPORT const char* qxtVersion();
 
 #ifndef QT_BEGIN_NAMESPACE
 #define QT_BEGIN_NAMESPACE

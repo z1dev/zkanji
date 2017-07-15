@@ -7,21 +7,21 @@ This is a temporary name. I will refer to the program simply as zkanji below.
 
 zkanji is a cross-platform, feature rich Japanese language study suite and dictionary
 software. It is still alpha, meaning it's not finished nor tested. It can damage its
-own data files and files created by the program. zkanji has several kanji look-up
-methods, example sentences for many Japanese words, vocabulary printing, JLPT levels
-indicated for words and kanji, spaced-repetition system for studying and more.
+own data files and files created by user interaction. zkanji has several kanji
+look-up methods, example sentences for many Japanese words, vocabulary printing, JLPT
+levels indicated for words and kanji, spaced-repetition system for studying and more.
 
 Please see the License paragraph at the end of this readme about the license and
-warranty information.
+warranty information, and for credits of used libraries.
 
 ---
 
 ## Compiling from source
 
-zkanji uses Qt, so an installation of Qt with its header files and libraries must be
-present on the system. I used Qt version 5.5 during initial development, but newer
-versions should work as well. zkanji can be compiled with c++ compilers that are
-c++11 compatible and can use Qt.
+zkanji utilizes Qt 5, so an installation of Qt with its header files and libraries
+must be present on the system. I used Qt version 5.5 during initial development, but
+newer versions should work as well. zkanji can be compiled with c++ compilers that
+are c++11 compatible and can use Qt.
 
 On Windows, the minimal Visual Studio version capable of compiling zkanji is VS2013.
 It is recommended, and possibly required, to use the Qt add-on for Visual Studio. GNU
@@ -30,11 +30,7 @@ yet. Currently only the Visual Studio project file is included. If it is set up
 correctly, zkanji should compile out of the box. (You might need to modify the file
 called zkanji.vcxproj.user, to change the path to Qt)
 
-Instructions for other OSes will be added later as I figured them out.
-
-If the compilation was successful, you must make sure the Qt static libraries are in
-place, to be able to run zkanji. (DLLs next to the executable on Windows, the .so
-files at their default location on Linux.)
+Instructions for other OSes will be added later as I figure them out.
 
 ---
 
@@ -44,36 +40,35 @@ The following files must be downloaded, before the data files can be generated b
 zkanji:  
 [JMdict](http://www.edrdg.org/jmdict/j_jmdict.html) in UTF-8 encoding  
 [KANJIDIC](http://nihongo.monash.edu/kanjidic.html) in EUC-JP encoding  
-[RADKFILE](http://users.monash.edu/~jwb/kradinf.html) also in EUC-JP.
+[RADKFILE](http://users.monash.edu/~jwb/kradinf.html) also in EUC-JP encoding.
 
-For the example sentences data, download the complete version of the 
+For the example sentences data, download the complete version of the
 [Tanaka Corpus](http://www.edrdg.org/wiki/index.php/Tanaka_Corpus) in UTF-8 encoding.
 The downloadable subset of Tanaka Corpus is also usable, but it's only available in
 EUC-JP encoding on the site, so it must be converted to UTF-8 first with the name
 `examples.utf`.
 
-The files must be extracted from their archives and placed next to the files in the
-dataimports folder. (Any folder is valid, as long as the files from dataimports are
-also copied there.)
+The files must be extracted from their archives into a single folder, and the files
+found in the `dataimports` folder must be copied there as well.
 
-To generate the data files for zkanji, you need to create a folder called data next
-to the executable, and run the compiled program with command line options.
+To generate the data files for zkanji, you need to create a folder called `data` next
+to the executable, and run the compiled program with command line options listed
+here.
 
 The command line option for generating the dictionary data files is:  
 `-i [path]`  
-Path must point to the folder with the files from dataimports. (Not the newly created
-data folder.)
+Path must point to the folder containing the extracted files.
 
 To generate the example sentences data file, use the command line option:  
 `-e [path]`  
 The `examples.utf` file must be on the passed path.
 
 The options can be combined. For example on Windows the following line will create
-every required data file for zkanji to run:
+every necessary data file for zkanji after correcting the path:  
 `zkanji.exe -ie C:\projects\zkanji\dataimports`
 
-If the data files are generated successfully, zkanji will start. See the next
-section for instructions.
+If the data files are generated successfully, zkanji will start. See the next section
+too.
 
 ---
 
@@ -81,21 +76,24 @@ section for instructions.
 
 When run for the first time, zkanji might offer to run normally or in portable mode.
 For this test version, it's recommended to start the program in portable mode, to
-save the data files next to the executable in its data folder. (The user must have
-read/write access to the files in the folder.)
+save the data files next to the executable in the `data` folder. (The user must have
+read/write access to the files in the folder.) If normal mode is selected, the user
+data files will be saved in a user folder appropriate for the system.
 
-The program will offer to import user data from zkanji v0.731.
+The program will offer to import user data from zkanji v0.731 next. If this step is
+skipped, the old files can only be imported after deleting the generated user files.
+(Files with the `.zkdict` and `.zkuser` extensions in the `data` folder.)
 
 ---
 
 ## License
 
-Copyright 2017 Sólyom Zoltán
+Copyright 2017 Sólyom Zoltán  
 z-one AT-SIGN free mail DOT hu (Remove the spaces and replace parts accordingly.)
 
 zkanji TEST v1 is licensed under the terms of the GNU GPLv3. See the LICENCE file for
-details. The files in folders are released with the same license, unless otherwise
-stated in the files themselves.
+details. The files in sub-folders, apart from files in the `Qxt` folder, are released
+under the same terms, unless otherwise stated in the files themselves.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
@@ -104,11 +102,16 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 An earlier program called zkanji, released before 2014 used a different license,
 which is not applicatble to this version.
 
+The folder named `Qxt` contains unmodified source code from the Qxt project. It is
+distributed under the terms of the LGPL v2.1 or CPL 1.0. The project is unrelated to
+zkanji. See the `Qxt/AUTHORS` file for the authors who contributed to that project.
+
 ---
 
 ## Credits
 
 Qt is used for the cross platform user interface. On Windows (which currently is the
-only platform,) zkanji is linked dynamically with the Qt DLLs
+only platform,) zkanji is linked dynamically with the Qt DLLs.
 
-
+Some files from Qxt, a project to extend Qt, were linked to the program. They can be
+found in the `Qxt` folder.
