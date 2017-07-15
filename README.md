@@ -1,6 +1,5 @@
 # zkanji TEST v1
-This is a temporary name. I will refer to the program simply as zkanji in this
-readme.
+This is a temporary name. I will refer to the program simply as zkanji.
 
 You can find the source code of the program on [GitHub](https://github.com/z1dev/zkanji).
 
@@ -30,9 +29,9 @@ was released in 2013, which can be downloaded from its project page on
 [Sourceforge](https://sourceforge.net/projects/zkanji/). I more or less lost interest
 to develop the program further at the time.  
 
-I wanted to revive zkanji, and started working on the next version on 2015. Since
-v0.731 was made with a compiler and library I can no longer use, I had to start over
-the project from scratch. This is when I decided to make it cross-platform, and chose
+I wanted to revive zkanji, and started working on the next version in 2015. Since
+v0.731 was made with a compiler and library I no longer use, I had to start over the
+project from scratch. This is when I decided to make it cross-platform, and chose
 Qt as the library for the user interface. I finally reached a point in 2017 to
 release this new version, and plan to develop it further.
 
@@ -42,12 +41,12 @@ release this new version, and plan to develop it further.
 
 zkanji utilizes Qt 5, so an installation of the Qt SDK with its header files and
 libraries must be present on the system. I used Qt version 5.5 during initial
-development, but newer versions should work as well. zkanji can be compiled with c++
-compilers that are c++11 compatible and can use Qt.
+development, but newer versions should work as well. zkanji can be compiled with C++
+compilers that are C++11 compatible and can use Qt.
 
 On Windows, the minimal Visual Studio version capable of compiling zkanji is VS2013.
 It is recommended, and possibly required, to use the Qt add-on for Visual Studio. GNU
-c++ compilers should have no problem compiling zkanji either but I haven't tested it
+C++ compilers should have no problem compiling zkanji either but I haven't tested it
 yet. Currently only the Visual Studio project file is included. If it is set up
 correctly, zkanji should compile out of the box. (You might need to modify the file
 called zkanji.vcxproj.user, to change the path to Qt)
@@ -113,15 +112,14 @@ skipped, the old files can only be imported after deleting the generated user fi
 Copyright 2007-2013, 2017 Sólyom Zoltán
 
 zkanji TEST v1 is licensed under the terms of the GNU GPLv3. See the LICENCE file for
-details. The secion in this README file is just an informal explanation. The files in
-sub-folders, apart from files in the `Qxt` folder, are released under the same terms,
-unless otherwise stated in the files themselves.
+details. The files in sub-folders, apart from files in the `Qxt` folder, are released
+under the same terms, unless otherwise stated in the files themselves.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-An earlier program called zkanji, released before 2014 used a different license,
+An earlier program called zkanji, last released in 2013 used a different license,
 which is not applicatble to this version.
 
 The folder named `Qxt` contains unmodified source code from the Qxt project. It is
@@ -138,9 +136,8 @@ only platform,) zkanji is linked dynamically with the Qt DLLs.
 Some files from Qxt, a project to extend Qt, were linked to the program. They can be
 found in the `Qxt` folder.
 
-zkanji wouldn't have been possible without JMdict (a free Japanese dictionary,)
-KANJIDIC (data holding informaction on 6553 kanji) and RADKFILE. They are the
-property of [The Electronic Dictionary Research and Development Group, Monash
-University](http://www.edrdg.org/). The files are made available under a Creative
-Commons Attribution-ShareAlike Licence (V3.0).
-
+zkanji wouldn't be possible without JMdict (a free Japanese dictionary,) KANJIDIC
+(holding information about 6355 kanji) and RADKFILE. They are the property of [The
+Electronic Dictionary Research and Development Group, Monash University](http://www.edrdg.org/).
+The files are made available under a Creative Commons Attribution-ShareAlike Licence
+(V3.0).
