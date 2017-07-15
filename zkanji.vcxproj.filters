@@ -1559,7 +1559,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="README">
+    <Text Include="README.md">
       <Filter>Documents</Filter>
     </Text>
   </ItemGroup>
