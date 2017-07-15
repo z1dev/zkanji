@@ -105,9 +105,6 @@
     <Filter Include="Code\Settings">
       <UniqueIdentifier>{97d7f701-8868-4b04-b6ff-08ebf78ef61e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Documents">
-      <UniqueIdentifier>{c541979f-2ec6-44ff-b2f4-27ef63dbcd94}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="words.cpp">
@@ -1557,10 +1554,5 @@
     <ClInclude Include="GeneratedFiles\ui_jlptreplaceform.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="README.md">
-      <Filter>Documents</Filter>
-    </Text>
   </ItemGroup>
 </Project>

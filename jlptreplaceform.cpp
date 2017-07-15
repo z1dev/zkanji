@@ -211,13 +211,13 @@ void JLPTReplaceForm::saveJLPTData()
             "#   Lines starting with # are comments.\n"
             "#   JLPT N data for words lasts till the first empty line.\n"
             "#   Each word data contains three fields separated by TAB.\n"
-            "#   The fields are :\n"
+            "#   The fields are:\n"
             "#     kanji form\n"
             "#     kana reading\n"
             "#     N level\n"
             "#   JLPT N data for kanji starts after the first empty line till the\n"
             "#   end of file.\n"
-            "#   The kanji N data contains 2 fields with no space between them :\n"
+            "#   The kanji N data contains 2 fields with no space between them:\n"
             "#     kanji character.\n"
             "#     N level\n#\n";
 
