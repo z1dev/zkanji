@@ -120,7 +120,7 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 An earlier program called zkanji, last released in 2013 used a different license,
-which is not applicatble to this version.
+which is not applicable to this version.
 
 The folder named `Qxt` contains unmodified source code from the Qxt project. It is
 distributed under the terms of the LGPL v2.1 or CPL 1.0. The project is unrelated to
