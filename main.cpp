@@ -722,6 +722,7 @@ int main(int argc, char *argv[])
     ZApplication a(argc, argv);
 #else
     QApplication a(argc, argv);
+    QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/qt5_plugins");
 #endif
 
     try
