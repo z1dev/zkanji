@@ -238,6 +238,9 @@ public slots:
     // hideAppWindows() increases a counter, that can only be cleared by calling
     // showAppWindows() the same number of times, before the windows are shown again.
     void showAppWindows();
+
+    // Displays a simplistic about window for the program.
+    void showAbout();
 private slots:
 
     void kanjiInfoDestroyed();

@@ -1350,6 +1350,14 @@ void ZKanjiForm::fillMainMenu()
         connect(a, &QAction::triggered, this, &ZKanjiForm::startDockDrag);
     }
 
+    QMenu *helpmenu = menu->addMenu(tr("Help"));
+
+    a = helpmenu->addAction(tr("&About"));
+    connect(a, &QAction::triggered, gUI, &GlobalUI::showAbout);
+
+    a = helpmenu->addAction(tr("About &Qt"));
+    connect(a, &QAction::triggered, qApp, &QApplication::aboutQt);
+
 }
 
 void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, QMenu *menu, CommandCategories categ)

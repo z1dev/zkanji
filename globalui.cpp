@@ -55,6 +55,8 @@ namespace {
     QxtGlobalShortcut *kanjiPopupShortcut = nullptr;
 }
 
+extern char ZKANJI_PROGRAM_VERSION[];
+
 //-------------------------------------------------------------
 
 
@@ -1448,6 +1450,15 @@ void GlobalUI::showAppWindows()
     appwin.clear();
 
     emit appWindowsVisibilityChanged(true);
+}
+
+void GlobalUI::showAbout()
+{
+    QString aboutsection = tr("This program is alpha, use for testing only.\n\nzkanji is an open-source, cross-platform, feature rich Japanese language study suite and dictionary software.\n\nSee README and LICENSE files for usage and license details. Released under the terms of the GNU GPLv3.\n\nSee \"Dictionary/Dictionary information\" menu option for dictionary authors and licenses.");
+    QString maddr = "freemail.hu";
+
+    QMessageBox::about(activeMainForm(), tr("About zkanji"), "zkanji " % QString::fromLatin1(ZKANJI_PROGRAM_VERSION) % "\n\n"
+        % aboutsection % "\n\n" % tr("Contact me via e-mail at: ") % "z-one@" % maddr % "\n" % tr("zkanji development blog: ") % "ht" "tp://zkanji." % "wordpress" % ".com/");
 }
 
 void GlobalUI::disableAutoSave()
