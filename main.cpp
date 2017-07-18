@@ -723,6 +723,9 @@ int main(int argc, char *argv[])
 #else
     QApplication a(argc, argv);
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/qt5_plugins");
+    QIcon prgico(":/program.ico");
+
+    a.setWindowIcon(prgico);
 #endif
 
     try
