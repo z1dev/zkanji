@@ -923,6 +923,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_jlptreplaceform.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_windowsicon.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1308,6 +1311,9 @@
     </CustomBuild>
     <CustomBuild Include="jlptreplaceform.h">
       <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\windowsicon.qrc">
+      <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

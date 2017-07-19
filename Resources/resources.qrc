@@ -73,6 +73,5 @@
         <file>box.svg</file>
         <file>testsettings.svg</file>
         <file>dockwindows.svg</file>
-        <file>program.ico</file>
     </qresource>
 </RCC>
