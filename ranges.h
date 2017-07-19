@@ -55,9 +55,9 @@ public:
     // result. The result list will be ordered by value.
     void getSelection(std::vector<int> &result, int addfirst = -1, int addlast = -1) const;
 
-    // Fills result with the ranges that have parts in the range [index, index + cnt). The
+    // Fills result with the ranges that have parts in the range [first, last]. The
     // first and last ranges in result might only be partially in the passed range.
-    void selectedRanges(int first, int last, std::vector<Range const * const> &result) const;
+    void selectedRanges(int first, int last, std::vector<Range const *> &result) const;
 
     // Changes the selection to include or exclude the range [first, last], depending on the
     // value of sel.

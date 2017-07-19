@@ -1371,7 +1371,7 @@ int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int
 
     int added = windexes.size();
 
-    for (int ix = 0, wix = 0; ix != listorder.size() && wix != worder.size();)
+    for (int ix = 0, wix = 0; ix != listorder.size() && wix != worder.size(); )
     {
         if (listorder[ix].second < worder[wix].second)
         {

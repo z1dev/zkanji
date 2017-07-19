@@ -80,17 +80,6 @@ void KanjiDefinitionForm::exec(Dictionary *d, const std::vector<ushort> &l)
     show();
 }
 
-void KanjiDefinitionForm::on_dictCBox_currentIndexChanged(int index)
-{
-    updateDictionary();
-}
-
-void KanjiDefinitionForm::dictionaryRemoved(int index, int orderindex, void *oldaddress)
-{
-    if (dict == oldaddress)
-        close();
-}
-
 void KanjiDefinitionForm::on_discardButton_clicked(bool checked)
 {
     pos = prevkanji.back();
@@ -109,10 +98,21 @@ void KanjiDefinitionForm::on_acceptButton_clicked(bool checked)
     updateKanji();
 }
 
+void KanjiDefinitionForm::on_dictCBox_currentIndexChanged(int index)
+{
+	updateDictionary();
+}
+
 void KanjiDefinitionForm::ok()
 {
     dict->setKanjiMeaning(list[pos], ui->defText->toPlainText());
     close();
+}
+
+void KanjiDefinitionForm::dictionaryRemoved(int index, int orderindex, void *oldaddress)
+{
+	if (dict == oldaddress)
+		close();
 }
 
 void KanjiDefinitionForm::updateKanji()

@@ -259,7 +259,7 @@ void RangeSelection::getSelection(std::vector<int> &result, int addfirst, int ad
     }
 }
 
-void RangeSelection::selectedRanges(int first, int last, std::vector<Range const * const> &result) const
+void RangeSelection::selectedRanges(int first, int last, std::vector<Range const *> &result) const
 {
     auto it = search(first);
 

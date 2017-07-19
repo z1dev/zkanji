@@ -138,7 +138,7 @@ QMimeData* DictionaryEditorModel::mimeData(const QModelIndexList &indexes) const
 
 void DictionaryEditorModel::handleAdded()
 {
-    signalRowsInserted({ { ZKanji::dictionaryCount() - 1, 1 } });
+    signalRowsInserted({ { (int)ZKanji::dictionaryCount() - 1, 1 } });
 }
 
 void DictionaryEditorModel::handleRemoved(int index, int order)

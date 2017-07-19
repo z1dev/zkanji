@@ -12,7 +12,7 @@
 //-------------------------------------------------------------
 
 
-int ushortlen(const ushort *str)
+uint ushortlen(const ushort *str)
 {
     const ushort *pos = str;
     while (*pos != 0)
@@ -20,7 +20,7 @@ int ushortlen(const ushort *str)
     return pos - str;
 }
 
-int qcharlen(const QChar *str)
+uint qcharlen(const QChar *str)
 {
     const QChar *pos = str;
     while (*pos != 0)
@@ -50,9 +50,9 @@ int qcharncmp(const QChar *s1, const QChar *s2, int len)
     return s1->unicode() - s2->unicode();
 }
 
-int qcharmlen(const QChar *s1, const QChar *s2, int maxlen)
+uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen)
 {
-    int pos = 0;
+    uint pos = 0;
     while (pos != maxlen && s1[pos] != 0 && s2[pos] != 0 && s1[pos] == s2[pos])
         ++pos;
     return pos;
@@ -156,12 +156,12 @@ int wordcompare(const QChar *kanjia, const QChar *kanaa, const QChar *kanjib, co
 //-------------------------------------------------------------
 
 
-QCharStringConstIterator& operator+(int n, const QCharStringConstIterator &b)
+QCharStringConstIterator operator+(int n, const QCharStringConstIterator &b)
 {
     return b + n;
 }
 
-QCharStringIterator& operator+(int n, const QCharStringIterator &b)
+QCharStringIterator operator+(int n, const QCharStringIterator &b)
 {
     return b + n;
 }
@@ -679,7 +679,7 @@ void QCharString::resize(int length)
             arr[ix] = QChar(' ');
 }
 
-int QCharString::size() const
+uint QCharString::size() const
 {
     return arr == nullptr ? 0 : qcharlen(arr);
 }
@@ -715,28 +715,24 @@ const QChar* QCharString::data() const
     return arr;
 }
 
-const QChar* QCharString::rightData(int n) const
+const QChar* QCharString::rightData(uint n) const
 {
-#ifdef _DEBUG
-    if (n < 0)
-        throw "Error bad parameter.";
-#endif
-    return arr + std::max(0, size() - n);
+    return arr + std::max<int>(0, size() - n);
 }
 
-QChar& QCharString::operator[](int n)
+QChar& QCharString::operator[](uint n)
 {
 #ifdef _DEBUG
-    if (n < 0 || n >= siz)
+    if (n >= siz)
         throw "invalid call";
 #endif
     return arr[n];
 }
 
-const QChar& QCharString::operator[](int n) const
+const QChar& QCharString::operator[](uint n) const
 {
 #ifdef _DEBUG
-    if (n < 0 || n >= siz)
+    if (n >= siz)
         throw "invalid call";
 #endif
     return arr[n];
@@ -938,12 +934,12 @@ namespace std
 //-------------------------------------------------------------
 
 
-QCharStringListConstIterator& operator+(int n, const QCharStringListConstIterator &b)
+QCharStringListConstIterator operator+(int n, const QCharStringListConstIterator &b)
 {
     return b + n;
 }
 
-QCharStringListIterator& operator+(int n, const QCharStringListIterator &b)
+QCharStringListIterator operator+(int n, const QCharStringListIterator &b)
 {
     return b + n;
 }

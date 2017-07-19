@@ -78,8 +78,8 @@ private:
         int y;
     };
 
-    // Settings passed to addText() or addFuriText() at a given item position.
-    struct Settings
+    // Fonts settings passed to addText() or addFuriText() at a given item position.
+    struct Fonts
     {
         QFont &f;
         QFontMetrics &fm;
@@ -101,7 +101,7 @@ private:
     std::vector<Item> list;
 
     // Font information for the tokens.
-    std::vector<Settings> setlist;
+    std::vector<Fonts> setlist;
 
     // Unit width of each line starting at item position.
     struct Line

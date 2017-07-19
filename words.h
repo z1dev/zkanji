@@ -51,6 +51,10 @@ struct WordDefinition
     WordDefinition();
     WordDefinition(WordDefinition &&src);
     WordDefinition& operator=(WordDefinition &&src);
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+	WordDefinition(const WordDefinition &src) = default;
+	WordDefinition& operator=(const WordDefinition &src) = default;
+#endif
 };
 
 bool operator!=(const WordDefinition &a, const WordDefinition &b);

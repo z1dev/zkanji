@@ -819,7 +819,7 @@ void StudyListModel::itemsQueued(int count)
     //beginInsertRows(QModelIndex(), lsiz, list.size() - 1);
     //endInsertRows();
 
-    signalRowsInserted({ { lsiz, list.size() - lsiz } });
+    signalRowsInserted({ { lsiz, (int)list.size() - lsiz } });
 }
 
 void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, bool decrement)

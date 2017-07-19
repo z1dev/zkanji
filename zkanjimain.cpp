@@ -448,7 +448,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<const QCharString> &str)
         data = str.val.toUtf8();
     else
     {
-        int len = std::min(str.length, str.val.size());
+        int len = std::min<int>(str.length, str.val.size());
         data = str.val.toUtf8(len);
         if (len < str.length)
         {
@@ -509,7 +509,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QCharString> &str)
         data = str.val.toUtf8();
     else
     {
-        int len = std::min(str.length, str.val.size());
+        int len = std::min<int>(str.length, str.val.size());
         data = str.val.toUtf8(len);
         if (len < str.length)
         {

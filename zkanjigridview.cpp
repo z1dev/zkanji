@@ -651,7 +651,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
     int first = std::min(selpivot, endindex);
     int last = std::max(selpivot, endindex);
 
-    std::vector<const Range * const> r;
+    std::vector<const Range *> r;
 
     scrollIn(endindex);
 
@@ -668,7 +668,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
             {
                 for (int ix = 0; ix != r.size(); ++ix)
                 {
-                    const Range * const range = r[ix];
+                    const Range *range = r[ix];
                     int to = std::min(first, range->last + 1);
                     for (int iy = range->first; iy != to; ++iy)
                         updateCell(iy);
@@ -685,7 +685,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
             {
                 for (int ix = 0; ix != r.size(); ++ix)
                 {
-                    const Range * const range = r[ix];
+                    const Range *range = r[ix];
                     int from = std::max(last + 1, range->first);
                     for (int iy = from; iy != range->last + 1; ++iy)
                         updateCell(iy);
@@ -709,7 +709,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
         int pos = first;
         for (int ix = 0; ix != r.size() && pos <= last; ++ix)
         {
-            const Range * const range = r[ix];
+            const Range *range = r[ix];
             for (int iy = pos; iy < range->first; ++iy)
                 updateCell(iy);
             pos = range->last + 1;

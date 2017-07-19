@@ -321,7 +321,7 @@ bool KanjiListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         list.push_back(dat[aorder[ix]]);
 
     smartvector<Interval> intervals;
-    intervals.push_back({ list.size() - (aorder.size() - skipped), aorder.size() - skipped });
+    intervals.push_back({ (int)list.size() - (int)(aorder.size() - skipped), (int)aorder.size() - skipped });
     signalItemsInserted(intervals);
 
     return true;

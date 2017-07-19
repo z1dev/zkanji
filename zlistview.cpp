@@ -648,7 +648,7 @@ void ZListView::updateSelection(bool range)
     if (firstrow == -1 || lastrow == -1)
         return;
 
-    std::vector<const Range *const> sel;
+    std::vector<const Range *> sel;
     selection->selectedRanges(mapToSelection(firstrow), mapToSelection(lastrow), sel);
 
     int w = viewport()->width();

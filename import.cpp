@@ -659,11 +659,11 @@ bool DictImport::doImportExamples()
     QString trans;
 
     // Index of the current block. Incremented at every 100 sentences.
-    int blockix = 0;
+    ushort blockix = 0;
     // Index of the current sentence in the current block.
-    int sentenceix = 0;
+    uchar sentenceix = 0;
     // Index of the current word in the current sentence.
-    int wordix = 0;
+    uchar wordix = 0;
 
     // A list of block positions written to file.
     std::vector<int> blockpos;
@@ -880,7 +880,7 @@ bool DictImport::doImportExamples()
 
             // Unlikely but if no word data were added to the commons, skip the word.
             // Otherwise add it.
-            if (!wordforms.empty())
+            if (!wordforms.empty() && wordix < UCHAR_MAX)
             {
                 ExampleWordsData wdata;
                 wdata.pos = wordpos;
@@ -916,6 +916,10 @@ bool DictImport::doImportExamples()
 
             sentenceix = 0;
             wordix = 0;
+
+			if (blockix == USHRT_MAX)
+				throw ZException("More than 6 million sentences in the example database.");
+
             ++blockix;
         }
     }

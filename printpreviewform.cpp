@@ -135,7 +135,7 @@ void PrintTextBlock::setFuriWord(WordEntry *e, QFont &f, QFontMetrics &fm, QFont
         h = furih + lh;
         w = 0;
 
-        int siz = e->kanji.size();
+        uint siz = e->kanji.size();
         int strw;
         int linew = 0;
 
@@ -199,7 +199,7 @@ void PrintTextBlock::addFuriWord(WordEntry *e, QFont &f, QFontMetrics &fm, QFont
     furif = ff;
     furifm = ffm;
 
-    setlist.push_back({ f, fm, tokens.size() });
+    setlist.push_back({ f, fm, (int)tokens.size() });
     tokens.push_back({ e->kanji.toQString(), QString() });
 
     addString(tokens.size() - 1, fm, true);
@@ -211,7 +211,7 @@ void PrintTextBlock::addText(QCharTokenizer &tok, QFont &f, QFontMetrics &fm)
     if (furitext)
         throw "Can't add text in furigana block.";
 #endif
-    setlist.push_back({ f, fm, tokens.size() });
+    setlist.push_back({ f, fm, (int)tokens.size() });
 
     bool first = true;
     while (tok.next())
@@ -239,7 +239,7 @@ void PrintTextBlock::addText(const QString &str, QFont &f, QFontMetrics &fm)
         throw "Can't add text in furigana block.";
 #endif
 
-    setlist.push_back({ f, fm, tokens.size() });
+    setlist.push_back({ f, fm, (int)tokens.size() });
     tokens.push_back({ str, QString() });
     addString(tokens.size() - 1, fm, true);
 }
@@ -274,7 +274,7 @@ void PrintTextBlock::addString(int tokenpos, QFontMetrics &fm, bool addspace)
         {
             // The word doesn't fit the line if the delimiter is included.
 
-            lines.push_back({ list.size(), 0 });
+            lines.push_back({ (int)list.size(), 0 });
 
             left = 0;
             dw = 0;
@@ -344,7 +344,7 @@ void PrintTextBlock::addString(int tokenpos, QFontMetrics &fm, bool addspace)
                 space = 0;
                 strw = chw;
 
-                lines.push_back({ list.size(), 0 });
+                lines.push_back({ (int)list.size(), 0 });
             }
         }
     }
@@ -498,14 +498,14 @@ void PrintTextBlock::paintKanjiFuri(QPainter &p, int x, int y, bool rightalign)
     std::vector<FuriganaData> fdat;
     findFurigana(word->kanji, word->kana, fdat);
 
-    int kanjisiz = word->kanji.size();
-    int kanasiz = word->kana.size();
+    uint kanjisiz = word->kanji.size();
+    uint kanasiz = word->kana.size();
 
     // Position in fdat.
     int datpos = 0;
 
     // Position in lines.
-    int linepos = 0;
+    uint linepos = 0;
 
     // Position to print the next character relative to x.
     int left = 0;
@@ -520,7 +520,7 @@ void PrintTextBlock::paintKanjiFuri(QPainter &p, int x, int y, bool rightalign)
     QFont &f = setlist[0].f;
     QFontMetrics &fm = setlist[0].fm;
 
-    for (int pos = 0; pos != kanjisiz; ++pos)
+    for (uint pos = 0; pos != kanjisiz; ++pos)
     {
         p.setFont(f);
 

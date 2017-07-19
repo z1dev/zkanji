@@ -150,9 +150,10 @@ struct SARButton
     QString text;
     QMessageBox::ButtonRole role;
     SARButton(const QString &text, QMessageBox::ButtonRole role) : text(text), role(role) {}
-    SARButton(SARButton&& btn) : text(btn.text), role(btn.role) {}
-    SARButton& operator=(SARButton&& btn) { std::swap(text, btn.text); std::swap(role, btn.role); return *this; }
+    SARButton(const SARButton& btn) : text(btn.text), role(btn.role) {}
+    SARButton& operator=(const SARButton& btn) { text = btn.text; role = btn.role; return *this; }
 };
+
 // Shows a custom message box with title, text and details string. Pass the
 // button string and button roles for the buttons that will be added to the
 // dialog. Returns the index of the button that was clicked.

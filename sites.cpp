@@ -300,7 +300,7 @@ SiteItem& SitesListModel::expandedItem(int row)
     item.url = "http://";
     item.insertpos = item.url.size();
     item.poslocked = false;
-    signalRowsInserted({ { list.size() - 1, 1 } });
+    signalRowsInserted({ { (int)list.size() - 1, 1 } });
 
     return item;
 }

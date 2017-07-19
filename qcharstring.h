@@ -12,14 +12,14 @@
 
 enum class QCharKind;
 
-int ushortlen(const ushort *str);
-int qcharlen(const QChar *str);
+uint ushortlen(const ushort *str);
+uint qcharlen(const QChar *str);
 int qcharcmp(const QChar *s1, const QChar *s2);
 int qcharncmp(const QChar *s1, const QChar *s2, int len);
 // Returns the number of characters that match in s1 and s2 starting from the
 // first character. If maxlen is reached, it's returned. The ending null is
 // not counted.
-int qcharmlen(const QChar *s1, const QChar *s2, int maxlen = -1);
+uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen = -1);
 // Copies src to dest. Dest must have space for qcharlen(src) + 1 characters
 // and src must be null terminated.
 void qcharcpy(QChar *dest, const QChar *src);
@@ -46,8 +46,8 @@ int wordcompare(const QChar *kanjia, const QChar *kanaa, const QChar *kanjib, co
 class QCharString;
 class QCharStringIterator;
 class QCharStringConstIterator;
-QCharStringIterator& operator+(int n, const QCharStringIterator &b);
-QCharStringConstIterator& operator+(int n, const QCharStringConstIterator &b);
+QCharStringIterator operator+(int n, const QCharStringIterator &b);
+QCharStringConstIterator operator+(int n, const QCharStringConstIterator &b);
 
 class QCharStringConstIterator
 {
@@ -193,7 +193,7 @@ public:
     // Number of characters in the string data, not counting the null
     // terminating character. It is always re-computed when this
     // function is called.
-    int size() const;
+    uint size() const;
 
     // Returns true if the data is not initialized or it contains an array
     // with only the terminating null character.
@@ -210,16 +210,15 @@ public:
     const QChar* data() const;
 
     // Returns the array of the n rightmost characters. If n is greater than the
-    // string size, the whole string is returned. Passing a negative number has
-    // undefined result.
-    const QChar* rightData(int n) const;
+    // string size, the whole string is returned.
+    const QChar* rightData(uint n) const;
 
     // Returns the n-th character in array. There is no error checking, so
     // make sure the passed index is valid.
-    QChar& operator[](int n);
+    QChar& operator[](uint n);
     // Returns the n-th character in array. There is no error checking, so
     // make sure the passed index is valid.
-    const QChar& operator[](int n) const;
+    const QChar& operator[](uint n) const;
     // Returns true if the string and the other string results in 0 when
     // compared with qcharcmp.
     bool operator==(const QCharString &other) const;
@@ -321,8 +320,8 @@ bool operator!=(const QCharString &a, const QChar *b);
 class QCharStringList;
 class QCharStringListIterator;
 class QCharStringListConstIterator;
-QCharStringListIterator& operator+(int n, const QCharStringListIterator &b);
-QCharStringListConstIterator& operator+(int n, const QCharStringListConstIterator &b);
+QCharStringListIterator operator+(int n, const QCharStringListIterator &b);
+QCharStringListConstIterator operator+(int n, const QCharStringListConstIterator &b);
 
 class QCharStringListConstIterator
 {

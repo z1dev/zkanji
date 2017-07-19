@@ -41,17 +41,34 @@ release this new version, and plan to develop it further.
 
 zkanji utilizes Qt 5, so an installation of the Qt SDK with its header files and
 libraries must be present on the system. I used Qt version 5.5 during initial
-development, but newer versions should work as well. zkanji can be compiled with C++
-compilers that are C++11 compatible and can use Qt.
+development, but switched to 5.9.1 for the early release on GitHub. Versions from 5.5
+and newer should work. zkanji can be compiled with C++ compilers that are C++11
+compatible and can use Qt.
 
-On Windows, the minimal Visual Studio version capable of compiling zkanji is VS2013.
+On Windows, the minimal Visual Studio version capable of compiling zkanji is VS2013
+but the project file is for VS2015. I don't plan to make future changes compatible
+with previous compiler veresions.
 It is recommended, and possibly required, to use the Qt add-on for Visual Studio. GNU
 C++ compilers should have no problem compiling zkanji either but I haven't tested it
 yet. Currently only the Visual Studio project file is included. If it is set up
-correctly, zkanji should compile out of the box. (You might need to modify the file
-called zkanji.vcxproj.user, to change the path to Qt)
+correctly, zkanji should compile out of the box.
 
 Instructions for other OSes will be added later as I figure them out.
+
+---
+
+## Deployment on Windows
+
+To use the program after compilation, you should copy the C++ runtime DLLs of your
+compiler next to the executable. zkanji also needs the Qt DLLs. See the web page
+[Qt for Windows - Deployment](http://doc.qt.io/qt-5/windows-deployment.html) for
+details.
+
+The easiest way is to run the `windeployqt` executable from the Qt `bin` folder with
+the path to the compiled zkanji executable as a command line parameter. This will
+copy some DLLs next to the executable, and also create some extra folders. These
+extra folders, except the one called `platforms` (this is important!), must be copied
+to a subfolder named `qt5_plugins`.
 
 ---
 

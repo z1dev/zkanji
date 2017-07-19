@@ -472,14 +472,14 @@ QModelIndex ZAbstractTreeModel::index(const TreeItem *item) const
     return createIndex(item->row(), 0, (quintptr)item);
 }
 
-inline const TreeItem* ZAbstractTreeModel::itemFromIndex(const QModelIndex &index) const
+const TreeItem* ZAbstractTreeModel::itemFromIndex(const QModelIndex &index) const
 {
     if (!index.isValid())
         return &root;
     return ((TreeItem*)index.internalPointer());
 }
 
-inline TreeItem* ZAbstractTreeModel::itemFromIndex(const QModelIndex &index)
+TreeItem* ZAbstractTreeModel::itemFromIndex(const QModelIndex &index)
 {
     if (!index.isValid())
         return &root;
