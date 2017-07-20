@@ -41,6 +41,7 @@ void Sentences::load(const QString &filename)
         f.close();
         blockpos.clear();
         blocks.clear();
+        usedsize = 0;
         creation = QDateTime();
     }
 
@@ -165,11 +166,18 @@ void Sentences::load(const QString &filename)
         if (f.pos() != ui)
         {
             blockpos.clear();
+            blocks.clear();
+            usedsize = 0;
+            creation = QDateTime();
             ZKanji::commons.clearExamplesData();
         }
     }
     catch (...)
     {
+        usedsize = 0;
+        blockpos.clear();
+        blocks.clear();
+        creation = QDateTime();
         ZKanji::commons.clearExamplesData();
         QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "The example sentences data file is corrupted."));
     }
