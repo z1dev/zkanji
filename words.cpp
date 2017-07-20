@@ -331,15 +331,15 @@ namespace ZKanji
                     {
                         if (!QFile::remove(userFolder() + "/data/English.zkdict"))
                         {
-                            QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't save dictionary. Make sure its folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
-                            return;
+                            QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't save base dictionary in user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
+                            continue;
                         }
                     }
 
                     if (!QFile::copy(appFolder() + "/data/English.zkj", userFolder() + "/data/English.zkdict"))
                     {
-                        QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't save user data. Make sure its folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
-                        return;
+                        QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't copy base dictionary to user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
+                        continue;
                     }
 
                 }
