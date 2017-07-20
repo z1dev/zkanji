@@ -341,14 +341,8 @@ namespace ZKanji
                         QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't copy base dictionary to user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
                         continue;
                     }
-
+                    d->setToUserModified();
                 }
-                //if (forced || d->modified())
-                //{
-                //    d->setModified(false);
-                //    d->setUserDataModified(true);
-                //}
-
             }
             else if (forced || d->isModified())
             {

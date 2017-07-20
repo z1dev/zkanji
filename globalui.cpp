@@ -756,7 +756,7 @@ void GlobalUI::importBaseDict()
         return;
     }
 
-    if (QMessageBox::question(mainforms[0], "zkanji", tr("This operation will replace the current base dictionary, but changes by the user will be kept.\n\n"
+    if (QMessageBox::question(mainforms[0], "zkanji", tr("This operation will replace the current base dictionary. Changes by the user will be kept.\n\n"
         "You will be asked to select a folder with the JMdict data file. The folder must contain the file:\n"
         "JMdict or JMdict_e\n"
         "\n"
