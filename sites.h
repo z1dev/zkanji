@@ -7,8 +7,8 @@
 #ifndef SITES_H
 #define SITES_H
 
-#include <QXMLStreamWriter>
-#include <QXMLStreamReader>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 #include "zabstracttablemodel.h"
 #include "zlistviewitemdelegate.h"
 

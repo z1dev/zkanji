@@ -102,13 +102,13 @@ namespace RecMath
     // The distance between two values is "very small".
     inline bool fnear(const double &a, const double &b)
     {
-        return fabs(a - b) < tinyval;
+        return std::fabs(a - b) < tinyval;
     }
 
     // The distance between a value and itself rounded is "very small".
     inline bool fnearw(const double &a)
     {
-        return fnear(a, round(a));
+        return fnear(a, std::round(a));
     }
 
     // The counter-clockwise angle in radians between a line going through

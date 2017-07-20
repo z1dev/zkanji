@@ -498,7 +498,7 @@ KanjiGridSortModel::KanjiGridSortModel(KanjiGridModel *basemodel, const std::vec
 
 KanjiGridSortModel::KanjiGridSortModel(KanjiGridModel *basemodel, std::vector<ushort> &&filter, KanjiGridSortOrder order, Dictionary *dict, QObject *parent) : base(parent), basemodel(basemodel), order(KanjiGridSortOrder::NoSort)
 {
-    std::swap(list, std::move(filter));
+    std::swap(list, filter);
     sort(order, dict);
 }
 

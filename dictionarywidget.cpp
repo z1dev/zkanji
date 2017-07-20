@@ -1150,7 +1150,7 @@ void DictionaryWidget::exampleWordSelected(ushort block, uchar line, int wordpos
     if (dictionary() == nullptr)
         return;
 
-    auto &sentence = ZKanji::sentences.getSentence(block, line);
+    auto sentence = ZKanji::sentences.getSentence(block, line);
     ExampleWordsData::Form &f = sentence.words[wordpos].forms[wordform];
     int ix = dictionary()->findKanjiKanaWord(f.kanji, f.kana);
     if (ix == -1)

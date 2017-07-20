@@ -1638,7 +1638,7 @@ Dictionary* DictImport::importJMdict()
     std::set<QString> fields;
     std::set<QString> types;
     std::set<QString> notes;
-#endif;
+#endif
 
     while (file.getLine(str))
     {

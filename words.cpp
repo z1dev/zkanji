@@ -4891,7 +4891,7 @@ WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searc
 #ifdef _DEBUG
     if (searchmode == SearchMode::Browse)
         throw "Call browseWords with the wanted browse order instead.";
-#endif;
+#endif
 
     if (search.isEmpty())
         return std::move(result);

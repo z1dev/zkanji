@@ -772,7 +772,7 @@ QString toKana(QString str, bool uppertokata)
     return toKana(str.constData(), str.size(), uppertokata);
 }
 
-inline void findKanaArrays(QChar ch, /*const char** &input, const ushort* output[3],*/ int &pos, int &size)
+void findKanaArrays(QChar ch, /*const char** &input, const ushort* output[3],*/ int &pos, int &size)
 {
 #define CASEQ(x) #x
 #define ADDCASE(x)\

@@ -100,26 +100,26 @@ private:
 public:
     smartvector_move_iterator() : base() {}
     smartvector_move_iterator(const self_type &orig) : base(orig._base()) {}
-    smartvector_move_iterator(const typename basetype &base) : base(base) {}
+    smartvector_move_iterator(const typename basetype &origbase) : base(origbase) {}
 
     self_type& operator++() { base::operator++(); return *this; }
     self_type operator++(int) { self_type copy(*this);  base::operator++(); return copy; }
     self_type& operator--() { base::operator--(); return *this; }
     self_type operator--(int) { self_type copy(*this);  base::operator--(); return copy; }
 
-    self_type operator+(int n) const { return self_type(_base() + n); }
-    self_type operator-(int n) const { return self_type(_base() - n); }
+    self_type operator+(int n) const { return self_type(this->_base() + n); }
+    self_type operator-(int n) const { return self_type(this->_base() - n); }
     self_type& operator+=(int n) { base::operator+=(n); return *this; }
     self_type& operator-=(int n) { base::operator-=(n); return *this; }
 
-    int operator-(const self_type &other) const { return _base() - other._base(); }
+    int operator-(const self_type &other) const { return this->_base() - other._base(); }
 
-    bool operator==(const self_type &other) const { return _base() == other._base(); }
-    bool operator!=(const self_type &other) const { return _base() != other._base(); }
-    bool operator<(const self_type &other) const { return _base() < other._base(); }
-    bool operator>(const self_type &other) const { return _base() > other._base(); }
-    bool operator<=(const self_type &other) const { return _base() <= other._base(); }
-    bool operator>=(const self_type &other) const { return _base() >= other._base(); }
+    bool operator==(const self_type &other) const { return this->_base() == other._base(); }
+    bool operator!=(const self_type &other) const { return this->_base() != other._base(); }
+    bool operator<(const self_type &other) const { return this->_base() < other._base(); }
+    bool operator>(const self_type &other) const { return this->_base() > other._base(); }
+    bool operator<=(const self_type &other) const { return this->_base() <= other._base(); }
+    bool operator>=(const self_type &other) const { return this->_base() >= other._base(); }
 
     friend smartvector<T, Alloc>;
 };
@@ -234,7 +234,6 @@ public:
     typedef std::reverse_iterator<smartvector_iterator<T, Alloc>>   reverse_iterator;
     typedef std::reverse_iterator<smartvector_const_iterator<T, Alloc>> const_reverse_iterator;
     typedef typename base::difference_type  difference_type;
-    typedef typename base::size_type  size_type;
 
     typedef smartvector_move_iterator<T, Alloc>  move_iterator;
 
@@ -894,10 +893,10 @@ private:
     typedef typename base::iterator  base_iterator;
     typedef typename base::const_iterator    base_const_iterator;
 
-    template<typename T, typename Alloc>
-    friend bool operator==(const smartvector<T, Alloc> &a, const smartvector<T, Alloc> &b);
-    template<typename T, typename Alloc>
-    friend bool operator!=(const smartvector<T, Alloc> &a, const smartvector<T, Alloc> &b);
+    template<typename T, typename AAlloc>
+    friend bool operator==(const smartvector<T, AAlloc> &a, const smartvector<T, AAlloc> &b);
+    template<typename T, typename AAlloc>
+    friend bool operator!=(const smartvector<T, AAlloc> &a, const smartvector<T, AAlloc> &b);
 };
 
 template<typename T, typename Alloc>

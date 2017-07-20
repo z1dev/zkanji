@@ -40,7 +40,7 @@ public:
     virtual QVariant data(const QModelIndex &index = QModelIndex(), int role = Qt::DisplayRole) const override;
 private:
     // When valid, the default color that appears at the first index of the combo box.
-    QColor default;
+    QColor defcol;
 
     // Whether to list an item with the "Custom..." label. Selecting that item will open the
     // built in color selector dialog.

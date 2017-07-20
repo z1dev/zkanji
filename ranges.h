@@ -279,7 +279,7 @@ void _moveRange(T *array,
         range.first = tmp + 1;
     }
 
-    std::vector<typename T> movelist(array + range.first, array + (range.last + 1));
+    std::vector</*typename*/ T> movelist(array + range.first, array + (range.last + 1));
 
     //auto *ldat = list.data();
     auto *mdat = movelist.data();

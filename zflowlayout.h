@@ -8,7 +8,7 @@
 #define ZFLOWLAYOUT_H
 
 #include <QLayout>
-#include <QtWidgets\QStyle>
+#include <QtWidgets/QStyle>
 #include "smartvector.h"
 
 // Layout that places its items in a flowing manner. Items are placed one after the other in

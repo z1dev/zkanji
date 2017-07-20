@@ -119,7 +119,7 @@ int GroupTreeModel::rowCount(const TreeItem *parent) const
 
     // parent has empty userData when it's a message item only for expanding empty categories,
     // or an empty item for editing the name of a new group or category.
-    if (parent != nullptr && parent->userData() == nullptr)
+    if (parent != nullptr && parent->userData() == 0)
         return 0;
 
     GroupCategoryBase* dat;
@@ -188,7 +188,7 @@ bool GroupTreeModel::setData(TreeItem *item, const QVariant &value, int role)
 
     // Parent category of the edited item.
     GroupCategoryBase *cat = root;
-    if (item->parent() != nullptr && item->parent()->userData() != nullptr)
+    if (item->parent() != nullptr && item->parent()->userData() != 0)
         cat = (GroupCategoryBase*)item->parent()->userData();
 
     if ((base == nullptr || base->name().toLower() != str.toLower()) &&
@@ -221,7 +221,7 @@ bool GroupTreeModel::setData(TreeItem *item, const QVariant &value, int role)
         GroupCategoryBase *pcat = cat->categories(cat->addCategory(str));
         ignoresignals = false;
 
-        item->setUserData(pcat);
+        item->setUserData((uintptr_t)pcat);
         // Add message item "add new..."
         if (pcat->categoryCount() + (onlycateg ? 0 : pcat->size()) == 0)
             qApp->postEvent(this, new TreeAddFakeItemEvent(item));
@@ -235,7 +235,7 @@ bool GroupTreeModel::setData(TreeItem *item, const QVariant &value, int role)
         editparent = nullptr;
 
         ignoresignals = true;
-        item->setUserData(cat->items(cat->addGroup(str)));
+        item->setUserData((uintptr_t)cat->items(cat->addGroup(str)));
         ignoresignals = false;
     }
 
@@ -277,14 +277,14 @@ Qt::ItemFlags GroupTreeModel::flags(const TreeItem *item) const
             return 0;
         return Qt::ItemIsDropEnabled;
     }
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | (!filtered && ((item->userData() != nullptr && item->userData() != root) || (addmode != NoAdd && item->parent() == editparent)) ? Qt::ItemIsEditable : 0) |
-        (item->userData() != nullptr ? Qt::ItemIsDropEnabled : 0) | ((item->userData() != nullptr && item->userData() != root) ? Qt::ItemIsDragEnabled : 0) |
-        ((item->userData() == nullptr || !((GroupBase*)item->userData())->isCategory()) ? Qt::ItemNeverHasChildren : 0);
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | (!filtered && ((item->userData() != 0 && item->userData() != (uintptr_t)root) || (addmode != NoAdd && item->parent() == editparent)) ? Qt::ItemIsEditable : Qt::NoItemFlags) |
+        (item->userData() != 0 ? Qt::ItemIsDropEnabled : Qt::NoItemFlags) | ((item->userData() != 0 && item->userData() != (uintptr_t)root) ? Qt::ItemIsDragEnabled : Qt::NoItemFlags) |
+        ((item->userData() == 0 || !((GroupBase*)item->userData())->isCategory()) ? Qt::ItemNeverHasChildren : Qt::NoItemFlags);
 }
 
 bool GroupTreeModel::hasChildren(const TreeItem *parent) const
 {
-    return parent == nullptr || (parent->userData() != nullptr && ((GroupBase*)parent->userData())->isCategory() && (placeholder || 
+    return parent == nullptr || (parent->userData() != 0 && ((GroupBase*)parent->userData())->isCategory() && (placeholder || 
         ((!onlycateg && ((GroupCategoryBase*)parent->userData())->isEmpty()) || ((GroupCategoryBase*)parent->userData())->categoryCount() != 0)
         ));
 }
@@ -422,9 +422,9 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         //if (group->dictionary() != (void*)(*(intptr_t*)arr.constData()))
         //    return false;
 
-        // Dropping on the same group as the source, which is the second pointer sized value in
-        // arr.
-        if (parent->userData() == (void*)(*((intptr_t*)arr.constData() + 1)))
+        // Dropping on the same group as the source, which is the second pointer sized value
+        // in arr.
+        if (parent->userData() == (*((uintptr_t*)arr.constData() + 1)))
             return false;
 
         int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(ushort);
@@ -460,7 +460,7 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
             return false;
         // Dropping on the same group as the source, which is the second pointer sized value in
         // arr.
-        if (parent->userData() == (void*)(*((intptr_t*)arr.constData() + 1)))
+        if (parent->userData() == (*((uintptr_t*)arr.constData() + 1)))
             return false;
 
         int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(int);
@@ -605,7 +605,7 @@ TreeItem* GroupTreeModel::findTreeItem(const GroupBase *which)
         for (int ix = 0; ix != siz; ++ix)
         {
             TreeItem *item = getItem(top, ix);
-            if (item->userData() == which)
+            if (item->userData() == (uintptr_t)which)
             {
 #ifdef _DEBUG
                 found = true;
@@ -647,7 +647,7 @@ void GroupTreeModel::remove(TreeItem *which)
         return;
     }
 
-    if (which && which->userData() == nullptr && addmode != NoAdd && editparent == which->parent())
+    if (which && which->userData() == 0 && addmode != NoAdd && editparent == which->parent())
     {
         beginRemoveRows(editparent, which->row(), which->row());
 
@@ -664,7 +664,7 @@ void GroupTreeModel::remove(TreeItem *which)
         return;
     }
 
-    if (which == nullptr || which->userData() == nullptr)
+    if (which == nullptr || which->userData() == 0)
         return;
 
 #ifdef _DEBUG
@@ -1223,7 +1223,7 @@ bool CheckedGroupTreeModel::setData(TreeItem *item, const QVariant &value, int r
         QSet<TreeItem*> tmp = list;
         for (TreeItem *i : tmp)
         {
-            if (i->userData() == nullptr)
+            if (i->userData() == 0)
                 continue;
             if (((GroupBase*)i->userData())->isCategory())
                 collectCategoryChildren(i, list);
@@ -1265,7 +1265,7 @@ bool CheckedGroupTreeModel::setData(TreeItem *item, const QVariant &value, int r
 
 Qt::ItemFlags CheckedGroupTreeModel::flags(const TreeItem *item) const
 {
-    return base::flags(item) | (item->userData() != nullptr ? Qt::ItemIsUserCheckable : 0);
+    return base::flags(item) | (item->userData() != 0 ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
 }
 
 void CheckedGroupTreeModel::categoryAboutToBeDeleted(GroupCategoryBase *parent, int index, GroupCategoryBase *cat)

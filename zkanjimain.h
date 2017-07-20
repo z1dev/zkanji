@@ -169,7 +169,11 @@ public:
     ~ZException();
     ZException operator=(const ZException &other);
 
-    virtual const char* what() const override;
+    virtual const char* what() const
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+        noexcept
+#endif
+        override;
 private:
     void copyMsg(const char * const &m);
 

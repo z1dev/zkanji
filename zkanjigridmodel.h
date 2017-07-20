@@ -9,7 +9,7 @@
 
 #include <QObject>
 #include <QColor>
-#include "smartvector.H"
+#include "smartvector.h"
 
 class KanjiEntry;
 class KanjiGroup;

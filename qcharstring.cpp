@@ -878,6 +878,35 @@ bool operator!=(const QCharString &a, const STR &b)
     return qcharncmp(b.constData(), a.arr, len) != 0;
 }
 
+namespace {
+    // Function is never called but generates the template == and != operators for QStringRef
+    // and QString.
+    void dummyfunction()
+    {
+        QStringRef ref;
+        QString s;
+        QCharString str;
+        bool a = str == ref;
+        a = ref == str;
+        a = str != ref;
+        a = ref != str;
+        a = str == s;
+        a = s == str;
+        a = str != s;
+        a = s != str;
+
+        // Replacing these lines in the .h which doesn't seem to work in GCC.
+        //template bool operator==<QStringRef>(const QStringRef &a, const QCharString &b);
+        //template bool operator==<QStringRef>(const QCharString &a, const QStringRef &b);
+        //template bool operator!=<QStringRef>(const QStringRef &a, const QCharString &b);
+        //template bool operator!=<QStringRef>(const QCharString &a, const QStringRef &b);
+        //template bool operator==<QString>(const QString &a, const QCharString &b);
+        //template bool operator==<QString>(const QCharString &a, const QString &b);
+        //template bool operator!=<QString>(const QString &a, const QCharString &b);
+        //template bool operator!=<QString>(const QCharString &a, const QString &b);
+    }
+}
+
 bool operator==(const QChar *a, const QCharString &b)
 {
     return qcharcmp(a, b.data()) == 0;

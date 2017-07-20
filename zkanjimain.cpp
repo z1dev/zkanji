@@ -242,7 +242,10 @@ ZException ZException::operator=(const ZException &other)
     return *this;
 }
 
-const char* ZException::what() const
+const char* ZException::what() const 
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+    noexcept
+#endif
 {
     return msg != nullptr ? msg : "Exception occurred.";
 }

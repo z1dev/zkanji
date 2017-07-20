@@ -32,8 +32,8 @@ public:
     const TreeItem* items(uint index) const;
     TreeItem* items(uint index);
 
-    void* userData() const;
-    void setUserData(void *data);
+    uintptr_t userData() const;
+    void setUserData(uintptr_t data);
 private:
     // When returns true, the parent parameter is the root of the owner tree model.
     // Items in the root cannot be used in some operations. The parent() function for
@@ -62,7 +62,7 @@ private:
     // Parent.
     TreeItem *pr;
     // User data.
-    void *dat;
+    uintptr_t dat;
 
     std::vector<TreeItem*> list;
 

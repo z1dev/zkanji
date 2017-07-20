@@ -302,7 +302,7 @@ QString ZRadicalGrid::searchName() const
     return search;
 }
 
-void ZRadicalGrid::setSearchName(QString &newname)
+void ZRadicalGrid::setSearchName(const QString &newname)
 {
     if (search == newname)
         return;

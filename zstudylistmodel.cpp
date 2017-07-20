@@ -699,7 +699,7 @@ bool StudyListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     if (!canDropMimeData(data, action, row, column, parent))
         return false;
 
-    QByteArray &arr = data->data(QStringLiteral("zkanji/words"));
+    const QByteArray &arr = data->data(QStringLiteral("zkanji/words"));
 
     int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(int);
     if (cnt <= 0 || cnt * sizeof(int) + sizeof(intptr_t) * 2 != arr.size())

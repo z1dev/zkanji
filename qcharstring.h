@@ -300,17 +300,6 @@ bool operator!=(const STR &a, const QCharString &b);
 template <typename STR>
 bool operator!=(const QCharString &a, const STR &b);
 
-// Declare them so the templates get completed:
-template bool operator==<QStringRef>(const QStringRef &a, const QCharString &b);
-template bool operator==<QStringRef>(const QCharString &a, const QStringRef &b);
-template bool operator!=<QStringRef>(const QStringRef &a, const QCharString &b);
-template bool operator!=<QStringRef>(const QCharString &a, const QStringRef &b);
-
-template bool operator==<QString>(const QString &a, const QCharString &b);
-template bool operator==<QString>(const QCharString &a, const QString &b);
-template bool operator!=<QString>(const QString &a, const QCharString &b);
-template bool operator!=<QString>(const QCharString &a, const QString &b);
-
 bool operator==(const QChar *a, const QCharString &b);
 bool operator==(const QCharString &a, const QChar *b);
 bool operator!=(const QChar *a, const QCharString &b);

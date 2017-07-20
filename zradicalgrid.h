@@ -88,7 +88,7 @@ public:
     // Only used in NamedRadicals mode. Set whether only show radicals that
     // consist or start with a string, depending on the value of exactMatch()
     // Set an empty string to erase the filter.
-    void setSearchName(QString &newname);
+    void setSearchName(const QString &newname);
 
     // Only used in NamedRadicals mode. Only show radicals that have a
     // name exactly matching the value of searchName().

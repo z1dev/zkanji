@@ -177,26 +177,26 @@ ZColorListModel::~ZColorListModel()
 
 QColor ZColorListModel::defaultColor() const
 {
-    return default;
+    return defcol;
 }
 
 void ZColorListModel::setDefaultColor(QColor color)
 {
-    if (default == color)
+    if (defcol == color)
         return;
 
-    bool changed = (default.isValid() != color.isValid());
-    if (changed && !default.isValid())
+    bool changed = (defcol.isValid() != color.isValid());
+    if (changed && !defcol.isValid())
         beginInsertRows(QModelIndex(), 0, 0);
-    else if (changed && default.isValid())
+    else if (changed && defcol.isValid())
         beginRemoveRows(QModelIndex(), 0, 0);
-    default = color;
-    if (changed && default.isValid())
+    defcol = color;
+    if (changed && defcol.isValid())
         endInsertRows();
-    else if (changed && !default.isValid())
+    else if (changed && !defcol.isValid())
         endRemoveRows();
 
-    if (!changed && default.isValid())
+    if (!changed && defcol.isValid())
         emit dataChanged(index(0, 0), index(0, 0));
 }
 
@@ -211,9 +211,9 @@ void ZColorListModel::setListCustom(bool allow)
         return;
 
     if (allow)
-        beginInsertRows(QModelIndex(), default.isValid() ? 1 : 0, default.isValid() ? 1 : 0);
+        beginInsertRows(QModelIndex(), defcol.isValid() ? 1 : 0, defcol.isValid() ? 1 : 0);
     else
-        beginRemoveRows(QModelIndex(), default.isValid() ? 1 : 0, default.isValid() ? 1 : 0);
+        beginRemoveRows(QModelIndex(), defcol.isValid() ? 1 : 0, defcol.isValid() ? 1 : 0);
     listcustom = allow;
     if (!listcustom)
         custom = QColor();
@@ -236,7 +236,7 @@ void ZColorListModel::setCustomColor(QColor color)
         return;
 
     custom = color;
-    emit dataChanged(index(default.isValid() ? 1 : 0, 0), index(default.isValid() ? 1 : 0, 0));
+    emit dataChanged(index(defcol.isValid() ? 1 : 0, 0), index(defcol.isValid() ? 1 : 0, 0));
 }
 
 int ZColorListModel::rowCount(const QModelIndex &parent) const
@@ -244,7 +244,7 @@ int ZColorListModel::rowCount(const QModelIndex &parent) const
     if (parent.isValid())
         return 0;
 
-    return basecolors.size() + (default.isValid() ? 1 : 0) + (listcustom ? 1 : 0);
+    return basecolors.size() + (defcol.isValid() ? 1 : 0) + (listcustom ? 1 : 0);
 }
 
 static const int ColorRole = Qt::UserRole;
@@ -259,23 +259,23 @@ QVariant ZColorListModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     if (role == ColorTextRole)
     {
-        if (row == 0 && default.isValid())
+        if (row == 0 && defcol.isValid())
             return tr("Default");
-        if (listcustom && row == (default.isValid() ? 1 : 0))
+        if (listcustom && row == (defcol.isValid() ? 1 : 0))
             return tr("Custom...");
 
-        return basecolors[row - (default.isValid() ? 1 : 0) - (listcustom ? 1 : 0)].first;
+        return basecolors[row - (defcol.isValid() ? 1 : 0) - (listcustom ? 1 : 0)].first;
     }
 
     if (role == Qt::SizeHintRole)
         return owner->indexSizeHint(index);
 
     // ColorRole.
-    if (row == 0 && default.isValid())
-        return default;
-    if (listcustom && row == (default.isValid() ? 1 : 0))
+    if (row == 0 && defcol.isValid())
+        return defcol;
+    if (listcustom && row == (defcol.isValid() ? 1 : 0))
         return custom.isValid() ? custom : QVariant();
-    return basecolors[row - (default.isValid() ? 1 : 0) - (listcustom ? 1 : 0)].second;
+    return basecolors[row - (defcol.isValid() ? 1 : 0) - (listcustom ? 1 : 0)].second;
 }
 
 

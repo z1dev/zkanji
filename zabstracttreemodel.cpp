@@ -12,17 +12,17 @@
 //-------------------------------------------------------------
 
 
-TreeItem::TreeItem() : oldrow(-1), pr(nullptr), dat(nullptr)
+TreeItem::TreeItem() : oldrow(-1), pr(nullptr), dat(0)
 {
 
 }
 
-TreeItem::TreeItem(int newrow, TreeItem *itemparent, void *itemdata) : oldrow(newrow), pr(itemparent), dat(itemdata)
+TreeItem::TreeItem(int newrow, TreeItem *itemparent, void *itemdata) : oldrow(newrow), pr(itemparent), dat(0)
 {
 
 }
 
-TreeItem::TreeItem(TreeItem &&other) : oldrow(-1), pr(nullptr), dat(nullptr)
+TreeItem::TreeItem(TreeItem &&other) : oldrow(-1), pr(nullptr), dat(0)
 {
     *this = std::move(other);
 }
@@ -112,12 +112,12 @@ TreeItem* TreeItem::items(uint index)
     return list[index];
 }
 
-void* TreeItem::userData() const
+uintptr_t TreeItem::userData() const
 {
     return dat;
 }
 
-void TreeItem::setUserData(void *data)
+void TreeItem::setUserData(uintptr_t data)
 {
     dat = data;
 }

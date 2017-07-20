@@ -208,7 +208,7 @@ public:
 
     // Executes a function with every TextNode in the tree. Data will be
     // passed to the function as second argument.
-    void walkthrough(void *data, std::function<void(TextNode*, void*)> func);
+    void walkthrough(uintptr_t data, std::function<void(TextNode*, uintptr_t)> func);
 
     // Returns a list of line indexes that were in the node that holds
     // the line index of text c.
@@ -265,7 +265,7 @@ private:
     void distributeChildren(TextNode *parent);
 
     // Used in walkthrough.
-    void walkReq(TextNode *n, void *data, std::function<void(TextNode*, void*)> func);
+    void walkReq(TextNode *n, uintptr_t data, std::function<void(TextNode*, uintptr_t)> func);
 
     // Has nodes a to z on top of the nodes list.
     //bool createbase;

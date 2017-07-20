@@ -435,7 +435,7 @@ bool GroupTreeView::hasGroupSelected() const
     for (int ix = 0; ix != indexes.size(); ++ix)
     {
         QModelIndex index = indexes.at(ix);
-        if (index.isValid() && ((TreeItem*)index.internalPointer())->userData() != nullptr && !((GroupBase*)((TreeItem*)index.internalPointer())->userData())->isCategory())
+        if (index.isValid() && ((TreeItem*)index.internalPointer())->userData() != 0 && !((GroupBase*)((TreeItem*)index.internalPointer())->userData())->isCategory())
             return true;
     }
     return false;
@@ -463,7 +463,7 @@ void GroupTreeView::createCategory(TreeItem *parent)
         return;
 
     cachepos = currentItem();
-    if (cachepos && cachepos->userData() == nullptr)
+    if (cachepos && cachepos->userData() == 0)
         cachepos = cachepos->parent();
 
     state = State::Creation;
@@ -479,7 +479,7 @@ void GroupTreeView::createGroup(TreeItem *parent)
         return;
 
     cachepos = currentItem();
-    if (cachepos && cachepos->userData() == nullptr)
+    if (cachepos && cachepos->userData() == 0)
         cachepos = cachepos->parent();
 
     state = State::Creation;
@@ -510,7 +510,7 @@ bool GroupTreeView::currentCompleted(bool currentmustexist)
     if (state == State::Creation)
         return false;
     TreeItem *i = currentItem();
-    if (currentmustexist && (!i || i->userData() == nullptr))
+    if (currentmustexist && (!i || i->userData() == 0))
         return false;
     return true;
 }
@@ -531,10 +531,10 @@ void GroupTreeView::mousePressEvent(QMouseEvent *e)
     if (state == State::Creation)
     {
         TreeItem *item = itemAt(e->pos());
-        if (item != nullptr && item->userData() != nullptr)
+        if (item != nullptr && item->userData() != 0)
         {
             cachepos = item;
-            if (cachepos && cachepos->userData() == nullptr)
+            if (cachepos && cachepos->userData() == 0)
                 cachepos = cachepos->parent();
         }
 
@@ -611,7 +611,7 @@ bool GroupTreeView::event(QEvent *e)
 
         state = State::Idle;
 
-        if (edititem->userData() == nullptr /*((GroupBase*)editem->userData())->name().isEmpty()*/)
+        if (edititem->userData() == 0 /*((GroupBase*)editem->userData())->name().isEmpty()*/)
         {
             setCurrentItem(cachepos);
             model()->remove(edititem);
@@ -803,7 +803,7 @@ void GroupTreeView::dragMoveEvent(QDragMoveEvent *e)
             if (i != nullptr)
             {
                 TreeItem *pos = i->parent();
-                while (pos && pos->userData() != grp)
+                while (pos && pos->userData() != (uintptr_t)grp)
                     pos = pos->parent();
 
                 // Invalid move confirmed. 

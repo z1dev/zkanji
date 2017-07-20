@@ -10,6 +10,7 @@
 #include <QValidator>
 #include <QPixmap>
 #include <QMessageBox>
+#include <QBoxLayout>
 #include "smartvector.h"
 
 // Classes and functions used globally by several parts of the interface, that are

@@ -349,13 +349,13 @@ protected:
     virtual GroupBase* createGroup(QString name) override;
 private:
     template<typename TT = T>
-    typename std::enable_if<std::is_same<typename TT, WordGroup>::value, GroupTypes>::type _groupType() const
+    typename std::enable_if<std::is_same</*typename*/ TT, WordGroup>::value, GroupTypes>::type _groupType() const
     {
         return GroupTypes::Words;
     }
 
     template<typename TT = T>
-    typename std::enable_if<std::is_same<typename TT, KanjiGroup>::value, GroupTypes>::type _groupType() const
+    typename std::enable_if<std::is_same</*typename*/ TT, KanjiGroup>::value, GroupTypes>::type _groupType() const
     {
         return GroupTypes::Kanji;
     }

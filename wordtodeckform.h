@@ -71,7 +71,7 @@ private:
     // Returns the rectangle of the given section in the viewport.
     QRect sectionRect(int index) const;
 
-    CheckBoxMouseState WordsToDeckHeader::checkBoxMouseState(int index) const;
+    CheckBoxMouseState checkBoxMouseState(int index) const;
 
     Qt::CheckState checkState(int index) const;
 
