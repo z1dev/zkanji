@@ -848,13 +848,20 @@ void GlobalUI::importBaseDict()
         return;
     }
 
-    QFile::copy(ZKanji::appFolder() + "/data/English.zkj", ZKanji::userFolder() + "/data/English.zkdict");
+    if (!QFile::copy(ZKanji::appFolder() + "/data/English.zkj", ZKanji::userFolder() + "/data/English.zkdict"))
+    {
+        saveguard.release();
+        hideguard.release();
+        QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("Error occurred while trying to copy base dictionary to user folder. To avoid corrupting the user data file, the program will terminate.") % QString("\n\n%1").arg(Error::last()));
+        exit(0);
+        return;
+    }
 
     if (!dict->saveUserData(ZKanji::userFolder() + "/data/English.zkuser"))
     {
         saveguard.release();
         hideguard.release();
-        QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("Error occurred while trying to save user data for the base dictionary. Depending on the error, file might be compromised.") % QString("\n\n%1").arg(Error::last()));
+        QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("Error occurred while trying to save user data for the base dictionary. Depending on the error, the user data file might be compromised.") % QString("\n\n%1").arg(Error::last()));
         return;
     }
 
