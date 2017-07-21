@@ -112,12 +112,12 @@ TreeItem* TreeItem::items(uint index)
     return list[index];
 }
 
-uintptr_t TreeItem::userData() const
+intptr_t TreeItem::userData() const
 {
     return dat;
 }
 
-void TreeItem::setUserData(uintptr_t data)
+void TreeItem::setUserData(intptr_t data)
 {
     dat = data;
 }

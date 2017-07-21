@@ -184,7 +184,7 @@ struct StudyCard // - ex TRepetitionItem
 
     // User defined data for the study card. This is usually a pointer to the item that was
     // tested. This data is NOT saved. It's the user's task to restore this on load.
-    uintptr_t data;
+    intptr_t data;
 
     // Date of the start of the current or last test. The repetition spacing is added to this
     // date to compute the date of the next test.
@@ -448,8 +448,8 @@ private:
     // Returns a new study deck id which comes after a.
     static StudyDeckId next(StudyDeckId a);
 
-    StudyDeckId(uintptr_t id);
-    uintptr_t id;
+    StudyDeckId(intptr_t id);
+    intptr_t id;
 
     friend bool operator==(const StudyDeckId &a, const StudyDeckId &b);
     friend QDataStream& operator<<(QDataStream &stream, const StudyDeckId &id);
@@ -515,21 +515,21 @@ public:
     // the index saved is -1.
     void saveCardId(QDataStream &stream, CardId *id) const;
     // Sets the user defined data for a given card.
-    void setCardData(CardId *cardid, uintptr_t data);
+    void setCardData(CardId *cardid, intptr_t data);
     // Returns the user defined data for a given card.
-    uintptr_t cardData(const CardId *cardid) const;
+    intptr_t cardData(const CardId *cardid) const;
     // Returns the next card in the card group of cardid. It can be the same as cardid if the
     // group consists of that single card.
     CardId* nextCard(CardId *cardid);
     // Returns the user defined data for a given group identified by a card in the card group.
     // The result vector is not cleared, new items are appended. The vector is not checked for
     // duplicates.
-    void groupData(CardId *cardid, std::vector<uintptr_t> &result);
+    void groupData(CardId *cardid, std::vector<intptr_t> &result);
 
     // Creates a new card on the deck. Cards can be grouped if an item's multiple data are
     // tested. Pass a card's id in cardid_group which is in the group as the card to be
     // created. Passing null creates a new group. Set data to a user specified data.
-    CardId* createCard(CardId *cardid_group, uintptr_t data);
+    CardId* createCard(CardId *cardid_group, intptr_t data);
 
     // Deletes the card with the passed id. Returns the id of the card which comes next in the
     // same card group. If the group is empty after the delete, deleteCard() returns null.

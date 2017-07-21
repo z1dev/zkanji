@@ -256,7 +256,7 @@ void WordDeckItems<LockedWordDeckItem>::loadItemLegacy(QDataStream &stream, item
     //    return;
 
     //item->cardid = deck->cardId(index);
-    //deck->setCardData(item->cardid, (uintptr_t)item);
+    //deck->setCardData(item->cardid, (intptr_t)item);
 
     //if (item->data->groupid == nullptr)
     //    item->data->groupid = item->cardid;
@@ -393,7 +393,7 @@ void WordDeck::loadLegacy(QDataStream &stream)
         {
             LockedWordDeckItem *item = lockitems.items(ix);
             item->cardid = deck->cardId(ix);
-            deck->setCardData(item->cardid, (uintptr_t)item);
+            deck->setCardData(item->cardid, (intptr_t)item);
 
             if (item->data->groupid == nullptr)
                 item->data->groupid = item->cardid;

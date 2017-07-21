@@ -300,7 +300,7 @@ QVariant DictionarySearchFilterProxyModel::data(const QModelIndex &index, int ro
     if (role == (int)DictRowRoles::Inflection)
     {
         auto inflist = list[index.row()].second;
-        return (uintptr_t)inflist;
+        return (intptr_t)inflist;
     }
 
     return base::data(index, role);
@@ -1732,7 +1732,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
             if (a.first != b.first)
                 return a.first < b.first;
             // Make the null inflection come last if present.
-            return (uintptr_t)a.second > (uintptr_t)b.second;
+            return (intptr_t)a.second > (intptr_t)b.second;
         });
 
         int wpos = 0;

@@ -723,7 +723,7 @@ bool StudyDeckId::valid()
     return id != 0;
 }
 
-StudyDeckId::StudyDeckId(uintptr_t id) : id(id) 
+StudyDeckId::StudyDeckId(intptr_t id) : id(id) 
 {
     ;
 }
@@ -1040,13 +1040,13 @@ void StudyDeck::saveCardId(QDataStream &stream, CardId *id) const
         stream << (qint32)id->data;
 }
 
-void StudyDeck::setCardData(CardId *cardid, uintptr_t data)
+void StudyDeck::setCardData(CardId *cardid, intptr_t data)
 {
     StudyCard *card = fromId(cardid);
     card->data = data;
 }
 
-uintptr_t StudyDeck::cardData(const CardId *cardid) const
+intptr_t StudyDeck::cardData(const CardId *cardid) const
 {
     const StudyCard *card = fromId(cardid);
     return card->data;
@@ -1058,7 +1058,7 @@ CardId* StudyDeck::nextCard(CardId *cardid)
     return ids[card->next->index];
 }
 
-void StudyDeck::groupData(CardId *cardid, std::vector<uintptr_t> &result)
+void StudyDeck::groupData(CardId *cardid, std::vector<intptr_t> &result)
 {
     StudyCard *card = fromId(cardid);
     StudyCard *first = card;
@@ -1069,7 +1069,7 @@ void StudyDeck::groupData(CardId *cardid, std::vector<uintptr_t> &result)
     } while (card != first);
 }
 
-CardId* StudyDeck::createCard(CardId *cardid_group, uintptr_t data)
+CardId* StudyDeck::createCard(CardId *cardid_group, intptr_t data)
 {
     StudyCard *group = fromId(cardid_group);
     StudyCard *card = new StudyCard;

@@ -972,7 +972,7 @@ void WordDeck::loadLockedDeckItem(QDataStream &stream, LockedWordDeckItem *w, St
     loadWordDeckItem(stream, w);
     w->cardid = study->loadCardId(stream);
     //stream >> *w->cardid;
-    study->setCardData(w->cardid, (uintptr_t)w);
+    study->setCardData(w->cardid, (intptr_t)w);
 }
 
 void WordDeck::saveLockedDeckItem(QDataStream &stream, const LockedWordDeckItem *w, StudyDeck *study) const
@@ -1095,7 +1095,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
     std::map<int, int> types;
 
     // Temporary vector used for retrieving every user data for a given card group.
-    std::vector<uintptr_t> datalist;
+    std::vector<intptr_t> datalist;
 
     // Figuring out which item types to keep for which word data. Types in the main word data
     // placed in 'mainword' have priority. Item types without study data might be kept too,
@@ -1110,7 +1110,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
         study->groupData(p.second->groupid, datalist);
 
         int added = 0;
-        for (uintptr_t data : datalist)
+        for (intptr_t data : datalist)
         {
             LockedWordDeckItem *item = (LockedWordDeckItem*)data;
             added |= (int)item->questiontype;
@@ -2300,7 +2300,7 @@ void WordDeck::answer(StudyCard::AnswerType a, qint64 answertime)
 
         freeitems.remove(currentix.free);
 
-        item->cardid = study->createCard(item->data->groupid, (uintptr_t)item);
+        item->cardid = study->createCard(item->data->groupid, (intptr_t)item);
         if (item->data->groupid == nullptr)
             item->data->groupid = item->cardid;
 

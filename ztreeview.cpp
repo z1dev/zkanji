@@ -803,7 +803,7 @@ void GroupTreeView::dragMoveEvent(QDragMoveEvent *e)
             if (i != nullptr)
             {
                 TreeItem *pos = i->parent();
-                while (pos && pos->userData() != (uintptr_t)grp)
+                while (pos && pos->userData() != (intptr_t)grp)
                     pos = pos->parent();
 
                 // Invalid move confirmed. 

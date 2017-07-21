@@ -1685,7 +1685,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         return; // Remove this. It was added on an access violation.
 #endif
 
-    std::vector<InfTypes> *inf = (std::vector<InfTypes>*)index.data((int)DictRowRoles::Inflection).toInt();
+    std::vector<InfTypes> *inf = (std::vector<InfTypes>*)index.data((int)DictRowRoles::Inflection).value<intptr_t>();
 
     // The painted item is in the current row of the owner view.
     bool current = index.isValid() ? owner()->hasFocus() && owner()->currentRow() == index.row() : false;

@@ -695,7 +695,7 @@ void TextSearchTreeBase::doExpand(int index, bool inserted)
     if (inserted)
     {
         // Increase all lines with index equal or higher by one.
-        walkthrough((uintptr_t)index, [](TextNode *n, uintptr_t value)
+        walkthrough((intptr_t)index, [](TextNode *n, intptr_t value)
         {
             for (int ix = 0; ix != n->lines.size(); ++ix)
                 if (n->lines[ix] >= (int)value)
@@ -995,14 +995,14 @@ void TextSearchTreeBase::removeLine(int line, bool deleted)
     nodes.removeLine(line, deleted);
 }
 
-void TextSearchTreeBase::walkReq(TextNode *n, uintptr_t data, std::function<void(TextNode*, uintptr_t)> func)
+void TextSearchTreeBase::walkReq(TextNode *n, intptr_t data, std::function<void(TextNode*, intptr_t)> func)
 {
     func(n, data);
     for (int ix = 0; ix != n->nodes.size(); ++ix)
         walkReq(n->nodes.items(ix), data, func);
 }
 
-void TextSearchTreeBase::walkthrough(uintptr_t data, std::function<void(TextNode*, uintptr_t)> afunc)
+void TextSearchTreeBase::walkthrough(intptr_t data, std::function<void(TextNode*, intptr_t)> afunc)
 {
     for (int ix = 0; ix != nodes.size(); ++ix)
         walkReq(nodes.items(ix), data, afunc);

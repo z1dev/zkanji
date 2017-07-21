@@ -221,7 +221,7 @@ bool GroupTreeModel::setData(TreeItem *item, const QVariant &value, int role)
         GroupCategoryBase *pcat = cat->categories(cat->addCategory(str));
         ignoresignals = false;
 
-        item->setUserData((uintptr_t)pcat);
+        item->setUserData((intptr_t)pcat);
         // Add message item "add new..."
         if (pcat->categoryCount() + (onlycateg ? 0 : pcat->size()) == 0)
             qApp->postEvent(this, new TreeAddFakeItemEvent(item));
@@ -235,7 +235,7 @@ bool GroupTreeModel::setData(TreeItem *item, const QVariant &value, int role)
         editparent = nullptr;
 
         ignoresignals = true;
-        item->setUserData((uintptr_t)cat->items(cat->addGroup(str)));
+        item->setUserData((intptr_t)cat->items(cat->addGroup(str)));
         ignoresignals = false;
     }
 
@@ -277,8 +277,8 @@ Qt::ItemFlags GroupTreeModel::flags(const TreeItem *item) const
             return 0;
         return Qt::ItemIsDropEnabled;
     }
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | (!filtered && ((item->userData() != 0 && item->userData() != (uintptr_t)root) || (addmode != NoAdd && item->parent() == editparent)) ? Qt::ItemIsEditable : Qt::NoItemFlags) |
-        (item->userData() != 0 ? Qt::ItemIsDropEnabled : Qt::NoItemFlags) | ((item->userData() != 0 && item->userData() != (uintptr_t)root) ? Qt::ItemIsDragEnabled : Qt::NoItemFlags) |
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | (!filtered && ((item->userData() != 0 && item->userData() != (intptr_t)root) || (addmode != NoAdd && item->parent() == editparent)) ? Qt::ItemIsEditable : Qt::NoItemFlags) |
+        (item->userData() != 0 ? Qt::ItemIsDropEnabled : Qt::NoItemFlags) | ((item->userData() != 0 && item->userData() != (intptr_t)root) ? Qt::ItemIsDragEnabled : Qt::NoItemFlags) |
         ((item->userData() == 0 || !((GroupBase*)item->userData())->isCategory()) ? Qt::ItemNeverHasChildren : Qt::NoItemFlags);
 }
 
@@ -424,7 +424,7 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
         // Dropping on the same group as the source, which is the second pointer sized value
         // in arr.
-        if (parent->userData() == (*((uintptr_t*)arr.constData() + 1)))
+        if (parent->userData() == (*((intptr_t*)arr.constData() + 1)))
             return false;
 
         int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(ushort);
@@ -460,7 +460,7 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
             return false;
         // Dropping on the same group as the source, which is the second pointer sized value in
         // arr.
-        if (parent->userData() == (*((uintptr_t*)arr.constData() + 1)))
+        if (parent->userData() == (*((intptr_t*)arr.constData() + 1)))
             return false;
 
         int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(int);
@@ -605,7 +605,7 @@ TreeItem* GroupTreeModel::findTreeItem(const GroupBase *which)
         for (int ix = 0; ix != siz; ++ix)
         {
             TreeItem *item = getItem(top, ix);
-            if (item->userData() == (uintptr_t)which)
+            if (item->userData() == (intptr_t)which)
             {
 #ifdef _DEBUG
                 found = true;
