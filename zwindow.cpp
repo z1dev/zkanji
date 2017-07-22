@@ -34,7 +34,7 @@ ZWindow::ZWindow(QWidget *parent) : base(parent, Qt::Window |
 #ifdef Q_OS_LINUX
     Qt::X11BypassWindowManagerHint |
 #endif
-    Qt::FramelessWindowHint | /*Qt::CustomizeWindowHint |*/ Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), border(BorderStyle::Resizable), grabbing(false)
+    Qt::FramelessWindowHint | /*Qt::CustomizeWindowHint |*/ Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
 {
     setMouseTracking(true);
 }
