@@ -816,7 +816,7 @@ bool DictImport::doImportExamples()
                 }
             }
 
-            if (expos == -1)
+            if (expos == -1 || (kanjisiz == 0 && kanasiz == 0))
                 continue;
 
             // Found everything needed from the sentences. Look in the dictionary for matching
