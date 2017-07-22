@@ -243,30 +243,30 @@ bool GroupTreeModel::setData(TreeItem *item, const QVariant &value, int role)
     return true;
 }
 
-void* GroupTreeModel::treeRowData(int row, const TreeItem *parent) const
+intptr_t GroupTreeModel::treeRowData(int row, const TreeItem *parent) const
 {
     if (filtered)
-        return parent == nullptr ? filterlist[row] : nullptr;
+        return parent == nullptr ? (intptr_t)filterlist[row] : 0;
 
     GroupCategoryBase *cat;
     if (parent == nullptr)
     {
         if (onlycateg)
-            return root;
+            return (intptr_t)root;
         cat = root;
     }
     else
         cat = (GroupCategoryBase*)parent->userData();
 
     if (row < cat->categoryCount())
-        return cat->categories(row);
+        return (intptr_t)cat->categories(row);
 
     int groupcnt = (onlycateg ? 0 : cat->size());
     bool editrow = editparent == parent && ((addmode == CategoryAdd && row == cat->categoryCount()) || (addmode == GroupAdd && row == cat->categoryCount() + groupcnt));
     if (editrow || cat->categoryCount() + groupcnt == 0)
-        return nullptr;
+        return 0;
 
-    return cat->items(row - cat->categoryCount() - ((editrow && addmode == CategoryAdd) ? 1 : 0));
+    return (intptr_t)cat->items(row - cat->categoryCount() - ((editrow && addmode == CategoryAdd) ? 1 : 0));
 }
 
 Qt::ItemFlags GroupTreeModel::flags(const TreeItem *item) const

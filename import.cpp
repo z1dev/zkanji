@@ -633,8 +633,11 @@ bool DictImport::doImportExamples()
 
     ostream.writeRawData("zex", 3);
     ostream.writeRawData(ZKANJI_EXAMPLES_FILE_VERSION, 3);
-    ostream << make_zdate(QDateTime::currentDateTimeUtc());
-    ostream << make_zstr(QString::fromLatin1(ZKANJI_PROGRAM_VERSION), ZStrFormat::Byte);
+
+    QDateTime tempnow = QDateTime::currentDateTimeUtc();
+    ostream << make_zdate(tempnow);
+    QString tempverstr = QString::fromLatin1(ZKANJI_PROGRAM_VERSION);
+    ostream << make_zstr(tempverstr, ZStrFormat::Byte);
 
     // Position of the next value saved, so we can seek back here later.
     int startpos = of.pos();

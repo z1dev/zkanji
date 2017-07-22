@@ -99,7 +99,7 @@ bool ZTreeView::isSelected(TreeItem *item) const
 
 void ZTreeView::selection(std::vector<TreeItem*> &result) const
 {
-    std::swap(result, std::vector<TreeItem*>());
+    std::vector<TreeItem*>().swap(result);
     QModelIndexList indexes = selectedIndexes();
     result.reserve(indexes.size());
     for (int ix = 0; ix != indexes.size(); ++ix)
@@ -443,7 +443,7 @@ bool GroupTreeView::hasGroupSelected() const
 
 void GroupTreeView::selectedGroups(std::vector<GroupBase*> &result) const
 {
-    std::swap(result, std::vector<GroupBase*>());
+    std::vector<GroupBase*>().swap(result);
     QModelIndexList indexes = selectedIndexes();
     result.reserve(indexes.size());
     for (int ix = 0; ix != indexes.size(); ++ix)

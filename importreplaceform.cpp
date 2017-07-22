@@ -267,7 +267,7 @@ void ImportReplaceForm::init()
     list = newdir->mapWords(olddir, l);
     dlg.hide();
 
-    std::swap(l, std::vector<int>());
+    std::vector<int>().swap(l);
     int ix = 0;
     for (auto p : list)
     {

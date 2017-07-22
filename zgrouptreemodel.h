@@ -34,7 +34,7 @@ public:
     virtual int rowCount(const TreeItem *parent = nullptr) const override;
     virtual QVariant data(const TreeItem *item, int role = Qt::DisplayRole) const override;
     virtual bool setData(TreeItem *item, const QVariant &value, int role = Qt::EditRole) override;
-    virtual void* treeRowData(int row, const TreeItem *parent = nullptr) const override;
+    virtual intptr_t treeRowData(int row, const TreeItem *parent = nullptr) const override;
     virtual Qt::ItemFlags flags(const TreeItem *item) const override;
     virtual bool hasChildren(const TreeItem *parent) const override;
 

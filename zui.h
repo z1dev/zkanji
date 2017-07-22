@@ -213,11 +213,13 @@ QImage imageFromSvg(QString svgpath, int width, int height, int version = 0);
 // Renders the SVG specified by svgpath on dest in the r rectangle. Dest must have been
 // created in QImage::Format_ARGB32_Premultiplied format. The SVG image is rendered on dest
 // without filling the background.
-QImage renderFromSvg(QImage &dest, QString svgpath, QRect r);
+//QImage renderFromSvg(QImage &dest, QString svgpath, QRect r);
 
-QPixmap renderFromSvg(QPixmap &dest, QString svgpath, QRect r);
+// Renders the SVG image specified by svgpath on a QPixmap of size (w, h) in the r rectangle.
+// The result is a pixmap with the SVG image rendered on a transparent background.
+QPixmap renderFromSvg(QString svgpath, int w, int h, QRect r);
 
-void renderFromSvg(QPainter &dest, QString svgpath, QRect r);
+//void renderFromSvg(QPainter &dest, QString svgpath, QRect r);
 
 enum class Flags { FromJapanese, ToJapanese, Flag, Browse };
 namespace ZKanji

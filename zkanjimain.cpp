@@ -347,7 +347,7 @@ int QCharTokenizer::delimSize()
 //-------------------------------------------------------------
 
 
-QDataStream& operator>>(QDataStream& stream, ZStr<QString> &str)
+QDataStream& operator>>(QDataStream& stream, ZStr<QString> str)
 {
     int len = str.readLength(stream);
     if (len < 0 || len > str.maxSize())
@@ -363,7 +363,7 @@ QDataStream& operator>>(QDataStream& stream, ZStr<QString> &str)
     return stream;
 }
 
-QDataStream& operator>>(QDataStream& stream, ZStr<QChar*> &str)
+QDataStream& operator>>(QDataStream& stream, ZStr<QChar*> str)
 {
     int len = str.readLength(stream);
     if (len < 0 || len > str.maxSize())
@@ -388,7 +388,7 @@ QDataStream& operator>>(QDataStream& stream, ZStr<QChar*> &str)
     return stream;
 }
 
-QDataStream& operator>>(QDataStream& stream, ZStr<QCharString> &str)
+QDataStream& operator>>(QDataStream& stream, ZStr<QCharString> str)
 {
     int len = str.readLength(stream);
     if (len < 0 || len > str.maxSize())
@@ -530,7 +530,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QCharString> &str)
 
 //-------------------------------------------------------------
 
-template<>
+
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDateTime> &date)
 {
     if (date.dt.isValid())
@@ -557,14 +557,12 @@ QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDateTime>
     return stream;
 }
 
-template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<QDateTime> &date)
 {
     return stream << ZDateTimeStr<const QDateTime>(date.dt);
 }
 
-template<>
-QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDateTime> &date)
+QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDateTime> date)
 {
     quint64 u64;
     stream >> u64;
@@ -595,7 +593,6 @@ QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDateTime> &date)
     return stream;
 }
 
-template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDate> &date)
 {
     if (date.dt.isValid())
@@ -620,14 +617,12 @@ QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDate> &da
     return stream;
 }
 
-template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<QDate> &date)
 {
     return stream << ZDateTimeStr<const QDate>(date.dt);
 }
 
-template<>
-QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDate> &date)
+QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDate> date)
 {
     //char datestr[10];
     //stream.readRawData(datestr, 10);

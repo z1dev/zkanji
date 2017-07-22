@@ -624,7 +624,7 @@ QVariant DictionarySearchResultItemModel::data(const QModelIndex &index, int rol
         auto &inflist = list->getInflections();
         if (inflist.size() <= index.row())
             return 0;
-        return (intptr_t)inflist[index.row()];
+        return QVariant::fromValue((intptr_t)inflist[index.row()]);
     }
 
     return base::data(index, role);

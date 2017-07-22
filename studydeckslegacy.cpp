@@ -244,7 +244,7 @@ void StudyDeck::loadLegacy(QDataStream &stream, int version)
     }
 
     // Freeing up memory.
-    nextvec.swap(std::vector<int>());
+    std::vector<int>().swap(nextvec);
 
     timestats.loadLegacy(stream, version);
     daystats.loadLegacy(stream, version);

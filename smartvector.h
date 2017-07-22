@@ -100,7 +100,7 @@ private:
 public:
     smartvector_move_iterator() : base() {}
     smartvector_move_iterator(const self_type &orig) : base(orig._base()) {}
-    smartvector_move_iterator(const typename basetype &origbase) : base(origbase) {}
+    smartvector_move_iterator(const typename base::basetype &origbase) : base(origbase) {}
 
     self_type& operator++() { base::operator++(); return *this; }
     self_type operator++(int) { self_type copy(*this);  base::operator++(); return copy; }
@@ -277,7 +277,7 @@ public:
         }
     }
 
-    smartvector(typename std::enable_if<!std::is_pointer<T>::value, self_type&&>::type x) : base() { swap(std::forward<self_type>(x)); }
+    smartvector(typename std::enable_if<!std::is_pointer<T>::value, self_type&&>::type x) : base() { swap(x); /* swap(std::forward<self_type>(x)); */ }
     smartvector(typename std::enable_if<!std::is_pointer<T>::value, std::vector<value_base_type*> &&>::type x) : base() { base::swap(std::forward<std::vector<value_base_type*>>(x)); }
 
     smartvector(typename std::enable_if<!std::is_pointer<T>::value, std::initializer_list<value_base_type>>::type il, const allocator_type& alloc = allocator_type()) : base(alloc)
@@ -510,7 +510,7 @@ public:
         return it;
     }
 
-    iterator insert(const_iterator position, size_type n, nullptr_t nul)
+    iterator insert(const_iterator position, size_type n, std::nullptr_t nul)
     {
         if (n == 0)
             return begin() + (position - cbegin());
@@ -704,7 +704,7 @@ public:
     // result. Returns an iterator to the position after the removed pointers.
     iterator removeAt(const_iterator first, const_iterator last, std::vector<value_base_type*> &result)
     {
-        result.swap(std::vector<value_base_type*>(first.base, last.base));
+        std::vector<value_base_type*>(first.base, last.base).swap(result);
         return base::erase(first.base, last.base);
     }
 
@@ -893,10 +893,10 @@ private:
     typedef typename base::iterator  base_iterator;
     typedef typename base::const_iterator    base_const_iterator;
 
-    template<typename T, typename AAlloc>
-    friend bool operator==(const smartvector<T, AAlloc> &a, const smartvector<T, AAlloc> &b);
-    template<typename T, typename AAlloc>
-    friend bool operator!=(const smartvector<T, AAlloc> &a, const smartvector<T, AAlloc> &b);
+    template<typename TT, typename AAlloc>
+    friend bool operator==(const smartvector<TT, AAlloc> &a, const smartvector<TT, AAlloc> &b);
+    template<typename TT, typename AAlloc>
+    friend bool operator!=(const smartvector<TT, AAlloc> &a, const smartvector<TT, AAlloc> &b);
 };
 
 template<typename T, typename Alloc>

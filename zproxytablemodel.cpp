@@ -300,7 +300,7 @@ QVariant DictionarySearchFilterProxyModel::data(const QModelIndex &index, int ro
     if (role == (int)DictRowRoles::Inflection)
     {
         auto inflist = list[index.row()].second;
-        return (intptr_t)inflist;
+        return QVariant::fromValue((intptr_t)inflist);
     }
 
     return base::data(index, role);
@@ -1671,7 +1671,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
         delete p.second;
 
     sortfunc = preparedsortfunc;
-    list.swap(std::vector<std::pair<int, InfVector*>>());
+    std::vector<std::pair<int, InfVector*>>().swap(list);
     int cnt = model == nullptr ? 0 : model->rowCount();
 
     bool filtered = !ssearchstr.isEmpty() || !condEmpty();
@@ -1710,7 +1710,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
                 if (ZKanji::wordfilters().match(dict->wordEntry(wfilter[ix]), scond.get()))
                     wlist.add(wfilter[ix]);
         }
-        wfilter.swap(std::vector<int>());
+        std::vector<int>().swap(wfilter);
 
         const auto &windexes = wlist.getIndexes();
         auto &winfs = wlist.getInflections();

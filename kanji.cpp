@@ -665,7 +665,7 @@ void KanjiRadicalList::addRadical(QChar ch, std::vector<ushort> &&kanji, uchar s
 {
     KanjiRadical *rad = new KanjiRadical;
     rad->ch = ch;
-    rad->kanji.swap(std::move(kanji));
+    std::swap(rad->kanji, kanji);
     rad->strokes = strokes;
     rad->radical = radical;
     rad->names = std::move(names);

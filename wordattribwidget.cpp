@@ -284,12 +284,12 @@ void WordAttribModel::ownerDataChanged()
 //
 //}
 
-void* WordAttribModel::treeRowData(int row, const TreeItem *parent) const
+intptr_t WordAttribModel::treeRowData(int row, const TreeItem *parent) const
 {
     // Returns the index of the tree item at parent's row in attribMap[].
 
     if (row < 0 || row >= attribSize)
-        return nullptr;
+        return 0;
 
     // Level of items we are looking for.
     int level = 0;
@@ -312,7 +312,7 @@ void* WordAttribModel::treeRowData(int row, const TreeItem *parent) const
 #endif
     }
 
-    return (void*)(ix - 1);
+    return (ix - 1);
 }
 
 int WordAttribModel::rowCount(const TreeItem *parent) const

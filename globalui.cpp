@@ -48,7 +48,7 @@
 //TODO: put the global shortcut code into settings loading. Make sure the correct files are added to the project in their OS.
 // Documentation for QxtGlobalShortcut: http://libqxt.bitbucket.org/doc/tip/qxtglobalshortcut.html
 
-#include "Qxt\qxtglobalshortcut.h"
+#include "Qxt/qxtglobalshortcut.h"
 namespace {
     QxtGlobalShortcut *fromPopupDictShortcut = nullptr;
     QxtGlobalShortcut *toPopupDictShortcut = nullptr;

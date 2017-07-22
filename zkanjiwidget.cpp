@@ -103,16 +103,16 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
     int _iconH = _iconW;
     QSize icosize = QSize(_iconW, _iconH);
 
-    QPixmap pix = renderFromSvg(QPixmap(_iconW, _iconH), QStringLiteral(":/magnisearch.svg"), QRect(0, 0, _iconW, _iconH));
+    QPixmap pix = renderFromSvg(QStringLiteral(":/magnisearch.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     dictimg = modeTriangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Dictionary search\tCtrl+1"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
-    pix = renderFromSvg(QPixmap(_iconW, _iconH), QStringLiteral(":/wordgroups.svg"), QRect(0, 0, _iconW, _iconH));
+    pix = renderFromSvg(QStringLiteral(":/wordgroups.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     wgrpimg = modeTriangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Word groups\tCtrl+2"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
-    pix = renderFromSvg(QPixmap(_iconW, _iconH), QStringLiteral(":/kanjigroups.svg"), QRect(0, 0, _iconW, _iconH));
+    pix = renderFromSvg(QStringLiteral(":/kanjigroups.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     kgrpimg = modeTriangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Kanji groups\tCtrl+3"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
-    pix = renderFromSvg(QPixmap(_iconW, _iconH), QStringLiteral(":/kanjisearch.svg"), QRect(0, 0, _iconW, _iconH));
+    pix = renderFromSvg(QStringLiteral(":/kanjisearch.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     ksrcimg = modeTriangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Kanji search\tCtrl+4"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
 

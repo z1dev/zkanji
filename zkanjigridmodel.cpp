@@ -222,7 +222,7 @@ void KanjiListModel::setList(const std::vector<ushort> &newlist)
 
 void KanjiListModel::setList(std::vector<ushort> &&newlist)
 {
-    list.swap(std::vector<ushort>());
+    std::vector<ushort>().swap(list);
     list.swap(newlist);
     signalModelReset();
 }

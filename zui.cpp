@@ -411,7 +411,7 @@ int fixedLabelWidth(QLabel *label)
 
 void fixWrapLabelsHeight(QWidget *form, int labelwidth)
 {
-    auto &widgs = form->findChildren<QWidget*>();
+    QList<QWidget*> widgs = form->findChildren<QWidget*>();
     for (QWidget *w : widgs)
     {
         if (w->layout() != nullptr)
@@ -421,7 +421,7 @@ void fixWrapLabelsHeight(QWidget *form, int labelwidth)
 
     form->adjustSize();
 
-    auto &children = form->findChildren<QLabel*>();
+    QList<QLabel*> children = form->findChildren<QLabel*>();
     for (QLabel *ch : children)
     {
         if (!ch->wordWrap())
@@ -717,41 +717,42 @@ QImage imageFromSvg(QString svgpath, int width, int height, int version)
     return *img;
 }
 
-QImage renderFromSvg(QImage &dest, QString svgpath, QRect r)
-{
-    dest.fill(QColor(0, 0, 0, 0));
+//QImage renderFromSvg(QImage &dest, QString svgpath, QRect r)
+//{
+//    dest.fill(QColor(0, 0, 0, 0));
+//
+//    QSvgRenderer sr;
+//    sr.load(svgpath);
+//
+//    QPainter p(&dest);
+//    sr.render(&p, r);
+//
+//    p.end();
+//    return dest;
+//}
 
+QPixmap renderFromSvg(QString svgpath, int w, int h, QRect r)
+{
     QSvgRenderer sr;
     sr.load(svgpath);
 
-    QPainter p(&dest);
+    QPixmap result(w, h);
+    result.fill(QColor(0, 0, 0, 0));
+
+    QPainter p(&result);
     sr.render(&p, r);
 
     p.end();
-    return dest;
+    return result;
 }
 
-QPixmap renderFromSvg(QPixmap &dest, QString svgpath, QRect r)
-{
-    dest.fill(QColor(0, 0, 0, 0));
-
-    QSvgRenderer sr;
-    sr.load(svgpath);
-
-    QPainter p(&dest);
-    sr.render(&p, r);
-
-    p.end();
-    return dest;
-}
-
-void renderFromSvg(QPainter &dest, QString svgpath, QRect r)
-{
-    QSvgRenderer sr;
-    sr.load(svgpath);
-
-    sr.render(&dest, r);
-}
+//void renderFromSvg(QPainter &dest, QString svgpath, QRect r)
+//{
+//    QSvgRenderer sr;
+//    sr.load(svgpath);
+//
+//    sr.render(&dest, r);
+//}
 
 bool operator<(const std::pair<QSize, Flags> &a, const std::pair<QSize, Flags> &b)
 {

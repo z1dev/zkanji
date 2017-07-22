@@ -17,7 +17,7 @@ TreeItem::TreeItem() : oldrow(-1), pr(nullptr), dat(0)
 
 }
 
-TreeItem::TreeItem(int newrow, TreeItem *itemparent, void *itemdata) : oldrow(newrow), pr(itemparent), dat(0)
+TreeItem::TreeItem(int newrow, TreeItem *itemparent, intptr_t itemdata) : oldrow(newrow), pr(itemparent), dat(itemdata)
 {
 
 }
@@ -165,7 +165,7 @@ void TreeItem::takeItems(int first, int cnt, std::vector<TreeItem*> &dest)
     list.erase(list.begin() + first, list.begin() + first + cnt);
 }
 
-TreeItem* TreeItem::addChild(void *childdata)
+TreeItem* TreeItem::addChild(intptr_t childdata)
 {
     TreeItem *i = new TreeItem(list.size(), this, childdata);
     list.push_back(i);

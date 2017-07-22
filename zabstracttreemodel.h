@@ -15,7 +15,7 @@ public:
     TreeItem(const TreeItem &other) = delete;
     TreeItem& operator=(const TreeItem &other) = delete;
     TreeItem();
-    TreeItem(int newrow, TreeItem *itemparent, void *itemdata);
+    TreeItem(int newrow, TreeItem *itemparent, intptr_t itemdata);
     TreeItem(TreeItem &&other);
     TreeItem& operator=(TreeItem &&other);
     ~TreeItem();
@@ -55,7 +55,7 @@ private:
     // Inserts tree items as child items, with a new starting index of pos. The parent of the
     // items is updated if updateparent is true.
     void insertItems(int pos, const std::vector<TreeItem*> &items, bool updateparent);
-    TreeItem* addChild(void *childdata);
+    TreeItem* addChild(intptr_t childdata);
 
     // Used for caching row index.
     mutable uint oldrow; 
@@ -129,7 +129,7 @@ public:
 
     // Returns custom user data that helps derived classes identify a given row in a parent.
     // The user data can be retrieved by calling TreeItem::userData() in the other functions.
-    virtual void* treeRowData(int row, const TreeItem *parent = nullptr) const = 0;
+    virtual intptr_t treeRowData(int row, const TreeItem *parent = nullptr) const = 0;
 
     // Returns the QAbstractItemIndex::index() equivalent for the tree item.
     virtual QModelIndex index(const TreeItem *item) const;

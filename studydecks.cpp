@@ -216,7 +216,9 @@ QDataStream& operator>>(QDataStream &stream, DeckTimeStat &s)
     for (int ix = 0; ix != s.used; ++ix)
     {
         stream >> b;
-        (quint8)s.repeat[ix] = b;
+        *(quint8*)&(s.repeat[ix]) = b;
+        //((quint8*)s.repeat)[ix] = b;
+        //(quint8)s.repeat[ix] = b;
     }
     stream >> make_zvec<qint32, DeckTimeStatItem>(s.timestats);
 

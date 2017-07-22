@@ -74,23 +74,6 @@ void WordDeckItems<T>::load(QDataStream &stream)
     }
 }
 
-template<>
-void WordDeckItems<FreeWordDeckItem>::save(QDataStream &stream) const
-{
-    stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
-        saveItem(stream, list[ix], nullptr);
-}
-
-template<>
-void WordDeckItems<LockedWordDeckItem>::save(QDataStream &stream) const
-{
-    StudyDeck *study = owner->getStudyDeck();
-    stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
-        saveItem(stream, list[ix], study);
-}
-
 template<typename T>
 void WordDeckItems<T>::clear()
 {
@@ -235,6 +218,22 @@ void WordDeckItems<LockedWordDeckItem>::saveItem(QDataStream &stream, const Lock
     owner->saveLockedDeckItem(stream, item, study);
 }
 
+template<>
+void WordDeckItems<FreeWordDeckItem>::save(QDataStream &stream) const
+{
+    stream << (qint32)list.size();
+    for (int ix = 0; ix != list.size(); ++ix)
+        saveItem(stream, list[ix], nullptr);
+}
+
+template<>
+void WordDeckItems<LockedWordDeckItem>::save(QDataStream &stream) const
+{
+    StudyDeck *study = owner->getStudyDeck();
+    stream << (qint32)list.size();
+    for (int ix = 0; ix != list.size(); ++ix)
+        saveItem(stream, list[ix], study);
+}
 
 
 //-------------------------------------------------------------

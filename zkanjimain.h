@@ -300,6 +300,8 @@ struct ZStr
         }
     }
 
+    ZStr(ZStr<T> &&other) : val(other.val), length(other.length), format(other.format) { }
+
     static int maxSize(ZStrFormat format)
     {
         switch (format)
@@ -324,7 +326,7 @@ private:
     int readLength(QDataStream &stream);
     void writeLength(QDataStream &stream, int len) const;
 
-    friend QDataStream& operator>>(QDataStream &stream, ZStr<T> &str);
+    friend QDataStream& operator>>(QDataStream &stream, ZStr<T> str);
     friend QDataStream& operator<<(QDataStream &stream, const ZStr<T> &str);
 };
 
@@ -403,16 +405,18 @@ void ZStr<T>::writeLength(QDataStream &stream, int len) const
 template<typename T>
 struct ZDateTimeStr
 {
-    T &dt;
-    ZDateTimeStr(T &dt) : dt(dt) {}
+private:
+    typedef typename std::conditional<std::is_const<T>::value, T, typename std::add_lvalue_reference<T>::type>::type DT;
+    DT &dt;
+public:
+    ZDateTimeStr(DT dt) : dt(dt) {}
+    ZDateTimeStr(ZDateTimeStr &&other) : dt(other.dt) { ; }
 
+    friend QDataStream& operator>>(QDataStream&, ZDateTimeStr<T>);
+    friend QDataStream& operator<<(QDataStream&, const ZDateTimeStr<T>&);
 };
 
 #define Z_DATETIME_SIZE sizeof(quint64)
-template<typename T>
-QDataStream& operator<<(QDataStream&, const ZDateTimeStr<T>&);
-template<typename T>
-QDataStream& operator>>(QDataStream&, ZDateTimeStr<T>&);
 
 template<typename T>
 ZDateTimeStr<T> make_zdate(T &v)
@@ -430,13 +434,15 @@ template<typename S, typename T, typename V>
 struct ZVec
 {
     ZVec(V& vec) : vec(vec) {}
+    ZVec(ZVec &&other) : vec(other.vec) { ; }
+
 private:
     V& vec;
 public:
     template<typename TS, typename TT, typename TV>
-    friend QDataStream& operator<<(QDataStream &stream, const ZVec<TS, TT, TV> &v);
+    friend QDataStream& operator>>(QDataStream &stream, ZVec<TS, TT, TV> v);
     template<typename TS, typename TT, typename TV>
-    friend QDataStream& operator>>(QDataStream &stream, ZVec<TS, TT, TV> &v);
+    friend QDataStream& operator<<(QDataStream &stream, const ZVec<TS, TT, TV> &v);
 };
 
 template<typename S, typename T, typename V>
@@ -445,19 +451,8 @@ ZVec<S, T, V> make_zvec(V &vec)
     return ZVec<S, T, V>(vec);
 }
 
-
 template<typename S, typename T, typename V>
-QDataStream& operator<<(QDataStream &stream, const ZVec<S, T, V> &v)
-{
-    stream << (S)v.vec.size();
-    for (S s = 0; s != v.vec.size(); ++s)
-        stream << (typename std::add_const<T>::type) v.vec[s];
-
-    return stream;
-}
-
-template<typename S, typename T, typename V>
-QDataStream& operator>>(QDataStream &stream, ZVec<S, T, V> &v)
+QDataStream& operator>>(QDataStream &stream, ZVec<S, T, V> v)
 {
     S cnt;
     stream >> cnt;
@@ -468,6 +463,16 @@ QDataStream& operator>>(QDataStream &stream, ZVec<S, T, V> &v)
         stream >> val;
         v.vec[s] = val;
     }
+
+    return stream;
+}
+
+template<typename S, typename T, typename V>
+QDataStream& operator<<(QDataStream &stream, const ZVec<S, T, V> &v)
+{
+    stream << (S)v.vec.size();
+    for (S s = 0; s != (S)v.vec.size(); ++s)
+        stream << (typename std::add_const<T>::type) v.vec[s];
 
     return stream;
 }

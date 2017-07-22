@@ -41,7 +41,7 @@ public:
     //virtual QModelIndex index(int row, int column, const TreeItem *parent) const override;
     //virtual QModelIndex parent(const TreeItem *child) const override;
 
-    virtual void* treeRowData(int row, const TreeItem *parent = nullptr) const override;
+    virtual intptr_t treeRowData(int row, const TreeItem *parent = nullptr) const override;
 
     virtual int rowCount(const TreeItem *parent = nullptr) const override;
     virtual bool hasChildren(const TreeItem *parent = nullptr) const override;

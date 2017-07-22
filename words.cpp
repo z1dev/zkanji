@@ -1287,7 +1287,7 @@ void WordResultList::sortByIndex()
 
     std::vector<std::vector<InfTypes>*> inftmp;
     infs.swap(inftmp);
-    indexes.swap(std::vector<int>());
+    std::vector<int>().swap(indexes);
     indexes.reserve(siz);
 
     int infsiz = inftmp.size();
@@ -3711,7 +3711,8 @@ Error Dictionary::saveUserData(const QString &filename)
 
         errorcode = 2;
 
-        stream << make_zdate(lastWriteDate());
+        QDateTime lastwrite = lastWriteDate();
+        stream << make_zdate(lastwrite);
 
         errorcode = 3;
 
