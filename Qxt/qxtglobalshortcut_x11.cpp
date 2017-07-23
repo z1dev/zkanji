@@ -31,123 +31,123 @@
 
 #include <QVector>
 #include <X11/Xlib.h>
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+//#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #   include <QX11Info>
-#else
-#   include <QApplication>
-#   include <qpa/qplatformnativeinterface.h>
+//#else
+//#   include <QApplication>
+//#   include <qpa/qplatformnativeinterface.h>
 #   include <xcb/xcb.h>
-#endif
+//#endif
 
 namespace {
 
-const QVector<quint32> maskModifiers = QVector<quint32>()
-    << 0 << Mod2Mask << LockMask << (Mod2Mask | LockMask);
+    const QVector<quint32> maskModifiers = QVector<quint32>()
+        << 0 << Mod2Mask << LockMask << (Mod2Mask | LockMask);
 
-typedef int (*X11ErrorHandler)(Display *display, XErrorEvent *event);
+    typedef int(*X11ErrorHandler)(Display *display, XErrorEvent *event);
 
-class QxtX11ErrorHandler {
-public:
-    static bool error;
+    class QxtX11ErrorHandler {
+    public:
+        static bool error;
 
-    static int qxtX11ErrorHandler(Display *display, XErrorEvent *event)
-    {
-        Q_UNUSED(display);
-        switch (event->error_code)
+        static int qxtX11ErrorHandler(Display *display, XErrorEvent *event)
         {
+            Q_UNUSED(display);
+            switch (event->error_code)
+            {
             case BadAccess:
             case BadValue:
             case BadWindow:
                 if (event->request_code == 33 /* X_GrabKey */ ||
-                        event->request_code == 34 /* X_UngrabKey */)
+                    event->request_code == 34 /* X_UngrabKey */)
                 {
                     error = true;
                     //TODO:
                     //char errstr[256];
                     //XGetErrorText(dpy, err->error_code, errstr, 256);
                 }
-        }
-        return 0;
-    }
-
-    QxtX11ErrorHandler()
-    {
-        error = false;
-        m_previousErrorHandler = XSetErrorHandler(qxtX11ErrorHandler);
-    }
-
-    ~QxtX11ErrorHandler()
-    {
-        XSetErrorHandler(m_previousErrorHandler);
-    }
-
-private:
-    X11ErrorHandler m_previousErrorHandler;
-};
-
-bool QxtX11ErrorHandler::error = false;
-
-class QxtX11Data {
-public:
-    QxtX11Data()
-    {
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-        m_display = QX11Info::display();
-#else
-        QPlatformNativeInterface *native = qApp->platformNativeInterface();
-        void *display = native->nativeResourceForScreen(QByteArray("display"),
-                                                        QGuiApplication::primaryScreen());
-        m_display = reinterpret_cast<Display *>(display);
-#endif
-    }
-
-    bool isValid()
-    {
-        return m_display != 0;
-    }
-
-    Display *display()
-    {
-        Q_ASSERT(isValid());
-        return m_display;
-    }
-
-    Window rootWindow()
-    {
-        return DefaultRootWindow(display());
-    }
-
-    bool grabKey(quint32 keycode, quint32 modifiers, Window window)
-    {
-        QxtX11ErrorHandler errorHandler;
-
-        for (int i = 0; !errorHandler.error && i < maskModifiers.size(); ++i) {
-            XGrabKey(display(), keycode, modifiers | maskModifiers[i], window, True,
-                     GrabModeAsync, GrabModeAsync);
+            }
+            return 0;
         }
 
-        if (errorHandler.error) {
-            ungrabKey(keycode, modifiers, window);
-            return false;
+        QxtX11ErrorHandler()
+        {
+            error = false;
+            m_previousErrorHandler = XSetErrorHandler(qxtX11ErrorHandler);
         }
 
-        return true;
-    }
-
-    bool ungrabKey(quint32 keycode, quint32 modifiers, Window window)
-    {
-        QxtX11ErrorHandler errorHandler;
-
-        foreach (quint32 maskMods, maskModifiers) {
-            XUngrabKey(display(), keycode, modifiers | maskMods, window);
+        ~QxtX11ErrorHandler()
+        {
+            XSetErrorHandler(m_previousErrorHandler);
         }
 
-        return !errorHandler.error;
-    }
+    private:
+        X11ErrorHandler m_previousErrorHandler;
+    };
 
-private:
-    Display *m_display;
-};
+    bool QxtX11ErrorHandler::error = false;
+
+    class QxtX11Data {
+    public:
+        QxtX11Data()
+        {
+            //#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+            m_display = QX11Info::display();
+            //#else
+            //        QPlatformNativeInterface *native = qApp->platformNativeInterface();
+            //        void *display = native->nativeResourceForScreen(QByteArray("display"),
+            //                                                        QGuiApplication::primaryScreen());
+            //        m_display = reinterpret_cast<Display *>(display);
+            //#endif
+        }
+
+        bool isValid()
+        {
+            return m_display != 0;
+        }
+
+        Display *display()
+        {
+            Q_ASSERT(isValid());
+            return m_display;
+        }
+
+        Window rootWindow()
+        {
+            return DefaultRootWindow(display());
+        }
+
+        bool grabKey(quint32 keycode, quint32 modifiers, Window window)
+        {
+            QxtX11ErrorHandler errorHandler;
+
+            for (int i = 0; !errorHandler.error && i < maskModifiers.size(); ++i) {
+                XGrabKey(display(), keycode, modifiers | maskModifiers[i], window, True,
+                    GrabModeAsync, GrabModeAsync);
+            }
+
+            if (errorHandler.error) {
+                ungrabKey(keycode, modifiers, window);
+                return false;
+            }
+
+            return true;
+        }
+
+        bool ungrabKey(quint32 keycode, quint32 modifiers, Window window)
+        {
+            QxtX11ErrorHandler errorHandler;
+
+            foreach(quint32 maskMods, maskModifiers) {
+                XUngrabKey(display(), keycode, modifiers | maskMods, window);
+            }
+
+            return !errorHandler.error;
+        }
+
+    private:
+        Display *m_display;
+    };
 
 } // namespace
 
@@ -176,13 +176,13 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
     if (kev != 0) {
         unsigned int keycode = kev->detail;
         unsigned int keystate = 0;
-        if(kev->state & XCB_MOD_MASK_1)
+        if (kev->state & XCB_MOD_MASK_1)
             keystate |= Mod1Mask;
-        if(kev->state & XCB_MOD_MASK_CONTROL)
+        if (kev->state & XCB_MOD_MASK_CONTROL)
             keystate |= ControlMask;
-        if(kev->state & XCB_MOD_MASK_4)
+        if (kev->state & XCB_MOD_MASK_4)
             keystate |= Mod4Mask;
-        if(kev->state & XCB_MOD_MASK_SHIFT)
+        if (kev->state & XCB_MOD_MASK_SHIFT)
             keystate |= ShiftMask;
 #endif
         activateShortcut(keycode,
@@ -192,7 +192,7 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     return prevEventFilter ? prevEventFilter(message) : false;
 #else
-	return false;
+    return false;
 #endif
 }
 

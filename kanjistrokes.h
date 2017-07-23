@@ -11,7 +11,7 @@
 //#include <QPoint>
 //#include <QRect>
 
-
+#include <cmath>
 #include <vector>
 #include <map>
 #include <memory>

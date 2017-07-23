@@ -7,6 +7,7 @@
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets svg printsupport
+greaterThan(QT_MAJOR_VERSION, 4): unix:QT += x11extras
 
 TARGET = zkanji
 TEMPLATE = app
@@ -24,9 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 debug:DEFINES += _DEBUG
 
-LIBS += -lX11
-
-unix:INCLUDEPATH += ${QTDIR}/include/QtGui/5.9.1/QtGui/
+unix:CONFIG += link_pkgconfig
+unix:PKGCONFIG += xcb x11
 
 SOURCES += \
     Qxt/qxtglobal.cpp \
