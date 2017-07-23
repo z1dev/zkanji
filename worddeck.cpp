@@ -127,24 +127,6 @@ void WordDeckItems<T>::copy(WordDeckItems<T> *src, const std::map<CardId*, CardI
 }
 
 template<typename T>
-int WordDeckItems<T>::size() const
-{
-    return list.size();
-}
-
-template<typename T>
-T* WordDeckItems<T>::items(int index)
-{
-    return list[index];
-}
-
-template<typename T>
-const T* WordDeckItems<T>::items(int index) const
-{
-    return list[index];
-}
-
-template<typename T>
 int WordDeckItems<T>::add(T *item)
 {
     //expand(owner->wordRomaji(item->data->index), list.size(), false);

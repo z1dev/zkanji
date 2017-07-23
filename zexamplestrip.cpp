@@ -103,6 +103,7 @@ void ZExamplePopup::popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint
     move(left, top);
 
     show();
+    raise();
 }
 
 bool ZExamplePopup::event(QEvent *e)
@@ -607,7 +608,7 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
             // set here we can't show a new one.
             hovered = hpos;
 
-            popup = new ZExamplePopup(this);
+            popup = new ZExamplePopup(window());
             QRect wr = QRect(mapToGlobal(wordrect[hovered].topLeft()), mapToGlobal(wordrect[hovered].bottomRight())).adjusted(-2, -2, 2, 2);
             popup->popup(dict, sentence.words[hovered].forms, wr);
         }

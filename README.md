@@ -53,7 +53,13 @@ C++ compilers should have no problem compiling zkanji either but I haven't teste
 yet. Currently only the Visual Studio project file is included. If it is set up
 correctly, zkanji should compile out of the box.
 
-Instructions for other OSes will be added later as I figure them out.
+When compiling for the Linux platform, use Qt Creator and open the `.pro` file found
+in the root folder. The `.pro` file must be edited to fix the `unix:INCLUDEPATH`,
+which can be invalid when compiling with a different Qt version. The file
+`qxtglobalshortcut_x11.cpp` is from the Qxt project and included with the zkanji
+source unmodified, but it must be modified to compile. The line which only contains
+`#include <X11/Xlib.h>` must be moved below the other includes. If Qt was installed
+the default way, the program will compile without further changes.
 
 ---
 
@@ -69,6 +75,12 @@ the path to the compiled zkanji executable as a command line parameter. This wil
 copy some DLLs next to the executable, and also create some extra folders. These
 extra folders, except the one called `platforms` (this is important!), must be copied
 to a subfolder named `qt5_plugins`.
+
+---
+
+## Deployment on Linux
+
+To be completed...
 
 ---
 

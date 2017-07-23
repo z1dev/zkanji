@@ -300,7 +300,7 @@ struct ZStr
         }
     }
 
-    ZStr(ZStr<T> &&other) : val(other.val), length(other.length), format(other.format) { }
+    ZStr(ZStr &&other) : val(other.val), length(other.length), format(other.format) { ; }
 
     static int maxSize(ZStrFormat format)
     {
@@ -406,10 +406,9 @@ template<typename T>
 struct ZDateTimeStr
 {
 private:
-    typedef typename std::conditional<std::is_const<T>::value, T, typename std::add_lvalue_reference<T>::type>::type DT;
-    DT &dt;
+    T &dt;
 public:
-    ZDateTimeStr(DT dt) : dt(dt) {}
+    ZDateTimeStr(T dt) : dt(dt) {}
     ZDateTimeStr(ZDateTimeStr &&other) : dt(other.dt) { ; }
 
     friend QDataStream& operator>>(QDataStream&, ZDateTimeStr<T>);

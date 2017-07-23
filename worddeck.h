@@ -98,9 +98,20 @@ public:
     // Wordmap contains [source word, new word] items.
     void copy(WordDeckItems<T> *src, const std::map<CardId*, CardId*> &cardmap, const std::map<WordDeckWord*, WordDeckWord*> &wordmap);
 
-    int size() const;
-    T* items(int index);
-    const T* items(int index) const;
+    int size() const
+    {
+        return list.size();
+    }
+
+    T* items(int index)
+    {
+        return list[index];
+    }
+
+    const T* items(int index) const
+    {
+        return list[index];
+    }
 
     // Adds the passed item to the list, taking ownership of the pointer.
     int add(T *item);

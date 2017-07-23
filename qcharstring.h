@@ -300,6 +300,15 @@ bool operator!=(const STR &a, const QCharString &b);
 template <typename STR>
 bool operator!=(const QCharString &a, const STR &b);
 
+bool operator==(const QString &a, const QCharString &b);
+bool operator!=(const QString &a, const QCharString &b);
+bool operator==(const QCharString &a, const QString &b);
+bool operator!=(const QCharString &a, const QString &b);
+bool operator==(const QStringRef &a, const QCharString &b);
+bool operator!=(const QStringRef &a, const QCharString &b);
+bool operator==(const QCharString &a, const QStringRef &b);
+bool operator!=(const QCharString &a, const QStringRef &b);
+
 bool operator==(const QChar *a, const QCharString &b);
 bool operator==(const QCharString &a, const QChar *b);
 bool operator!=(const QChar *a, const QCharString &b);
