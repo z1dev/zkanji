@@ -408,7 +408,7 @@ struct ZDateTimeStr
 private:
     T &dt;
 public:
-    ZDateTimeStr(T dt) : dt(dt) {}
+    ZDateTimeStr(T &dt) : dt(dt) { ; }
     ZDateTimeStr(ZDateTimeStr &&other) : dt(other.dt) { ; }
 
     friend QDataStream& operator>>(QDataStream&, ZDateTimeStr<T>);
