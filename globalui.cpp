@@ -1461,12 +1461,12 @@ void GlobalUI::showAppWindows()
 
 void GlobalUI::showAbout()
 {
-    QString aboutsection = tr("This program is alpha, use for testing only.\n\nzkanji is an open-source, cross-platform, feature rich Japanese language study suite and dictionary software.\n\nSee README and LICENSE files for usage and license details. Released under the terms of the GNU GPLv3.\n\nSee \"Dictionary/Dictionary information\" menu option for dictionary authors and licenses.");
+    QString aboutsection = tr("This program is alpha, use for testing only.\n\nzkanji is a FREE, open-source, cross-platform, feature rich Japanese language study suite and dictionary software.\n\nSee readme.txt and LICENSE files for usage and license details. Released under the terms of the GNU GPLv3.\n\nzkanji uses parts of the LibQxt project. See QxtCOPYING for its license.\n\nSee \"Dictionary/Dictionary information\" menu option for dictionary authors and licenses.");
     QString examplesection = tr("zkanji relies on the Tanaka Corpus for the Japanese example sentences data, which is released under a Creative Commons CC-BY license. See the EXAMPLES file for authors and license location.");
     QString maddr = QString("freem") % "ail.hu";
 
     QMessageBox::about(activeMainForm(), tr("About zkanji"), "zkanji " % QString::fromLatin1(ZKANJI_PROGRAM_VERSION) % "\n\n"
-        % aboutsection % (ZKanji::sentences.creationDate().isValid()  ? ("\n\n" % examplesection) : QString()) % "\n\n" % tr("Contact me via e-mail at: ") % "z-one@" % maddr % "\n" % tr("zkanji development blog: ") % "ht" "tp://zkanji." % "wordpress" % ".com/");
+        % aboutsection % (ZKanji::sentences.creationDate().isValid()  ? ("\n\n" % examplesection) : QString()) % "\n\n" % tr("Contact me via e-mail at: ") % "z-one@" % maddr % "\n" % tr("zkanji development blog: ") % "ht" "tp://zkanji." % "wordpress" % ".com/\n" % "zkanji project home: https://github.com/z1dev/zkanji/");
 }
 
 void GlobalUI::disableAutoSave()
