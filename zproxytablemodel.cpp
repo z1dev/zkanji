@@ -109,7 +109,7 @@ void DictionarySearchFilterProxyModel::filter(SearchMode mode, QString searchstr
 
 void DictionarySearchFilterProxyModel::sortBy(int column, Qt::SortOrder order, ProxySortFunction func)
 {
-    if (sortcolumn == column && sortorder == order && sortfunc.target<bool(DictionaryItemModel*, int, int, int)>() == func.target<bool(DictionaryItemModel*, int, int, int)>())
+    if (sortcolumn == column && sortorder == order && sortfunc.target<bool(*)(DictionaryItemModel*, int, int, int)>() == func.target<bool(*)(DictionaryItemModel*, int, int, int)>())
     {
         preparedsortfunc = sortfunc;
         return;
