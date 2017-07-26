@@ -33,7 +33,7 @@ static char ZKANJI_EXAMPLES_FILE_VERSION[] = "001";
 // When changed: also update exportDictionary() in words.cpp.
 static const char JMDictInfoText[] = "This program uses a compilation of the <a href=\"http://www.edrdg.org/jmdict/j_jmdict.html\">JMdict</a> "
 "and <a href=\"http://nihongo.monash.edu/kanjidic.html\">KANJIDIC</a> dictionary files "
-"and <a href=\"http://users.monash.edu/~jwb/kradinf.html\">RADKFILE</a>, "
+"and <a href=\"http://nihongo.monash.edu/kradinf.html\">RADKFILE</a>, "
 "which are the property of The Electronic Dictionary Research and Development Group, Monash University.\n"
 "The files are made available under a Creative Commons Attribution-ShareAlike Licence (V3.0).\n"
 "The group can be found at: <a href=\"http://www.edrdg.org/\">http://www.edrdg.org/</a>\n"
@@ -50,7 +50,7 @@ static const char JMDictInfoText[] = "This program uses a compilation of the <a 
 "\n"
 "The SKIP(System of Kanji Indexing by Patterns) system for ordering kanji was developed by Jack Halpern "
 "(Kanji Dictionary Publishing Society at <a href=\"http://www.kanji.org/\">http://www.kanji.org/</a>), and is used with his permission. "
-"The SKIP coding system and all established SKIP codes have been placed under a Creative Commons Attribution-ShareAlike 4.0 International.";
+"The SKIP coding system and all established SKIP codes have been placed under a Creative Commons Attribution-ShareAlike 4.0 International license.";
 
 
 //-------------------------------------------------------------
