@@ -2716,7 +2716,7 @@ WordEntry* DictImport::importWord()
     if (str.size() <= pos || str.at(pos) != ' ')
     {
         setErrorText(tr("Invalid line format. Expected space after word."));
-        return false;
+        return nullptr;
     }
 
     ++pos;
