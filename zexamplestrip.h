@@ -7,10 +7,12 @@
 #ifndef ZEXAMPLESTRIP_H
 #define ZEXAMPLESTRIP_H
 
+#include <memory>
 #include "zscrollarea.h"
 #include "sentences.h"
 
 class Dictionary;
+class ZExampleStrip;
 struct WordCommons;
 
 enum class ExampleDisplay : uchar { Japanese, Translated, Both };
@@ -21,7 +23,7 @@ class ZExamplePopup : public QWidget
 {
     Q_OBJECT
 public:
-    ZExamplePopup(QWidget *parent = nullptr);
+    ZExamplePopup(ZExampleStrip *owner = nullptr);
     ~ZExamplePopup();
 
     // Shows the popup window above or below the wordrect, depending on the available desktop
@@ -39,6 +41,8 @@ protected:
 private:
     // Position of the word rectangle relative to this popup window.
     enum RectSide { Top = 0x00, Bottom = 0x01, Left = 0x00, Right = 0x02 };
+
+    ZExampleStrip *owner;
 
     // Height of a single word line.
     int lineheight;
@@ -144,7 +148,7 @@ private:
     Dictionary *dict;
 
     // Popup listing words above the strip. Only set if a popup is visible.
-    ZExamplePopup *popup;
+    std::unique_ptr<ZExamplePopup> popup;
 
     ExampleDisplay display;
 

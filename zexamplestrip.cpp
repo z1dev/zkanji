@@ -17,12 +17,31 @@
 #include "fontsettings.h"
 #include "globalui.h"
 
+
+//-------------------------------------------------------------
+
+
+class ZExPopupDestroyedEvent : public EventTBase<ZExPopupDestroyedEvent>
+{
+public:
+    ZExPopupDestroyedEvent(ZExamplePopup *popup) : p(popup) { ; }
+    ZExamplePopup* what()
+    {
+        return p;
+    }
+private:
+    ZExamplePopup *p;
+
+    typedef EventTBase<SetDictEvent>  base;
+};
+
+
 //-------------------------------------------------------------
 
 
 static const int popupMargin = 3;
 
-ZExamplePopup::ZExamplePopup(QWidget *parent) : base(parent, Qt::Window | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus), hovered(-1)
+ZExamplePopup::ZExamplePopup(ZExampleStrip *owner) : base(owner->window(), Qt::Window | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus), owner(owner), hovered(-1)
 {
     setAutoFillBackground(false);
 
@@ -41,8 +60,8 @@ ZExamplePopup::ZExamplePopup(QWidget *parent) : base(parent, Qt::Window | Qt::Fr
 
 ZExamplePopup::~ZExamplePopup()
 {
-    EndEvent end;
-    qApp->sendEvent(parent(), &end);
+    ZExPopupDestroyedEvent e(this);
+    qApp->sendEvent(owner, &e);
 }
 
 void ZExamplePopup::popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint16> &wordforms, const QRect &wordrect)
@@ -81,7 +100,7 @@ void ZExamplePopup::popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint
     setMinimumSize(r.size());
     setMaximumSize(r.size());
 
-    QRect dr = qApp->desktop()->availableGeometry((QWidget*)parent());
+    QRect dr = qApp->desktop()->availableGeometry(owner);
 
     side = Bottom | Left;
     int left = wordrect.left();
@@ -110,7 +129,7 @@ bool ZExamplePopup::event(QEvent *e)
 {
     if (e->type() == EndEvent::Type())
     {
-        if (!underMouse() && !((QWidget*)parent())->underMouse())
+        if (!underMouse() && !owner->underMouse())
             deleteLater();
         return true;
     }
@@ -204,7 +223,7 @@ void ZExamplePopup::leaveEvent(QEvent *e)
         hovered = -1;
     }
 
-    if (((QWidget*)parent())->underMouse())
+    if (owner->underMouse())
         return;
 
     qApp->postEvent(this, new EndEvent);
@@ -220,8 +239,6 @@ void ZExamplePopup::mousePressEvent(QMouseEvent *e)
         return;
     }
 
-    ZExampleStrip *p = (ZExampleStrip*)parent();
-
     // Not all word forms are shown. Notify the parent about the real word
     // form position.
     int pos = (e->pos().y() - popupMargin) / lineheight + 1;
@@ -234,7 +251,7 @@ void ZExamplePopup::mousePressEvent(QMouseEvent *e)
             --pos;
         if (pos == 0)
         {
-            p->selectForm(ix);
+            owner->selectForm(ix);
             break;
         }
     }
@@ -268,7 +285,7 @@ void ZExamplePopup::mouseReleaseEvent(QMouseEvent *e)
 //-------------------------------------------------------------
 
 
-ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), popup(nullptr), display(ExampleDisplay::Both), index(-1), dirty(false), block(0), line(0), wordpos(-1), common(nullptr), current(-1), hovered(-1), jpwidth(-1), trwidth(-1)
+ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), display(ExampleDisplay::Both), index(-1), dirty(false), block(0), line(0), wordpos(-1), common(nullptr), current(-1), hovered(-1), jpwidth(-1), trwidth(-1)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
@@ -291,7 +308,6 @@ ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), pop
 
 ZExampleStrip::~ZExampleStrip()
 {
-    delete popup;
 }
 
 void ZExampleStrip::reset()
@@ -401,7 +417,7 @@ void ZExampleStrip::setDisplayed(ExampleDisplay newdisp)
     if (!dirty && isVisible() && index != -1)
     {
         wordrect.clear();
-        delete popup;
+        popup.reset();
         hovered = -1;
         jpwidth = -1;
         trwidth = -1;
@@ -442,13 +458,19 @@ void ZExampleStrip::setCurrentSentence(int which)
 
 bool ZExampleStrip::event(QEvent *e)
 {
-    if (e->type() == EndEvent::Type())
+    if (e->type() == ZExPopupDestroyedEvent::Type())
     {
-        popup = nullptr;
-        if (hovered != -1 && hovered < wordrect.size())
-            updateWordRect(hovered);
-        hovered = -1;
-        updateDots();
+        // Event is received when a popup window previously owned by this strip is deleted.
+        ZExPopupDestroyedEvent *pe = (ZExPopupDestroyedEvent*)e;
+
+        if (popup.get() == pe->what())
+        {
+            popup.release();
+            if (hovered != -1 && hovered < wordrect.size())
+                updateWordRect(hovered);
+            hovered = -1;
+            updateDots();
+        }
         return true;
     }
 
@@ -564,7 +586,7 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
         {
             updateWordRect(hovered);
             hovered = wordrect.size();
-            delete popup;
+            popup.reset();
             updateDots();
 
             update();
@@ -596,24 +618,21 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
 
         if (hovered != -1 && hovered != wordrect.size())
             updateWordRect(hovered);
-        hovered = hpos;
-        if (hovered != -1 && hovered != wordrect.size())
+        if (hpos != -1 && hpos != wordrect.size())
+        {
+            popup.reset(new ZExamplePopup(this));
+
+            hovered = hpos;
             updateWordRect(hovered);
 
-        if (hovered != -1 && hovered != wordrect.size())
-        {
-            delete popup;
-
-            // Hovered is set to -1 in an event when deleting the popup window. if it's not
-            // set here we can't show a new one.
-            hovered = hpos;
-
-            popup = new ZExamplePopup(window());
             QRect wr = QRect(mapToGlobal(wordrect[hovered].topLeft()), mapToGlobal(wordrect[hovered].bottomRight())).adjusted(-2, -2, 2, 2);
             popup->popup(dict, sentence.words[hovered].forms, wr);
         }
         else
-            delete popup;
+        {
+            hovered = hpos;
+            popup.reset();
+        }
     }
 
 }
@@ -631,11 +650,11 @@ void ZExampleStrip::leaveEvent(QEvent *e)
         if (popup)
         {
             if (popup->rect().contains(popup->mapFromGlobal(QCursor::pos())))
-                qApp->postEvent(popup, new EndEvent);
+                qApp->postEvent(popup.get(), new EndEvent);
             else
             {
                 hovered = -1;
-                delete popup;
+                popup.reset();
             }
         }
         else
@@ -735,7 +754,7 @@ void ZExampleStrip::updateSentence()
     if (!dirty)
         return;
 
-    delete popup;
+    popup.reset();
     wordrect.clear();
 
     hovered = -1;
