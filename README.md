@@ -18,7 +18,7 @@ it at your own risk! zkanji has several kanji look-up methods, example sentences
 many Japanese words, vocabulary printing, JLPT levels indicated for words and kanji,
 a spaced-repetition system for studying and more.
 
-Please see the License and credit sections at the end of this readme.
+Please see the License and Credit sections at the end of this readme.
 
 ---
 
@@ -151,21 +151,23 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 An earlier program called zkanji, last released in 2013 used a different license,
 which is not applicable to this version.
 
-The folder named `Qxt` contains unmodified source code from the Qxt project. It is
-distributed under the terms of the LGPL v2.1 or CPL 1.0. The project is unrelated to
-zkanji. See the `Qxt/AUTHORS` file for the authors who contributed to that project.
-
 ---
 
 ## Credits
 
-Qt is used for the cross platform user interface. On Windows (which currently is the
-only platform,) zkanji is linked dynamically with the Qt DLLs.
+* The following projects are not in any connection with zkanji. The program is only
+using them as their license allows.
 
-Some files from Qxt, a project to extend Qt, were linked to the program. They can be
-found in the `Qxt` folder.
+* Qt Open Source Edition is used for the cross platform user interface and for other
+purposes, like string handling. Qt is licensed under the terms of the GNU LGPL v3.
+You can find out more about it on the [Qt website](https://www.qt.io/).
 
-zkanji wouldn't be possible without JMdict (a free Japanese dictionary,) KANJIDIC
+* Some parts of LibQxt, an open source project to extend Qt were used in zkanji with
+small modifications. See the [LibQxt project's website](https://bitbucket.org/libqxt/libqxt/)
+for the source code. See the `Qxt/AUTHORS` file for its authors who contributed to
+that project, and `Qxt/COPYING` for license information.
+
+* zkanji wouldn't be possible without JMdict (a free Japanese dictionary,) KANJIDIC
 (holding information about 6355 kanji) and RADKFILE. They are the property of [The
 Electronic Dictionary Research and Development Group, Monash University](http://www.edrdg.org/).
 The files are made available under a Creative Commons Attribution-ShareAlike Licence

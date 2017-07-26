@@ -29,6 +29,9 @@
 ** <http://libqxt.org>  <foundation@libqxt.org>
 *****************************************************************************/
 
+// 07/23/2017 - Modifications for release with zkanji: Made it compile without
+// the need to include Qt private headers.
+
 #include <QVector>
 #include <X11/Xlib.h>
 //#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
