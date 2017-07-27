@@ -122,7 +122,7 @@ void ZExamplePopup::popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint
     move(left, top);
 
     show();
-    raise();
+    //raise();
 }
 
 bool ZExamplePopup::event(QEvent *e)

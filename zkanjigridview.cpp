@@ -1812,7 +1812,7 @@ void ZKanjiGridView::kanjiToGroup() const
     selKanji(selkanji);
     if (selkanji.empty())
         return;
-    kanjiToGroupSelect(dictionary(), selkanji, window());
+    kanjiToGroupSelect(dictionary(), selkanji/*, window()*/);
 }
 
 void ZKanjiGridView::collectWords() const

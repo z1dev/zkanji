@@ -1032,7 +1032,7 @@ void ZDictionaryListView::selectionToGroup() const
 
     indexes(sel, sel);
 
-    wordToGroupSelect(dictionary(), sel, gUI->activeMainForm());
+    wordToGroupSelect(dictionary(), sel/*, gUI->activeMainForm()*/);
 }
 
 void ZDictionaryListView::editWord() const
@@ -1358,7 +1358,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
     {
         QAction *aadd = popup->addAction(tr("Add word to group..."));
         connect(aadd, &QAction::triggered, [dict, &windexes]() {
-            wordToGroupSelect(dict, windexes, gUI->activeMainForm());
+            wordToGroupSelect(dict, windexes/*, gUI->activeMainForm()*/);
         });
         QAction *astudy = popup->addAction(tr("Add word to study deck..."));
         connect(astudy, &QAction::triggered, [this, &windexes]() {

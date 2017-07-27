@@ -122,15 +122,15 @@ void KanjiToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictiona
 //-------------------------------------------------------------
 
 
-void kanjiToGroupSelect(Dictionary *d, ushort kindex, QWidget *dialogParent)
+void kanjiToGroupSelect(Dictionary *d, ushort kindex/*, QWidget *dialogParent*/)
 {
-    KanjiToGroupForm *form = new KanjiToGroupForm(dialogParent);
+    KanjiToGroupForm *form = new KanjiToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     form->exec(d, kindex, d->kanjiGroups().groupFromEncodedName(Settings::dialog.defkanjigroup));
 }
 
-void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, QWidget *dialogParent)
+void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes/*, QWidget *dialogParent*/)
 {
-    KanjiToGroupForm *form = new KanjiToGroupForm(dialogParent);
+    KanjiToGroupForm *form = new KanjiToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     form->exec(d, kindexes, d->kanjiGroups().groupFromEncodedName(Settings::dialog.defkanjigroup));
 }
 

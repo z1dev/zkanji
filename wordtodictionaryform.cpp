@@ -111,7 +111,7 @@ void WordToDictionaryForm::on_switchButton_clicked()
 
     close();
 
-    wordToGroupSelect(d, windex, parentWidget());
+    wordToGroupSelect(d, windex/*, parentWidget()*/);
 }
 
 void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)

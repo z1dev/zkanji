@@ -11,10 +11,10 @@
 
 class Dictionary;
 class QWidget;
-void wordToGroupSelect(Dictionary *d, int windex, QWidget *dialogParent = nullptr);
-void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, QWidget *dialogParent = nullptr);
-void kanjiToGroupSelect(Dictionary *d, ushort kindex, QWidget *dialogParent = nullptr);
-void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, QWidget *dialogParent = nullptr);
+void wordToGroupSelect(Dictionary *d, int windex/*, QWidget *dialogParent = nullptr*/);
+void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes/*, QWidget *dialogParent = nullptr*/);
+void kanjiToGroupSelect(Dictionary *d, ushort kindex/*, QWidget *dialogParent = nullptr*/);
+void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes/*, QWidget *dialogParent = nullptr*/);
 // Opens a word filter editor window with the passed parent. Set filterindex to -1 to create a
 // new filter.
 void editWordFilter(int filterindex, QWidget *parent);

@@ -158,15 +158,15 @@ void WordToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictionar
 
 
 // Declared in "dialogs.h"
-void wordToGroupSelect(Dictionary *d, int windex, QWidget *dialogParent)
+void wordToGroupSelect(Dictionary *d, int windex/*, QWidget *dialogParent*/)
 {
-    WordToGroupForm *form = new WordToGroupForm(dialogParent);
+    WordToGroupForm *form = new WordToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     form->exec(d, windex, d->wordGroups().groupFromEncodedName(Settings::dialog.defwordgroup));
 }
 
-void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, QWidget *dialogParent)
+void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes/*, QWidget *dialogParent*/)
 {
-    WordToGroupForm *form = new WordToGroupForm(dialogParent);
+    WordToGroupForm *form = new WordToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     form->exec(d, indexes, d->wordGroups().groupFromEncodedName(Settings::dialog.defwordgroup));
 }
 
