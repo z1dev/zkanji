@@ -80,7 +80,8 @@ void JLPTReplaceForm::skipall()
         return;
     skipped = list.size() - pos;
     pos = list.size();
-    close();
+    // Because pos == list.size(), the call to abort() will properly save other changes and close the window.
+    abort();
 }
 
 void JLPTReplaceForm::skip()
