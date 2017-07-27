@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017 SÃ³lyom ZoltÃ¡n
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -273,7 +273,7 @@ const char *buinfromaji[]
         "banai", "baserareru", "bareru", "baseru",
         "bi", "bitai", "bitagaru", "bisou",
         "nde", "nda", "ndara", "ndari",
-        "beba", "beru", "be", "‚Úu",
+        "beba", "beru", "be", "â€šÃšu",
         "nderu", "ndeiru", "banakuya", "banakya",
         "njau", "banaide", "bazu", "banu",
         "basareru", "njimau", "ndenasai", "ndeoku",
