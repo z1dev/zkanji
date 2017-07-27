@@ -20,8 +20,11 @@ DialogWindow::DialogWindow(QWidget *parent) : base(parent), loop(nullptr), res(M
 
 DialogWindow::~DialogWindow()
 {
+    // This is for debugging purposes only. If we throw here, it's best for the program to
+    // crash anyway.
     if (loop && loop->isRunning())
         throw "Programmer error. Must call base::closeEvent to stop the loop.";
+
     //{
     //    loop->quit();
     //    emit finished(res);

@@ -957,7 +957,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
 
     if (itemmodel == nullptr || itemmodel->empty())
     {
-        p.setBrush(Settings::color(opts.palette, colorgrp, ColorSettings::ColorTypes::Bg) /*opts.palette.color(colorgrp, QPalette::Base)*/);
+        p.setBrush(Settings::textColor(opts.palette, colorgrp, ColorSettings::TextColorTypes::Bg) /*opts.palette.color(colorgrp, QPalette::Base)*/);
         p.fillRect(event->rect() /*QRect(0, 0, size.width(), size.height())*/, p.brush());
         p.setBrush(oldbrush);
         return;
@@ -1006,7 +1006,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     }
 
     // Fill background to the right of the last grid line.
-    p.setBrush(Settings::color(opts.palette, colorgrp, ColorSettings::ColorTypes::Bg) /*opts.palette.color(colorgrp, QPalette::Base)*/);
+    p.setBrush(Settings::textColor(opts.palette, colorgrp, ColorSettings::TextColorTypes::Bg) /*opts.palette.color(colorgrp, QPalette::Base)*/);
     if (cols * cellsize < size.width())
         p.fillRect(QRect(QPoint(cols * cellsize, 0), QPoint(size.width(), y2)), p.brush());
 
@@ -1063,30 +1063,30 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
             if (!c.isValid())
             {
                 if (dict->kanjiWordCount(itemmodel->kanjiAt(drawpos)) == 0)
-                    c = Settings::colors.kanjinowords.isValid() ? Settings::colors.kanjinowords.isValid() : Settings::colors.nowordsdef;
+                    c = Settings::uiColor(ColorSettings::KanjiNoWords);
                 else
-                    c = Settings::color(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::ColorTypes::Text); // opts.palette.color(colorgrp, QPalette::Text);
+                    c = Settings::textColor(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::TextColorTypes::Text); // opts.palette.color(colorgrp, QPalette::Text);
             }
             p.setPen(c);
             c = itemmodel->backColorAt(drawpos);
             if (!c.isValid())
-                c = Settings::color(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::ColorTypes::Bg); // opts.palette.color(colorgrp, QPalette::Base);
+                c = Settings::textColor(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::TextColorTypes::Bg); // opts.palette.color(colorgrp, QPalette::Base);
             p.setBrush(c);
         }
         else
         {
             QColor cc = itemmodel->textColorAt(drawpos);
-            QColor c = Settings::color(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::ColorTypes::SelText); // opts.palette.color(state == State::Dragging ? QPalette::Inactive : colorgrp, QPalette::HighlightedText)
+            QColor c = Settings::textColor(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::TextColorTypes::SelText); // opts.palette.color(state == State::Dragging ? QPalette::Inactive : colorgrp, QPalette::HighlightedText)
             if (!cc.isValid() && dict->kanjiWordCount(itemmodel->kanjiAt(drawpos)) == 0)
-                cc = Settings::colors.kanjinowords.isValid() ? Settings::colors.kanjinowords.isValid() : Settings::colors.nowordsdef;
+                cc = Settings::uiColor(ColorSettings::KanjiNoWords);
             if (cc.isValid())
-                c = colorFromBase(Settings::color(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::ColorTypes::Text), c, cc);
+                c = colorFromBase(Settings::textColor(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::TextColorTypes::Text), c, cc);
             p.setPen(c);
 
-            c = Settings::color(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::ColorTypes::SelBg);// opts.palette.color(state == State::Dragging ? QPalette::Inactive : colorgrp, QPalette::Highlight)
+            c = Settings::textColor(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::TextColorTypes::SelBg);// opts.palette.color(state == State::Dragging ? QPalette::Inactive : colorgrp, QPalette::Highlight)
             cc = itemmodel->backColorAt(drawpos);
             if (cc.isValid())
-                c = colorFromBase(Settings::color(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::ColorTypes::Bg), c, cc);
+                c = colorFromBase(Settings::textColor(opts.palette, state == State::Dragging ? QPalette::Inactive : colorgrp, ColorSettings::TextColorTypes::Bg), c, cc);
 
             p.setBrush(c);
         }
@@ -1115,7 +1115,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     {
         // Paint the drag indicator.
 
-        p.setBrush(Settings::color(opts.palette, QPalette::Active, ColorSettings::ColorTypes::SelBg) /*opts.palette.color(colorgrp, QPalette::Highlight)*/);
+        p.setBrush(Settings::textColor(opts.palette, QPalette::Active, ColorSettings::TextColorTypes::SelBg) /*opts.palette.color(colorgrp, QPalette::Highlight)*/);
 
         QRect r = dragind < model()->size() ? cellRect(dragind) : QRect();
         QRect r2 = dragind > 0 ? cellRect(dragind - 1) : QRect();

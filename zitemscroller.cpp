@@ -101,7 +101,7 @@ QColor SimilarKanjiScrollerModel::textColor(int index) const
 {
     if (index < limit)
         return base::textColor(index);
-    return Settings::colors.similartext.isValid() ? Settings::colors.similartext : Settings::colors.similartextdef;
+    return Settings::uiColor(ColorSettings::SimilarText);
 }
 
 
@@ -125,9 +125,9 @@ QColor CandidateKanjiScrollerModel::bgColor(int index) const
     QChar ch = val < 0 ? ZKanji::elements()->itemUnicode(-val - 1) : ZKanji::kanjis[val]->ch;
 
     if (HIRAGANA(ch.unicode()))
-        return Settings::colors.hirabg.isValid() ? Settings::colors.hirabg : Settings::colors.hirabgdef;
+        return Settings::uiColor(ColorSettings::HiraBg);
     else if (!KANJI(ch.unicode()))
-        return Settings::colors.katabg.isValid() ? Settings::colors.katabg : Settings::colors.katabgdef;
+        return Settings::uiColor(ColorSettings::KataBg);
     
     return base::bgColor(index);
 }
@@ -291,7 +291,7 @@ void ZItemScroller::paintEvent(QPaintEvent *e)
         left += cellsize;
     }
 
-    p.fillRect(QRect(left, r.top(), r.width() - (left - r.left()) + 1, r.height()), Settings::color(pal, QPalette::Active, ColorSettings::Bg));
+    p.fillRect(QRect(left, r.top(), r.width() - (left - r.left()) + 1, r.height()), Settings::textColor(pal, QPalette::Active, ColorSettings::Bg));
 }
 
 //void ZItemScroller::resizeEvent(QResizeEvent *e)
@@ -623,20 +623,20 @@ void ZItemScroller::paintCell(QPainter &p, const QRect &rect, bool selected, int
 
     if (selected)
     {
-        QColor c = Settings::color(pal, QPalette::Active, ColorSettings::SelBg);
+        QColor c = Settings::textColor(pal, QPalette::Active, ColorSettings::SelBg);
 
-        p.setBrush(!bg.isValid() ? c : colorFromBase(Settings::color(pal, QPalette::Active, ColorSettings::Bg), c, bg));
-        c = Settings::color(pal, QPalette::Active, ColorSettings::SelText);
-        p.setPen(!col.isValid() ? c : colorFromBase(Settings::color(pal, QPalette::Active, ColorSettings::Text), c, col));
+        p.setBrush(!bg.isValid() ? c : colorFromBase(Settings::textColor(pal, QPalette::Active, ColorSettings::Bg), c, bg));
+        c = Settings::textColor(pal, QPalette::Active, ColorSettings::SelText);
+        p.setPen(!col.isValid() ? c : colorFromBase(Settings::textColor(pal, QPalette::Active, ColorSettings::Text), c, col));
     }
     else
     {
-        p.setBrush(bg.isValid() ? bg : Settings::color(pal, QPalette::Active, ColorSettings::Bg));
-        p.setPen(col.isValid() ? col : Settings::color(pal, QPalette::Active, ColorSettings::Text));
+        p.setBrush(bg.isValid() ? bg : Settings::textColor(pal, QPalette::Active, ColorSettings::Bg));
+        p.setPen(col.isValid() ? col : Settings::textColor(pal, QPalette::Active, ColorSettings::Text));
     }
 
     if (ch.unicode() == 0)
-        p.setBrush(colorFromBase(Settings::color(pal, QPalette::Active, ColorSettings::Bg), p.brush().color(), Settings::colors.kanjiunsorted.isValid() ? Settings::colors.kanjiunsorted : Settings::colors.unsorteddef));
+        p.setBrush(colorFromBase(Settings::textColor(pal, QPalette::Active, ColorSettings::Bg), p.brush().color(), Settings::uiColor(ColorSettings::KanjiUnsorted)));
 
     p.fillRect(rect, p.brush());
 

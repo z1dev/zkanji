@@ -1716,7 +1716,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     if (cellcol.isValid())
         bgcol = colorFromBase(basecol, bgcol, cellcol);
     else if (inf != 0)
-        bgcol = colorFromBase(basecol, bgcol, (Settings::colors.inf.isValid() ? Settings::colors.inf : Settings::colors.infdef));
+        bgcol = colorFromBase(basecol, bgcol, Settings::uiColor(ColorSettings::Inf));
     painter->setBrush(bgcol);
 
     if (bgcol != basecol)
@@ -1769,34 +1769,19 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
                     switch (c->jlptn)
                     {
                     case 1:
-                        if (Settings::colors.n1.isValid())
-                            painter->setPen(Settings::colors.n1);
-                        else
-                            painter->setPen(Settings::colors.n1def);
+                        painter->setPen(Settings::uiColor(ColorSettings::N1));
                         break;
                     case 2:
-                        if (Settings::colors.n2.isValid())
-                            painter->setPen(Settings::colors.n2);
-                        else
-                            painter->setPen(Settings::colors.n2def);
+                        painter->setPen(Settings::uiColor(ColorSettings::N2));
                         break;
                     case 3:
-                        if (Settings::colors.n3.isValid())
-                            painter->setPen(Settings::colors.n3);
-                        else
-                            painter->setPen(Settings::colors.n3def);
+                        painter->setPen(Settings::uiColor(ColorSettings::N3));
                         break;
                     case 4:
-                        if (Settings::colors.n4.isValid())
-                            painter->setPen(Settings::colors.n4);
-                        else
-                            painter->setPen(Settings::colors.n4def);
+                        painter->setPen(Settings::uiColor(ColorSettings::N4));
                         break;
                     case 5:
-                        if (Settings::colors.n5.isValid())
-                            painter->setPen(Settings::colors.n5);
-                        else
-                            painter->setPen(Settings::colors.n5def);
+                        painter->setPen(Settings::uiColor(ColorSettings::N5));
                         break;
                     }
                 }
@@ -1847,7 +1832,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
             if (Settings::colors.kanaonly.isValid())
                 painter->setPen(Settings::colors.kanaonly);
             else
-                painter->setPen(Settings::colors.kanaonlydef);
+                painter->setPen(Settings::uiColor(ColorSettings::KanaOnly));
         }
         else
             painter->setPen(textcol);
@@ -2046,34 +2031,19 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
                 switch (c->jlptn)
                 {
                 case 1:
-                    if (Settings::colors.n1.isValid())
-                        painter->setPen(Settings::colors.n1);
-                    else
-                        painter->setPen(Settings::colors.n1def);
+                    painter->setPen(Settings::uiColor(ColorSettings::N1));
                     break;
                 case 2:
-                    if (Settings::colors.n2.isValid())
-                        painter->setPen(Settings::colors.n2);
-                    else
-                        painter->setPen(Settings::colors.n2def);
+                    painter->setPen(Settings::uiColor(ColorSettings::N2));
                     break;
                 case 3:
-                    if (Settings::colors.n3.isValid())
-                        painter->setPen(Settings::colors.n3);
-                    else
-                        painter->setPen(Settings::colors.n3def);
+                    painter->setPen(Settings::uiColor(ColorSettings::N3));
                     break;
                 case 4:
-                    if (Settings::colors.n4.isValid())
-                        painter->setPen(Settings::colors.n4);
-                    else
-                        painter->setPen(Settings::colors.n4def);
+                    painter->setPen(Settings::uiColor(ColorSettings::N4));
                     break;
                 case 5:
-                    if (Settings::colors.n5.isValid())
-                        painter->setPen(Settings::colors.n5);
-                    else
-                        painter->setPen(Settings::colors.n5def);
+                    painter->setPen(Settings::uiColor(ColorSettings::N5));
                     break;
                 }
             }
@@ -2095,12 +2065,7 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
     {
         painter->setFont(fs);
         if (!selected)
-        {
-            if (Settings::colors.attrib.isValid())
-                painter->setPen(Settings::colors.attrib);
-            else
-                painter->setPen(Settings::colors.attribdef);
-        }
+            painter->setPen(Settings::uiColor(ColorSettings::Attrib));
 
         drawTextBaseline(painter, r.left(), y, false, r, str);
         //painter->drawText(r.left(), y, str);
@@ -2136,12 +2101,8 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
         {
             str = Strings::wordTypesText(def.attrib.types) + " ";
             if (!selected)
-            {
-                if (Settings::colors.types.isValid())
-                    painter->setPen(Settings::colors.types);
-                else
-                    painter->setPen(Settings::colors.typesdef);
-            }
+                painter->setPen(Settings::uiColor(ColorSettings::Types));
+
             drawTextBaseline(painter, r.left(), y, false, r, str);
             //painter->drawText(r.left(), y, str);
             r.setLeft(r.left() + fsmet.boundingRect(str).width() + spacewidth / 2);
@@ -2154,12 +2115,8 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
             str = Strings::wordNotesText(def.attrib.notes) + " ";
 
             if (!selected)
-            {
-                if (Settings::colors.notes.isValid())
-                    painter->setPen(Settings::colors.notes);
-                else
-                    painter->setPen(Settings::colors.notesdef);
-            }
+                painter->setPen(Settings::uiColor(ColorSettings::Notes));
+
             drawTextBaseline(painter, r.left(), y, false, r, str);
             //painter->drawText(r.left(), y, str);
             r.setLeft(r.left() + fsmet.boundingRect(str).width() + spacewidth / 2);
@@ -2187,12 +2144,8 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
             str = Strings::wordFieldsText(def.attrib.fields) + " ";
 
             if (!selected)
-            {
-                if (Settings::colors.fields.isValid())
-                    painter->setPen(Settings::colors.fields);
-                else
-                    painter->setPen(Settings::colors.fieldsdef);
-            }
+                painter->setPen(Settings::uiColor(ColorSettings::Fields));
+
             drawTextBaseline(painter, r.left(), y, false, r, str);
             //painter->drawText(r.left(), y, str);
             r.setLeft(r.left() + fsmet.boundingRect(str).width() + spacewidth / 2);
@@ -2203,12 +2156,8 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
             str += " " + Strings::wordDialectsText(def.attrib.dialects);
 
             if (!selected)
-            {
-                if (Settings::colors.dialect.isValid())
-                    painter->setPen(Settings::colors.dialect);
-                else
-                    painter->setPen(Settings::colors.dialectdef);
-            }
+                painter->setPen(Settings::uiColor(ColorSettings::Dialects));
+
             drawTextBaseline(painter, r.left(), y, false, r, str);
             //painter->drawText(r.left(), y, str);
             r.setLeft(r.left() + fsmet.boundingRect(str).width() + spacewidth / 2);

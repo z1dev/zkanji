@@ -236,32 +236,32 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->selbgiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Highlight));
     ui->seltextiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::HighlightedText));
 
-    ui->colInfCBox->setDefaultColor(Settings::colors.infdef);
-    ui->colAttribCBox->setDefaultColor(Settings::colors.attribdef);
-    ui->colTypeCBox->setDefaultColor(Settings::colors.typesdef);
-    ui->colUsageCBox->setDefaultColor(Settings::colors.notesdef);
-    ui->colFieldCBox->setDefaultColor(Settings::colors.fieldsdef);
-    ui->colDialectCBox->setDefaultColor(Settings::colors.dialectdef);
-    ui->colKanaCBox->setDefaultColor(Settings::colors.kanaonlydef);
-    ui->colKanjiExCBox->setDefaultColor(Settings::colors.kanjiexbgdef);
+    ui->colInfCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Inf));
+    ui->colAttribCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Attrib));
+    ui->colTypeCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Types));
+    ui->colUsageCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Notes));
+    ui->colFieldCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Fields));
+    ui->colDialectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Dialects));
+    ui->colKanaCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanaOnly));
+    ui->colKanjiExCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiExBg));
 
-    ui->colN5CBox->setDefaultColor(Settings::colors.n5def);
-    ui->colN4CBox->setDefaultColor(Settings::colors.n4def);
-    ui->colN3CBox->setDefaultColor(Settings::colors.n3def);
-    ui->colN2CBox->setDefaultColor(Settings::colors.n2def);
-    ui->colN1CBox->setDefaultColor(Settings::colors.n1def);
+    ui->colN5CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N5));
+    ui->colN4CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N4));
+    ui->colN3CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N3));
+    ui->colN2CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N2));
+    ui->colN1CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N1));
 
-    ui->colNoWordsCBox->setDefaultColor(Settings::colors.nowordsdef);
-    ui->colUnsortedCBox->setDefaultColor(Settings::colors.unsorteddef);
+    ui->colNoWordsCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiNoWords));
+    ui->colUnsortedCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiUnsorted));
 
-    ui->colOkuCBox->setDefaultColor(Settings::colors.okucolordef);
+    ui->colOkuCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Oku));
 
-    ui->bgKataCBox->setDefaultColor(Settings::colors.katabgdef);
-    ui->bgHiraCBox->setDefaultColor(Settings::colors.hirabgdef);
-    ui->bgSimilarCBox->setDefaultColor(Settings::colors.similarbgdef);
-    ui->textSimilarCBox->setDefaultColor(Settings::colors.similartextdef);
-    ui->bgPartsCBox->setDefaultColor(Settings::colors.partsbgdef);
-    ui->bgPartOfCBox->setDefaultColor(Settings::colors.partofbgdef);
+    ui->bgKataCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KataBg));
+    ui->bgHiraCBox->setDefaultColor(Settings::defUiColor(ColorSettings::HiraBg));
+    ui->bgSimilarCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SimilarBg));
+    ui->textSimilarCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SimilarText));
+    ui->bgPartsCBox->setDefaultColor(Settings::defUiColor(ColorSettings::PartsBg));
+    ui->bgPartOfCBox->setDefaultColor(Settings::defUiColor(ColorSettings::PartOfBg));
 
     QLocale validatorlocale;
     validatorlocale.setNumberOptions(QLocale::OmitGroupSeparator);

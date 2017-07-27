@@ -1111,7 +1111,7 @@ namespace Settings
         return QFont{ !Settings::print.dictfonts ? Settings::fonts.printinfo : Settings::fonts.info, 120, Settings::print.dictfonts ? false : Settings::fonts.printinfostyle == FontSettings::Bold || Settings::fonts.printinfostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::print.dictfonts ? true : Settings::fonts.printinfostyle == FontSettings::Italic || Settings::fonts.printinfostyle == FontSettings::BoldItalic };
     }
 
-    QColor color(const QPalette &pal, QPalette::ColorGroup group, ColorSettings::ColorTypes type)
+    QColor textColor(const QPalette &pal, QPalette::ColorGroup group, ColorSettings::TextColorTypes type)
     {
         switch (type)
         {
@@ -1136,17 +1136,167 @@ namespace Settings
         }
     }
 
+    QColor uiColor(ColorSettings::UIColorTypes type)
+    {
+        switch (type)
+        {
+        case ColorSettings::Inf:
+            if (colors.inf.isValid())
+                return colors.inf;
+            break;
+        case ColorSettings::Attrib:
+            if (colors.attrib.isValid())
+                return colors.attrib;
+            break;
+        case ColorSettings::Types:
+            if (colors.types.isValid())
+                return colors.types;
+            break;
+        case ColorSettings::Notes:
+            if (colors.notes.isValid())
+                return colors.notes;
+            break;
+        case ColorSettings::Fields:
+            if (colors.fields.isValid())
+                return colors.fields;
+            break;
+        case ColorSettings::Dialects:
+            if (colors.dialect.isValid())
+                return colors.dialect;
+            break;
+        case ColorSettings::KanaOnly:
+            if (colors.kanaonly.isValid())
+                return colors.kanaonly;
+            break;
+        case ColorSettings::KanjiExBg:
+            if (colors.kanjiexbg.isValid())
+                return colors.kanjiexbg;
+            break;
+        case ColorSettings::Oku:
+            if (colors.okucolor.isValid())
+                return colors.okucolor;
+            break;
+        case ColorSettings::N5:
+            if (colors.n5.isValid())
+                return colors.n5;
+            break;
+        case ColorSettings::N4:
+            if (colors.n4.isValid())
+                return colors.n4;
+            break;
+        case ColorSettings::N3:
+            if (colors.n3.isValid())
+                return colors.n3;
+            break;
+        case ColorSettings::N2:
+            if (colors.n2.isValid())
+                return colors.n2;
+            break;
+        case ColorSettings::N1:
+            if (colors.n1.isValid())
+                return colors.n1;
+            break;
+        case ColorSettings::KanjiNoWords:
+            if (colors.kanjinowords.isValid())
+                return colors.kanjinowords;
+            break;
+        case ColorSettings::KanjiUnsorted:
+            if (colors.kanjiunsorted.isValid())
+                return colors.kanjiunsorted;
+            break;
+        case ColorSettings::KataBg:
+            if (colors.katabg.isValid())
+                return colors.katabg;
+            break;
+        case ColorSettings::HiraBg:
+            if (colors.hirabg.isValid())
+                return colors.hirabg;
+            break;
+        case ColorSettings::SimilarText:
+            if (colors.similartext.isValid())
+                return colors.similartext;
+            break;
+        case ColorSettings::SimilarBg:
+            if (colors.similarbg.isValid())
+                return colors.similarbg;
+            break;
+        case ColorSettings::PartsBg:
+            if (colors.partsbg.isValid())
+                return colors.partsbg;
+            break;
+        case ColorSettings::PartOfBg:
+            if (colors.partofbg.isValid())
+                return colors.partofbg;
+            break;
+        }
+
+        return defUiColor(type);
+    }
+
+    QColor defUiColor(ColorSettings::UIColorTypes type)
+    {
+        switch (type)
+        {
+        case ColorSettings::Inf:
+            return colors.lighttheme ? colors.infldef : colors.infddef;
+        case ColorSettings::Attrib:
+            return colors.lighttheme ?  colors.attribldef : colors.attribddef;
+        case ColorSettings::Types:
+            return colors.lighttheme ?  colors.typesldef : colors.typesddef;
+        case ColorSettings::Notes:
+            return colors.lighttheme ?  colors.notesldef : colors.notesddef;
+        case ColorSettings::Fields:
+            return colors.lighttheme ?  colors.fieldsldef : colors.fieldsddef;
+        case ColorSettings::Dialects:
+            return colors.lighttheme ?  colors.dialectldef : colors.dialectddef;
+        case ColorSettings::KanaOnly:
+            return colors.lighttheme ?  colors.kanaonlyldef : colors.kanaonlyddef;
+        case ColorSettings::KanjiExBg:
+            return colors.lighttheme ? colors.kanjiexbgldef : colors.kanjiexbgddef;
+        case ColorSettings::Oku:
+            return colors.lighttheme ?  colors.okucolorldef : colors.okucolorddef;
+        case ColorSettings::N5:
+            return colors.lighttheme ?  colors.n5ldef : colors.n5ddef;
+        case ColorSettings::N4:
+            return colors.lighttheme ?  colors.n4ldef : colors.n4ddef;
+        case ColorSettings::N3:
+            return colors.lighttheme ?  colors.n3ldef : colors.n3ddef;
+        case ColorSettings::N2:
+            return colors.lighttheme ?  colors.n2ldef : colors.n2ddef;
+        case ColorSettings::N1:
+            return colors.lighttheme ?  colors.n1ldef : colors.n1ddef;
+        case ColorSettings::KanjiNoWords:
+            return colors.lighttheme ?  colors.nowordsldef : colors.nowordsddef;
+        case ColorSettings::KanjiUnsorted:
+            return colors.lighttheme ?  colors.unsortedldef : colors.unsortedddef;
+        case ColorSettings::KataBg:
+            return colors.lighttheme ?  colors.katabgldef : colors.katabgddef;
+        case ColorSettings::HiraBg:
+            return colors.lighttheme ?  colors.hirabgldef : colors.hirabgddef;
+        case ColorSettings::SimilarText:
+            return colors.lighttheme ?  colors.similartextldef : colors.similartextddef;
+        case ColorSettings::SimilarBg:
+            return colors.lighttheme ?  colors.similarbgldef : colors.similarbgddef;
+        case ColorSettings::PartsBg:
+            return colors.lighttheme ?  colors.partsbgldef : colors.partsbgddef;
+        case ColorSettings::PartOfBg:
+            return colors.lighttheme ?  colors.partofbgldef : colors.partofbgddef;
+        default:
+            return QColor(0, 0, 0);
+        }
+    }
+
     void updatePalette(QWidget *w)
     {
         QPalette newpal = w->palette();
-        newpal.setColor(QPalette::Active, QPalette::Base, color(qApp->palette(), QPalette::Active, ColorSettings::Bg));
-        newpal.setColor(QPalette::Active, QPalette::Text, color(qApp->palette(), QPalette::Active, ColorSettings::Text));
-        newpal.setColor(QPalette::Active, QPalette::Highlight, color(qApp->palette(), QPalette::Active, ColorSettings::SelBg));
-        newpal.setColor(QPalette::Active, QPalette::HighlightedText, color(qApp->palette(), QPalette::Active, ColorSettings::SelText));
-        newpal.setColor(QPalette::Inactive, QPalette::Base, color(qApp->palette(), QPalette::Inactive, ColorSettings::Bg));
-        newpal.setColor(QPalette::Inactive, QPalette::Text, color(qApp->palette(), QPalette::Inactive, ColorSettings::Text));
-        newpal.setColor(QPalette::Inactive, QPalette::Highlight, color(qApp->palette(), QPalette::Inactive, ColorSettings::SelBg));
-        newpal.setColor(QPalette::Inactive, QPalette::HighlightedText, color(qApp->palette(), QPalette::Inactive, ColorSettings::SelText));
+        newpal.setColor(QPalette::Active, QPalette::Base, textColor(qApp->palette(), QPalette::Active, ColorSettings::Bg));
+        newpal.setColor(QPalette::Active, QPalette::Text, textColor(qApp->palette(), QPalette::Active, ColorSettings::Text));
+        newpal.setColor(QPalette::Active, QPalette::Highlight, textColor(qApp->palette(), QPalette::Active, ColorSettings::SelBg));
+        newpal.setColor(QPalette::Active, QPalette::HighlightedText, textColor(qApp->palette(), QPalette::Active, ColorSettings::SelText));
+        newpal.setColor(QPalette::Inactive, QPalette::Base, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::Bg));
+        newpal.setColor(QPalette::Inactive, QPalette::Text, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::Text));
+        newpal.setColor(QPalette::Inactive, QPalette::Highlight, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::SelBg));
+        newpal.setColor(QPalette::Inactive, QPalette::HighlightedText, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::SelText));
         w->setPalette(newpal);
     }
 }

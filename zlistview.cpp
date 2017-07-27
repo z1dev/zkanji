@@ -2032,7 +2032,7 @@ void ZListView::paintEvent(QPaintEvent *e)
         return;
 
     //QPalette::ColorGroup colorgrp = hasFocus() ? QPalette::Active : QPalette::Inactive;
-    QColor col = Settings::color(qApp->palette(), QPalette::Active, ColorSettings::SelBg); ;//palette().color(colorgrp, QPalette::Highlight);
+    QColor col = Settings::textColor(qApp->palette(), QPalette::Active, ColorSettings::SelBg); ;//palette().color(colorgrp, QPalette::Highlight);
 
     if (!dragon)
     {

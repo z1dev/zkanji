@@ -267,7 +267,7 @@ void KanjiToolTipWidget::paintEvent(QPaintEvent *e)
             drawTextBaseline(&p, rowx, rowy, false, QRect(), part);
             rowx += w;
 
-            p.setPen(Settings::colors.okucolor.isValid() ? Settings::colors.okucolor : Settings::colors.okucolordef);
+            p.setPen(Settings::uiColor(ColorSettings::Oku));
             part = str.mid(pos + 1, str.size() - pos - 1 - (ix == siz - 1 ? 0 : 1));
             w = kkfm.width(part);
             drawTextBaseline(&p, rowx, rowy, false, QRect(), part);

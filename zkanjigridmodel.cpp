@@ -884,7 +884,7 @@ QColor KanjiGridSortModel::backColorAt(int pos) const
 {
     if (sortcount == -1 || pos < sortcount)
         return QColor();
-    return Settings::colors.kanjiunsorted.isValid() ? Settings::colors.kanjiunsorted : Settings::colors.unsorteddef;
+    return Settings::uiColor(ColorSettings::KanjiUnsorted);
 }
 
 KanjiGroup* KanjiGridSortModel::kanjiGroup() const

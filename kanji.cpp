@@ -344,7 +344,7 @@ namespace ZKanji
                 str[ix * 2 + 1 + spansiz] = 0x2060;
                 if (!hasoku && Settings::colors.coloroku && chr[ix] == '.')
                 {
-                    QColor c = Settings::colors.okucolor.isValid() ? Settings::colors.okucolor : Settings::colors.okucolordef;
+                    QColor c = Settings::uiColor(ColorSettings::Oku);
                     hasoku = true;
                     // TODO: .arg() usage where user input is replaced, defend against inserting %1 etc. which can cause trouble with subsequent .arg() calls.
                     // HTML escape any user input string with toHtmlEscaped().

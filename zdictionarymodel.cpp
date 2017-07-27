@@ -1979,7 +1979,7 @@ QVariant KanjiWordsItemModel::data(const QModelIndex &index, int role) const
     if (dict != nullptr && index.isValid() && role == (int)CellRoles::CellColor)
     {
         if (onlyex || dict->isKanjiExample(kix, list[index.row()]))
-            return QVariant(Settings::colors.kanjiexbg.isValid() ? Settings::colors.kanjiexbg : Settings::colors.kanjiexbgdef);
+            return QVariant(Settings::uiColor(ColorSettings::KanjiExBg));
     }
 
     return base::data(index, role);
