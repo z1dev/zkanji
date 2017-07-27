@@ -220,6 +220,10 @@ public slots:
     void saveSettings();
     void loadSettings();
 
+    // Determines whether we are currently working with a light or dark color palette, and
+    // updates the lighttheme value in ColorSettings.
+    void checkColorTheme();
+
     // 0: From Japanese, 1: To Japanese, 2: Kanji popup.
     void showPopup(int which);
 

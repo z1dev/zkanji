@@ -38,6 +38,7 @@
 #include "importreplaceform.h"
 #include "dialogs.h"
 #include "grouppickerform.h"
+#include "colorsettings.h"
 
 //// Mode button icon image width.
 //static const int _iconW = 16;
@@ -124,6 +125,7 @@ GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infobloc
     //connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterErased, this, &GlobalUI::wordFilterErased);
 
     connect(qApp, &QApplication::applicationStateChanged, this, &GlobalUI::appStateChanged);
+    connect(qApp, &QApplication::paletteChanged, this, &GlobalUI::applySettings);
     connect(qApp, &QApplication::focusChanged, this, &GlobalUI::appFocusChanged);
     connect(qApp, &QApplication::aboutToQuit, this, &GlobalUI::saveBeforeQuit);
     qApp->installEventFilter(this);
@@ -437,6 +439,7 @@ int GlobalUI::activeDictionaryIndex() const
 
 void GlobalUI::applySettings()
 {
+    checkColorTheme();
     emit settingsChanged();
 }
 
@@ -1163,7 +1166,15 @@ void GlobalUI::saveSettings()
 
 void GlobalUI::loadSettings()
 {
+    checkColorTheme();
+
     Settings::loadSettingsFromFile();
+}
+
+void GlobalUI::checkColorTheme()
+{
+    QColor basecolor = qApp->palette().color(QPalette::Active, QPalette::Base);
+    Settings::colors.lighttheme = basecolor.red() + basecolor.green() + basecolor.blue() > 128 * 3;
 }
 
 void GlobalUI::showPopup(int which)
