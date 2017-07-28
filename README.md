@@ -1,4 +1,4 @@
-# zkanji TEST v1
+# zkanji TEST
 This is a temporary name. I will refer to the program simply as zkanji.
 
 You can find the source code of the program on [GitHub](https://github.com/z1dev/zkanji).
@@ -143,7 +143,7 @@ skipped, the old files can only be imported after deleting the generated user fi
 
 Copyright 2007-2013, 2017 Sólyom Zoltán
 
-zkanji TEST v1 is licensed under the terms of the GNU GPLv3. See the LICENCE file for
+zkanji TEST is licensed under the terms of the GNU GPLv3. See the LICENCE file for
 details. The files in sub-folders, apart from files in the `Qxt` folder, are released
 under the same terms, unless otherwise stated in the files themselves.
 
