@@ -11,6 +11,7 @@
 #include <qdialog.h>
 #include <qeventloop.h>
 #include "words.h"
+#include "dialogwindow.h"
 
 namespace Ui {
     class ImportReplaceForm;
@@ -32,7 +33,7 @@ private:
 
 class Dictionary;
 class OriginalWordsList;
-class ImportReplaceForm : public QMainWindow
+class ImportReplaceForm : public DialogWindow
 {
     Q_OBJECT
 public:
@@ -85,7 +86,7 @@ private:
     // set to -1.
     std::map<int, int> list;
 
-    typedef QMainWindow base;
+    typedef DialogWindow    base;
 };
 
 #endif // IMPORTREPLACEFORM_H

@@ -41,7 +41,12 @@ private:
 
 static const int popupMargin = 3;
 
-ZExamplePopup::ZExamplePopup(ZExampleStrip *owner) : base(owner->window(), Qt::Window | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus), owner(owner), hovered(-1)
+ZExamplePopup::ZExamplePopup(ZExampleStrip *owner) :
+        base(owner->window(), Qt::Window | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus
+            // Under Linux (tested on KDE) Qt::Tool must be indicated or the window won't stay on top of its parent.
+            // TODO: (later) On Mac the Qt::Tool might keep a window on top of everything. This is not intended. 
+            | Qt::Tool),
+        owner(owner), hovered(-1)
 {
     setAutoFillBackground(false);
 

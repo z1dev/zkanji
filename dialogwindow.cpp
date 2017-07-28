@@ -12,7 +12,7 @@
 //-------------------------------------------------------------
 
 
-DialogWindow::DialogWindow(QWidget *parent) : base(parent), loop(nullptr), res(ModalResult::Cancel)
+DialogWindow::DialogWindow(QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog : Qt::WindowFlags()), loop(nullptr), res(ModalResult::Cancel)
 {
     setAttribute(Qt::WA_QuitOnClose, false);
     setWindowModality(Qt::NonModal);

@@ -12,6 +12,7 @@
 #include <QPrinter>
 #include <QFont>
 #include <QPrintPreviewWidget>
+#include "dialogwindow.h"
 
 namespace Ui {
     class PrintPreviewForm;
@@ -156,7 +157,7 @@ private:
 };
 
 
-class PrintPreviewForm : public QMainWindow
+class PrintPreviewForm : public DialogWindow
 {
     Q_OBJECT
 public:
@@ -209,7 +210,7 @@ private:
     // Number of pages.
     int pagecnt;
 
-    typedef QMainWindow base;
+    typedef DialogWindow    base;
 };
 
 

@@ -9,6 +9,7 @@
 
 #include <QMainWindow>
 #include <memory>
+#include "dialogwindow.h"
 
 namespace Ui {
     class RadicalForm;
@@ -20,7 +21,7 @@ struct RadicalFilter;
 class QAbstractButton;
 class QListWidgetItem;
 class KanjiGridModel;
-class RadicalForm : public QMainWindow
+class RadicalForm : public DialogWindow
 {
     Q_OBJECT
 public:
@@ -118,7 +119,7 @@ private:
     Results btnresult;
     std::unique_ptr<RadicalFilter> finalfilter;
 
-    typedef QMainWindow base;
+    typedef DialogWindow    base;
 };
 
 

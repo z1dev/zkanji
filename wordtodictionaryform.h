@@ -10,6 +10,8 @@
 #include <QtCore>
 #include <QMainWindow>
 
+#include "dialogwindow.h"
+
 namespace Ui {
     class WordToDictionaryForm;
 }
@@ -17,7 +19,7 @@ namespace Ui {
 class Dictionary;
 class DictionariesProxyModel;
 
-class WordToDictionaryForm : public QMainWindow
+class WordToDictionaryForm : public DialogWindow
 {
     Q_OBJECT
 public:
@@ -59,7 +61,7 @@ private:
     // Word index in the destination dictionary.
     int dindex;
 
-    typedef QMainWindow base;
+    typedef DialogWindow    base;
 };
 
 #endif // WORDTODICTIONARYFORM_H
