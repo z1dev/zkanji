@@ -10,6 +10,18 @@
 #include <QStyle>
 #include <QStyleOption>
 #include "zscrollarea.h"
+#include "zevents.h"
+
+struct ScrollAreaScrolledEvent : public EventTBase<ScrollAreaScrolledEvent>
+{
+private:
+    typedef EventTBase<ScrollAreaScrolledEvent>  base;
+public:
+    ScrollAreaScrolledEvent(QWheelEvent *e) : base(), e(e) { ; }
+    QWheelEvent* wheelEvent() { return e; }
+private:
+    QWheelEvent *e;
+};
 
 //-------------------------------------------------------------
 
@@ -66,23 +78,34 @@ int ZScrollArea::scrollPos() const
 
 void ZScrollArea::setScrollPos(int newpos)
 {
-    int smin = scrollMin();
-    int smax = scrollMax();
-    int spage = scrollPage();
-
-    newpos = std::max(smin, std::min(newpos, smax - std::max(0, spage)));
-
-    if (newpos == scrollpos)
-        return;
-
-    std::swap(scrollpos, newpos);
-    scrolled(newpos, scrollpos);
-    updateScroller();
+    setScrollPos(newpos, nullptr);
 }
 
 int ZScrollArea::scrollerSize() const
 {
     return scrollsize;
+}
+
+bool ZScrollArea::event(QEvent *e)
+{
+    if (e->type() == ScrollAreaScrolledEvent::Type())
+    {
+        ScrollAreaScrolledEvent *se = (ScrollAreaScrolledEvent*)e;
+        if (underMouse())
+        {
+            if (se->wheelEvent() != nullptr)
+                qApp->postEvent(this, new QMouseEvent(QEvent::MouseMove, se->wheelEvent()->pos(), Qt::NoButton, se->wheelEvent()->buttons(), se->wheelEvent()->modifiers()));
+            else
+            {
+                QPoint p = mapFromGlobal(QCursor::pos());
+                qApp->postEvent(this, new QMouseEvent(QEvent::MouseMove, p, Qt::NoButton, Qt::MouseButtons(), Qt::KeyboardModifiers()));
+            }
+        }
+
+        return true;
+    }
+
+    return base::event(e);
 }
 
 void ZScrollArea::paintEvent(QPaintEvent *e)
@@ -269,6 +292,7 @@ void ZScrollArea::mouseMoveEvent(QMouseEvent *e)
 {
     base::mouseMoveEvent(e);
 
+    e->accept();
     QRect r = rect();
 
     if (type == Buttons)
@@ -331,7 +355,7 @@ void ZScrollArea::mouseMoveEvent(QMouseEvent *e)
     if (!dragging)
     {
         bool shouldhover = x >= p.first && x < p.second && y >= h - scrollsize && y < h;
-        if (y < h - scrollsize || y >= h)
+        if (x >= 0 && x < w && y >= 0 && y < h - scrollsize)
             e->ignore();
         if (hovering != shouldhover)
         {
@@ -381,12 +405,13 @@ void ZScrollArea::wheelEvent(QWheelEvent *e)
 
     delta -= steps * 120;
 
-    setScrollPos(scrollpos + scrollStep() * -steps * qApp->wheelScrollLines());
+    setScrollPos(scrollpos + scrollStep() * -steps * qApp->wheelScrollLines(), e);
 }
 
 void ZScrollArea::leaveEvent(QEvent *e)
 {
     base::leaveEvent(e);
+    e->accept();
 
     if (!hovering)
     {
@@ -574,6 +599,24 @@ void ZScrollArea::updateFrameRect()
             setFrameRect(rect().adjusted(0, scrollsize, 0, -scrollsize));
         break;
     }
+}
+
+void ZScrollArea::setScrollPos(int newpos, QWheelEvent *e)
+{
+    int smin = scrollMin();
+    int smax = scrollMax();
+    int spage = scrollPage();
+
+    newpos = std::max(smin, std::min(newpos, smax - std::max(0, spage)));
+
+    if (newpos == scrollpos)
+        return;
+
+    std::swap(scrollpos, newpos);
+    scrolled(newpos, scrollpos);
+    updateScroller();
+
+    qApp->postEvent(this, new ScrollAreaScrolledEvent(e));
 }
 
 void ZScrollArea::drawButton(QPainter &p, QRect r, double padding, ScrollerOrientation ori, bool first)

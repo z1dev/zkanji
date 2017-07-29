@@ -23,16 +23,16 @@
 
 class ZExPopupDestroyedEvent : public EventTBase<ZExPopupDestroyedEvent>
 {
+private:
+    typedef EventTBase<ZExPopupDestroyedEvent>  base;
 public:
-    ZExPopupDestroyedEvent(ZExamplePopup *popup) : p(popup) { ; }
+    ZExPopupDestroyedEvent(ZExamplePopup *popup) : base(), p(popup) { ; }
     ZExamplePopup* what()
     {
         return p;
     }
 private:
     ZExamplePopup *p;
-
-    typedef EventTBase<SetDictEvent>  base;
 };
 
 
@@ -45,7 +45,7 @@ ZExamplePopup::ZExamplePopup(ZExampleStrip *owner) :
         base(owner->window(), Qt::Window | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus
             // Under Linux (tested on KDE) Qt::Tool must be indicated or the window won't stay on top of its parent.
             // TODO: (later) On Mac the Qt::Tool might keep a window on top of everything. This is not intended. 
-            | Qt::Tool),
+            | Qt::X11BypassWindowManagerHint | Qt::Tool),
         owner(owner), hovered(-1)
 {
     setAutoFillBackground(false);
@@ -69,7 +69,7 @@ ZExamplePopup::~ZExamplePopup()
     qApp->sendEvent(owner, &e);
 }
 
-void ZExamplePopup::popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint16> &wordforms, const QRect &wordrect)
+void ZExamplePopup::popup(Dictionary *d, const fastarray<ExampleWordsData::Form, quint16> &wordforms, const QRect &wordrect)
 {
     QFont f = Settings::kanaFont();
     QFontMetrics fm(f);
@@ -85,7 +85,7 @@ void ZExamplePopup::popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint
     QString str;
     for (int ix = 0; ix != wordforms.size(); ++ix)
     {
-        auto &dat = wordforms[ix];
+        const auto &dat = wordforms[ix];
         if (d->findKanjiKanaWord(dat.kanji, dat.kana) == -1)
         {
             available.push_back(0);
@@ -149,42 +149,45 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     QRectF r = rect();
     r.adjust(0.5, 0.5, -0.5, -0.5);
 
+    QRect rr = QRect(owner->mapToGlobal(QPoint(0, 0)), owner->size());
+    rr = QRect(mapFromGlobal(rr.topLeft()), mapFromGlobal(rr.bottomRight()));
+
     painter.setPen(Qt::black);
     if (side == (Bottom | Left))
     {
-        QPointF pt[] = { r.bottomLeft(), r.topLeft(), r.topRight(), r.bottomRight(), QPointF(r.left() + rectwidth - 2, r.bottom()) };
-        painter.drawPolyline(pt, 5);
+        QPointF pt[] = { QPointF(std::max<double>(r.left(), rr.left() + 0.5), r.bottom()), r.bottomLeft(), r.topLeft(), r.topRight(), r.bottomRight(), QPointF(std::min<double>(r.left() + rectwidth - 2, rr.right() + 0.5), r.bottom()) };
+        painter.drawPolyline(pt, 6);
         painter.setPen(Qt::white);
-        pt[4].setX(pt[4].x() - 1);
-        pt[0].setX(pt[0].x() + 1);
-        painter.drawLine(pt[4], pt[0]);
+        --pt[5].rx();
+        ++pt[0].rx();
+        painter.drawLine(pt[5], pt[0]);
     }
     else if (side == (Bottom | Right))
     {
-        QPointF pt[] = { r.bottomRight(), r.topRight(), r.topLeft(), r.bottomLeft(), QPointF(r.right() - rectwidth + 2, r.bottom()) };
-        painter.drawPolyline(pt, 5);
+        QPointF pt[] = { QPointF(std::min<double>(r.right(), rr.right() + 0.5), r.bottom()), r.bottomRight(), r.topRight(), r.topLeft(), r.bottomLeft(), QPointF(std::max<double>(r.right() - rectwidth + 2, rr.left() + 0.5), r.bottom()) };
+        painter.drawPolyline(pt, 6);
         painter.setPen(Qt::white);
-        pt[4].setX(pt[4].x() + 1);
-        pt[0].setX(pt[0].x() - 1);
-        painter.drawLine(pt[4], pt[0]);
+        ++pt[5].rx();
+        --pt[0].rx();
+        painter.drawLine(pt[5], pt[0]);
     }
     else if (side == (Top | Left))
     {
-        QPointF pt[] = { r.topLeft(), r.bottomLeft(), r.bottomRight(), r.topRight(), QPointF(r.left() + rectwidth - 2, r.top()) };
-        painter.drawPolyline(pt, 5);
+        QPointF pt[] = { QPointF(std::max<double>(r.left(), rr.left() + 0.5), r.top()), r.topLeft(), r.bottomLeft(), r.bottomRight(), r.topRight(), QPointF(std::min<double>(r.left() + rectwidth - 2, rr .right() + 0.5), r.top()) };
+        painter.drawPolyline(pt, 6);
         painter.setPen(Qt::white);
-        pt[4].setX(pt[4].x() - 1);
-        pt[0].setX(pt[0].x() + 1);
-        painter.drawLine(pt[4], pt[0]);
+        --pt[5].rx();
+        ++pt[0].rx();
+        painter.drawLine(pt[5], pt[0]);
     }
     else // Top | Right
     {
-        QPointF pt[] = { r.topRight(), r.bottomRight(), r.topLeft(), r.topLeft(), QPointF(r.right() - rectwidth + 2, r.top()) };
-        painter.drawPolyline(pt, 5);
+        QPointF pt[] = { QPointF(std::min<double>(r.right(), rr.right() + 0.5), r.top()), r.topRight(), r.bottomRight(), r.topLeft(), r.topLeft(), QPointF(std::max<double>(r.right() - rectwidth + 2, rr .left() + 0.5), r.top()) };
+        painter.drawPolyline(pt, 6);
         painter.setPen(Qt::white);
-        pt[4].setX(pt[4].x() + 1);
-        pt[0].setX(pt[0].x() - 1);
-        painter.drawLine(pt[4], pt[0]);
+        ++pt[5].rx();
+        --pt[0].rx();
+        painter.drawLine(pt[5], pt[0]);
     }
 
     r.adjust(0, 0, -1, -1);
@@ -204,7 +207,7 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
         if (available[ix] == 0)
             continue;
 
-        auto &dat = forms->operator[](ix);
+        const auto &dat = forms->operator[](ix);
         if (dat.kanji == dat.kana)
             str = dat.kanji.toQStringRaw();
         else
@@ -339,7 +342,7 @@ void ZExampleStrip::setItem(Dictionary *d, int windex, int wpos, int wordform)
 
     if (d != nullptr && windex != -1 && wpos != -1 && wordform != -1 && index != -1 && sentence.words.size() > wpos && sentence.words[wpos].forms.size() > wordform)
     {
-        ExampleWordsData::Form &form = sentence.words[wpos].forms[wordform];
+        const ExampleWordsData::Form &form = sentence.words[wpos].forms[wordform];
         if (w->kanji == form.kanji && w->kana == form.kana)
             keepsentence = true;
     }
@@ -500,6 +503,7 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
 
     int x = -scrollPos() + 4;
     QRect r = drawArea();
+    painter.setClipRect(r);
 
     QFont jf = Settings::kanaFont();
     QFont tf = Settings::defFont();
@@ -585,12 +589,16 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
     // The scroller handled the event.
     if (e->isAccepted())
     {
+        const QRect r = contentsRect();
+        int hpos = r.contains(e->pos()) ? wordrect.size() : -1;
+
         // Mouse cursor was in a word rectangle, but it's now over the scroll bar. Update the
         // hovered rectangle and the dotted strip below the words.
-        if (index != -1 && hovered != wordrect.size())
+        if (index != -1 && hovered != hpos)
         {
-            updateWordRect(hovered);
-            hovered = wordrect.size();
+            if (hovered != -1 && hovered != wordrect.size())
+                updateWordRect(hovered);
+            hovered = hpos;
             popup.reset();
             updateDots();
 
@@ -625,13 +633,22 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
             updateWordRect(hovered);
         if (hpos != -1 && hpos != wordrect.size())
         {
-            popup.reset(new ZExamplePopup(this));
-
             hovered = hpos;
             updateWordRect(hovered);
 
-            QRect wr = QRect(mapToGlobal(wordrect[hovered].topLeft()), mapToGlobal(wordrect[hovered].bottomRight())).adjusted(-2, -2, 2, 2);
-            popup->popup(dict, sentence.words[hovered].forms, wr);
+            const ExampleWordsData &worddata = sentence.words[hovered];
+            if (worddata.forms.size() == 1)
+            {
+                const ExampleWordsData::Form &wordform = worddata.forms[0];
+                if (wordform.kanji == wordform.kana && wordform.kanji.size() == worddata.len && qcharncmp(sentence.japanese.data() + worddata.pos, wordform.kana.data(), worddata.len) == 0)
+                {
+                    popup.reset();
+                    return;
+                }
+            }
+            popup.reset(new ZExamplePopup(this));
+            QRect wr = QRect(mapToGlobal(wordrect[hovered].topLeft()), mapToGlobal(wordrect[hovered].bottomRight())).adjusted(-2, -1, 3, 2);
+            popup->popup(dict, worddata.forms, wr);
         }
         else
         {
@@ -728,6 +745,13 @@ void ZExampleStrip::scrolled(int oldpos, int &newpos)
 {
     for (int ix = 0; ix != wordrect.size(); ++ix)
         wordrect[ix].translate(oldpos - newpos, 0);
+    if (popup != nullptr && popup->isVisible())
+    {
+        QPoint p = popup->pos();
+        p.rx() += oldpos - newpos;
+        popup->move(p);
+        popup->update();
+    }
     update();
 }
 
@@ -973,10 +997,10 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
     if (hovered != -1 && hovered != wordrect.size())
     {
         QRectF r = wordrect[hovered];
-        r.adjust(-1.5, -2.5, 0.5, 1.5);
+        r.adjust(-1.5, -1.5, 1.5, 1.5);
         p->setPen(Qt::black);
         p->drawRect(r);
-        r.adjust(1, 1, -1, -1);
+        r.adjust(0, 0, -1, -1);
         p->fillRect(r, Qt::white);
 
         QString str = sentence.japanese.toQString(sentence.words[hovered].pos, sentence.words[hovered].len);

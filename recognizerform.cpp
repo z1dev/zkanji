@@ -26,8 +26,10 @@
 
 class RecognizerPopupEvent : public EventTBase<RecognizerPopupEvent>
 {
+private:
+    typedef EventTBase<RecognizerPopupEvent>    base;
 public:
-    RecognizerPopupEvent(QToolButton *btn, ZKanaLineEdit *edt, RecognizerPosition pos) : btn(btn), edt(edt), pos(pos) {}
+    RecognizerPopupEvent(QToolButton *btn, ZKanaLineEdit *edt, RecognizerPosition pos) : base(), btn(btn), edt(edt), pos(pos) {}
 
     QToolButton *button()
     {

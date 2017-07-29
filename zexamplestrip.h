@@ -28,7 +28,7 @@ public:
 
     // Shows the popup window above or below the wordrect, depending on the available desktop
     // space.
-    void popup(Dictionary *d, fastarray<ExampleWordsData::Form, quint16> &wordforms, const QRect &wordrect);
+    void popup(Dictionary *d, const fastarray<ExampleWordsData::Form, quint16> &wordforms, const QRect &wordrect);
 protected:
     virtual bool event(QEvent *e) override;
 
@@ -53,7 +53,7 @@ private:
     // Index of the hovered word form.
     int hovered;
 
-    fastarray<ExampleWordsData::Form, quint16> *forms;
+    const fastarray<ExampleWordsData::Form, quint16> *forms;
 
     // Contains 1 for word forms available in the current dictionary. The other forms are not
     // presented.

@@ -71,6 +71,7 @@ public:
     // Height or width taken up by the scrollbar from the widget's rectangle.
     int scrollerSize() const;
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void paintEvent(QPaintEvent *e) override;
     virtual void mousePressEvent(QMouseEvent *e) override;
     virtual void mouseReleaseEvent(QMouseEvent *e) override;
@@ -95,6 +96,11 @@ protected:
     virtual void scrolled(int oldpos, int &newpos) = 0;
 private:
     void updateFrameRect();
+
+    // Set the scroll position to newpos. The passed value is clamped between scrollMin() and
+    // scrollMax() - scrollPage(). If a QWheelEvent is found, its keyboard modifiers and
+    // position are passed to the possibly invoked mouseMoveEvent().
+    void setScrollPos(int newpos, QWheelEvent *e);
 
     // Draws a round triangle fitting inside r. Set first to true if the triangle should point
     // left or up, and false for right or down.
