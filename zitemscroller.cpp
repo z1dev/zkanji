@@ -361,7 +361,8 @@ void ZItemScroller::mousePressEvent(QMouseEvent *e)
 
 void ZItemScroller::mouseDoubleClickEvent(QMouseEvent *e)
 {
-    // Needed empty handler to avoid event propagation.
+    base::mouseDoubleClickEvent(e);
+    e->accept();
 }
 
 void ZItemScroller::mouseReleaseEvent(QMouseEvent *e)
@@ -384,6 +385,8 @@ void ZItemScroller::mouseReleaseEvent(QMouseEvent *e)
     //downpos = QPoint(-1, -1);
     //mousepos = e->pos();
     //setMouseItem(itemAt(mousepos), true);
+
+    e->accept();
 }
 
 void ZItemScroller::mouseMoveEvent(QMouseEvent *e)
@@ -482,6 +485,7 @@ void ZItemScroller::contextMenuEvent(QContextMenuEvent *e)
 
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->popup(e->globalPos());
+    e->accept();
 }
 
 void ZItemScroller::modelChanged()

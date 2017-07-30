@@ -177,6 +177,7 @@ void ZWindow::paintEvent(QPaintEvent *e)
 void ZWindow::mousePressEvent(QMouseEvent *e)
 {
     base::mousePressEvent(e);
+    e->accept();
 
     if (grabside != (int)GrabSide::None || grabbing || e->button() != Qt::LeftButton)
         return;
@@ -207,6 +208,7 @@ void ZWindow::mousePressEvent(QMouseEvent *e)
 void ZWindow::mouseReleaseEvent(QMouseEvent *e)
 {
     base::mouseReleaseEvent(e);
+    e->accept();
 
     if (grabside == (int)GrabSide::None)
         return;
@@ -216,6 +218,7 @@ void ZWindow::mouseReleaseEvent(QMouseEvent *e)
 
 void ZWindow::mouseMoveEvent(QMouseEvent *e)
 {
+    e->accept();
     QRect r = geometry();
     bool floating = border != BorderStyle::Docked;
 

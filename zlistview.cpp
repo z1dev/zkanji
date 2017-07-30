@@ -32,7 +32,7 @@
 
 
 ZListView::ZListView(QWidget *parent) : base(parent), selection(new RangeSelection), currentrow(-1), seltype(ListSelectionType::Single),
-selpivot(-1), autosize(true), sizebase(ListSizeBase::Custom), firstrow(-1), lastrow(-1), checkcol(-1), state(State::None), doubleclick(false), mousebtn(Qt::NoButton), pressed(false),
+selpivot(-1), autosize(true), sizebase(ListSizeBase::Custom), firstrow(-1), lastrow(-1), checkcol(-1), state(State::None), doubleclick(false), mousedown(false), pressed(false),
         hover(false), canclickedit(false), editcolumn(0), ignorechange(false), dragpos(-1)
 {
     setAttribute(Qt::WA_MouseTracking);
@@ -727,9 +727,15 @@ void ZListView::commitPivotSelection()
 
 bool ZListView::cancelActions()
 {
+    bool cancelled = state == State::CanDrag || state == State::CanDragOrSelect || mousedown || doubleclick || pressed;
     if (state == State::CanDrag || state == State::CanDragOrSelect)
         state = State::None;
-    return false;
+    mousedown = false;
+    doubleclick = false;
+    if (pressed && mousecell.isValid())
+        viewport()->update(itemDelegate()->checkBoxRect(mousecell));
+    pressed = false;
+    return cancelled;
 }
 
 void ZListView::signalSelectionChanged()
@@ -1142,7 +1148,7 @@ void ZListView::timerEvent(QTimerEvent *e)
 void ZListView::focusOutEvent(QFocusEvent *e)
 {
     doubleclicktimer.stop();
-    doubleclick = false;
+    cancelActions();
 
     base::focusOutEvent(e);
 }
@@ -1433,8 +1439,9 @@ void ZListView::keyPressEvent(QKeyEvent *e)
 void ZListView::mouseMoveEvent(QMouseEvent *e)
 {
     QFrame::mouseMoveEvent(e);
+    e->accept();
 
-    if (mousebtn == Qt::LeftButton && (state == State::CanDrag || state == State::CanDragOrSelect))
+    if (mousedown && (state == State::CanDrag || state == State::CanDragOrSelect))
     {
         if ((mousedownpos - e->pos()).manhattanLength() > QApplication::startDragDistance())
         {
@@ -1444,7 +1451,7 @@ void ZListView::mouseMoveEvent(QMouseEvent *e)
             if (mdat == nullptr)
                 return;
 
-            mousebtn = Qt::NoButton;
+            mousedown = false;
 
             QDrag *drag = new QDrag(this);
             drag->setMimeData(mdat);
@@ -1504,10 +1511,11 @@ void ZListView::mouseMoveEvent(QMouseEvent *e)
 void ZListView::mousePressEvent(QMouseEvent *e)
 {
     QFrame::mousePressEvent(e);
+    e->accept();
 
     doubleclicktimer.stop();
 
-    if (doubleclick || (e->button() != Qt::LeftButton && e->button() != Qt::RightButton) || mousebtn != Qt::NoButton)
+    if (doubleclick || mousedown || (e->button() != Qt::LeftButton && e->button() != Qt::RightButton))
     {
         doubleclick = false;
         return;
@@ -1545,7 +1553,8 @@ void ZListView::mousePressEvent(QMouseEvent *e)
     }
 
     mousecell = i;
-    mousebtn = e->button();
+    if (e->button() == Qt::LeftButton)
+        mousedown = true;
 
     mousedownpos = e->pos();
 
@@ -1583,7 +1592,7 @@ void ZListView::mousePressEvent(QMouseEvent *e)
             setCurrentRow(mousecell.row()); //toggleRowSelect(mousecell.row(), e->button(), e->modifiers());
         else
         {
-            if (sel)
+            if (sel && e->button() == Qt::LeftButton)
                 state = State::CanDragOrSelect;
             commitPivotSelection();
             changeCurrent(mousecell.row());
@@ -1667,7 +1676,7 @@ void ZListView::mousePressEvent(QMouseEvent *e)
         int selmouse = mapToSelection(mousecell.row());
 
         bool sel = selection->selected(selmouse);
-        if (sel && mousebtn != Qt::LeftButton)
+        if (sel && e->button() != Qt::LeftButton)
         {
             changeCurrent(mousecell.row());
             return;
@@ -1683,7 +1692,7 @@ void ZListView::mousePressEvent(QMouseEvent *e)
         signalSelectionChanged();
     }
 
-    if (mousebtn == Qt::LeftButton && dragEnabled() && state == State::None && (rowSelected(mousecell.row()) || (seltype == ListSelectionType::None && currentrow == mousecell.row())))
+    if (e->button() == Qt::LeftButton && dragEnabled() && state == State::None && (rowSelected(mousecell.row()) || (seltype == ListSelectionType::None && currentrow == mousecell.row())))
         state = State::CanDrag;
 
 }
@@ -1694,6 +1703,7 @@ void ZListView::mouseDoubleClickEvent(QMouseEvent *e)
 
     doubleclick = true;
     QFrame::mouseDoubleClickEvent(e);
+    e->accept();
 
     if (!mousecell.isValid() || hover || e->button() != Qt::LeftButton)
         return;
@@ -1711,17 +1721,18 @@ void ZListView::mouseDoubleClickEvent(QMouseEvent *e)
 void ZListView::mouseReleaseEvent(QMouseEvent *e)
 {
     QFrame::mouseReleaseEvent(e);
+    e->accept();
 
-    if (e->button() != mousebtn)
+    if (!mousedown || e->button() != Qt::LeftButton)
         return;
 
-    if (state == State::CanDragOrSelect && mousebtn == Qt::LeftButton && rowSelected(mousecell.row()))
+    if (state == State::CanDragOrSelect && rowSelected(mousecell.row()))
         setCurrentRow(mousecell.row()); //toggleRowSelect(mousecell.row(), e->button(), e->modifiers());
 
     state = State::None;
-    mousebtn = Qt::NoButton;
+    mousedown = false;
 
-    if (editcolumn != -1 && editcolumn == mousecell.column() && canclickedit && e->button() == Qt::LeftButton && editTriggers().testFlag(SelectedClicked))
+    if (editcolumn != -1 && editcolumn == mousecell.column() && canclickedit && editTriggers().testFlag(SelectedClicked))
     {
         if (editTriggers().testFlag(DoubleClicked))
         {
@@ -2076,6 +2087,7 @@ void ZListView::contextMenuEvent(QContextMenuEvent *e)
     QModelIndex index = indexAt(e->pos());
     int row = index.isValid() ? mapToSelection(index.row()) : -1;
     emit requestingContextMenu(e->pos(), e->globalPos(), row);
+    e->accept();
 }
 
 bool ZListView::viewportEvent(QEvent *e)

@@ -419,6 +419,7 @@ void ZLineEdit::contextMenuEvent(QContextMenuEvent *e)
 
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->popup(e->globalPos());
+    e->accept();
 }
 
 void ZLineEdit::keyPressEvent(QKeyEvent *e)

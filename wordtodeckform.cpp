@@ -312,6 +312,29 @@ void WordsToDeckItemModel::entryRemoved(int windex, int abcdeindex, int aiueoind
 //-------------------------------------------------------------
 
 
+DeckFormListView::DeckFormListView(QWidget *parent) : base(parent)
+{
+    setHorizontalHeader(new WordsToDeckHeader(this));
+}
+
+DeckFormListView::~DeckFormListView()
+{
+    ;
+}
+
+bool DeckFormListView::cancelActions()
+{
+    bool r = base::cancelActions();
+
+    if (dynamic_cast<WordsToDeckHeader*>(horizontalHeader()) != nullptr)
+        r |= ((WordsToDeckHeader*)horizontalHeader())->cancelActions();
+
+    return r;
+}
+
+
+//-------------------------------------------------------------
+
 WordsToDeckHeader::WordsToDeckHeader(ZListView *parent) : base(Qt::Horizontal, parent), mousecell(-1), hover(false), pressed(false)
 {
 
@@ -434,6 +457,13 @@ void WordsToDeckHeader::mouseMoveEvent(QMouseEvent *e)
         mousecell = i;
 
     base::mouseMoveEvent(e);
+    e->accept();
+}
+
+void WordsToDeckHeader::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    base::mouseDoubleClickEvent(e);
+    e->accept();
 }
 
 void WordsToDeckHeader::mousePressEvent(QMouseEvent *e)
@@ -466,11 +496,12 @@ void WordsToDeckHeader::mousePressEvent(QMouseEvent *e)
     }
 
     base::mousePressEvent(e);
+    e->accept();
 }
 
 void WordsToDeckHeader::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (pressed)
+    if (pressed && e->button() == Qt::LeftButton)
     {
         int i = logicalIndexAt(e->pos());
 
@@ -498,6 +529,7 @@ void WordsToDeckHeader::mouseReleaseEvent(QMouseEvent *e)
     }
 
     base::mouseReleaseEvent(e);
+    e->accept();
 }
 
 void WordsToDeckHeader::leaveEvent(QEvent *e)
@@ -510,6 +542,13 @@ void WordsToDeckHeader::leaveEvent(QEvent *e)
     }
 
     base::leaveEvent(e);
+}
+
+bool WordsToDeckHeader::cancelActions()
+{
+    bool r = pressed;
+    pressed = false;
+    return r;
 }
 
 QRect WordsToDeckHeader::sectionRect(int index) const
@@ -603,8 +642,6 @@ void WordToDeckForm::exec(WordDeck* _deck, const std::vector<int> &ind)
     }
 
     indexes = ind;
-
-    ui->wordsTable->setHorizontalHeader(new WordsToDeckHeader(ui->wordsTable));
 
     connect(model, &ZAbstractTableModel::dataChanged, this, &WordToDeckForm::checkStateChanged);
     connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &WordToDeckForm::selChanged);

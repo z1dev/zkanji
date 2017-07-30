@@ -144,6 +144,11 @@ public slots:
 
     virtual void modelDestroyed();
 protected:
+    // Cancels drag or mouse down. Called on focus out and returns whether a meaningful action
+    // has been cancelled. What counts as meaningful can be decided in derived classes. The
+    // default implementation returns true if a left button was held down.
+    virtual bool cancelActions();
+
     // Makes sure the drag drop indicator is updated while draggong.
     virtual void scrollContentsBy(int dx, int dy) override;
 
@@ -247,9 +252,8 @@ private:
     // automatically changes as the user resizes the widget.
     int rows;
 
-    // The mouse button pressed first. Pressing or releasing any other button while the first
-    // button is still pressed will be ignored.
-    Qt::MouseButton mousebtn;
+    // The left mouse button has been pressed over the view and not released yet.
+    bool mousedown;
 
     // The client coordinate of the mouse inside the view when starting to drag a kanji.
     QPoint mousedownpos;

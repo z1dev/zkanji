@@ -563,7 +563,7 @@ int ZDictionaryListView::textSelectionLength() const
 
 bool ZDictionaryListView::cancelActions()
 {
-    base::cancelActions();
+    bool r = base::cancelActions();
 
     if (selecting)
     {
@@ -574,7 +574,7 @@ bool ZDictionaryListView::cancelActions()
         return true;
     }
 
-    return false;
+    return r;
 }
 
 //QModelIndex ZDictionaryListView::baseIndexAt(const QPoint &p) const
@@ -1009,7 +1009,7 @@ void ZDictionaryListView::leaveEvent(QEvent *e)
 
 void ZDictionaryListView::contextMenuEvent(QContextMenuEvent *e)
 {
-    base::contextMenuEvent(e);
+    //base::contextMenuEvent(e);
 
     QModelIndex index = indexAt(e->pos());
     if (index.isValid())
@@ -1018,7 +1018,7 @@ void ZDictionaryListView::contextMenuEvent(QContextMenuEvent *e)
         DictionaryListDelegate *del = (DictionaryListDelegate*)itemDelegate();
         
         showPopup(e->globalPos(), index, QString(), del->kanjiAt(e->pos(), visualRect(index), index));
-
+        e->accept();
     }
 }
 

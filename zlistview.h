@@ -456,8 +456,8 @@ private:
     QModelIndex editcell;
     // The point where the left mouse button was clicked over the list view.
     QPoint mousedownpos;
-    // The first button being pressed.
-    Qt::MouseButton mousebtn;
+    // The left mouse button is being pressed.
+    bool mousedown;
 
     // The mouse button is currently pressed over the checkbox in mousecell.
     bool pressed;

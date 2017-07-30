@@ -490,14 +490,15 @@ void ZRadicalGrid::resizeEvent(QResizeEvent *event)
     recomputeScrollbar(size);
 }
 
-void ZRadicalGrid::mousePressEvent(QMouseEvent *event)
+void ZRadicalGrid::mousePressEvent(QMouseEvent *e)
 {
-    base::mousePressEvent(event);
+    base::mousePressEvent(e);
+    e->accept();
 
-    if (event->button() != Qt::LeftButton)
+    if (e->button() != Qt::LeftButton)
         return;
 
-    int index = indexAt(event->pos());
+    int index = indexAt(e->pos());
     if (index == -1)
         return;
     auto it = std::find(selection.begin(), selection.end(), list[index]);
@@ -514,6 +515,7 @@ void ZRadicalGrid::mousePressEvent(QMouseEvent *event)
 void ZRadicalGrid::mouseReleaseEvent(QMouseEvent *e)
 {
     base::mouseReleaseEvent(e);
+    e->accept();
 
     // Needed empty handler to avoid event propagation.
 }
@@ -521,6 +523,7 @@ void ZRadicalGrid::mouseReleaseEvent(QMouseEvent *e)
 void ZRadicalGrid::mouseDoubleClickEvent(QMouseEvent *e)
 {
     base::mouseDoubleClickEvent(e);
+    e->accept();
 
     // Needed empty handler to avoid event propagation.
 }

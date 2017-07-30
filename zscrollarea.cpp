@@ -206,6 +206,7 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
 void ZScrollArea::mousePressEvent(QMouseEvent *e)
 {
     base::mousePressEvent(e);
+    e->accept();
 
     if (drawArea().contains(e->pos()) || (type == Buttons && hoverscroll))
     {
@@ -264,6 +265,7 @@ void ZScrollArea::mousePressEvent(QMouseEvent *e)
 void ZScrollArea::mouseReleaseEvent(QMouseEvent *e)
 {
     base::mouseReleaseEvent(e);
+    e->accept();
 
     if (!dragging || e->button() != Qt::LeftButton)
     {
@@ -284,6 +286,13 @@ void ZScrollArea::mouseReleaseEvent(QMouseEvent *e)
 void ZScrollArea::mouseDoubleClickEvent(QMouseEvent *e)
 {
     base::mouseDoubleClickEvent(e);
+    e->accept();
+
+    if (drawArea().contains(e->pos()) || (type == Buttons && hoverscroll))
+    {
+        e->ignore();
+        return;
+    }
 
     // Needed empty handler to avoid event propagation.
 }
@@ -291,8 +300,8 @@ void ZScrollArea::mouseDoubleClickEvent(QMouseEvent *e)
 void ZScrollArea::mouseMoveEvent(QMouseEvent *e)
 {
     base::mouseMoveEvent(e);
-
     e->accept();
+
     QRect r = rect();
 
     if (type == Buttons)

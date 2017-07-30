@@ -38,6 +38,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent *e) override;
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     virtual void mouseReleaseEvent(QMouseEvent *e) override;
+    virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
 private:
     // Position of the word rectangle relative to this popup window.
     enum RectSide { Top = 0x00, Bottom = 0x01, Left = 0x00, Right = 0x02 };

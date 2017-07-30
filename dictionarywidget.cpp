@@ -1065,14 +1065,14 @@ bool DictionaryWidget::eventFilter(QObject *obj, QEvent *e)
     {
         if (e->type() == QEvent::KeyPress && ((QKeyEvent*)e)->text() != QString())
         {
-            if (
+            if ((
                 //TODO: (later with Qt5.6 or newer) replace all Key_Escape keys where appropriate with QKeySequence::Cancel
 #if (QT_VERSION > 0x050500)
                 ((QKeyEvent*)e)->matches(QKeySequence::Cancel) &&
 #else
                 ((QKeyEvent*)e)->key() == Qt::Key_Escape &&
 #endif
-                ui->wordsTable->cancelActions())
+                ui->wordsTable->cancelActions()) || qApp->mouseButtons().testFlag(Qt::RightButton))
                 return base::eventFilter(obj, e);
 
             QKeyEvent *ke = (QKeyEvent*)e;

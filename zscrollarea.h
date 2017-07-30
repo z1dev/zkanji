@@ -148,6 +148,8 @@ private:
     // The mouse cursor is positioned above the scroll bar or scroll button.
     bool hovering;
 
+    // Auto scroll area when in buttons mode and the cursor hovers above a button. User
+    // settable.
     bool hoverscroll;
 
     // The point relative to the scroll bar's top or left when dragging started. For buttons,

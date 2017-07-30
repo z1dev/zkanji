@@ -81,7 +81,7 @@
      </widget>
     </item>
     <item>
-     <widget class="ZDictionaryListView" name="wordsTable">
+     <widget class="DeckFormListView" name="wordsTable">
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
@@ -105,11 +105,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZDictionaryListView</class>
-   <extends>QTableView</extends>
-   <header>zdictionarylistview.h</header>
-  </customwidget>
-  <customwidget>
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>
    <header>dialogwindow.h</header>
@@ -120,6 +115,11 @@
    <extends>QWidget</extends>
    <header>definitionwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DeckFormListView</class>
+   <extends>QTableView</extends>
+   <header>wordtodeckform.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

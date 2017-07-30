@@ -286,7 +286,14 @@ void ZExamplePopup::mouseMoveEvent(QMouseEvent *e)
 
 void ZExamplePopup::mouseReleaseEvent(QMouseEvent *e)
 {
-    // Needed empty handler to avoid event propagation.
+    base::mouseReleaseEvent(e);
+    e->accept();
+}
+
+void ZExamplePopup::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    base::mouseDoubleClickEvent(e);
+    e->accept();
 }
 
 
@@ -572,8 +579,7 @@ void ZExampleStrip::mousePressEvent(QMouseEvent *e)
 void ZExampleStrip::mouseDoubleClickEvent(QMouseEvent *e)
 {
     base::mouseDoubleClickEvent(e);
-
-    // Needed empty handler to avoid event propagation.
+    e->accept();
 }
 
 void ZExampleStrip::mouseReleaseEvent(QMouseEvent *e)

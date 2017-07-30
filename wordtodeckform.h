@@ -11,6 +11,7 @@
 #include <vector>
 #include "dialogwindow.h"
 #include "zdictionarymodel.h"
+#include "zdictionarylistview.h"
 #include "zui.h"
 
 namespace Ui {
@@ -50,7 +51,18 @@ private:
     typedef DictionaryWordListItemModel base;
 };
 
-class ZListView;
+class DeckFormListView : public ZDictionaryListView
+{
+    Q_OBJECT
+public:
+    DeckFormListView(QWidget *parent = nullptr);
+    virtual ~DeckFormListView();
+protected:
+    virtual bool cancelActions() override;
+private:
+    typedef ZDictionaryListView base;
+};
+
 // Simple header without column move or click, but with checkboxes left to the labels.
 class WordsToDeckHeader : public QHeaderView
 {
@@ -65,9 +77,14 @@ protected:
 
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     virtual void mousePressEvent(QMouseEvent *e) override;
+    virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
     virtual void mouseReleaseEvent(QMouseEvent *e) override;
     virtual void leaveEvent(QEvent *e) override;
 private:
+    // Cancels mouse press when it was held down over a checkbox. Called from parent list view
+    // on lost focus.
+    bool cancelActions();
+
     // Returns the rectangle of the given section in the viewport.
     QRect sectionRect(int index) const;
 
@@ -87,6 +104,8 @@ private:
     int mousecell;
     bool hover;
     bool pressed;
+
+    friend class DeckFormListView;
 
     typedef QHeaderView base;
 };

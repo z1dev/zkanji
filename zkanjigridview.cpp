@@ -37,7 +37,7 @@
 
 
 ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullptr), connected(false), dict(ZKanji::dictionary(0)), 
-        state(State::None), cellsize(std::ceil(Settings::fonts.kanjifontsize / 0.7)), autoscrollmargin(24), cols(0), rows(0), mousebtn(Qt::NoButton),
+        state(State::None), cellsize(std::ceil(Settings::fonts.kanjifontsize / 0.7)), autoscrollmargin(24), cols(0), rows(0), mousedown(false),
         current(-1), selpivot(-1), selection(new RangeSelection), kanjitipcell(-1), kanjitipkanji(-1), dragind(-1)
 {
     setAcceptDrops(true);
@@ -922,6 +922,16 @@ void ZKanjiGridView::removeSelected()
     model()->kanjiGroup()->remove(ranges);
 }
 
+bool ZKanjiGridView::cancelActions()
+{
+    bool cancelled = state == State::CanDrag || mousedown;
+    if (state == State::CanDrag)
+        state = State::None;
+    mousedown = false;
+
+    return cancelled;
+}
+
 void ZKanjiGridView::scrollContentsBy(int dx, int dy)
 {
     base::scrollContentsBy(dx, dy);
@@ -1302,9 +1312,10 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *event)
 
 void ZKanjiGridView::mousePressEvent(QMouseEvent *e)
 {
-    if (mousebtn != Qt::NoButton && e->button() != mousebtn)
+    if (mousedown)
     {
         base::mousePressEvent(e);
+        e->accept();
         return;
     }
 
@@ -1317,7 +1328,8 @@ void ZKanjiGridView::mousePressEvent(QMouseEvent *e)
         return;
     }
 
-    mousebtn = e->button();
+    if (e->button() == Qt::LeftButton)
+        mousedown = true;
 
     bool multi = e->modifiers().testFlag(Qt::ShiftModifier);
     bool toggle = e->modifiers().testFlag(Qt::ControlModifier);
@@ -1344,14 +1356,12 @@ void ZKanjiGridView::mousePressEvent(QMouseEvent *e)
     }
 
     if (!multi && toggle)
-    {
         toggleSelect(cell);
-        base::mousePressEvent(e);
-        return;
-    }
+    else
+        multiSelect(cell, !toggle);
 
-    multiSelect(cell, !toggle);
     base::mousePressEvent(e);
+    e->accept();
 }
 
 void ZKanjiGridView::mouseDoubleClickEvent(QMouseEvent *e)
@@ -1361,6 +1371,7 @@ void ZKanjiGridView::mouseDoubleClickEvent(QMouseEvent *e)
     int ix = cellAt(e->pos());
     if (ix != -1)
         gUI->showKanjiInfo(dictionary(), model()->kanjiAt(ix));
+    e->accept();
 }
 
 void ZKanjiGridView::mouseMoveEvent(QMouseEvent *e)
@@ -1369,11 +1380,12 @@ void ZKanjiGridView::mouseMoveEvent(QMouseEvent *e)
     {
         if ((mousedownpos - e->pos()).manhattanLength() > QApplication::startDragDistance())
         {
+            e->accept();
             QMimeData *mdat = dragMimeData(/*mousedownpos*/);
             if (mdat == nullptr)
                 return;
 
-            mousebtn = Qt::NoButton;
+            mousedown = false;
 
             QDrag *drag = new QDrag(this);
             drag->setMimeData(mdat);
@@ -1390,6 +1402,7 @@ void ZKanjiGridView::mouseMoveEvent(QMouseEvent *e)
     }
 
     base::mouseMoveEvent(e);
+    e->accept();
 
     if (!Settings::kanji.tooltip || itemmodel == nullptr || e->buttons() != Qt::NoButton)
         return;
@@ -1423,15 +1436,16 @@ void ZKanjiGridView::leaveEvent(QEvent *e)
 
 void ZKanjiGridView::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (mousebtn != e->button())
+    if (!mousedown)
     {
         base::mouseReleaseEvent(e);
+        e->accept();
         return;
     }
 
-    mousebtn = Qt::NoButton;
+    mousedown = false;
 
-    if (state == State::CanDrag && e->button() == Qt::LeftButton)
+    if (state == State::CanDrag)
     {
         // The mouse hasn't been moved enough to start a drag operation, so the cell clicked
         // should be selected instead.
@@ -1443,6 +1457,7 @@ void ZKanjiGridView::mouseReleaseEvent(QMouseEvent *e)
     state = State::None;
 
     base::mouseReleaseEvent(e);
+    e->accept();
 }
 
 void ZKanjiGridView::contextMenuEvent(QContextMenuEvent *e)
@@ -1481,6 +1496,7 @@ void ZKanjiGridView::focusInEvent(QFocusEvent *e)
 
 void ZKanjiGridView::focusOutEvent(QFocusEvent *e)
 {
+    cancelActions();
     viewport()->update();
 }
 
