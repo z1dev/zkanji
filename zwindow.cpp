@@ -29,12 +29,11 @@
 const int POPUP_RESIZE_BORDER_SIZE = 4;
 
 
-ZWindow::ZWindow(QWidget *parent) : base(parent, Qt::Window | Qt::Dialog |
-    // TODO: test on linux to see if this flag is needed, and if so whether it breaks current functionality.
+ZWindow::ZWindow(QWidget *parent) : base(parent, Qt::Dialog |
 #ifdef Q_OS_LINUX
     Qt::X11BypassWindowManagerHint |
 #endif
-    Qt::FramelessWindowHint | /*Qt::CustomizeWindowHint |*/ Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
+    Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
 {
     setMouseTracking(true);
 }

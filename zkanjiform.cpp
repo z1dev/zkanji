@@ -58,7 +58,8 @@ void ZDockOverlay::paintEvent(QPaintEvent *e)
 //-------------------------------------------------------------
 
 
-ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog : Qt::WindowFlags()), ui(new Ui::ZKanjiForm), mainform(mainform), activewidget(nullptr), //activepage(-1), activedict(nullptr),
+ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+    : Qt::WindowFlags()), ui(new Ui::ZKanjiForm), mainform(mainform), activewidget(nullptr), //activepage(-1), activedict(nullptr),
     docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
