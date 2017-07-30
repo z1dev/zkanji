@@ -1736,8 +1736,8 @@ void DictionaryWidget::updateMultiline()
     if (categ != CommandCategories::NoCateg)
         ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::ToggleMultiline, categ), ui->multilineButton->isChecked());
 
-    if (model == nullptr)
-        return;
+    //if (model == nullptr)
+    //    return;
 
     if (ui->multilineButton->isChecked() == ui->wordsTable->isMultiLine())
         return;
