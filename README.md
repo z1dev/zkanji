@@ -54,12 +54,8 @@ yet. Currently only the Visual Studio project file is included. If it is set up
 correctly, zkanji should compile out of the box.
 
 When compiling for the Linux platform, use Qt Creator and open the `.pro` file found
-in the root folder. The `.pro` file must be edited to fix the `unix:INCLUDEPATH`,
-which can be invalid when compiling with a different Qt version. The file
-`qxtglobalshortcut_x11.cpp` is from the Qxt project and included with the zkanji
-source unmodified, but it must be modified to compile. The line which only contains
-`#include <X11/Xlib.h>` must be moved below the other includes. If Qt was installed
-the default way, the program will compile without further changes.
+in the root folder. If Qt was installed the default way, the program will compile
+without further changes.
 
 ---
 
@@ -143,7 +139,7 @@ skipped, the old files can only be imported after deleting the generated user fi
 
 Copyright 2007-2013, 2017 Sólyom Zoltán
 
-zkanji TEST is licensed under the terms of the GNU GPLv3. See the LICENCE file for
+zkanji TEST is licensed under the terms of the GNU GPLv3. See the LICENSE file for
 details. The files in sub-folders, apart from files in the `Qxt` folder, are released
 under the same terms, unless otherwise stated in the files themselves.
 
@@ -158,8 +154,8 @@ which is not applicable to this version.
 
 ## Credits
 
-* The following projects are not in any connection with zkanji. The program is only
-using them as their license allows.
+The following projects are not in any connection with zkanji. The program is only
+using them as their license allows:
 
 * Qt Open Source Edition is used for the cross platform user interface and for other
 purposes, like string handling. Qt is licensed under the terms of the GNU LGPL v3.
@@ -175,3 +171,8 @@ that project, and `Qxt/COPYING` for license information.
 Electronic Dictionary Research and Development Group, Monash University](http://www.edrdg.org/).
 The files are made available under a Creative Commons Attribution-ShareAlike Licence
 (V3.0).
+
+* The [Tanaka Corpus](http://www.edrdg.org/wiki/index.php/Tanaka_Corpus), a database
+of English/Japanese example sentences is included or can be imported in zkanji. It is
+released under the terms of [Creative Commons CC-BY](http://creativecommons.org/licenses/by/2.0/fr/deed.en_GB)
+license.
