@@ -4,9 +4,8 @@ This is a temporary name. I will refer to the program simply as zkanji.
 You can find the source code of the program on [GitHub](https://github.com/z1dev/zkanji).
 
 You can reach me at:  
-*z-one* AT+sign free*mail DOT hu (Remove the spaces and * characters, and replace
+z-.one AT+sign free.mail DOT hu (Remove the spaces and . characters, and replace
 parts accordingly.)
-
 
 ---
 
