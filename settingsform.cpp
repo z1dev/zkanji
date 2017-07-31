@@ -869,6 +869,14 @@ void SettingsForm::on_refDownButton_clicked()
     ui->refTable->scrollToRow(ui->refTable->currentRow());
 }
 
+void SettingsForm::on_studyIncludeEdit_textChanged(const QString &text)
+{
+    bool ok;
+    int val = text.toInt(&ok);
+    if (ok)
+        ui->studyIncludeCBox->setEnabled(val != 0);
+}
+
 void SettingsForm::on_siteTypeCBox_currentIndexChanged(int index)
 {
     SitesListModel *m = (SitesListModel*)ui->sitesTable->model();

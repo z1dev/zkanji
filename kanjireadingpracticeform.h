@@ -8,6 +8,7 @@
 #define KANJIREADINGPRACTICEFORM_H
 
 #include <QMainWindow>
+#include "dialogwindow.h"
 
 namespace Ui {
     class KanjiReadingPracticeForm;
@@ -15,7 +16,7 @@ namespace Ui {
 
 class WordDeck;
 class DictionaryWordListItemModel;
-class KanjiReadingPracticeForm : public QMainWindow
+class KanjiReadingPracticeForm : public DialogWindow
 {
     Q_OBJECT
 public:
@@ -38,7 +39,7 @@ private:
 
     DictionaryWordListItemModel *model;
 
-    typedef QMainWindow base;
+    typedef DialogWindow base;
 };
 
 

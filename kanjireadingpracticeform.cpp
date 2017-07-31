@@ -13,6 +13,7 @@
 #include "words.h"
 #include "zui.h"
 #include "globalui.h"
+#include "fontsettings.h"
 
 
 //-------------------------------------------------------------
@@ -30,6 +31,10 @@ KanjiReadingPracticeForm::KanjiReadingPracticeForm(WordDeck *deck, QWidget *pare
     ui->wordsTable->setModel(model);
 
     ui->answerEdit->setValidator(&kanaValidator());
+    ui->acceptButton->setDefault(true);
+    ui->nextButton->setDefault(true);
+
+    ui->kanjiLabel->setFont(Settings::kanjiFont());
 
     connect(ui->acceptButton, &QPushButton::clicked, this, &KanjiReadingPracticeForm::readingAccepted);
     connect(ui->answerEdit, &ZLineEdit::textChanged, this, &KanjiReadingPracticeForm::answerChanged);
@@ -44,6 +49,8 @@ KanjiReadingPracticeForm::~KanjiReadingPracticeForm()
 
 void KanjiReadingPracticeForm::exec()
 {
+    gUI->hideAppWindows();
+
     initNextRound();
 
     show();

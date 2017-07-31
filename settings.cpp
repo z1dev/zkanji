@@ -614,7 +614,7 @@ namespace Settings
         print.separator = ini.value("print/separatorline", false).toBool();
         print.pagenum = ini.value("print/pagenum", false).toBool();
 
-        ini.value("print/printername", print.printername);
+        print.printername = ini.value("print/printername").toString();
         print.portrait = ini.value("print/portraitmode", true).toBool();
         val = ini.value("print/leftmargin", 16).toInt(&ok);
         if (ok && val >= 0)
@@ -859,7 +859,7 @@ namespace Settings
         val = ini.value("study/readings", 2).toInt(&ok);
         if (ok && val >= 0 && val <= 3)
             study.readings = (StudySettings::ReadingType)val;
-        ini.value("study/readingsfrom", 0).toInt(&ok);
+        val = ini.value("study/readingsfrom", 0).toInt(&ok);
         if (ok && val >= 0 && val <= 3)
             study.readingsfrom = (StudySettings::ReadingFrom)val;
 

@@ -171,7 +171,7 @@ void DialogWindow::keyPressEvent(QKeyEvent *e)
             QPushButton *b = nullptr;
             for (QPushButton *btn : list)
             {
-                if (btn->window() != this)
+                if (btn->window() != this || !btn->isVisibleTo(this))
                     continue;
 
                 if (btn->hasFocus())

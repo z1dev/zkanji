@@ -224,23 +224,25 @@ void WordStudyForm::studyDeck(WordDeck *deck)
     bool ok = true;
     int r = 0;
 
+    HideAppWindowsGuard hideguard;
+
     int due = deck->dueSize();
     int queue = deck->queueSize();
 
-    if (deck->firstTest())
+    if (deck->firstTest() || (due == 0 && queue != 0 && Settings::study.includecount == 0))
     {
         // One, Two, Three, Five, Seven
         int includedays[] = { 1, 2, 3, 5, 7 };
         int sincedays = deck->daysSinceLastInclude();
-        if (sincedays == -1 || sincedays >= includedays[(int)Settings::study.includedays])
+        if (sincedays == -1 || (Settings::study.includecount == 0 && queue != 0) || (Settings::study.includecount != 0 && sincedays >= includedays[(int)Settings::study.includedays]))
         {
             if (queue != 0)
             {
                 if (Settings::study.includecount == 0)
                 {
-                    HideAppWindowsGuard hideguard;
-
-                    r = QInputDialog::getInt(nullptr, tr("Inclusion of new items"), tr("Select the number of new items to study today.\n\nDue words from previous days: %1\n\nValid range: 0 - %2 (Unique items: %3)").arg(due).arg(queue).arg(deck->queueUniqueSize()), 0, 0, queue, 1, &ok);
+                    r = QInputDialog::getInt(nullptr, tr("Inclusion of new items"),
+                        (deck->firstTest() ? QString() : tr("You have already finished studying for the day.\nCancel or close the window if you started the test by mistake.\n\n") ) +
+                        tr("Select the number of new items to study.\nDue words from previous days: %1\n\nValid range: 0 - %2 (Unique items: %3)").arg(due).arg(queue).arg(deck->queueUniqueSize()), 0, 0, queue, 1, &ok);
                 }
                 else
                 {
@@ -251,8 +253,6 @@ void WordStudyForm::studyDeck(WordDeck *deck)
             }
             else
             {
-                HideAppWindowsGuard hideguard;
-
                 ok = due == 0 || QMessageBox::question(nullptr, tr("No new items"), tr("There are no new items to include in the test for today. Would you like to study anyway?"), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes;
             }
         }
@@ -262,8 +262,19 @@ void WordStudyForm::studyDeck(WordDeck *deck)
     {
         if (ok)
         {
-            QMessageBox::information(nullptr, "zkanji", tr("No words to study for today.\n\nIf you would like to study new words, start a new test and allow new words to be included."), QMessageBox::Ok);
+            QMessageBox::information(nullptr, "zkanji",
+                queue == 0 ?
+                tr("No words to study for today.\n\nIf you would like to study, add more words to your study queue and start a new test.")
+                :
+                tr("No words to study for today.\n\nIf you would like to study new words, start a new test and allow new words to be included."), QMessageBox::Ok);
         }
+
+        if (deck->readingsQueued() && QMessageBox::question(nullptr, tr("Readings available"), tr("Would you like to practice readings of kanji from words tested today?"), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+        {
+            KanjiReadingPracticeForm *form = new KanjiReadingPracticeForm(deck);
+            form->exec();
+        }
+
         return;
     }
 
@@ -486,8 +497,8 @@ bool WordStudyForm::event(QEvent *e)
                 KanjiReadingPracticeForm *form = new KanjiReadingPracticeForm(deck);
                 form->exec();
             }
-            else
-                gUI->showAppWindows();
+
+            gUI->showAppWindows();
             deleteLater();
             return true;
         }

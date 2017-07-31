@@ -7,8 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>604</width>
-    <height>360</height>
+    <height>366</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Kanji reading test</string>
@@ -18,7 +24,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="kanjiLabel">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
+       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -125,7 +131,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>5</height>
            </size>
           </property>
          </spacer>

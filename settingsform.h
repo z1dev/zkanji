@@ -79,10 +79,12 @@ public slots:
     void on_refUpButton_clicked();
     void on_refDownButton_clicked();
 
+    void on_studyIncludeEdit_textChanged(const QString &text);
+
     void on_siteTypeCBox_currentIndexChanged(int index);
     void sitesSelChanged(int curr, int prev);
-    void on_siteNameEdit_textEdited(const QString & text);
-    void on_siteUrlEdit_textEdited(const QString & text);
+    void on_siteNameEdit_textEdited(const QString &text);
+    void on_siteUrlEdit_textEdited(const QString &text);
     void on_siteUrlEdit_cursorPositionChanged(int oldp, int newp);
     void on_siteUrlEdit_selectionChanged();
     void on_siteLockButton_toggled(bool checked);
