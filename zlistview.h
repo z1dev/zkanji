@@ -364,8 +364,8 @@ protected:
 
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
 
-    // Only purpose of this event is to skip some handling in the base class that would create
-    // persistent indexes.
+    // Skips some handling in the base class that would create persistent indexes, and handles
+    // leave events.
     virtual bool viewportEvent(QEvent *e) override;
 protected slots:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) { ; }

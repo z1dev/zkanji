@@ -1774,6 +1774,8 @@ void ZListView::leaveEvent(QEvent *e)
 {
     base::leaveEvent(e);
 
+    // Don't forget viewportEvent() when changing this.
+
     if (!mousecell.isValid())
         return;
 
@@ -2097,6 +2099,16 @@ bool ZListView::viewportEvent(QEvent *e)
     case QEvent::HoverMove:
     case QEvent::HoverEnter:
     case QEvent::HoverLeave:
+        // Moving out of the cell.
+        if (mousecell.isValid() && hover)
+        {
+            hover = false;
+            viewport()->update(itemDelegate()->checkBoxRect(mousecell));
+
+            if (!pressed)
+                mousecell = QModelIndex();
+        }
+
         // Skipping base class implementations that would save persistent indexes.
         return QAbstractScrollArea::viewportEvent(e);
     }

@@ -943,6 +943,21 @@ void ZKanjiGridView::scrollContentsBy(int dx, int dy)
     dragMoveEvent(&e);
 }
 
+bool ZKanjiGridView::viewportEvent(QEvent *e)
+{
+    switch (e->type())
+    {
+    case QEvent::Leave:
+    case QEvent::HoverLeave:
+        ZToolTip::startHide();
+        kanjitipcell = -1;
+        kanjitipkanji = -1;
+        break;
+    }
+
+    return base::viewportEvent(e);
+}
+
 void ZKanjiGridView::timerEvent(QTimerEvent *e)
 {
     if (e->timerId() == autoScrollTimer.timerId())
@@ -1429,6 +1444,7 @@ void ZKanjiGridView::leaveEvent(QEvent *e)
 {
     base::leaveEvent(e);
 
+    // Don't forget viewportEvent() when changing this.
     ZToolTip::startHide();
     kanjitipcell = -1;
     kanjitipkanji = -1;

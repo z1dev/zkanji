@@ -152,6 +152,8 @@ protected:
     // Makes sure the drag drop indicator is updated while draggong.
     virtual void scrollContentsBy(int dx, int dy) override;
 
+    virtual bool viewportEvent(QEvent *e) override;
+
     virtual void timerEvent(QTimerEvent *e) override;
 
     virtual void paintEvent(QPaintEvent *e) override;

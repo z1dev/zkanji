@@ -866,6 +866,22 @@ int ZDictionaryListView::dropRow(int ypos) const
 //    base::keyPressEvent(e);
 //}
 
+bool ZDictionaryListView::viewportEvent(QEvent *e)
+{
+    switch (e->type())
+    {
+    case QEvent::HoverLeave:
+    case QEvent::Leave:
+        ZToolTip::startHide();
+        kanjitippos = -1;
+        kanjitipcell = QModelIndex();
+        unsetCursor();
+        break;
+    }
+
+    return base::viewportEvent(e);
+}
+
 void ZDictionaryListView::mouseDoubleClickEvent(QMouseEvent *e)
 {
     base::mouseDoubleClickEvent(e);
@@ -1002,6 +1018,7 @@ void ZDictionaryListView::leaveEvent(QEvent *e)
 {
     base::leaveEvent(e);
 
+    // Don't forget viewportEvent() when changing this.
     ZToolTip::startHide();
     kanjitippos = -1;
     kanjitipcell = QModelIndex();

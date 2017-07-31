@@ -2440,11 +2440,10 @@ WordDeckWord* WordDeck::addWordWithIndex(int windex)
     if (it != list.end() && (*it)->index == windex)
         return *it;
 
-    WordDeckWord *w = wordFromIndex(windex);
-
-    w = new WordDeckWord;
+    WordDeckWord *w = new WordDeckWord;
     w->index = windex;
     w->types = 0;
+    w->groupid = nullptr;
 
     list.insert(it, w);
 

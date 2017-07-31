@@ -210,6 +210,8 @@ protected:
 
     //virtual void keyPressEvent(QKeyEvent *event) override;
 
+    virtual bool viewportEvent(QEvent *e) override;
+
     virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     virtual void mousePressEvent(QMouseEvent *e) override;
