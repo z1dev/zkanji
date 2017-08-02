@@ -415,7 +415,10 @@ namespace Settings
     {
         QString defjp;
 
-        // Find either Meiryo (Win), MS UI Gothic (Win), MS Gothic (Win), Hiragino Kaku Gothic Pro (Mac), Osaka (Mac), Arial Unicode
+        // Fonts to look for to set as default:
+        // Windows: Meiryo, MS UI Gothic, MS Gothic
+        // Mac: Hiragino Kaku Gothic Pro, Osaka, Arial Unicode
+        // Linux: Sazanami Gothic, VL Gothic, IPAGothic, Droid Sans Fallback, Gnu Unifont
         if (!allJpFonts.isEmpty())
         {
 #ifdef Q_OS_MAC
@@ -486,6 +489,47 @@ namespace Settings
                     defjp = allJpFonts.at(uix);
                 else if (gx)
                     defjp = allJpFonts.at(gix);
+            }
+#elif defined Q_OS_LINUX
+            if (defjp.isEmpty())
+            {
+                // Linux: Sazanami Gothic, VL Gothic, IPAGothic, Droid Sans Fallback, Gnu Unifont
+                int ixs[]{ -1, -1, -1, -1, -1 };
+                bool fx[]{ false, false, false, false, false };
+                QString strnames[] = { "Sazanami Gothic", "VL Gothic", "IPAGothic", "Droid Sans Fallback", "Gnu Unifont" };
+
+                int ix = 0;
+                for (const QString &s : allJpFonts)
+                {
+                    int iy = 0;
+                    for (const QString &s2 : strnames)
+                    {
+                        if (!fx[iy] && s.startsWith(s2.split(' ').at(0)))
+                        {
+                            ixs[iy] = ix;
+                            if (s == s2)
+                            {
+                                fx[iy] = true;
+                                if (iy == 0)
+                                    break;
+                            }
+                        }
+                        ++iy;
+                    }
+
+                    if (fx[0])
+                        break;
+                    ++ix;
+                }
+
+                for (ix = 0; ix != 5; ++ix)
+                {
+                    if (ixs[ix] != -1)
+                    {
+                        defjp = allJpFonts.at(ixs[ix]);
+                        break;
+                    }
+                }
             }
 #endif
             if (defjp.isEmpty())
@@ -873,7 +917,7 @@ namespace Settings
         val = ini.value("data/backupcount", 4).toInt(&ok);
         if (ok && val >= 1 && val <= 9999)
             data.backupcnt = val;
-        val = ini.value("data/backupskip",3).toInt(&ok);
+        val = ini.value("data/backupskip", 3).toInt(&ok);
         if (ok && val >= 1 && val <= 100)
             data.backupskip = val;
         data.location = ini.value("data/location", QString()).toString();
@@ -1240,47 +1284,47 @@ namespace Settings
         case ColorSettings::Inf:
             return colors.lighttheme ? colors.infldef : colors.infddef;
         case ColorSettings::Attrib:
-            return colors.lighttheme ?  colors.attribldef : colors.attribddef;
+            return colors.lighttheme ? colors.attribldef : colors.attribddef;
         case ColorSettings::Types:
-            return colors.lighttheme ?  colors.typesldef : colors.typesddef;
+            return colors.lighttheme ? colors.typesldef : colors.typesddef;
         case ColorSettings::Notes:
-            return colors.lighttheme ?  colors.notesldef : colors.notesddef;
+            return colors.lighttheme ? colors.notesldef : colors.notesddef;
         case ColorSettings::Fields:
-            return colors.lighttheme ?  colors.fieldsldef : colors.fieldsddef;
+            return colors.lighttheme ? colors.fieldsldef : colors.fieldsddef;
         case ColorSettings::Dialects:
-            return colors.lighttheme ?  colors.dialectldef : colors.dialectddef;
+            return colors.lighttheme ? colors.dialectldef : colors.dialectddef;
         case ColorSettings::KanaOnly:
-            return colors.lighttheme ?  colors.kanaonlyldef : colors.kanaonlyddef;
+            return colors.lighttheme ? colors.kanaonlyldef : colors.kanaonlyddef;
         case ColorSettings::KanjiExBg:
             return colors.lighttheme ? colors.kanjiexbgldef : colors.kanjiexbgddef;
         case ColorSettings::Oku:
-            return colors.lighttheme ?  colors.okucolorldef : colors.okucolorddef;
+            return colors.lighttheme ? colors.okucolorldef : colors.okucolorddef;
         case ColorSettings::N5:
-            return colors.lighttheme ?  colors.n5ldef : colors.n5ddef;
+            return colors.lighttheme ? colors.n5ldef : colors.n5ddef;
         case ColorSettings::N4:
-            return colors.lighttheme ?  colors.n4ldef : colors.n4ddef;
+            return colors.lighttheme ? colors.n4ldef : colors.n4ddef;
         case ColorSettings::N3:
-            return colors.lighttheme ?  colors.n3ldef : colors.n3ddef;
+            return colors.lighttheme ? colors.n3ldef : colors.n3ddef;
         case ColorSettings::N2:
-            return colors.lighttheme ?  colors.n2ldef : colors.n2ddef;
+            return colors.lighttheme ? colors.n2ldef : colors.n2ddef;
         case ColorSettings::N1:
-            return colors.lighttheme ?  colors.n1ldef : colors.n1ddef;
+            return colors.lighttheme ? colors.n1ldef : colors.n1ddef;
         case ColorSettings::KanjiNoWords:
-            return colors.lighttheme ?  colors.nowordsldef : colors.nowordsddef;
+            return colors.lighttheme ? colors.nowordsldef : colors.nowordsddef;
         case ColorSettings::KanjiUnsorted:
-            return colors.lighttheme ?  colors.unsortedldef : colors.unsortedddef;
+            return colors.lighttheme ? colors.unsortedldef : colors.unsortedddef;
         case ColorSettings::KataBg:
-            return colors.lighttheme ?  colors.katabgldef : colors.katabgddef;
+            return colors.lighttheme ? colors.katabgldef : colors.katabgddef;
         case ColorSettings::HiraBg:
-            return colors.lighttheme ?  colors.hirabgldef : colors.hirabgddef;
+            return colors.lighttheme ? colors.hirabgldef : colors.hirabgddef;
         case ColorSettings::SimilarText:
-            return colors.lighttheme ?  colors.similartextldef : colors.similartextddef;
+            return colors.lighttheme ? colors.similartextldef : colors.similartextddef;
         case ColorSettings::SimilarBg:
-            return colors.lighttheme ?  colors.similarbgldef : colors.similarbgddef;
+            return colors.lighttheme ? colors.similarbgldef : colors.similarbgddef;
         case ColorSettings::PartsBg:
-            return colors.lighttheme ?  colors.partsbgldef : colors.partsbgddef;
+            return colors.lighttheme ? colors.partsbgldef : colors.partsbgddef;
         case ColorSettings::PartOfBg:
-            return colors.lighttheme ?  colors.partofbgldef : colors.partofbgddef;
+            return colors.lighttheme ? colors.partofbgldef : colors.partofbgddef;
         default:
             return QColor(0, 0, 0);
         }

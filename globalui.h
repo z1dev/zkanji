@@ -245,6 +245,9 @@ public slots:
 
     // Displays a simplistic about window for the program.
     void showAbout();
+
+    // Saves user data, user settings and form states.
+    void saveBeforeQuit();
 private slots:
 
     void kanjiInfoDestroyed();
@@ -269,9 +272,6 @@ private slots:
     // enableAutoSave() the same number of times as disableAutoSave() was called to start
     // saving again. Use AutoSaveGuard objects outside this class.
     void enableAutoSave();
-
-    // Saves user data, user settings and form states.
-    void saveBeforeQuit();
 private:
     GlobalUI(QObject *parent = nullptr);
 

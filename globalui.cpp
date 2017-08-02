@@ -1482,6 +1482,18 @@ void GlobalUI::showAbout()
         % aboutsection % (ZKanji::sentences.creationDate().isValid()  ? ("\n\n" % examplesection) : QString()) % "\n\n" % tr("Contact me via e-mail at: ") % "z-one@" % maddr % "\n" % tr("zkanji development blog: ") % "ht" "tp://zkanji." % "wordpress" % ".com/\n" % "zkanji project home: https://github.com/z1dev/zkanji/");
 }
 
+void GlobalUI::saveBeforeQuit()
+{
+    static bool saved = false;
+    if (saved)
+        return;
+    saved = true;
+
+    saveSettings();
+    lastsave = QDateTime::currentDateTimeUtc();
+    ZKanji::saveUserData();
+}
+
 void GlobalUI::disableAutoSave()
 {
     autosavecounter++;
@@ -1493,13 +1505,6 @@ void GlobalUI::enableAutoSave()
         throw "Called without disableAutoSave().";
 
     --autosavecounter;
-}
-
-void GlobalUI::saveBeforeQuit()
-{
-    saveSettings();
-    lastsave = QDateTime::currentDateTimeUtc();
-    ZKanji::saveUserData();
 }
 
 void GlobalUI::installShortcuts(bool install)

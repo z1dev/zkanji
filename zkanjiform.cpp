@@ -12,6 +12,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QSystemTrayIcon>
+#include <QDesktopWidget>
 
 #include "zkanjiform.h"
 #include "ui_zkanjiform.h"
@@ -97,15 +98,21 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
 
     updateMainMenu();
 
-    //// Allowing the ZKanjiWidget to calculate correct sizes.
-    //setAttribute(Qt::WA_DontShowOnScreen);
-    //show();
-    //hide();
-    //setAttribute(Qt::WA_DontShowOnScreen, false);
+    // Allowing the ZKanjiWidget to calculate correct sizes.
+    setAttribute(Qt::WA_DontShowOnScreen);
+    show();
+
+    QRect fr = frameGeometry();
+    QRect g = qApp->desktop()->screenGeometry();
+    move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
+
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
 }
 
-ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent) : base(parent), ui(new Ui::ZKanjiForm), mainform(false), activewidget(nullptr), //activepage(-1), activedict(nullptr),
-    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
+ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent) : base(parent, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+ui(new Ui::ZKanjiForm), mainform(false), activewidget(nullptr), //activepage(-1), activedict(nullptr),
+docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
     setMouseTracking(true);
@@ -139,11 +146,16 @@ ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent) : base(parent), ui(new 
 
     updateMainMenu();
 
-    //// Allowing the ZKanjiWidget to calculate correct sizes.
-    //setAttribute(Qt::WA_DontShowOnScreen);
-    //show();
-    //hide();
-    //setAttribute(Qt::WA_DontShowOnScreen, false);
+    // Allowing the ZKanjiWidget to calculate correct sizes.
+    setAttribute(Qt::WA_DontShowOnScreen);
+    show();
+
+    QRect fr = frameGeometry();
+    QRect g = qApp->desktop()->screenGeometry();
+    move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
+
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
 }
 
 ZKanjiForm::~ZKanjiForm()
@@ -927,37 +939,37 @@ void ZKanjiForm::keyPressEvent(QKeyEvent *e)
     base::keyPressEvent(e);
 }
 
-//void ZKanjiForm::moveEvent(QMoveEvent *e)
-//{
-//    qApp->postEvent(this, new SaveSizeEvent());
-//    //if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowMinimized))
-//    //    settingsrect = normalGeometry();
-//
-//    // Qt sends move events during resize not just during move (tested on Windows.) In case
-//    // the window was merely resized, docking behavior should be avoided.
-//    QRect r;
-//    QPoint p;
-//    if (downnonclient)
-//    {
-//        r = frameGeometry();
-//        if (!qApp->mouseButtons().testFlag(Qt::LeftButton) || framerect == r || framerect.width() != r.width() || framerect.height() != r.height())
-//        {
-//            ((ZKanjiForm*)gUI->mainForm())->hideDockOverlay();
-//            downnonclient = false;
-//        }
-//    }
-//    if (downnonclient)
-//    {
-//        p = QCursor::pos();
-//        if (dockmoving = validDockPos(p))
-//            ((ZKanjiForm*)gUI->mainForm())->dockAt(gUI->mainForm()->centralWidget()->mapFromGlobal(p));
-//        else
-//            ((ZKanjiForm*)gUI->mainForm())->hideDockOverlay();
-//        framerect = frameGeometry();
-//    }
-//
-//    base::moveEvent(e);
-//}
+void ZKanjiForm::moveEvent(QMoveEvent *e)
+{
+    qApp->postEvent(this, new SaveSizeEvent());
+    //    //if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowMinimized))
+    //    //    settingsrect = normalGeometry();
+    //
+    //    // Qt sends move events during resize not just during move (tested on Windows.) In case
+    //    // the window was merely resized, docking behavior should be avoided.
+    //    QRect r;
+    //    QPoint p;
+    //    if (downnonclient)
+    //    {
+    //        r = frameGeometry();
+    //        if (!qApp->mouseButtons().testFlag(Qt::LeftButton) || framerect == r || framerect.width() != r.width() || framerect.height() != r.height())
+    //        {
+    //            ((ZKanjiForm*)gUI->mainForm())->hideDockOverlay();
+    //            downnonclient = false;
+    //        }
+    //    }
+    //    if (downnonclient)
+    //    {
+    //        p = QCursor::pos();
+    //        if (dockmoving = validDockPos(p))
+    //            ((ZKanjiForm*)gUI->mainForm())->dockAt(gUI->mainForm()->centralWidget()->mapFromGlobal(p));
+    //        else
+    //            ((ZKanjiForm*)gUI->mainForm())->hideDockOverlay();
+    //        framerect = frameGeometry();
+    //    }
+    //
+    //    base::moveEvent(e);
+}
 
 void ZKanjiForm::resizeEvent(QResizeEvent *e)
 {
@@ -1040,6 +1052,16 @@ void ZKanjiForm::changeEvent(QEvent *e)
     }
 
     base::changeEvent(e);
+}
+
+void ZKanjiForm::closeEvent(QCloseEvent *e)
+{
+    // It's necessary to save settings before the main form closes, because the child windows
+    // owned by this form would get destroyed before their settings could be saved.
+    if (mainform)
+        gUI->saveBeforeQuit();
+
+    base::closeEvent(e);
 }
 
 void ZKanjiForm::appFocusChanged(QWidget *prev, QWidget *current)
@@ -1304,7 +1326,7 @@ void ZKanjiForm::fillMainMenu()
 
     viewmenu->addSeparator();
 
-    a = viewmenu->addAction(tr("New Window"));
+    a = viewmenu->addAction(tr("New window"));
     a->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_N);
     connect(a, &QAction::triggered, gUI, &GlobalUI::createWindow);
 

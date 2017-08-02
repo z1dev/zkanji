@@ -223,7 +223,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -2646,7 +2646,7 @@ Scales everything in the program, including icons and text. The main menu, popup
               <item row="1" column="1">
                <widget class="QFontComboBox" name="dictKanaFontCBox">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -2666,7 +2666,7 @@ Scales everything in the program, including icons and text. The main menu, popup
               <item row="2" column="1">
                <widget class="QFontComboBox" name="dictDefFontCBox">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -2688,7 +2688,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 <item>
                  <widget class="QFontComboBox" name="dictInfoFontCBox">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -2742,7 +2742,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 <item>
                  <widget class="QFontComboBox" name="extraFontCBox">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -2912,7 +2912,7 @@ Scales everything in the program, including icons and text. The main menu, popup
               <item row="0" column="1">
                <widget class="QFontComboBox" name="kanjiFontCBox">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -4915,7 +4915,7 @@ Scales everything in the program, including icons and text. The main menu, popup
               <item row="2" column="1">
                <widget class="QFontComboBox" name="printKanaFontCBox">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -4932,7 +4932,7 @@ Scales everything in the program, including icons and text. The main menu, popup
               <item row="3" column="1">
                <widget class="QFontComboBox" name="printDefFontCBox">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -4954,7 +4954,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 <item>
                  <widget class="QFontComboBox" name="printInfoFontCBox">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -5208,8 +5208,8 @@ Scales everything in the program, including icons and text. The main menu, popup
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

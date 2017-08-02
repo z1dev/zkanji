@@ -152,13 +152,14 @@ protected:
 
     //virtual void focusInEvent(QFocusEvent *e) override;
     virtual bool event(QEvent *e) override;
-    //virtual void moveEvent(QMoveEvent *e) override;
+    virtual void moveEvent(QMoveEvent *e) override;
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     virtual void mousePressEvent(QMouseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;
     //virtual void contextMenuEvent(QContextMenuEvent *e) override;
     virtual void changeEvent(QEvent *e) override;
+    virtual void closeEvent(QCloseEvent *e) override;
 private slots:
     void appFocusChanged(QWidget *prev, QWidget *current);
     void startDockDrag();
@@ -221,7 +222,7 @@ private:
 
     // Rectangle of the frameGeometry saved when pressing the mouse button on the non-client
     // area of a form. If its value changes, the form is not dragged but resized.
-    QRect framerect;
+    //QRect framerect;
 
     // Overlay widget shown on the main form while dragging a window above the main form, to
     // show the destination of a dock operation.
