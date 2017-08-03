@@ -21,6 +21,10 @@
 #undef max
 #endif
 
+#ifdef Q_OS_LINUX
+#include "stayontop_x11.h"
+#endif
+
 #include "zwindow.h"
 #include "zevents.h"
 
@@ -89,9 +93,11 @@ const int POPUP_RESIZE_BORDER_SIZE = 4;
 
 
 ZWindow::ZWindow(QWidget *parent) : base(parent, Qt::Dialog |
-#ifdef Q_OS_LINUX
+    /*
+    #ifdef Q_OS_LINUX
     Qt::X11BypassWindowManagerHint |
-#endif
+    #endif
+    */
     Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
 {
     setMouseTracking(true);
@@ -124,8 +130,12 @@ void ZWindow::setStayOnTop(bool val)
         SetWindowPos(reinterpret_cast<HWND>(winId()), val ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     else
 #endif
+
 #ifdef Q_OS_LINUX
-        setWindowFlags(val ? (flags | Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint) : (flags & ~(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint)));
+        if (testAttribute(Qt::WA_NativeWindow))
+            x11_window_set_on_top(this, val);
+        else
+            setWindowFlags(val ? (flags /*| Qt::X11BypassWindowManagerHint*/ | Qt::WindowStaysOnTopHint) : (flags & ~(/*Qt::X11BypassWindowManagerHint |*/ Qt::WindowStaysOnTopHint)));
 #else
         setWindowFlags(val ? (flags | Qt::WindowStaysOnTopHint) : (flags & ~Qt::WindowStaysOnTopHint));
 #endif
@@ -388,6 +398,16 @@ bool ZWindow::event(QEvent *e)
 
         MARGINS m = { -1 };
         HRESULT hr = DwmExtendFrameIntoClientArea(hwnd, &m);
+    }
+#endif
+
+#ifdef Q_OS_LINUX
+    if (e->type() == QEvent::WinIdChange)
+    {
+        bool r = base::event(e);
+        if (windowFlags().testFlag(Qt::WindowStaysOnTopHint))
+            x11_window_set_on_top(this, true);
+        return r;
     }
 #endif
 

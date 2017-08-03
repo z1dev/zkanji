@@ -8,6 +8,10 @@
 #include <QtEvents>
 #include "dialogwindow.h"
 
+#ifdef Q_OS_LINUX
+#include "stayontop_x11.h"
+#endif
+
 
 //-------------------------------------------------------------
 
@@ -129,6 +133,21 @@ void DialogWindow::closeStop()
 void DialogWindow::closeError()
 {
     modalClose(ModalResult::Error);
+}
+
+bool DialogWindow::event(QEvent *e)
+{
+#ifdef Q_OS_LINUX
+    if (e->type() == QEvent::WinIdChange)
+    {
+        bool r = base::event(e);
+        if (windowFlags().testFlag(Qt::WindowStaysOnTopHint))
+            x11_window_set_on_top(this, true);
+        return r;
+    }
+#endif
+
+    return base::event(e);
 }
 
 void DialogWindow::closeEvent(QCloseEvent *e)

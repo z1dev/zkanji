@@ -69,6 +69,8 @@ public slots:
 protected:
     // Overrides from Qt:
 
+    virtual bool event(QEvent *e) override;
+
     virtual void closeEvent(QCloseEvent *e) override;
 
     // Handles the default button.
