@@ -95,6 +95,9 @@ struct KanjiInfoData
     // Window dimensions.
     QSize siz;
 
+    // Position of the window.
+    QPoint pos;
+
     bool grid = true;
     bool sod = true;
 
@@ -125,8 +128,6 @@ struct KanjiInfoFormData
     // The information window is locked. Getting information of another kanji will force open
     // the next window.
     bool locked = false;
-    // Position of the window.
-    QPoint pos;
 
     int kindex;
     QString dictname;

@@ -137,7 +137,8 @@ SOURCES += \
     ztreeview.cpp \
     zui.cpp \
     zwindow.cpp \
-    main.cpp
+    main.cpp \
+	stayontop_x11.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -258,7 +259,8 @@ HEADERS += \
     ztooltip.h \
     ztreeview.h \
     zui.h \
-    zwindow.h
+    zwindow.h \
+	stayontop_x11.h
 
 FORMS += \
     collectwordsform.ui \

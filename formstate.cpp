@@ -455,6 +455,11 @@ namespace FormStates
             writer.writeAttribute("width", QString::number(data.siz.width()));
             writer.writeAttribute("height", QString::number(data.siz.height()));
         }
+        if (!data.pos.isNull())
+        {
+            writer.writeAttribute("x", QString::number(data.pos.x()));
+            writer.writeAttribute("y", QString::number(data.pos.y()));
+        }
 
         writer.writeAttribute("grid", data.grid ? True : False);
         writer.writeAttribute("sod", data.sod ? True : False);
@@ -506,6 +511,26 @@ namespace FormStates
         }
         if (!ok)
             data.siz = QSize();
+
+        ok = false;
+        if (reader.attributes().hasAttribute("x"))
+        {
+            val = reader.attributes().value("x").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.pos.setX(val);
+        }
+        if (ok && reader.attributes().hasAttribute("y"))
+        {
+            val = reader.attributes().value("y").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.pos.setY(val);
+        }
+        if (!ok)
+            data.pos = QPoint();
 
         data.grid = reader.attributes().value("grid") == True;
         data.sod = reader.attributes().value("sod") == True;
@@ -570,12 +595,6 @@ namespace FormStates
         if (data.locked)
             writer.writeAttribute("locked", QStringLiteral("1"));
 
-        if (!data.pos.isNull())
-        {
-            writer.writeAttribute("x", QString::number(data.pos.x()));
-            writer.writeAttribute("y", QString::number(data.pos.y()));
-        }
-
         saveXMLSettings(data.data, writer);
     }
 
@@ -599,26 +618,6 @@ namespace FormStates
         else
             data.dictname = QString();
         data.locked = reader.attributes().value("locked") == QStringLiteral("1");
-
-        ok = false;
-        if (reader.attributes().hasAttribute("x"))
-        {
-            val = reader.attributes().value("x").toInt(&ok);
-            if (val < -999999 || val > 999999)
-                ok = false;
-            if (ok)
-                data.pos.setX(val);
-        }
-        if (ok && reader.attributes().hasAttribute("y"))
-        {
-            val = reader.attributes().value("y").toInt(&ok);
-            if (val < -999999 || val > 999999)
-                ok = false;
-            if (ok)
-                data.pos.setY(val);
-        }
-        if (!ok)
-            data.pos = QPoint();
 
         loadXMLSettings(data.data, reader);
     }

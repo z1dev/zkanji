@@ -176,6 +176,7 @@ bool KanjiInfoForm::loadXMLSettings(QXmlStreamReader &reader)
 void KanjiInfoForm::saveState(KanjiInfoData &data) const
 {
     data.siz = isMaximized() ? normalGeometry().size() : rect().size();
+    data.pos = geometry().topLeft();
 
     int h = data.siz.height();
     if (ui->sodWidget->isVisibleTo(this))
@@ -316,13 +317,15 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
         siz.setHeight(h);
         resize(siz);
     }
+    if (!data.pos.isNull())
+        move(data.pos);
+
     ignoreresize = false;
     _resized();
 }
 
 void KanjiInfoForm::saveState(KanjiInfoFormData &data) const
 {
-    data.pos = geometry().topLeft();
     data.kindex = ui->kanjiView->kanjiIndex();
     data.dictname = dict == nullptr ? QString() : dict->name();
     data.locked = ui->lockButton->isChecked();
@@ -332,8 +335,6 @@ void KanjiInfoForm::saveState(KanjiInfoFormData &data) const
 bool KanjiInfoForm::restoreState(const KanjiInfoFormData &data)
 {
     ignoreresize = true;
-    if (!data.pos.isNull())
-        move(data.pos);
     int dix = ZKanji::dictionaryIndex(data.dictname);
     if (dix != -1)
         setKanji(ZKanji::dictionary(dix), data.kindex);
