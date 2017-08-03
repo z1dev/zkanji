@@ -66,6 +66,7 @@ private slots:
     void appStateChange(Qt::ApplicationState state);
     void on_pinButton_clicked(bool checked);
     void on_floatButton_clicked(bool checked);
+    void on_dictionary_wordDoubleClicked(int windex, int dindex);
 
     void settingsChanged();
     void dictionaryRemoved(int index);

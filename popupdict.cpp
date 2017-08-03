@@ -22,6 +22,7 @@
 #include "zevents.h"
 #include "zdictionarylistview.h"
 #include "words.h"
+#include "dialogs.h"
 
 PopupDictionary *PopupDictionary::instance = nullptr;
 
@@ -248,6 +249,11 @@ void PopupDictionary::on_floatButton_clicked(bool checked)
     floatWindow(FormStates::popupdict.floating);
 }
 
+void PopupDictionary::on_dictionary_wordDoubleClicked(int windex, int dindex)
+{
+    wordToGroupSelect(ZKanji::dictionary(dictindex), windex);
+}
+
 void PopupDictionary::appStateChange(Qt::ApplicationState state)
 {
     if (!isVisible() || !Settings::popup.autohide || ui->pinButton->isChecked() || ignoreresize)
@@ -391,6 +397,7 @@ void PopupDictionary::resizeToFullWidth()
     if (floating || !Settings::popup.widescreen)
         return;
 
+    winId();
     if (windowHandle()->screen() == nullptr)
         return;
 

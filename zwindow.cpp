@@ -124,7 +124,12 @@ void ZWindow::setStayOnTop(bool val)
         SetWindowPos(reinterpret_cast<HWND>(winId()), val ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     else
 #endif
+#ifdef Q_OS_LINUX
+        setWindowFlags(val ? (flags | Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint) : (flags & ~(Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint)));
+#else
         setWindowFlags(val ? (flags | Qt::WindowStaysOnTopHint) : (flags & ~Qt::WindowStaysOnTopHint));
+#endif
+
 #ifndef Q_OS_WIN
     if (wasvisible)
         show();
@@ -391,7 +396,7 @@ bool ZWindow::event(QEvent *e)
 
 bool ZWindow::eventFilter(QObject *obj, QEvent *e)
 {
-    if (isGrabWidget(obj) && grabside == (int)GrabSide::None && !beingResized() && (e->type() == QEvent::MouseMove || e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease))
+    if (grabside == (int)GrabSide::None && !beingResized() && (e->type() == QEvent::MouseMove || e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease) && isGrabWidget(obj))
     {
         QMouseEvent *me = (QMouseEvent*)e;
         switch (me->type())
