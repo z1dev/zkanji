@@ -97,13 +97,14 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &ZKanjiForm::dictionaryRenamed);
 
     updateMainMenu();
-
+    
     // Allowing the ZKanjiWidget to calculate correct sizes.
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
 
     QRect fr = frameGeometry();
-    QRect g = qApp->desktop()->screenGeometry();
+    int scrnum = -1;
+    QRect g = qApp->desktop()->screenGeometry(mainform ? this : (QWidget*)gUI->mainForm());
     move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
 
     hide();
@@ -151,7 +152,7 @@ docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(fals
     show();
 
     QRect fr = frameGeometry();
-    QRect g = qApp->desktop()->screenGeometry();
+    QRect g = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
     move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
 
     hide();

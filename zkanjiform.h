@@ -78,8 +78,6 @@ private:
 };
 
 
-// Form holding ZKanjiWidgets, both as the main window containing sliders and widgets, and as
-// a floating window above the main window.
 class QLayout;
 class ZKanjiWidget;
 class QXmlStreamWriter;
@@ -87,6 +85,8 @@ class QXmlStreamReader;
 class Dictionary;
 class QActionGroup;
 enum class ViewModes;
+// Form holding ZKanjiWidgets, both as the main window containing sliders and widgets, and as
+// a floating window above the main window.
 class ZKanjiForm : public QMainWindow
 {
     Q_OBJECT
@@ -115,6 +115,8 @@ public:
     // Returns true for the main form if it holds more than a single ZKanjiWidget.
     bool hasDockChild() const;
 
+    // Creates a new ZKanjiForm with the widget as its central widget floating over the main
+    // window.
     void floatWidget(ZKanjiWidget* w);
 
     // Returns the zkanji widget which is active in the window, or the zkanji widget which was

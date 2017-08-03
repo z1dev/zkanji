@@ -24,6 +24,65 @@
 #include "zwindow.h"
 #include "zevents.h"
 
+
+//-------------------------------------------------------------
+
+#ifdef Q_OS_LINUX
+namespace {
+    class ZWindowFilter : public QObject
+    {
+    public:
+        ZWindowFilter() : QObject(qApp) { qApp->installEventFilter(this); }
+
+        static void install()
+        {
+            if (filter == nullptr)
+            {
+                zwindowcnt = 1;
+                filter = new ZWindowFilter();
+            }
+            else
+                ++zwindowcnt;
+        }
+
+        static void uninstall()
+        {
+            if (zwindowcnt == 0)
+                return;
+
+            if (--zwindowcnt == 0)
+            {
+                delete filter;
+                filter = nullptr;
+            }
+        }
+    protected:
+        virtual bool eventFilter(QObject *o, QEvent *e) override
+        {
+            if (o->isWidgetType() && e->type() == QEvent::MouseButtonPress && dynamic_cast<ZWindow*>(((QWidget*)o)->window()) != nullptr)
+            {
+                ZWindow *w = ((ZWindow*)((QWidget*)o)->window());
+                if (!w->isActiveWindow())
+                {
+                    w->activateWindow();
+                    w->raise();
+                    w->update();
+                }
+            }
+
+            return false;
+        }
+    private:
+        static int zwindowcnt;
+        static ZWindowFilter *filter;
+
+        typedef QObject base;
+    };
+    int ZWindowFilter::zwindowcnt = 0;
+    ZWindowFilter* ZWindowFilter::filter = nullptr;
+}
+#endif
+
 //-------------------------------------------------------------
 
 const int POPUP_RESIZE_BORDER_SIZE = 4;
@@ -36,11 +95,18 @@ ZWindow::ZWindow(QWidget *parent) : base(parent, Qt::Dialog |
     Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
 {
     setMouseTracking(true);
+
+
+#ifdef Q_OS_LINUX
+    ZWindowFilter::install();
+#endif
 }
 
 ZWindow::~ZWindow()
 {
-
+#ifdef Q_OS_LINUX
+    ZWindowFilter::uninstall();
+#endif
 }
 
 void ZWindow::setParent(QWidget *newparent)
@@ -58,7 +124,7 @@ void ZWindow::setStayOnTop(bool val)
         SetWindowPos(reinterpret_cast<HWND>(winId()), val ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
     else
 #endif
-    setWindowFlags(val ? (flags | Qt::WindowStaysOnTopHint) : (flags & ~Qt::WindowStaysOnTopHint));
+        setWindowFlags(val ? (flags | Qt::WindowStaysOnTopHint) : (flags & ~Qt::WindowStaysOnTopHint));
 #ifndef Q_OS_WIN
     if (wasvisible)
         show();
@@ -325,7 +391,7 @@ bool ZWindow::event(QEvent *e)
 
 bool ZWindow::eventFilter(QObject *obj, QEvent *e)
 {
-    if (grabside == (int)GrabSide::None && !beingResized() && (e->type() == QEvent::MouseMove || e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease) && isGrabWidget(obj))
+    if (isGrabWidget(obj) && grabside == (int)GrabSide::None && !beingResized() && (e->type() == QEvent::MouseMove || e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease))
     {
         QMouseEvent *me = (QMouseEvent*)e;
         switch (me->type())
