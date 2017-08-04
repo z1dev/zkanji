@@ -1530,7 +1530,7 @@ bool StudyDeck::startTestDay()
 
     QDateTime now = QDateTime::currentDateTimeUtc();
     QDate testday = ltDay(now);
-    if (testdate.isValid() && ltDay(testdate).daysTo(testday) >= 0)
+    if (testdate.isValid() && ltDay(testdate).daysTo(testday) <= 0)
         return false;
 
     undodata.card = nullptr;

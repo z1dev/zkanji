@@ -2246,8 +2246,8 @@ void WordDeck::answer(StudyCard::AnswerType a, qint64 answertime)
     // the next one couldn't find anything else. As it couldn't tell what the answer will be,
     // it assumed the current item failed and will have to be repeated.
     // If the current item was a success, there is nothing else to test. Set the next one to
-    // null.
-    if (nextix == currentix && (a == StudyCard::Correct || a == StudyCard::Easy))
+    // invalid.
+    if (((nextix == currentix && nextix.free == -1) || (currentix.free != -1 && nextix.locked == lockitems.size())) && (a == StudyCard::Correct || a == StudyCard::Easy))
         nextix.reset();
 
     StudyDeck *study = studyDeck();
@@ -2276,9 +2276,9 @@ void WordDeck::answer(StudyCard::AnswerType a, qint64 answertime)
         item->mainhint = freeitem->mainhint;
         item->questiontype = freeitem->questiontype;
 
-        // The next item to be shown is the same as the current item. currentitem will be
-        // deleted and replaced by item.
-        if (nextix == currentix)
+        // The next item to be shown is the same as the current item. A new next item must be
+        // found.
+        if (nextix.locked == lockitems.size() /*== currentix*/)
             nextix.reset();
 
         freeitems.remove(currentix.free);
@@ -2840,10 +2840,13 @@ void WordDeck::doGenerateNextItem()
 
     if (previndex == -1)
     {
-        // If nothing was found, set the current item as the next item as
-        // well. We have no way to check the answer before it's given, so it
-        // must be checked before showing the next item outside this function.
+        // If nothing was found, set the current item as the next item as well. We have no way
+        // to check the answer before it's given, so it must be checked before showing the
+        // next item outside this function.
         nextix = currentix;
+
+        if (currentix.free >= 0)
+            nextix.setLocked(lockitems.size());
         return;
     }
 
