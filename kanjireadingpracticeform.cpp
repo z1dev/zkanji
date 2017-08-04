@@ -6,6 +6,7 @@
 
 #include <QtEvents>
 #include <QPainter>
+#include <QDesktopWidget>
 #include "kanjireadingpracticeform.h"
 #include "ui_kanjireadingpracticeform.h"
 #include "worddeck.h"
@@ -132,11 +133,22 @@ KanjiReadingPracticeForm::~KanjiReadingPracticeForm()
 
 void KanjiReadingPracticeForm::exec()
 {
-    gUI->hideAppWindows();
-
     initNextRound();
 
+    setAttribute(Qt::WA_DontShowOnScreen, true);
     show();
+    qApp->processEvents();
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    QRect r = frameGeometry();
+    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
+
+    gUI->hideAppWindows();
+
+    show();
+    ui->answerEdit->setFocus();
 }
 
 void KanjiReadingPracticeForm::answerChanged()

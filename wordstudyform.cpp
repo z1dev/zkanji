@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QMenu>
+#include <QDesktopWidget>
 #include "wordstudyform.h"
 #include "ui_wordstudyform.h"
 #include "words.h"
@@ -365,6 +366,10 @@ void WordStudyForm::exec(WordDeck *d)
     ui->retryLabel->setVisible(Settings::study.showestimate);
     ui->wrongLabel->setVisible(Settings::study.showestimate);
 
+    QRect r = frameGeometry();
+    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
+
     gUI->hideAppWindows();
 
     lasttime = idletime = starttime = QDateTime::currentDateTimeUtc();
@@ -444,6 +449,16 @@ void WordStudyForm::exec(WordStudy *s)
     statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Time passed") + ": ", 0, timeLabel = new QLabel(this), "00:00:00", 0));
 
     showNext();
+
+    setAttribute(Qt::WA_DontShowOnScreen, true);
+    show();
+    qApp->processEvents();
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    QRect r = frameGeometry();
+    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
 
     gUI->hideAppWindows();
 

@@ -6,6 +6,7 @@
 
 #include <QtEvents>
 #include <QImage>
+#include <QDesktopWidget>
 #include "wordtestresultsform.h"
 #include "ui_wordtestresultsform.h"
 #include "groupstudy.h"
@@ -146,14 +147,15 @@ void WordTestResultsForm::exec(WordStudy *s)
         ui->buttonBox->addButton(tr("Suspend"), QDialogButtonBox::RejectRole);
     }
 
-    //if (s->studySettings().method == WordStudyMethod::Gradual)
-    //{
+    setAttribute(Qt::WA_DontShowOnScreen, true);
+    show();
+    qApp->processEvents();
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
 
-    //}
-    //else
-    //{
-
-    //}
+    QRect r = frameGeometry();
+    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
 
     WordStudyItemModel *m = new WordStudyItemModel(s, this);
     ui->wordsTable->setModel(m);
