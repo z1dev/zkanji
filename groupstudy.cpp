@@ -798,6 +798,7 @@ WordStudyGradual::WordStudyGradual(const WordStudyGradualSettings &settings) : s
 void WordStudyGradual::load(QDataStream &stream)
 {
     qint32 i;
+    qint16 s;
     qint8 c;
     stream >> i;
     round = i;
@@ -806,8 +807,8 @@ void WordStudyGradual::load(QDataStream &stream)
     stream >> i;
     pos = i;
 
-    stream >> i;
-    testitems.resize(i);
+    stream >> s;
+    testitems.resize(s);
     for (int ix = 0; ix != testitems.size(); ++ix)
     {
         Item &t = testitems[ix];
