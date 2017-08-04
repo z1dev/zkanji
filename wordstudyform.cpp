@@ -923,7 +923,7 @@ bool WordStudyForm::showNext()
         // TODO: add this setting when testing with a deck.
         if (!deck && study->studySettings().hidekana)
         {
-            QChar subst[] = { QChar(0x25b3), QChar(0x25ef), QChar(0x2b1c), QChar(0x2606) };
+            QChar subst[] = { QChar(0x25b3), QChar(0x25ce), QChar(0x25c7), QChar(0x2606) };
             for (int ix = 0; ix != str.size(); ++ix)
             {
                 // TODO: (maybe) use japanese maru, sankaku etc instead of * for fun points.
