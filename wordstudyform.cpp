@@ -931,7 +931,7 @@ bool WordStudyForm::showNext()
             QChar subst[] = { QChar(0x25b3), QChar(0x25ce), QChar(0x25c7), QChar(0x2606) };
             for (int ix = 0; ix != str.size(); ++ix)
             {
-                if (KANA(str.at(ix).unicode()))
+                if (KANA(str.at(ix).unicode()) || DASH(str.at(ix).unicode()))
                     str[ix] = subst[rnd(0, 3)];
             }
         }
