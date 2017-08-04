@@ -83,18 +83,16 @@ WordsToDeckItemModel::WordsToDeckItemModel(WordDeck* deck, const std::vector<int
 
         if (!haskanji)
             val |= (1 << 3);
-        else if (!kanaonly)
+        if ((haskanji && !kanaonly) || (dw != 0 && dw->types & (int)WordPartBits::Kanji) != 0)
             val |= 1;
 
         if (!haskana)
             val |= (1 << 4);
-        else
-            val |= (1 << 1);
+        val |= (1 << 1);
 
         if (!hasdef)
             val |= (1 << 5);
-        else
-            val |= (1 << 2);
+        val |= (1 << 2);
 
         if (((val >> 3) & 7) == 7)
         {
@@ -122,7 +120,7 @@ bool WordsToDeckItemModel::hasBoxChecked() const
     {
         char val = checks[ix];
         // Returns if any of the lower 3 bits is checked, and the checkbox is not disabled.
-        if (((val & 7) & (val >> 3)) != (val & 7))
+        if (((val & 7) & (~(val >> 3)) & 7) != 0)
             return true;
     }
     return false;
@@ -139,8 +137,11 @@ Qt::ItemFlags WordsToDeckItemModel::flags(const QModelIndex &index) const
         return 0;
 
     Qt::ItemFlags r = base::flags(index);
-    if ((checks[index.row()] & (1 << (index.column() + 3))) == 0)
+    char val = checks[index.row()];
+    if ((val & (1 << (index.column() + 3))) == 0)
         r |= Qt::ItemIsUserCheckable;
+    if ((val & (1 << index.column())) == 0 || (val & (1 << (index.column() + 3))) != 0)
+        r &= ~Qt::ItemIsEnabled;
 
     return r;
 }
@@ -156,6 +157,8 @@ QVariant WordsToDeckItemModel::data(const QModelIndex &index, int role) const
         // not disabled.
         return (checks[index.row()] & 7) & ~(checks[index.row()] >> 3);
     }
+
+    // role == Qt::CheckStateRole
 
     if ((checks[index.row()] & (1 << index.column())) != 0)
         return Qt::Checked;
@@ -176,15 +179,18 @@ bool WordsToDeckItemModel::setData(const QModelIndex &index, const QVariant &val
 
     bool checked = value.toInt() == (int)Qt::Checked;
     bool changed = false;
-    if (checked && (val & (1 << index.column())) == 0)
+    if ((val & (1 << (index.column() + 3))) == 0)
     {
-        changed = true;
-        val |= (1 << index.column());
-    }
-    else if (!checked && (val & (1 << index.column())) != 0)
-    {
-        changed = true;
-        val &= ~(1 << index.column());
+        if (checked && (val & (1 << index.column())) == 0)
+        {
+            changed = true;
+            val |= (1 << index.column());
+        }
+        else if (!checked && (val & (1 << index.column())) != 0)
+        {
+            changed = true;
+            val &= ~(1 << index.column());
+        }
     }
 
     if (changed)

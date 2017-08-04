@@ -1691,7 +1691,8 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
     painter->setClipRect(option.rect);
 
-    QPalette::ColorGroup colorgrp = (option.state & QStyle::State_Active) ? QPalette::Active : QPalette::Inactive;
+    QPalette::ColorGroup colorgrp = (index.isValid() && !index.flags().testFlag(Qt::ItemIsEnabled)) ? QPalette::Disabled : (option.state & QStyle::State_Active) ? QPalette::Active : QPalette::Inactive;
+    //QPalette::ColorGroup colorgrp = (option.state & QStyle::State_Active) ? QPalette::Active : QPalette::Inactive;
 
     int coltype = index.data((int)DictColumnRoles::Type).toInt();
     int defix = index.data((int)DictRowRoles::DefIndex).toInt();

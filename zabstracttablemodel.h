@@ -39,7 +39,7 @@ enum class ColumnRoles {
 // Custom roles for cells in a ZListView.
 // CellColor: QColor. The color of a cell's background. When the cell is selected, this color
 //      is mixed with the highlight color.
-// TextColor: QColor. The color of a cell.s text. When the cell is selected, this color is
+// TextColor: QColor. The color of a cell's text. When the cell is selected, this color is
 //      mixed with the color of highlighted text.
 //// Flags: int. See the CellFlags enum for possible values.
 // Custom: Custom data appropriate for the specific model and ZListView descendant. It can be
