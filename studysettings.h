@@ -33,6 +33,7 @@ struct StudySettings
     WordParts defhint = (WordParts)0; //WordParts::Kanji;
 
     bool showestimate = true;
+    bool hidekanjikana = false;
     bool writekanji = false;
     bool writekana = false;
     bool writedef = false;

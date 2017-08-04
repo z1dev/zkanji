@@ -482,6 +482,7 @@ void SettingsForm::reset()
     ui->defKanaRadio->setChecked(Settings::study.defhint == WordParts::Kana);
     ui->studyReviewBox->setChecked(Settings::study.review);
     ui->studyEstimateBox->setChecked(Settings::study.showestimate);
+    ui->studyHideKanaBox->setChecked(Settings::study.hidekanjikana);
     ui->typeKanjiBox->setChecked(Settings::study.writekanji);
     ui->typeKanaBox->setChecked(Settings::study.writekana);
     ui->typeDefBox->setChecked(Settings::study.writedef);
@@ -743,6 +744,7 @@ void SettingsForm::applyClicked()
     Settings::study.defhint = ui->defKanjiRadio->isChecked() ? WordParts::Kanji : WordParts::Kana;
     Settings::study.review = ui->studyReviewBox->isChecked();
     Settings::study.showestimate = ui->studyEstimateBox->isChecked();
+    Settings::study.hidekanjikana = ui->studyHideKanaBox->isChecked();
     Settings::study.writekanji = ui->typeKanjiBox->isChecked();
     Settings::study.writekana = ui->typeKanaBox->isChecked();
     Settings::study.writedef = ui->typeDefBox->isChecked();

@@ -236,6 +236,7 @@ namespace Settings
         ini.setValue("study/defhint", (int)study.defhint);
 
         ini.setValue("study/showestimate", study.showestimate);
+        ini.setValue("study/hidekanjikana", study.hidekanjikana);
         ini.setValue("study/writekanji", study.writekanji);
         ini.setValue("study/writekana", study.writekana);
         ini.setValue("study/writedef", study.writedef);
@@ -882,6 +883,7 @@ namespace Settings
             study.defhint = (WordParts)val;
 
         study.showestimate = ini.value("study/showestimate", true).toBool();
+        study.hidekanjikana = ini.value("study/hidekanjikana", false).toBool();
         study.writekanji = ini.value("study/writekanji", false).toBool();
         study.writekana = ini.value("study/writekana", false).toBool();
         study.writedef = ini.value("study/writedef", false).toBool();

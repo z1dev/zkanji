@@ -750,20 +750,11 @@ void WordStudyForm::showWordHint()
 {
     WordEntry *w = dictionary()->wordEntry(windex);
     if (whint == WordParts::Kanji)
-    {
         ui->kanjiLabel->setText(w->kanji.toQStringRaw());
-        //ui->kanjiLabel->show();
-    }
     if (whint == WordParts::Kana)
-    {
         ui->kanaLabel->setText(w->kana.toQStringRaw());
-        //ui->kanaLabel->show();
-    }
     if (whint == WordParts::Definition)
-    {
         ui->meaningLabel->setText(dictionary()->displayedStudyDefinition(windex));
-        //ui->meaningLabel->show();
-    }
 
     ui->hintButton->hide();
 }
@@ -920,13 +911,11 @@ bool WordStudyForm::showNext()
     else if (whint != WordParts::Kanji)
     {
         QString str = w->kanji.toQStringRaw();
-        // TODO: add this setting when testing with a deck.
-        if (!deck && study->studySettings().hidekana)
+        if ((deck && Settings::study.hidekanjikana) || (!deck && study->studySettings().hidekana))
         {
             QChar subst[] = { QChar(0x25b3), QChar(0x25ce), QChar(0x25c7), QChar(0x2606) };
             for (int ix = 0; ix != str.size(); ++ix)
             {
-                // TODO: (maybe) use japanese maru, sankaku etc instead of * for fun points.
                 if (KANA(str.at(ix).unicode()))
                     str[ix] = subst[rnd(0, 3)];
             }
