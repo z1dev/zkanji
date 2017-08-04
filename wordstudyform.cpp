@@ -345,6 +345,15 @@ void WordStudyForm::exec(WordDeck *d)
     statusBar()->addWidget(createStatusWidget(this, -1, nullptr, tr("ETA") + ": ", 0, etaLabel = new QLabel(this), "00:00:00", 0));
     statusBar()->addWidget(createStatusWidget(this, -1, nullptr, tr("Time passed") + ": ", 0, timeLabel = new QLabel(this), "00:00:00", 0));
 
+    ui->testStack->setCurrentWidget(ui->inputPage);
+    setAttribute(Qt::WA_DontShowOnScreen, true);
+    show();
+    qApp->processEvents();
+    if (ui->hintButton->isVisible())
+        ui->hintWidget->setMinimumWidth(ui->hintButton->width());
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
+
     if (!showNext())
     {
         deleteLater();
@@ -739,12 +748,22 @@ void WordStudyForm::answerEntered()
 
 void WordStudyForm::showWordHint()
 {
+    WordEntry *w = dictionary()->wordEntry(windex);
     if (whint == WordParts::Kanji)
-        ui->kanjiLabel->show();
+    {
+        ui->kanjiLabel->setText(w->kanji.toQStringRaw());
+        //ui->kanjiLabel->show();
+    }
     if (whint == WordParts::Kana)
-        ui->kanaLabel->show();
+    {
+        ui->kanaLabel->setText(w->kana.toQStringRaw());
+        //ui->kanaLabel->show();
+    }
     if (whint == WordParts::Definition)
-        ui->meaningLabel->show();
+    {
+        ui->meaningLabel->setText(dictionary()->displayedStudyDefinition(windex));
+        //ui->meaningLabel->show();
+    }
 
     ui->hintButton->hide();
 }
@@ -897,45 +916,42 @@ bool WordStudyForm::showNext()
 
     // Kanji label.
     if ((wquestion & (int)WordPartBits::Kanji) != 0)
-        ui->kanjiLabel->setText(tr("?"));
-    else
+        ui->kanjiLabel->setText(tr("?") % QChar(0x3000));
+    else if (whint != WordParts::Kanji)
     {
         QString str = w->kanji.toQStringRaw();
         // TODO: add this setting when testing with a deck.
         if (!deck && study->studySettings().hidekana)
         {
+            QChar subst[] = { QChar(0x25b3), QChar(0x25ef), QChar(0x2b1c), QChar(0x2606) };
             for (int ix = 0; ix != str.size(); ++ix)
-                // TODO: use japanese maru, sankaku etc instead of * for fun points.
+            {
+                // TODO: (maybe) use japanese maru, sankaku etc instead of * for fun points.
                 if (KANA(str.at(ix).unicode()))
-                    str[ix] = '*';
+                    str[ix] = subst[rnd(0, 3)];
+            }
         }
         ui->kanjiLabel->setText(str);
     }
-    if (whint != WordParts::Kanji)
-        ui->kanjiLabel->show();
     else
-        ui->kanjiLabel->hide();
+        ui->kanjiLabel->setText(QChar(0x3000));
 
     // Kana label.
     if ((wquestion & (int)WordPartBits::Kana) != 0)
-        ui->kanaLabel->setText(tr("?"));
-    else
+        ui->kanaLabel->setText(tr("?") % QChar(0x3000));
+    else if (whint != WordParts::Kana)
         ui->kanaLabel->setText(w->kana.toQStringRaw());
-    if (whint != WordParts::Kana)
-        ui->kanaLabel->show();
     else
-        ui->kanaLabel->hide();
+        ui->kanaLabel->setText(QChar(0x3000));
 
     // Meaning label.
     if ((wquestion & (int)WordPartBits::Definition) != 0)
-        ui->meaningLabel->setText(tr("?"));
-    else
+        ui->meaningLabel->setText(tr("?") % QChar(' '));
+    else if (whint != WordParts::Definition)
         ui->meaningLabel->setText(dictionary()->displayedStudyDefinition(windex));
-    ui->meaningLabel->updated();
-    if (whint != WordParts::Definition)
-        ui->meaningLabel->show();
     else
-        ui->meaningLabel->hide();
+        ui->meaningLabel->setText(" ");
+    ui->meaningLabel->updated();
 
     ui->hintButton->setVisible(whint != WordParts::Default);
 

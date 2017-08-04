@@ -149,9 +149,6 @@
     <ClCompile Include="worddeck.cpp">
       <Filter>Code\General\Study\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kanjireadingpracticeform.cpp">
-      <Filter>Code\Files with .ui\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="recognizerform.cpp">
       <Filter>Code\Files with .ui\Source Files</Filter>
     </ClCompile>
@@ -926,6 +923,9 @@
     <ClCompile Include="GeneratedFiles\qrc_windowsicon.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="kanjireadingpracticeform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -954,9 +954,6 @@
     </CustomBuild>
     <CustomBuild Include="kanjireadingpracticeform.ui">
       <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="kanjireadingpracticeform.h">
-      <Filter>Code\Files with .ui\Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="recognizer.ui">
       <Filter>Form Files</Filter>
@@ -1314,6 +1311,9 @@
     </CustomBuild>
     <CustomBuild Include="Resources\windowsicon.qrc">
       <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanjireadingpracticeform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

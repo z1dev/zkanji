@@ -157,6 +157,7 @@ namespace Settings
         ini.setValue("colors/dialect", colors.dialect);
         ini.setValue("colors/kanaonly", colors.kanaonly);
         ini.setValue("colors/kanjiexamplebg", colors.kanjiexbg);
+        ini.setValue("colors/kanjitestpos", colors.kanjitestpos);
         ini.setValue("colors/n5", colors.n5);
         ini.setValue("colors/n4", colors.n4);
         ini.setValue("colors/n3", colors.n3);
@@ -729,6 +730,7 @@ namespace Settings
         colors.dialect = ini.value("colors/dialect").value<QColor>();
         colors.kanaonly = ini.value("colors/kanaonly").value<QColor>();
         colors.kanjiexbg = ini.value("colors/kanjiexamplebg").value<QColor>();
+        colors.kanjitestpos = ini.value("colors/kanjitestpos").value<QColor>();
 
         colors.n5 = ini.value("colors/n5").value<QColor>();
         colors.n4 = ini.value("colors/n4").value<QColor>();
@@ -1216,6 +1218,10 @@ namespace Settings
             if (colors.kanjiexbg.isValid())
                 return colors.kanjiexbg;
             break;
+        case ColorSettings::KanjiTestPos:
+            if (colors.kanjitestpos.isValid())
+                return colors.kanjitestpos;
+            break;
         case ColorSettings::Oku:
             if (colors.okucolor.isValid())
                 return colors.okucolor;
@@ -1297,6 +1303,8 @@ namespace Settings
             return colors.lighttheme ? colors.kanaonlyldef : colors.kanaonlyddef;
         case ColorSettings::KanjiExBg:
             return colors.lighttheme ? colors.kanjiexbgldef : colors.kanjiexbgddef;
+        case ColorSettings::KanjiTestPos:
+            return colors.lighttheme ? colors.kanjitestposldef : colors.kanjitestposddef;
         case ColorSettings::Oku:
             return colors.lighttheme ? colors.okucolorldef : colors.okucolorddef;
         case ColorSettings::N5:

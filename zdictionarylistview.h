@@ -330,6 +330,9 @@ public:
     // textcolor, otherwise only the main definition is using it.
     virtual void paintDefinition(QPainter *painter, QColor textcolor, QRect r, int y, WordEntry *e, std::vector<InfTypes> *inf, int defix, bool selected) const;
 
+    // Paints the kanji string passed in str with painter at left and baseline y.
+    virtual void paintKanji(QPainter *painter, const QModelIndex &index, int left, int top, int basey, QRect r) const;
+
     // Returns the index of a kanji in the global kanji list at the given point position. The
     // rectangle and index of the item under pos must be provided. Returns -1 if no kanji
     // would be drawn at the passed position, or the column of the index doesn't have the

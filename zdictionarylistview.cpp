@@ -1835,7 +1835,6 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     }
     case (int)DictColumnTypes::Kanji:
     {
-        QString str = index.data(Qt::DisplayRole).toString();
         QFont f = Settings::kanaFont(); //{ kanaFontName(), 9 };
         f.setPixelSize(option.rect.height() * kanjiRowSize /*/ 2 + 1*/);
         painter->save();
@@ -1856,11 +1855,8 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
             painter->setPen(textcol);
 
         painter->setFont(f);
-        if (owner()->isTextSelecting() && owner()->textSelectionIndex() == index)
-            drawSelectionText(painter, checkboxright + 4, option.rect.top() + option.rect.height() * 0.8, option.rect, str);
-        else
-            drawTextBaseline(painter, checkboxright + 4, option.rect.top() + option.rect.height() * 0.8, false, option.rect, str);
-            //painter->drawText(checkboxright + 4, option.rect.top(), option.rect.width() - (checkboxright - option.rect.left()) - 8, option.rect.height(), Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, str);
+
+        paintKanji(painter, index, checkboxright + 4, option.rect.top(), option.rect.top() + option.rect.height() * 0.8, option.rect);
 
         painter->restore();
         break;
@@ -2189,6 +2185,16 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
         if (defix != -1)
             break;
     }
+}
+
+void DictionaryListDelegate::paintKanji(QPainter *painter, const QModelIndex &index, int left, int top, int basey, QRect r) const
+{
+    QString str = index.data(Qt::DisplayRole).toString();
+    if (owner()->isTextSelecting() && owner()->textSelectionIndex() == index)
+        drawSelectionText(painter, left, basey, r, str);
+    else
+        drawTextBaseline(painter, left, basey, false, r, str);
+    //painter->drawText(checkboxright + 4, option.rect.top(), option.rect.width() - (checkboxright - option.rect.left()) - 8, option.rect.height(), Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, str);
 }
 
 int DictionaryListDelegate::kanjiAt(QPoint pos, QRect itemrect, const QModelIndex &index, QRect *kanjirect, int *charpos)

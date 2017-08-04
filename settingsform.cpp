@@ -244,6 +244,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->colDialectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Dialects));
     ui->colKanaCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanaOnly));
     ui->colKanjiExCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiExBg));
+    ui->colKanjiTestPosCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiTestPos));
 
     ui->colN5CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N5));
     ui->colN4CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N4));
@@ -456,6 +457,7 @@ void SettingsForm::reset()
     ui->colDialectCBox->setCurrentColor(Settings::colors.dialect);
     ui->colKanaCBox->setCurrentColor(Settings::colors.kanaonly);
     ui->colKanjiExCBox->setCurrentColor(Settings::colors.kanjiexbg);
+    ui->colKanjiTestPosCBox->setCurrentColor(Settings::colors.kanjitestpos);
 
     ui->colN5CBox->setCurrentColor(Settings::colors.n5);
     ui->colN4CBox->setCurrentColor(Settings::colors.n4);
@@ -474,10 +476,10 @@ void SettingsForm::reset()
     ui->studyStartEdit->setText(QString::number(Settings::study.starthour));
     ui->kanjiKanaRadio->setChecked(Settings::study.kanjihint == WordParts::Kana);
     ui->kanjiDefRadio->setChecked(Settings::study.kanjihint == WordParts::Definition);
-    ui->kanaKanjiRadio->setChecked(Settings::study.kanjihint == WordParts::Kanji);
-    ui->kanaDefRadio->setChecked(Settings::study.kanjihint == WordParts::Definition);
-    ui->defKanjiRadio->setChecked(Settings::study.kanjihint == WordParts::Kanji);
-    ui->defKanaRadio->setChecked(Settings::study.kanjihint == WordParts::Kana);
+    ui->kanaKanjiRadio->setChecked(Settings::study.kanahint == WordParts::Kanji);
+    ui->kanaDefRadio->setChecked(Settings::study.kanahint == WordParts::Definition);
+    ui->defKanjiRadio->setChecked(Settings::study.defhint == WordParts::Kanji);
+    ui->defKanaRadio->setChecked(Settings::study.defhint == WordParts::Kana);
     ui->studyReviewBox->setChecked(Settings::study.review);
     ui->studyEstimateBox->setChecked(Settings::study.showestimate);
     ui->typeKanjiBox->setChecked(Settings::study.writekanji);
@@ -713,6 +715,7 @@ void SettingsForm::applyClicked()
     Settings::colors.dialect = ui->colDialectCBox->currentColor();
     Settings::colors.kanaonly = ui->colKanaCBox->currentColor();
     Settings::colors.kanjiexbg = ui->colKanjiExCBox->currentColor();
+    Settings::colors.kanjitestpos = ui->colKanjiTestPosCBox->currentColor();
 
     Settings::colors.n5 = ui->colN5CBox->currentColor();
     Settings::colors.n4 = ui->colN4CBox->currentColor();
@@ -736,8 +739,8 @@ void SettingsForm::applyClicked()
     if (ok && val >= 1 && val <= 12)
         Settings::study.starthour = val;
     Settings::study.kanjihint = ui->kanjiKanaRadio->isChecked() ? WordParts::Kana : WordParts::Definition;
-    Settings::study.kanjihint = ui->kanaKanjiRadio->isChecked() ? WordParts::Kanji : WordParts::Definition;
-    Settings::study.kanjihint = ui->defKanjiRadio->isChecked() ? WordParts::Kanji : WordParts::Kana;
+    Settings::study.kanahint = ui->kanaKanjiRadio->isChecked() ? WordParts::Kanji : WordParts::Definition;
+    Settings::study.defhint = ui->defKanjiRadio->isChecked() ? WordParts::Kanji : WordParts::Kana;
     Settings::study.review = ui->studyReviewBox->isChecked();
     Settings::study.showestimate = ui->studyEstimateBox->isChecked();
     Settings::study.writekanji = ui->typeKanjiBox->isChecked();

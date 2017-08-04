@@ -21,6 +21,7 @@ struct ColorSettings
     const QColor dialectldef = QColor(128, 48, 64);
     const QColor kanaonlyldef = QColor(144, 176, 160);
     const QColor kanjiexbgldef = QColor(210, 255, 210);
+    const QColor kanjitestposldef = QColor(255, 0, 0);
 
     const QColor okucolorldef = QColor(48, 162, 255);
 
@@ -50,6 +51,7 @@ struct ColorSettings
     const QColor dialectddef = QColor(128, 48, 64);
     const QColor kanaonlyddef = QColor(144, 176, 160);
     const QColor kanjiexbgddef = QColor(210, 255, 210);
+    const QColor kanjitestposddef = QColor(255, 0, 0);
 
     const QColor okucolorddef = QColor(48, 162, 255);
 
@@ -84,7 +86,7 @@ struct ColorSettings
 
     enum UIColorTypes {
         Inf, Attrib, Types, Notes,
-        Fields, Dialects, KanaOnly, KanjiExBg,
+        Fields, Dialects, KanaOnly, KanjiExBg, KanjiTestPos,
         Oku, N5, N4, N3, N2, N1, KanjiNoWords,
         KanjiUnsorted, KataBg, HiraBg,
         SimilarText, SimilarBg, PartsBg,
@@ -99,6 +101,7 @@ struct ColorSettings
     QColor dialect;
     QColor kanaonly;
     QColor kanjiexbg;
+    QColor kanjitestpos;
 
     QColor n5;
     QColor n4;

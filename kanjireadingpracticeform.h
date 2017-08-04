@@ -9,10 +9,50 @@
 
 #include <QMainWindow>
 #include "dialogwindow.h"
+#include "zdictionarylistview.h"
+#include "zdictionarymodel.h"
 
 namespace Ui {
     class KanjiReadingPracticeForm;
 }
+
+class QPainter;
+class KanjiReadingPracticeListDelegate : public DictionaryListDelegate
+{
+    Q_OBJECT
+public:
+    KanjiReadingPracticeListDelegate(ZDictionaryListView *parent = nullptr);
+
+    // Paints the definition text of an entry. If selected is true, the text is painted with
+    // textcolor, otherwise only the main definition is using it.
+    virtual void paintKanji(QPainter *painter, const QModelIndex &index, int left, int top, int basey, QRect r) const override;
+private:
+    typedef DictionaryListDelegate  base;
+};
+
+enum class KanjiReadingRoles
+{
+    ReadingsList = (int)DictRowRoles::Last,
+
+    Last,
+};
+
+class KanjiReadingPracticeListModel : public DictionaryWordListItemModel
+{
+    Q_OBJECT
+public:
+    KanjiReadingPracticeListModel(QObject *parent = nullptr);
+    virtual ~KanjiReadingPracticeListModel();
+
+    // Sets a list of words to be provided by this model.
+    void setWordList(Dictionary *d, std::vector<int> &&wordlist, std::vector<std::vector<int>> &&readings);
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    virtual QMap<int, QVariant> itemData(const QModelIndex &index) const override;
+private:
+    std::vector<std::vector<int>> readings;
+
+    typedef DictionaryWordListItemModel base;
+};
 
 class WordDeck;
 class DictionaryWordListItemModel;
@@ -37,7 +77,7 @@ private:
 
     int tries;
 
-    DictionaryWordListItemModel *model;
+    KanjiReadingPracticeListModel *model;
 
     typedef DialogWindow base;
 };

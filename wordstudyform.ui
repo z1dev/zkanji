@@ -351,10 +351,40 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="hintButton">
-                <property name="text">
-                 <string>Show hint (Ctrl+H)</string>
+               <widget class="QWidget" name="hintWidget" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_12">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="hintButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Show hint (Ctrl+H)</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -1478,14 +1508,14 @@ text-align: left</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZKanaLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>DefinitionLabel</class>

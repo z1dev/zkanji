@@ -449,6 +449,7 @@ void ReadingTestList::add(int windex, bool newitem, bool failed, bool undo)
 
     int len = e->kanji.size();
 
+    QSet<std::pair<int, int>> found;
     for (int ix = 0; ix != len; ++ix)
     {
         if (!KANJI(e->kanji[ix].unicode()))
@@ -459,8 +460,10 @@ void ReadingTestList::add(int windex, bool newitem, bool failed, bool undo)
         int r = findKanjiReading(e->kanji, e->kana, ix, ZKanji::kanjis[k], &fdat);
 
         // Not a reading from ON or KUN, so we can't test it.
-        if (r == 0 || (Settings::study.readings == StudySettings::ON && r > ZKanji::kanjis[k]->on.size()) || (Settings::study.readings == StudySettings::Kun && r <= ZKanji::kanjis[k]->on.size()))
+        if (r == 0 || (Settings::study.readings == StudySettings::ON && r > ZKanji::kanjis[k]->on.size()) || (Settings::study.readings == StudySettings::Kun && r <= ZKanji::kanjis[k]->on.size()) || found.contains(std::make_pair(k, r)))
             continue;
+
+        found.insert(std::make_pair(k, r));
 
         // Search the kanji/reading in the items already in the readings list.
         int rix = -1;
@@ -508,9 +511,8 @@ void ReadingTestList::add(int windex, bool newitem, bool failed, bool undo)
             if (item->words[iy]->windex != windex)
                 continue;
 
-            // The same word has already been included in the test for
-            // today, but it's not tested yet. Update how to display it
-            // when it will be tested.
+            // The same word has already been included in the test for/ today, but it's not
+            // tested yet. Update how to display it when it will be tested.
             item->words[iy]->newword = item->words[iy]->newword || newitem;
             item->words[iy]->failed = item->words[iy]->newword || failed;
             break;

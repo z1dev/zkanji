@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>577</width>
-    <height>430</height>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -223,7 +223,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>7</number>
+             <number>10</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -3300,7 +3300,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
+              <item row="9" column="1">
                <spacer name="verticalSpacer_18">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -3316,7 +3316,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </spacer>
               </item>
-              <item row="10" column="0">
+              <item row="11" column="0">
                <widget class="QLabel" name="label_67">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3329,7 +3329,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="10" column="1">
+              <item row="11" column="1">
                <widget class="ZColorComboBox" name="colN5CBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3339,7 +3339,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="11" column="0">
+              <item row="12" column="0">
                <widget class="QLabel" name="label_68">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3352,7 +3352,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="11" column="1">
+              <item row="12" column="1">
                <widget class="ZColorComboBox" name="colN4CBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3362,7 +3362,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="12" column="0">
+              <item row="13" column="0">
                <widget class="QLabel" name="label_69">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3375,7 +3375,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="12" column="1">
+              <item row="13" column="1">
                <widget class="ZColorComboBox" name="colN3CBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3385,7 +3385,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="13" column="0">
+              <item row="14" column="0">
                <widget class="QLabel" name="label_70">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3398,7 +3398,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="13" column="1">
+              <item row="14" column="1">
                <widget class="ZColorComboBox" name="colN2CBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3408,7 +3408,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="14" column="0">
+              <item row="15" column="0">
                <widget class="QLabel" name="label_71">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -3421,7 +3421,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="14" column="1">
+              <item row="15" column="1">
                <widget class="ZColorComboBox" name="colN1CBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3448,10 +3448,27 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="9" column="0" colspan="2">
+              <item row="10" column="0" colspan="2">
                <widget class="QLabel" name="label_66">
                 <property name="text">
                  <string>JLPT level text color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="ZColorComboBox" name="colKanjiTestPosCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_129">
+                <property name="text">
+                 <string>Tested reading kanji:</string>
                 </property>
                </widget>
               </item>
@@ -5026,15 +5043,15 @@ Scales everything in the program, including icons and text. The main menu, popup
  <layoutdefault spacing="6" margin="6"/>
  <customwidgets>
   <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>
    <header>dialogwindow.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZListBox</class>
@@ -5208,8 +5225,8 @@ Scales everything in the program, including icons and text. The main menu, popup
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

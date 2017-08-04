@@ -67,6 +67,7 @@ public:
     virtual bool hasHeightForWidth() const override;
     virtual int heightForWidth(int h) const override;
 
+    // Changes label font size to fit text.
     void updated();
 protected:
     virtual void resizeEvent(QResizeEvent *e) override;

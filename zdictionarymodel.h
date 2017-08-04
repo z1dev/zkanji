@@ -36,7 +36,7 @@ enum class DictRowRoles {
     DefIndex,
     Inflection,
 
-    // Used as the first value in DeckColumnRoles. See zworddeckmodel.h
+    // Used as the first value in kanjireadingpracticeform.h
     Last 
 };
 
