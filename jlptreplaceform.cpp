@@ -21,8 +21,7 @@ JLPTReplaceForm::JLPTReplaceForm(QWidget *parent) : base(parent), ui(new Ui::JLP
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    connect(ui->abortButton, &QPushButton::clicked, this, &JLPTReplaceForm::abort);
-    connect(ui->skipAllButton, &QPushButton::clicked, this, &JLPTReplaceForm::skipall);
+    connect(ui->abortButton, &QPushButton::clicked, this, &JLPTReplaceForm::close);
     connect(ui->skipButton, &QPushButton::clicked, this, &JLPTReplaceForm::skip);
     connect(ui->useButton, &QPushButton::clicked, this, &JLPTReplaceForm::replace);
     connect(ui->undoButton, &QPushButton::clicked, this, &JLPTReplaceForm::undo);
@@ -43,7 +42,7 @@ JLPTReplaceForm::~JLPTReplaceForm()
     delete ui;
 }
 
-ModalResult JLPTReplaceForm::exec(QString filepath, Dictionary *dict, const std::vector<std::tuple<QString, QString, int>> &words)
+void JLPTReplaceForm::exec(QString filepath, Dictionary *dict, const std::vector<std::tuple<QString, QString, int>> &words)
 {
     list = words;
     path = filepath;
@@ -56,32 +55,7 @@ ModalResult JLPTReplaceForm::exec(QString filepath, Dictionary *dict, const std:
     pos = 0;
     updateButtons();
 
-    return showModal();
-}
-
-void JLPTReplaceForm::abort()
-{
-    if (pos == list.size())
-    {
-        if (skipped != pos)
-        {
-            if (QMessageBox::question(this, "zkanji", tr("Changes have been made to the JLPT data that can be saved to JLPTNData.txt. If you decide to save the changes, a backup file will be created from the original file.\n\nWould you like to save the updated JLPTNData.txt?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-                saveJLPTData();
-        }
-        modalClose(ModalResult::Ok);
-    }
-    else
-        close();
-}
-
-void JLPTReplaceForm::skipall()
-{
-    if (QMessageBox::warning(this, "zkanji", tr("Words without a replacement will be missing their JLPT data if you continue. Do you wish to skip them and continue the dictionary import?"), QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel)
-        return;
-    skipped = list.size() - pos;
-    pos = list.size();
-    // Because pos == list.size(), the call to abort() will properly save other changes and close the window.
-    abort();
+    showModal();
 }
 
 void JLPTReplaceForm::skip()
@@ -133,12 +107,18 @@ void JLPTReplaceForm::closeEvent(QCloseEvent *e)
 {
     if (pos != list.size())
     {
-        if (QMessageBox::warning(this, "zkanji", tr("Aborting the JLPT word replacement will abandon the dictionary import as well. If you don't mind words missing their JLPT data, select \"Skip all\" instead.\n\nDo you want to abort?"), QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel)
+        if (QMessageBox::warning(this, "zkanji", tr("Words without a replacement will be missing their JLPT data. Do you wish to skip them and continue the dictionary import?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         {
             e->ignore();
             base::closeEvent(e);
             return;
         }
+    }
+
+    if (pos != skipped)
+    {
+        if (QMessageBox::question(this, "zkanji", tr("Changes have been made to the JLPT data that can be saved to JLPTNData.txt. If you decide to save the changes, a backup file will be created from the original file.\n\nWould you like to save the updated JLPTNData.txt?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+            saveJLPTData();
     }
 
     base::closeEvent(e);
@@ -165,7 +145,6 @@ void JLPTReplaceForm::updateButtons()
 
     ui->undoButton->setEnabled(pos > 0);
     ui->skipButton->setEnabled(pos != list.size());
-    ui->skipAllButton->setEnabled(pos != list.size());
     ui->useButton->setEnabled(pos != list.size());
 
     ui->abortButton->setText(pos != list.size() ? tr("Abort") : tr("Finish"));

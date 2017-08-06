@@ -171,13 +171,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="skipAllButton">
-        <property name="text">
-         <string>Skip all</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="abortButton">
         <property name="text">
          <string>Abort</string>
@@ -355,7 +348,6 @@
   <tabstop>undoButton</tabstop>
   <tabstop>skipButton</tabstop>
   <tabstop>useButton</tabstop>
-  <tabstop>skipAllButton</tabstop>
   <tabstop>abortButton</tabstop>
   <tabstop>wordEdit</tabstop>
  </tabstops>

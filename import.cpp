@@ -2214,8 +2214,7 @@ bool DictImport::importJLPTN(Dictionary *dict)
     if (!missing.empty())
     {
         JLPTReplaceForm *frm = new JLPTReplaceForm(this);
-        if (frm->exec(path, dict, missing) != ModalResult::Ok)
-            return false;
+        frm->exec(path, dict, missing);
     }
 
     return true;

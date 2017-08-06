@@ -21,10 +21,8 @@ public:
     JLPTReplaceForm(QWidget *parent = nullptr);
     virtual ~JLPTReplaceForm();
 
-    ModalResult exec(QString filepath, Dictionary *dict, const std::vector<std::tuple<QString, QString, int>> &words);
+    void exec(QString filepath, Dictionary *dict, const std::vector<std::tuple<QString, QString, int>> &words);
 public slots:
-    void abort();
-    void skipall();
     void skip();
     void replace();
     void undo();
