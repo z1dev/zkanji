@@ -152,13 +152,13 @@ bool DialogWindow::event(QEvent *e)
 
 void DialogWindow::closeEvent(QCloseEvent *e)
 {
-    base::closeEvent(e);
     if (!e->isAccepted())
     {
         res = ModalResult::Cancel;
         return;
     }
 
+    base::closeEvent(e);
     if (loop && loop->isRunning())
     {
         loop->quit();

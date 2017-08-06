@@ -71,6 +71,8 @@ protected:
 
     virtual bool event(QEvent *e) override;
 
+    // This function MUST be called as the last executed line, even when ignoring the event in
+    // a derived class. Otherwise the modalresult won't be reset to Cancel.
     virtual void closeEvent(QCloseEvent *e) override;
 
     // Handles the default button.

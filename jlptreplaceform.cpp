@@ -136,6 +136,7 @@ void JLPTReplaceForm::closeEvent(QCloseEvent *e)
         if (QMessageBox::warning(this, "zkanji", tr("Aborting the JLPT word replacement will abandon the dictionary import as well. If you don't mind words missing their JLPT data, select \"Skip all\" instead.\n\nDo you want to abort?"), QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel) == QMessageBox::Cancel)
         {
             e->ignore();
+            base::closeEvent(e);
             return;
         }
     }

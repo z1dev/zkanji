@@ -17,6 +17,7 @@
 
 #include "smartvector.h"
 #include "words.h"
+#include "dialogwindow.h"
 
 namespace Ui {
     class DictImport;
@@ -219,7 +220,7 @@ template<typename T>
 class GroupCategory;
 typedef GroupCategory<WordGroup>    WordGroupCategory;
 typedef GroupCategory<KanjiGroup>   KanjiGroupCategory;
-class DictImport : public QMainWindow
+class DictImport : public DialogWindow
 {
     Q_OBJECT
 public:
@@ -401,7 +402,8 @@ private:
 
     ImportFileHandler file;
 
-    QEventLoop loop;
+    //QEventLoop loop;
+
     // Whether the import is at a point where the dictionary or user data is already modified,
     // and it can't be restored when closing the import midway.
     bool modified;
@@ -440,7 +442,7 @@ private:
     // counter reaches a limit.
     int counter;
      
-    typedef QMainWindow base;
+    typedef DialogWindow base;
 };
 
 

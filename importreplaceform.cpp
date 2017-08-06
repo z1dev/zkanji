@@ -38,10 +38,6 @@ LabelDialog::~LabelDialog()
 
 ImportReplaceForm::ImportReplaceForm(Dictionary *olddir, Dictionary *newdir, QWidget *parent) : base(parent), ui(new Ui::ImportReplaceForm), model(nullptr), olddir(olddir), owndir(newdir == nullptr), newdir(newdir)
 {
-    // TODO: switch to setWindowModality instead of the event loop when the window is shown
-    // above the initializer splash screen. (Which must run in the QApplication's event loop
-    // at that time.)
-
     ui->setupUi(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
@@ -67,7 +63,9 @@ bool ImportReplaceForm::exec()
     dlg.show();
 
     qApp->postEvent(this, new StartEvent());
-    loop.exec();
+
+    showModal();
+    //loop.exec();
 
     // Operation cancelled.
     if (ui->missingTable->currentRow() != -1)
@@ -108,6 +106,7 @@ void ImportReplaceForm::closeEvent(QCloseEvent *e)
         if (r == 1)
         {
             e->ignore();
+            base::closeEvent(e);
             return;
         }
 
@@ -119,11 +118,11 @@ void ImportReplaceForm::closeEvent(QCloseEvent *e)
     e->accept();
 
     base::closeEvent(e);
-    if (!e->isAccepted())
-        return;
+    //if (!e->isAccepted())
+    //    return;
 
-    // Notifies the event loop that makes this window behave like a dialog.
-    loop.quit();
+    //// Notifies the event loop that makes this window behave like a dialog.
+    //loop.quit();
 }
 
 bool ImportReplaceForm::event(QEvent *e)
@@ -132,7 +131,8 @@ bool ImportReplaceForm::event(QEvent *e)
     {
         init();
         if (!isVisible())
-            loop.exit();
+            closeCancel();
+        //    loop.exit();
 
         return true;
     }

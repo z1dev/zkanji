@@ -463,6 +463,7 @@ void WordEditorForm::closeEvent(QCloseEvent *e)
             if (r == 0)
             {
                 e->ignore();
+                base::closeEvent(e);
                 return;
             }
 
@@ -480,6 +481,7 @@ void WordEditorForm::closeEvent(QCloseEvent *e)
             if (r == 0)
             {
                 e->ignore();
+                base::closeEvent(e);
                 return;
             }
 

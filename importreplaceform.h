@@ -71,7 +71,7 @@ private:
     Ui::ImportReplaceForm *ui;
     DictionaryWordListItemModel *model;
 
-    QEventLoop loop;
+    //QEventLoop loop;
     LabelDialog dlg;
 
     Dictionary *olddir;

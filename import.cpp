@@ -306,7 +306,8 @@ Dictionary* DictImport::importDict(QString p, bool full)
     setFixedSize(size());
 
     qApp->postEvent(this, new StartEvent());
-    loop.exec();
+    showModal();
+    //loop.exec();
 
     return dict;
 }
@@ -328,7 +329,8 @@ Dictionary* DictImport::importFromExport(QString p)
     setFixedSize(size());
 
     qApp->postEvent(this, new StartEvent());
-    loop.exec();
+    showModal();
+    //loop.exec();
 
     return dict;
 }
@@ -350,7 +352,8 @@ bool DictImport::importFromExportPartial(QString p, Dictionary *dest, WordGroup 
     setFixedSize(size());
 
     qApp->postEvent(this, new StartEvent());
-    loop.exec();
+    showModal();
+    //loop.exec();
 
     return step != -1;
 }
@@ -382,7 +385,8 @@ bool DictImport::importExamples(QString p, QString o, Dictionary *d)
     setFixedSize(size());
 
     qApp->postEvent(this, new StartEvent());
-    loop.exec();
+    showModal();
+    //loop.exec();
 
     return step != -1;
 }
@@ -406,7 +410,8 @@ bool DictImport::importUserData(const QString &p, Dictionary *d, KanjiGroupCateg
     setFixedSize(size());
 
     qApp->postEvent(this, new StartEvent());
-    loop.exec();
+    showModal();
+    //loop.exec();
 
     return step != -1;
 }
@@ -420,18 +425,21 @@ bool DictImport::nextUpdate(int progress, bool forced)
     if (progress != -1)
         ui->progressBar->setValue(progress);
 
-    loop.processEvents();
-    return loop.isRunning();
+    qApp->processEvents();
+    //loop.processEvents();
+
+    return isVisible(); // loop.isRunning();
 }
 
 void DictImport::closeEvent(QCloseEvent *e)
 {
-    if (loop.isRunning() && !ui->finishButton->isEnabled())
+    if (isVisible() /*loop.isRunning()*/ && !ui->finishButton->isEnabled())
     {
         QString msg = !modified ? tr("Do you want to abort the import?")  : tr("Some data has been modified and it will be kept even if you abort the import.\n\nDo you want to abort?");
         if (QMessageBox::warning(nullptr, "zkanji", msg, QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         {
             e->ignore();
+            base::closeEvent(e);
             return;
         }
     }
@@ -439,11 +447,11 @@ void DictImport::closeEvent(QCloseEvent *e)
     e->accept();
 
     base::closeEvent(e);
-    if (!e->isAccepted())
-        return;
+    //if (!e->isAccepted())
+    //    return;
 
-    // Notifies the event loop that makes this window behave like a dialog.
-    loop.quit();
+    //// Notifies the event loop that makes this window behave like a dialog.
+    //loop.quit();
 }
 
 bool DictImport::event(QEvent *e)
@@ -468,7 +476,7 @@ bool DictImport::event(QEvent *e)
                 }
 
                 step = -1;
-                if (loop.isRunning())
+                if (/*loop.isRunning()*/isVisible())
                 {
                     ui->finishButton->setText(tr("Abort"));
                     ui->finishButton->setEnabled(true);
@@ -489,7 +497,7 @@ bool DictImport::event(QEvent *e)
             if (!doImportFromExport())
             {
                 step = -1;
-                if (loop.isRunning() && !ui->finishButton->isEnabled())
+                if (isVisible() /*loop.isRunning()*/ && !ui->finishButton->isEnabled())
                 {
                     ui->finishButton->setText(tr("Abort"));
                     ui->finishButton->setEnabled(true);
@@ -508,7 +516,7 @@ bool DictImport::event(QEvent *e)
             if (!doImportFromExportPartial())
             {
                 step = -1;
-                if (loop.isRunning() && !ui->finishButton->isEnabled())
+                if (isVisible() /*loop.isRunning()*/ && !ui->finishButton->isEnabled())
                 {
                     ui->finishButton->setText(tr("Abort"));
                     ui->finishButton->setEnabled(true);
@@ -526,7 +534,7 @@ bool DictImport::event(QEvent *e)
             if (!doImportExamples())
             {
                 step = -1;
-                if (loop.isRunning() && !ui->finishButton->isEnabled())
+                if (isVisible() /*loop.isRunning()*/ && !ui->finishButton->isEnabled())
                 {
                     ui->finishButton->setText(tr("Abort"));
                     ui->finishButton->setEnabled(true);
@@ -545,7 +553,7 @@ bool DictImport::event(QEvent *e)
             if (!doImportUserData())
             {
                 step = -1;
-                if (loop.isRunning() && !ui->finishButton->isEnabled())
+                if (isVisible() /*loop.isRunning()*/ && !ui->finishButton->isEnabled())
                 {
                     ui->finishButton->setText(tr("Abort"));
                     ui->finishButton->setEnabled(true);

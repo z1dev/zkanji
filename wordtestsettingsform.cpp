@@ -1052,6 +1052,7 @@ void WordTestSettingsForm::closeEvent(QCloseEvent *e)
         if (ui->methodCBox->currentIndex() == 0 && ui->initCBox->currentText().toInt() > ui->roundCBox->currentText().toInt())
         {
             QMessageBox::information(this, tr("Invalid settings"), tr("The initial number of words can't be higher than the number of words from previous rounds, when the study method is gradual inclusion."), QMessageBox::Ok);
+            base::closeEvent(e);
             return;
         }
 
@@ -1124,6 +1125,7 @@ void WordTestSettingsForm::closeEvent(QCloseEvent *e)
         if ((settings.answer == WordStudyAnswering::Choices5 && sum < 5) || (settings.answer == WordStudyAnswering::Choices8 && sum < 8))
         {
             QMessageBox::information(this, tr("Invalid settings"), tr("There are too few items to be tested for the number of choices."), QMessageBox::Ok);
+            base::closeEvent(e);
             return;
         }
 
@@ -1132,12 +1134,14 @@ void WordTestSettingsForm::closeEvent(QCloseEvent *e)
             if (std::max(settings.gradual.roundlimit, settings.gradual.initnum + settings.gradual.incnum) > sum)
             {
                 QMessageBox::information(this, tr("Invalid settings"), tr("The number of words to test must be at least %1, with the current gradual inclusion test settings.\n\nDepending on your test settings, words having the same written and kana forms can't be in the test.").arg(std::max(settings.gradual.roundlimit, settings.gradual.initnum + settings.gradual.incnum)), QMessageBox::Ok);
+                base::closeEvent(e);
                 return;
             }
         }
         else if (settings.method == WordStudyMethod::Single && sum < 10)
         {
             QMessageBox::information(this, tr("Invalid settings"), tr("At least 10 words must be present for the single round test.\n\nDepending on your test settings, words having the same written and kana forms can't be in the test."), QMessageBox::Ok);
+            base::closeEvent(e);
             return;
         }
 
