@@ -251,7 +251,7 @@ public:
 
 private:
     // Returns a random bit that was set to 1 in choices.
-    int createRandomTested(int choices);
+    int createRandomTested(int listindex, int choices);
 
     bool settingsValid() const;
 

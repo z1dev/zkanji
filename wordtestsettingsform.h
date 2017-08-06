@@ -75,6 +75,8 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     virtual QVariant data(const QModelIndex &index, int role) const override;
+    virtual Qt::ItemFlags flags(const QModelIndex &index = QModelIndex()) const override;
+
     // Removes rows from the model, emitting the necessary signals.
     //void removeRows(int from, int to);
 
@@ -100,6 +102,8 @@ private:
 
     // Item indexes in the study group.
     std::vector<WordStudyItem> items;
+    // A filtered ordering of items. Contains indexes to items in the current order and
+    // exluded items either in the list or not depending on user choice.
     std::vector<int> list;
 
     typedef DictionaryItemModel base;
@@ -131,8 +135,6 @@ private:
     Ui::WordTestSettingsForm *ui;
 
     WordGroup *group;
-
-    ModalResult result;
 
     TestWordsItemModel *model;
 

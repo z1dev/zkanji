@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>544</width>
+    <width>575</width>
     <height>448</height>
    </rect>
   </property>
@@ -41,19 +41,6 @@
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>General:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="shuffleTestBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Shuffle words before the test starts</string>
           </property>
          </widget>
         </item>
@@ -611,56 +598,96 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="methodPage">
-       <attribute name="title">
-        <string>Study method</string>
-       </attribute>
-       <layout class="QFormLayout" name="formLayout_4">
-        <property name="horizontalSpacing">
-         <number>10</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>4</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QLabel" name="methodLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Select the study method:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="methodCBox">
+        <item row="1" column="0" colspan="2">
+         <widget class="QCheckBox" name="shuffleTestBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="currentIndex">
-           <number>0</number>
+          <property name="text">
+           <string>Shuffle words before the test starts</string>
           </property>
-          <item>
-           <property name="text">
-            <string>Gradual inclusion</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Single round</string>
-           </property>
-          </item>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+       </layout>
+      </widget>
+      <widget class="QWidget" name="methodPage">
+       <attribute name="title">
+        <string>Study method</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,1">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="methodLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Select the study method:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="methodCBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Gradual inclusion</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Single round</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>13</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QStackedWidget" name="methodStack">
           <property name="currentIndex">
            <number>1</number>
@@ -798,30 +825,14 @@
               </item>
              </widget>
             </item>
-            <item row="3" column="1">
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>13</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="4" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="roundLabel">
               <property name="text">
                <string>Words from previous rounds:</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
+            <item row="3" column="1">
              <widget class="QComboBox" name="roundCBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -862,7 +873,7 @@
               </item>
              </widget>
             </item>
-            <item row="5" column="0" colspan="2">
+            <item row="4" column="0" colspan="2">
              <widget class="QCheckBox" name="shuffleRoundBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -900,10 +911,7 @@
             <item row="0" column="0" colspan="2">
              <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>&lt;p&gt;Priorities for inclusion when randomly generating list of tested words*:&lt;/p&gt;</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
+               <string>&lt;p&gt;Priorities for inclusion in test*:&lt;/p&gt;</string>
               </property>
              </widget>
             </item>
@@ -963,8 +971,8 @@
           </widget>
          </widget>
         </item>
-        <item row="1" column="1">
-         <spacer name="verticalSpacer_4">
+        <item>
+         <spacer name="verticalSpacer_3">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -975,6 +983,32 @@
            <size>
             <width>20</width>
             <height>13</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="infoLabel">
+          <property name="text">
+           <string>Instructions</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::NoTextInteraction</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
            </size>
           </property>
          </spacer>
@@ -1076,82 +1110,92 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QToolButton" name="resetButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
+               <property name="leftMargin">
+                <number>0</number>
                </property>
-               <property name="text">
-                <string>Reset score</string>
-               </property>
-               <property name="icon">
-                <iconset resource="Resources/resources.qrc">
-                 <normaloff>:/eraser.svg</normaloff>:/eraser.svg</iconset>
-               </property>
-               <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
-               </property>
-               <property name="autoRaise">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="excludeButton">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text">
-                <string>Exclude</string>
-               </property>
-               <property name="icon">
-                <iconset resource="Resources/resources.qrc">
-                 <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>18</width>
-                 <height>18</height>
-                </size>
-               </property>
-               <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
-               </property>
-               <property name="autoRaise">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QToolButton" name="includeButton">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text">
-                <string>Include</string>
-               </property>
-               <property name="icon">
-                <iconset resource="Resources/resources.qrc">
-                 <normaloff>:/addmark.svg</normaloff>:/addmark.svg</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>18</width>
-                 <height>18</height>
-                </size>
-               </property>
-               <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
-               </property>
-               <property name="autoRaise">
-                <bool>true</bool>
-               </property>
-              </widget>
+               <item>
+                <widget class="QToolButton" name="resetButton">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>Reset score</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="Resources/resources.qrc">
+                   <normaloff>:/eraser.svg</normaloff>:/eraser.svg</iconset>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="excludeButton">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>Exclude</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="Resources/resources.qrc">
+                   <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>18</width>
+                   <height>18</height>
+                  </size>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QToolButton" name="includeButton">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>Include</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="Resources/resources.qrc">
+                   <normaloff>:/addmark.svg</normaloff>:/addmark.svg</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>18</width>
+                   <height>18</height>
+                  </size>
+                 </property>
+                 <property name="toolButtonStyle">
+                  <enum>Qt::ToolButtonTextBesideIcon</enum>
+                 </property>
+                 <property name="autoRaise">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -1202,7 +1246,7 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="text">
-             <string>Excluded</string>
+             <string>Show excluded</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -1355,7 +1399,6 @@
   <tabstop>wordsEdit</tabstop>
   <tabstop>timeLimitBox</tabstop>
   <tabstop>timeLimitEdit</tabstop>
-  <tabstop>methodCBox</tabstop>
   <tabstop>initCBox</tabstop>
   <tabstop>increaseCBox</tabstop>
   <tabstop>roundCBox</tabstop>

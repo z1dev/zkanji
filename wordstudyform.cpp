@@ -926,7 +926,7 @@ bool WordStudyForm::showNext()
     else if (whint != WordParts::Kanji)
     {
         QString str = w->kanji.toQStringRaw();
-        if ((deck && Settings::study.hidekanjikana) || (!deck && study->studySettings().hidekana))
+        if (((deck && Settings::study.hidekanjikana) || (!deck && study->studySettings().hidekana)) && ((wquestion & (int)WordPartBits::Kana) != 0) && (wquestion & (int)WordPartBits::Definition) == 0)
         {
             QChar subst[] = { QChar(0x25b3), QChar(0x25ce), QChar(0x25c7), QChar(0x2606) };
             for (int ix = 0; ix != str.size(); ++ix)

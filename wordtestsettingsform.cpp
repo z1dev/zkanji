@@ -14,6 +14,11 @@
 #include "wordstudyform.h"
 #include "ranges.h"
 #include "zui.h"
+#include "colorsettings.h"
+#include "romajizer.h"
+
+//-------------------------------------------------------------
+
 
 TestWordsItemModel::TestWordsItemModel(WordGroup *group, QObject *parent) : base(parent), group(group), display(TestWordsDisplay::All), showexcluded(true)
 {
@@ -492,12 +497,21 @@ QVariant TestWordsItemModel::data(const QModelIndex &index, int role) const
     if (headerData(col, Qt::Horizontal, (int)DictColumnRoles::Type).toInt() == (int)TestWordsColumnTypes::Order && role == Qt::DisplayRole)
         return QString::number(list[row] + 1);
 
-    if (!index.isValid() || (role != (int)CellRoles::TextColor && role != (int)CellRoles::CellColor) || !items[list[row]].excluded)
+    if (!index.isValid() || (/*role != (int)CellRoles::TextColor &&*/ role != (int)CellRoles::CellColor) || !items[list[row]].excluded)
         return base::data(index, role);
 
     //QPalette::ColorGroup colgrp = ((QWidget*)parent())->window()->isActiveWindow() ? QPalette::Active : QPalette::Inactive;
     //QColor col = qApp->palette().color(colgrp, role == (int)CellRoles::CellColor ? QPalette::Base : QPalette::Text);
-    return QColor(160, 160, 160); /*mixColors(col, QColor(Qt::gray));*/
+    return mixColors(QColor(160, 160, 160), Settings::textColor(qApp->palette(), QPalette::Active, ColorSettings::Bg), 0.2); /*mixColors(col, QColor(Qt::gray));*/
+}
+
+Qt::ItemFlags TestWordsItemModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags r = base::flags(index);
+    int row = index.row();
+    if (index.isValid() && items[list[row]].excluded)
+        r &= ~Qt::ItemIsEnabled;
+    return r;
 }
 
 bool TestWordsItemModel::sortOrder(int c, int a, int b) const
@@ -846,7 +860,7 @@ bool TestWordsItemModel::comparedEqual(TestWordsDisplay disp, int windex1, int w
 
 
 WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
-    base(parent), ui(new Ui::WordTestSettingsForm), group(group), result(ModalResult::Cancel), model(nullptr),
+    base(parent), ui(new Ui::WordTestSettingsForm), group(group), model(nullptr),
     scolumn(0), sorder(Qt::AscendingOrder)
 {
     ui->setupUi(this);
@@ -1029,20 +1043,18 @@ void WordTestSettingsForm::exec()
 
 void WordTestSettingsForm::closeEvent(QCloseEvent *e)
 {
-    if (ui->methodCBox->currentIndex() == 0 && ui->initCBox->currentText().toInt() > ui->roundCBox->currentText().toInt())
-    {
-        e->ignore();
+    e->ignore();
 
-        QMessageBox::information(this, tr("Invalid settings"), tr("The initial number of itemst can't be higher than the number of items tested in a round."), QMessageBox::Ok);
-        return;
-    }
-
-    e->accept();
-
-    if (result == ModalResult::Cancel)
+    if (modalResult() == ModalResult::Cancel)
         ;// onclose(result, group, WordStudySettings());
     else
     {
+        if (ui->methodCBox->currentIndex() == 0 && ui->initCBox->currentText().toInt() > ui->roundCBox->currentText().toInt())
+        {
+            QMessageBox::information(this, tr("Invalid settings"), tr("The initial number of words can't be higher than the number of words from previous rounds, when the study method is gradual inclusion."), QMessageBox::Ok);
+            return;
+        }
+
         WordStudySettings settings;
         memset(&settings, 0, sizeof(WordStudySettings));
         if (ui->askKanjiBox->isChecked())
@@ -1101,15 +1113,44 @@ void WordTestSettingsForm::closeEvent(QCloseEvent *e)
         if (ui->defaultBox->isChecked())
             ZKanji::setDefaultWordStudySettings(settings);
 
+        // Count the number of testable items, and check if there are enough for the test to
+        // start. Update WordStudy::initTest() too if this part changes.
+        const std::vector<WordStudyItem> &items = model->getItems();
+        bool onlykanjikana = (settings.tested & ~((int)WordStudyQuestion::Kanji | (int)WordStudyQuestion::Kana)) == 0;
+        int sum = items.size();
+        for (int ix = sum - 1; ix != -1; --ix)
+            if (items[ix].excluded || (onlykanjikana && hiraganize(group->dictionary()->wordEntry(items[ix].windex)->kanji) == hiraganize(group->dictionary()->wordEntry(items[ix].windex)->kana)))
+                --sum;
+        if ((settings.answer == WordStudyAnswering::Choices5 && sum < 5) || (settings.answer == WordStudyAnswering::Choices8 && sum < 8))
+        {
+            QMessageBox::information(this, tr("Invalid settings"), tr("There are too few items to be tested for the number of choices."), QMessageBox::Ok);
+            return;
+        }
+
+        if (settings.method == WordStudyMethod::Gradual)
+        {
+            if (std::max(settings.gradual.roundlimit, settings.gradual.initnum + settings.gradual.incnum) > sum)
+            {
+                QMessageBox::information(this, tr("Invalid settings"), tr("The number of words to test must be at least %1, with the current gradual inclusion test settings.\n\nDepending on your test settings, words having the same written and kana forms can't be in the test.").arg(std::max(settings.gradual.roundlimit, settings.gradual.initnum + settings.gradual.incnum)), QMessageBox::Ok);
+                return;
+            }
+        }
+        else if (settings.method == WordStudyMethod::Single && sum < 10)
+        {
+            QMessageBox::information(this, tr("Invalid settings"), tr("At least 10 words must be present for the single round test.\n\nDepending on your test settings, words having the same written and kana forms can't be in the test."), QMessageBox::Ok);
+            return;
+        }
+
         group->studyData().setup(settings, model->getItems());
 
-        if (result == ModalResult::Start)
+        if (modalResult() == ModalResult::Start)
         {
             WordStudyForm *study = new WordStudyForm();
             study->exec(&group->studyData());
         }
     }
 
+    e->accept();
     base::closeEvent(e);
 }
 
@@ -1131,9 +1172,15 @@ void WordTestSettingsForm::updateStartSave()
 void WordTestSettingsForm::on_methodCBox_currentIndexChanged(int index)
 {
     if (index == 0)
+    {
         ui->methodStack->setCurrentWidget(ui->gradualPage);
+        ui->infoLabel->setText(tr("<p><b>Gradual inclusion:</b><br><br>The test has multiple rounds.<br><br>In each round, only a few words are shown. In the first round the initial number of words appear.<br><br>In all following rounds, words from the past rounds and at most the above set number of new words are shown. Words shown from past rounds are also limited to the set amount. If you make a mistake in a round, the next round will have the same words without new words added.<br><br>The test ends, when all words had the chance to be tested the same number of times.</p>"));
+    }
     else
+    {
         ui->methodStack->setCurrentWidget(ui->singlePage);
+        ui->infoLabel->setText(tr("<p><b>Single round:</b><br><br>Each word is shown once, until the last one is shown. If you make a mistake and can't answer a word correctly, it's shown again at the end of the test.</p>"));
+    }
 
     updateStartSave();
 }
@@ -1155,14 +1202,12 @@ void WordTestSettingsForm::on_wordsEdit_textChanged(QString t)
 
 void WordTestSettingsForm::on_saveButton_clicked()
 {
-    result = ModalResult::Save;
-    close();
+    closeSave();
 }
 
 void WordTestSettingsForm::on_startButton_clicked()
 {
-    result = ModalResult::Start;
-    close();
+    closeStart();
 }
 
 void WordTestSettingsForm::on_displayBox_currentIndexChanged(int index)

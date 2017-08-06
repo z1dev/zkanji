@@ -11,6 +11,7 @@
 #include "zui.h"
 #include "words.h"
 #include "zkanjimain.h"
+#include "romajizer.h"
 
 
 //-------------------------------------------------------------
@@ -309,7 +310,7 @@ void WordStudy::processRemovedWord(int windex)
 
     if (state != nullptr && !state->itemRemoved(posindex, testSize()))
     {
-        // TODO: notify the user that the study of the group has been abandoned(?)
+        // TODO: (maybe) notify the user that the study of the group has been abandoned
         state.reset();
     }
 }
@@ -367,15 +368,19 @@ void WordStudy::correctedIndexes(std::vector<WordStudyItem> &clist) const
 
 void WordStudy::initTest()
 {
-    // TODO: don't let test run with too few words.
-
     if (state == nullptr)
     {
+        // Update WordTestSettingsForm::closeEvent() if this part changes.
+
+        bool onlykanjikana = (settings.tested & ~((int)WordStudyQuestion::Kanji | (int)WordStudyQuestion::Kana)) == 0;
+
         // Generate testitems.
         testitems.reserve(list.size());
         for (int ix = 0, siz = list.size(); ix != siz; ++ix)
-            if (!list[ix].excluded)
-                testitems.push_back(TestItem(ix, (WordStudyQuestion)createRandomTested(settings.tested)));
+        {
+            if (!list[ix].excluded && (!onlykanjikana || hiraganize(dictionary()->wordEntry(list[ix].windex)->kanji) != hiraganize(dictionary()->wordEntry(list[ix].windex)->kana)))
+                testitems.push_back(TestItem(ix, (WordStudyQuestion)createRandomTested(ix, settings.tested)));
+        }
 
         if (settings.method == WordStudyMethod::Single && settings.usewordlimit && (settings.single.preferhard || settings.single.prefernew) && testitems.size() > settings.wordlimit)
         {
@@ -753,7 +758,7 @@ bool WordStudy::nextFailed() const
     return state->nextFailed(testSize());
 }
 
-int WordStudy::createRandomTested(int choices)
+int WordStudy::createRandomTested(int lix, int choices)
 {
     if (choices == 0)
         throw "Empty choices";
@@ -767,6 +772,24 @@ int WordStudy::createRandomTested(int choices)
     if (hi <= 1)
         return choices;
 
+    // We must exclude only kanji and only kana questions from the choices if the kana and
+    // kanji forms of a word are the same.
+    if ((choices & ((int)WordStudyQuestion::Kanji | (int)WordStudyQuestion::Kana)) != 0 &&
+        hiraganize(dictionary()->wordEntry(list[lix].windex)->kanji) == hiraganize(dictionary()->wordEntry(list[lix].windex)->kana))
+    {
+        if ((choices & (int)WordStudyQuestion::Kanji) != 0)
+            --hi;
+        if ((choices & (int)WordStudyQuestion::Kana) != 0)
+            --hi;
+        choices &= ~((int)WordStudyQuestion::Kanji | (int)WordStudyQuestion::Kana);
+#ifdef _DEBUG
+        if (choices == 0)
+            throw "No question type to select when word has same written and kana forms.";
+#endif
+    }
+
+    int r = -1;
+
     // Pick a random bit.
     hi = rnd(1, hi);
 
@@ -777,7 +800,7 @@ int WordStudy::createRandomTested(int choices)
         if ((choices & (1 << pos)) != 0)
             --hi;
     } while (hi != 0);
-        
+
     return (1 << pos);
 }
 
@@ -850,16 +873,13 @@ void WordStudyGradual::copy(WordStudyState *src)
 
 void WordStudyGradual::init(int indexcnt)
 {
-    // TODO: if indexcnt is less than g_roundlimit or g_initnum or even 10
-    // don't allow the settings window to start the test.
-
     if (round == -1)
     {
         // New test.
         round = 0;
         repeats = 0;
         pos = -1;
-        included = settings.initnum;
+        included = std::min(indexcnt, settings.initnum);
 
         for (int ix = 0; ix != included; ++ix)
             testitems.emplace_back(ix, true);
@@ -954,7 +974,7 @@ void WordStudyGradual::finish(int indexcnt)
 bool WordStudyGradual::itemRemoved(int index, int indexcnt)
 {
     if (index >= included)
-        return indexcnt >= 10;
+        return std::max(settings.initnum + settings.incnum, settings.roundlimit) <= indexcnt;
     --included;
 
     for (int ix = testitems.size() - 1; ix != -1; --ix)
@@ -971,16 +991,14 @@ bool WordStudyGradual::itemRemoved(int index, int indexcnt)
 
     // Fix the round in case too many words have been erased.
 
-    // If we are at the end of the tested words, there's no way to decide
-    // whether the test can continue or not.
+    // If we are at the end of the tested words, there's no way to decide whether the test can
+    // continue or not.
     if (included == indexcnt)
         return false;
 
-    round = (std::max(0, included - settings.initnum) + settings.incnum - 1) / settings.incnum;
+    round = (std::max(0, included - std::min(indexcnt, settings.initnum)) + settings.incnum - 1) / settings.incnum;
 
-    // TODO: don't allow stupid values for the gradual test settings in the
-    // settings form.
-    return !testitems.empty() && indexcnt >= 10;
+    return !testitems.empty() && std::max(settings.initnum + settings.incnum, settings.roundlimit) <= indexcnt;
 }
 
 int WordStudyGradual::index(int indexcnt) const
@@ -1015,7 +1033,10 @@ void WordStudyGradual::answer(bool correct, int indexcnt)
 
 bool WordStudyGradual::finished(int indexcnt) const
 {
-    return included == indexcnt && round >= ((indexcnt - settings.initnum) / settings.incnum) + 2;
+    if (included != indexcnt)
+        return false;
+    int maxrounds = ((indexcnt - std::min(indexcnt, settings.initnum)) / settings.incnum) + 2;
+    return round > maxrounds || (round == maxrounds && pos >= (int)testitems.size() - 1);
 }
 
 bool WordStudyGradual::correctAt(int p, int indexcnt) const
