@@ -129,9 +129,12 @@ bool ImportReplaceForm::event(QEvent *e)
 {
     if (e->type() == StartEvent::Type())
     {
-        init();
-        if (!isVisible())
+        if (!init())
+        {
+            QMessageBox::information(nullptr, "zkanji", tr("Every used word were found in the new dictionary. No need for user input."));
+
             closeCancel();
+        }
         //    loop.exit();
 
         return true;
@@ -186,7 +189,7 @@ void ImportReplaceForm::missingRowChanged(int row, int prev)
     }
 }
 
-void ImportReplaceForm::init()
+bool ImportReplaceForm::init()
 {
     if (owndir)
     {
@@ -260,13 +263,14 @@ void ImportReplaceForm::init()
     std::vector<int> l;
 
     // Creating word index mapping of words (that were added to groups, study data etc.) of
-    // the original dictionary to indexes in the new dictionary. Result in list is
+    // the original dictionary to indexes in the new dictionary. Result in list is:
     // [old word index, new word index]. The new word index is set to -1 if the same word is
     // not found.
     olddir->listUsedWords(l);
     list = newdir->mapWords(olddir, l);
     dlg.hide();
 
+    // Fill l to contain words in need of a replacement.
     std::vector<int>().swap(l);
     int ix = 0;
     for (auto p : list)
@@ -276,14 +280,16 @@ void ImportReplaceForm::init()
         ++ix;
     }
     if (l.empty())
-        return;
+        return false;
 
     std::vector<int> results;
     std::swap(results, l);
     model->setWordList(olddir, std::move(results));
     ui->missingTable->setCurrentRow(0);
 
-    show();
+    //show();
+
+    return true;
 }
 
 

@@ -66,7 +66,7 @@ private:
     // them in the missing words table. While the init is running, the widgets
     // on the window will be disabled. Closing the window during this time
     // shows a dialog box asking a user to abort.
-    void init();
+    bool init();
 
     Ui::ImportReplaceForm *ui;
     DictionaryWordListItemModel *model;

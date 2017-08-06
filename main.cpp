@@ -200,7 +200,7 @@ namespace {
             {
                 int result = showAndReturn(qApp->translate(0, "zkanji warning"),
                     qApp->translate(0, "Warning: data files of a portable installation detected at the application's location, but the location is read only!"),
-                    qApp->translate(0, "Choose \"Continue\" to start the program in non-portable mode."),
+                    qApp->translate(0, "Choose \"%1\" to start the program in non-portable mode.").arg(qApp->translate(0, "Continue")),
                     {
                         { qApp->translate(0, "Continue"), QMessageBox::AcceptRole },
                         { qApp->translate(0, "Quit"), QMessageBox::RejectRole }
