@@ -120,6 +120,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="text">
                <string>Pause</string>
               </property>
@@ -149,6 +152,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
                <string>&amp;Options...</string>
@@ -332,7 +338,11 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="undoCBox"/>
+                  <widget class="QComboBox" name="undoCBox">
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -378,6 +388,9 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
                    </property>
                    <property name="text">
                     <string>Show hint</string>
@@ -431,6 +444,9 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="acceptButton">
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
+                    </property>
                     <property name="text">
                      <string>Accept</string>
                     </property>
@@ -490,6 +506,9 @@
                      <font>
                       <pointsize>12</pointsize>
                      </font>
+                    </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
                     </property>
                     <property name="text">
                      <string>Show answer</string>
@@ -568,6 +587,9 @@
                    <widget class="QPushButton" name="choiceButton">
                     <property name="enabled">
                      <bool>true</bool>
+                    </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
                     </property>
                     <property name="text">
                      <string>Reveal answer</string>
@@ -762,6 +784,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="retryButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Try again (0)</string>
                 </property>
@@ -824,6 +849,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="wrongButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Couldn't recall (1)</string>
                 </property>
@@ -861,6 +889,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="correctButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Remembered (2)</string>
                 </property>
@@ -901,6 +932,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="easyButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>Too easy (3)</string>
                 </property>
@@ -1036,6 +1070,9 @@
                   <pointsize>11</pointsize>
                  </font>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string>&amp;Correct</string>
                 </property>
@@ -1063,6 +1100,9 @@
                  <font>
                   <pointsize>11</pointsize>
                  </font>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
                  <string>&amp;Wrong</string>
@@ -1224,6 +1264,9 @@
                  <font>
                   <pointsize>11</pointsize>
                  </font>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="text">
                  <string>Continue</string>

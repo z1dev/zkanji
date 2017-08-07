@@ -930,6 +930,7 @@ bool RecognizerObject::eventFilter(QObject *obj, QEvent *e)
         }
     }
 
+    /*
     if (RecognizerForm::instance == nullptr || !RecognizerForm::instance->isVisible())
     {
         // Pop up if space is pressed, ignore everything else.
@@ -945,20 +946,23 @@ bool RecognizerObject::eventFilter(QObject *obj, QEvent *e)
 
         return base::eventFilter(obj, e);
     }
+    */
 
     // Hide or show for another edit box if space is pressed. Hide when esc is
     // pressed.
     if (e->type() == QEvent::KeyPress)
     {
         QKeyEvent *ke = (QKeyEvent*)e;
-        if (ke->key() == Qt::Key_Space)
+        if (ke->key() == Qt::Key_Space && edit->isVisible())
         {
             if (edit != nullptr)
                 RecognizerForm::popup(RecognizerForm::editforbuttons[edit]);
         }
-        else if (ke->key() == Qt::Key_Escape)
+        else if (RecognizerForm::instance != nullptr && RecognizerForm::instance->isVisible() && ke->key() == Qt::Key_Escape)
             RecognizerForm::instance->hide();
     }
+    else if (e->type() == QEvent::Hide && RecognizerForm::instance != nullptr && RecognizerForm::instance->isVisible())
+        RecognizerForm::instance->hide();
 
     return base::eventFilter(obj, e);
 }
