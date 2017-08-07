@@ -598,6 +598,24 @@ bool WordStudyForm::eventFilter(QObject *obj, QEvent *e)
             idletime = QDateTime::currentDateTimeUtc();
     }
 
+    if (e->type() == QEvent::Shortcut)
+    {
+        QShortcutEvent *ke = (QShortcutEvent*)e;
+
+        // Find the position of the & character in the undo combobox label's text to be able to
+        // show the popup for the combo box if this shortcut is pressed.
+        if (ui->undoCBox->isVisibleTo(this))
+        {
+            QString str = ui->undoLabel->text();
+            int pos = str.indexOf('&');
+            if (pos != -1 && pos < str.size() - 1 && ke->key() == QKeySequence(qApp->translate("QShortcut", "Alt") + "+" + str.at(pos + 1).toUpper()))
+            {
+                ui->undoCBox->showPopup();
+                return true;
+            }
+        }
+    }
+
     return base::eventFilter(obj, e);
 }
 
