@@ -1019,6 +1019,47 @@ void drawCheckBox(QPainter *painter, const QWidget *widget, int leftpadding, QRe
 //-------------------------------------------------------------
 
 
+bool operator==(QKeyEvent *e, const QKeySequence &seq)
+{
+    if (seq.count() != 1)
+        return false;
+
+    int sh = seq[0];
+
+    int k = e->key();
+    int m = ((int)e->modifiers() & (int)Qt::KeyboardModifierMask);
+    if (k == Qt::Key_Control || k == Qt::Key_Shift || k == Qt::Key_Alt || k == Qt::Key_Meta)
+    {
+        switch (k)
+        {
+        case Qt::Key_Control:
+            m |= Qt::ControlModifier;
+            break;
+        case Qt::Key_Alt:
+            m |= Qt::AltModifier;
+            break;
+        case Qt::Key_Shift:
+            m |= Qt::ShiftModifier;
+            break;
+        case Qt::Key_Meta:
+            m |= Qt::MetaModifier;
+            break;
+        }
+        return sh == m;
+    }
+
+    return sh == (k | m);
+}
+
+bool operator==(const QKeySequence &seq, QKeyEvent *e)
+{
+    return e == seq;
+}
+
+
+//-------------------------------------------------------------
+
+
 JapaneseValidator::JapaneseValidator(bool acceptkanji, bool acceptsymbols, QObject *parent) : base(parent), acceptkanji(acceptkanji), acceptsymbols(acceptsymbols)
 {
 

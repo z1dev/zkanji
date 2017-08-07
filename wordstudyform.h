@@ -97,6 +97,7 @@ protected:
     virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *obj, QEvent *e) override;
     virtual void paintEvent(QPaintEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
 private slots:
     // Pressed the show answer or accept buttons. Reveals the correct answer, colors the
     // labels accordingly and shows the page to skip to the next word.

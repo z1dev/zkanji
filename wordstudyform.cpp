@@ -290,6 +290,7 @@ WordStudyForm::WordStudyForm(QWidget *parent) :
         testedcount(0), passedcount(0), passedtime(0), answered(false), first(true)
 {
     ui->setupUi(this);
+    ui->hintButton->setText(ui->hintButton->text() + " (" + QKeySequence(tr("Ctrl+H")).toString(QKeySequence::NativeText) + ")");
 
     setAttribute(Qt::WA_QuitOnClose, false);
 
@@ -602,6 +603,104 @@ void WordStudyForm::paintEvent(QPaintEvent *e)
     p.setBrush(Qt::transparent);
 
     p.drawRect(rect());
+}
+
+void WordStudyForm::keyPressEvent(QKeyEvent *e)
+{
+    if (ui->hintButton->isVisibleTo(this) && e == QKeySequence(tr("Ctrl+H")))
+    {
+        ui->hintButton->click();
+        return;
+    }
+    else if (ui->optionsButton->isVisibleTo(this) && e == QKeySequence(tr("Ctrl+O")))
+    {
+        ui->optionsButton->click();
+        return;
+    }
+    else if (e == QKeySequence(tr("0")) && ui->retryButton->isVisibleTo(this))
+    {
+        ui->retryButton->click();
+        return;
+    }
+    else if (e == QKeySequence(tr("1")))
+    {
+        if (ui->wrongButton->isVisibleTo(this))
+        {
+            ui->wrongButton->click();
+            return;
+        }
+        else if (ui->resumeButton->isVisibleTo(this))
+        {
+            ui->resumeButton->click();
+            return;
+        }
+    }
+    else if (e == QKeySequence(tr("2")) && ui->correctButton->isVisibleTo(this))
+    {
+        ui->correctButton->click();
+        return;
+    }
+    else if (e == QKeySequence(tr("3")))
+    {
+        if (ui->easyButton->isVisibleTo(this))
+        {
+            ui->easyButton->click();
+            return;
+        }
+        else if (ui->quitButton->isVisibleTo(this))
+        {
+            ui->quitButton->click();
+            return;
+        }
+    }
+    else if ((e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) && (((e->modifiers() & Qt::KeyboardModifierMask) == Qt::NoModifier) || ((e->modifiers() & Qt::KeyboardModifierMask) == Qt::KeypadModifier)))
+    {
+        if (ui->continueButton->isVisibleTo(this))
+        {
+            ui->continueButton->click();
+            return;
+        }
+        else if (ui->acceptButton->isVisibleTo(this))
+        {
+            ui->acceptButton->click();
+            return;
+        }
+        else if (ui->choiceButton->isVisibleTo(this))
+        {
+            ui->choiceButton->click();
+            return;
+        }
+        else if (ui->showButton->isVisibleTo(this))
+        {
+            ui->showButton->click();
+            return;
+        }
+        else if (ui->continueButton->isVisibleTo(this))
+        {
+            ui->continueButton->click();
+            return;
+        }
+    }
+    else if (ui->pauseButton->isVisibleTo(this) && e->key() == Qt::Key_Pause && ((e->modifiers() & Qt::KeyboardModifierMask) == Qt::NoModifier))
+    {
+        ui->pauseButton->click();
+        return;
+    }
+    else if (e->key() == Qt::Key_Escape && ((e->modifiers() & Qt::KeyboardModifierMask) == Qt::NoModifier))
+    {
+        if (ui->choiceButton->isVisibleTo(this))
+        {
+            ui->choiceButton->click();
+            return;
+        }
+        else if (ui->showButton->isVisibleTo(this))
+        {
+            ui->showButton->click();
+            return;
+        }
+    }
+
+    base::keyPressEvent(e);
 }
 
 void WordStudyForm::answerEntered()

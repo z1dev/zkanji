@@ -277,6 +277,9 @@ QRect checkBoxHitRect(const QWidget *widget, int leftpadding, QRect rect, QStyle
 // passed options is updated to the checkbox's real rectangle.
 void drawCheckBox(QPainter *painter, const QWidget *widget, int leftpadding, QRect rect, QStyleOptionButton *opt);
 
+bool operator==(QKeyEvent *e, const QKeySequence &seq);
+bool operator==(const QKeySequence &seq, QKeyEvent *e);
+
 class QSignalMapper;
 class QAction;
 

@@ -151,7 +151,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Options...</string>
+               <string>&amp;Options...</string>
               </property>
              </widget>
             </item>
@@ -380,7 +380,7 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>Show hint (Ctrl+H)</string>
+                    <string>Show hint</string>
                    </property>
                   </widget>
                  </item>
@@ -1037,7 +1037,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Correct</string>
+                 <string>&amp;Correct</string>
                 </property>
                </widget>
               </item>
@@ -1065,7 +1065,7 @@
                  </font>
                 </property>
                 <property name="text">
-                 <string>Wrong</string>
+                 <string>&amp;Wrong</string>
                 </property>
                </widget>
               </item>
