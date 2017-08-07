@@ -146,18 +146,21 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="optionsButton">
+             <widget class="QToolButton" name="optionsButton">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
               <property name="text">
-               <string>&amp;Options...</string>
+               <string>&amp;Options</string>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::NoArrow</enum>
               </property>
              </widget>
             </item>
@@ -333,7 +336,10 @@
                     </font>
                    </property>
                    <property name="text">
-                    <string>Previous answer:</string>
+                    <string>&amp;Previous answer:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring></cstring>
                    </property>
                   </widget>
                  </item>

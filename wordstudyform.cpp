@@ -9,6 +9,8 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QDesktopWidget>
+#include <QSignalMapper>
+#include <QDesktopServices>
 #include "wordstudyform.h"
 #include "ui_wordstudyform.h"
 #include "words.h"
@@ -26,6 +28,8 @@
 #include "fontsettings.h"
 #include "globalui.h"
 #include "zstrings.h"
+#include "sites.h"
+#include "dialogs.h"
 
 // Color of border and "New" text during long term study.
 static const QColor newcolor(80, 140, 200);
@@ -296,6 +300,28 @@ WordStudyForm::WordStudyForm(QWidget *parent) :
 
     ui->statusLabel->hide();
     ui->optionsButton->hide();
+    optionmenu = new QMenu(this);
+    QAction *a = optionmenu->addAction(tr("Add to group..."));
+    connect(a, &QAction::triggered, this, &WordStudyForm::currentToGroup);
+    partaction = optionmenu->addAction(tr("Study part..."));
+    connect(partaction, &QAction::triggered, this, &WordStudyForm::currentToStudy);
+    optionmenu->addSeparator();
+
+    if (ZKanji::lookup_sites.size() != 0)
+    {
+        QSignalMapper *mapper = new QSignalMapper(this);
+        connect(mapper, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, &WordStudyForm::currentLookup);
+
+        QMenu *sub = optionmenu->addMenu(tr("Online lookup"));
+        for (int ix = 0, siz = ZKanji::lookup_sites.size(); ix != siz; ++ix)
+        {
+            a = sub->addAction(ZKanji::lookup_sites[ix].name);
+            connect(a, &QAction::triggered, mapper, (void (QSignalMapper::*)())&QSignalMapper::map);
+            mapper->setMapping(a, ix);
+        }
+    }
+
+    ui->optionsButton->setMenu(optionmenu);
 
     connect(ui->acceptButton, &QPushButton::clicked, this, &WordStudyForm::answerEntered);
     connect(ui->showButton, &QPushButton::clicked, this, &WordStudyForm::answerEntered);
@@ -353,6 +379,7 @@ void WordStudyForm::exec(WordDeck *d)
     qApp->processEvents();
     if (ui->hintButton->isVisible())
         ui->hintWidget->setMinimumWidth(ui->hintButton->width());
+    ui->optionsButton->setMinimumHeight(ui->pauseButton->height());
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
@@ -383,6 +410,8 @@ void WordStudyForm::exec(WordDeck *d)
 void WordStudyForm::exec(WordStudy *s)
 {
     study = s;
+
+    partaction->setVisible(false);
 
     if (!s->studySettings().usetimer)
         ui->timerBar->hide();
@@ -454,6 +483,7 @@ void WordStudyForm::exec(WordStudy *s)
     setAttribute(Qt::WA_DontShowOnScreen, true);
     show();
     qApp->processEvents();
+    ui->optionsButton->setMinimumHeight(ui->pauseButton->height());
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
@@ -713,6 +743,8 @@ void WordStudyForm::answerEntered()
 
     WordEntry *w = dictionary()->wordEntry(windex);
 
+    ui->optionsButton->show();
+
     ui->kanjiLabel->setText(w->kanji.toQStringRaw());
     ui->kanjiLabel->show();
     ui->kanaLabel->setText(w->kana.toQStringRaw());
@@ -961,6 +993,26 @@ void WordStudyForm::resume()
     update();
 }
 
+void WordStudyForm::currentToGroup()
+{
+    wordToGroupSelect(dictionary(), windex, true);
+}
+
+void WordStudyForm::currentToStudy()
+{
+    WordEntry *w = dictionary()->wordEntry(windex);
+    addWordsToDeck(deck, { windex }, this);
+}
+
+void WordStudyForm::currentLookup(int ix)
+{
+    WordEntry *w = dictionary()->wordEntry(windex);
+
+    SiteItem &site = ZKanji::lookup_sites[ix];
+    QString url = site.url.left(site.insertpos) % w->kanji.toQString() % site.url.mid(site.insertpos);
+    QDesktopServices::openUrl(QUrl(url));
+}
+
 bool WordStudyForm::showNext()
 {
     if (deck)
@@ -996,6 +1048,8 @@ bool WordStudyForm::showNext()
             return false;
         }
         windex = study->nextIndex();
+
+        ui->optionsButton->hide();
 
         whint = WordParts::Default;
         wquestion = study->nextQuestion();

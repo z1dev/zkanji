@@ -11,10 +11,10 @@
 
 class Dictionary;
 class QWidget;
-void wordToGroupSelect(Dictionary *d, int windex/*, QWidget *dialogParent = nullptr*/);
-void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes/*, QWidget *dialogParent = nullptr*/);
-void kanjiToGroupSelect(Dictionary *d, ushort kindex/*, QWidget *dialogParent = nullptr*/);
-void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes/*, QWidget *dialogParent = nullptr*/);
+void wordToGroupSelect(Dictionary *d, int windex, bool showmodal = false /*, QWidget *dialogParent = nullptr*/);
+void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
+void kanjiToGroupSelect(Dictionary *d, ushort kindex, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
+void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
 // Opens a word filter editor window with the passed parent. Set filterindex to -1 to create a
 // new filter.
 void editWordFilter(int filterindex, QWidget *parent);
@@ -56,7 +56,8 @@ void editKanjiDefinition(Dictionary *d, ushort kindex);
 
 class WordDeck;
 // Shows the Add words to deck dialog window to select words to be added to a deck. The
-// initial deck should be passed in deck, with the index of words to be listed.
+// initial deck should be passed in deck, with the index of words to be listed. This window
+// is always shown as a modal dialog.
 void addWordsToDeck(WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent = nullptr);
 
 #endif // DIALOGS_H

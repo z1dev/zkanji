@@ -115,6 +115,10 @@ private slots:
 
     void suspend();
     void resume();
+
+    void currentToGroup();
+    void currentToStudy();
+    void currentLookup(int ix);
 private:
     // Updates the window to show the next tested word and the correct pages.
     bool showNext();
@@ -190,6 +194,9 @@ private:
     // True before an answer is given to the first item after the window is displayed.
     // Determines whether the undo button is shown.
     bool first;
+
+    QMenu *optionmenu;
+    QAction *partaction;
 
     typedef QMainWindow base;
 };

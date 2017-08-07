@@ -1339,6 +1339,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
 
     DictColumnTypes coltype = (DictColumnTypes)index.data((int)DictColumnRoles::Type).toInt();
 
+    // When changed: fix similar code in wordstudyform.cpp constructor.
     if (ZKanji::lookup_sites.size() != 0 && hasdict && dict != nullptr && (!selstr.isEmpty() || windexes.size() == 1) && coltype != DictColumnTypes::Definition)
     {
         QMenu *sub = popup->addMenu(tr("Online lookup"));
