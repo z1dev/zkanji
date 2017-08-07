@@ -1699,11 +1699,6 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     int defix = index.data((int)DictRowRoles::DefIndex).toInt();
     WordEntry *e = index.data((int)DictRowRoles::WordEntry).value<WordEntry*>();
 
-#ifdef _DEBUG
-    if (e == nullptr)
-        return; // Remove this. It was added on an access violation.
-#endif
-
     std::vector<InfTypes> *inf = (std::vector<InfTypes>*)index.data((int)DictRowRoles::Inflection).value<intptr_t>();
 
     // The painted item is in the current row of the owner view.
@@ -1760,6 +1755,8 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         checkboxright = r.right() + 1;
     }
 
+    QRect r = option.rect.adjusted(0, 0, -1, -1);
+
     switch (coltype)
     {
     case (int)DictColumnTypes::Frequency:
@@ -1769,7 +1766,6 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
         ushort val = index.data(Qt::DisplayRole).value<ushort>();
 
-        QRect r = option.rect;
         r.setLeft(checkboxright);
 
         // Looking for JLPT data in the commons tree.
@@ -1779,7 +1775,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
             if (c != nullptr && c->jlptn != 0)
             {
                 QFont f = Settings::notesFont();
-                f.setPointSize(option.rect.height() / 2 - 2);
+                f.setPointSize(r.height() / 2 - 2);
                 painter->save();
                 painter->setFont(f);
 
@@ -1837,7 +1833,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     case (int)DictColumnTypes::Kanji:
     {
         QFont f = Settings::kanaFont(); //{ kanaFontName(), 9 };
-        f.setPixelSize(option.rect.height() * kanjiRowSize /*/ 2 + 1*/);
+        f.setPixelSize(r.height() * kanjiRowSize /*/ 2 + 1*/);
         painter->save();
 
         if (defix > 0)
@@ -1857,7 +1853,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
         painter->setFont(f);
 
-        paintKanji(painter, index, checkboxright + 4, option.rect.top(), option.rect.top() + option.rect.height() * 0.8, option.rect);
+        paintKanji(painter, index, checkboxright + 4, r.top(), r.top() + r.height() * 0.8, r);
 
         painter->restore();
         break;
@@ -1866,7 +1862,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     {
         QString str = index.data(Qt::DisplayRole).toString();
         QFont f = Settings::kanaFont(); // { kanaFontName(), 9 };
-        f.setPixelSize(option.rect.height() * kanjiRowSize /*/ 2 + 1*/);
+        f.setPixelSize(r.height() * kanjiRowSize /*/ 2 + 1*/);
         painter->save();
 
         if (defix > 0)
@@ -1879,9 +1875,9 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
         painter->setFont(f);
         if (owner()->isTextSelecting() && owner()->textSelectionIndex() == index)
-            drawSelectionText(painter, checkboxright + 4, option.rect.top() + option.rect.height() * 0.8, option.rect, str);
+            drawSelectionText(painter, checkboxright + 4, r.top() + r.height() * 0.8, r, str);
         else
-            drawTextBaseline(painter, checkboxright + 4, option.rect.top() + option.rect.height() * 0.8, false, option.rect, str);
+            drawTextBaseline(painter, checkboxright + 4, r.top() + r.height() * 0.8, false, r, str);
             //painter->drawText(checkboxright + 4, option.rect.top(), option.rect.width() - (checkboxright - option.rect.left()) - 8, option.rect.height(), Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, str);
 
         painter->restore();
@@ -1895,7 +1891,6 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         if (e == nullptr)
             throw "No word to paint.";
 
-        QRect r = option.rect;
         r.setLeft(checkboxright);
 
         // Baseline position.
@@ -1917,9 +1912,9 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         else
         {
             QFont f = Settings::defFont(); //{ kanaFontName(), 9 };
-            f.setPixelSize(option.rect.height() * 0.78 /*/ 2 + 1*/);
+            f.setPixelSize(r.height() * 0.78 /*/ 2 + 1*/);
             painter->setFont(f);
-            drawTextBaseline(painter, r.left(), y, false, option.rect, owner()->dictionary()->displayedStudyDefinition(index.data((int)DictRowRoles::WordIndex).toInt()));
+            drawTextBaseline(painter, r.left(), y, false, r, owner()->dictionary()->displayedStudyDefinition(index.data((int)DictRowRoles::WordIndex).toInt()));
             //painter->drawText(r.left(), y, owner()->dictionary()->displayedStudyDefinition(index.data((int)DictRowRoles::WordIndex).toInt()));
         }
 
@@ -1929,7 +1924,9 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     default:
         if (defix > 0)
             break;
-        base::paint(painter, option, index);
+        QStyleOptionViewItem opt = option;
+        opt.rect.adjust(0, 0, -1, -1);
+        base::paint(painter, opt, index);
     }
 
     if (current)
