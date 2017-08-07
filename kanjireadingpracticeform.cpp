@@ -7,6 +7,7 @@
 #include <QtEvents>
 #include <QPainter>
 #include <QDesktopWidget>
+#include <QStatusBar>
 #include "kanjireadingpracticeform.h"
 #include "ui_kanjireadingpracticeform.h"
 #include "worddeck.h"
@@ -103,7 +104,7 @@ QMap<int, QVariant> KanjiReadingPracticeListModel::itemData(const QModelIndex &i
 
 
 KanjiReadingPracticeForm::KanjiReadingPracticeForm(WordDeck *deck, QWidget *parent) : base(parent), ui(new Ui::KanjiReadingPracticeForm),
-        deck(deck), tries(0), model(nullptr)
+        deck(deck), tries(0), correct(0), wrong(0), model(nullptr)
 {
     ui->setupUi(this);
 
@@ -119,6 +120,14 @@ KanjiReadingPracticeForm::KanjiReadingPracticeForm(WordDeck *deck, QWidget *pare
     ui->nextButton->setDefault(true);
 
     ui->kanjiLabel->setFont(Settings::kanjiFont());
+
+    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel = new QLabel(this), "0", 5));
+    dueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Correct") + ": ", 0, correctLabel = new QLabel(this), "0", 5));
+    correctLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Wrong") + ": ", 0, wrongLabel = new QLabel(this), "0", 5));
+    wrongLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
 
     connect(ui->acceptButton, &QPushButton::clicked, this, &KanjiReadingPracticeForm::readingAccepted);
     connect(ui->answerEdit, &ZLineEdit::textChanged, this, &KanjiReadingPracticeForm::answerChanged);
@@ -138,6 +147,7 @@ void KanjiReadingPracticeForm::exec()
     setAttribute(Qt::WA_DontShowOnScreen, true);
     show();
     qApp->processEvents();
+    ui->kanjiLabel->setMaximumHeight(ui->kanjiLabel->width());
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
@@ -165,6 +175,9 @@ void KanjiReadingPracticeForm::readingAccepted()
     {
         ui->solvedLabel->setText(tr("Incorrect"));
 
+        if (tries == 0)
+            ++wrong;
+
         // Answer string was empty, just show the correct answer.
         ui->label1->hide();
         ui->label2->hide();
@@ -177,6 +190,9 @@ void KanjiReadingPracticeForm::readingAccepted()
             // Incorrect answer.
 
             ui->solvedLabel->setText(tr("Incorrect"));
+
+            if (tries == 0)
+                ++wrong;
 
             ++tries;
             // The answer was incorrect. Show correct answer if this is the
@@ -199,14 +215,17 @@ void KanjiReadingPracticeForm::readingAccepted()
 
             ui->solvedLabel->setText(tr("Correct"));
 
+            if (tries == 0)
+                ++correct;
         }
     }
 
-    if (deck->readingsQueued())
+    if (deck->readingsQueued() != 0)
         ui->nextButton->setText(tr("Continue"));
     else
         ui->nextButton->setText(tr("Finish"));
     ui->answerStack->setCurrentIndex(1);
+    updateLabels();
 }
 
 void KanjiReadingPracticeForm::nextClicked()
@@ -230,7 +249,7 @@ void KanjiReadingPracticeForm::nextClicked()
 
         deck->practiceReadingAnswered();
 
-        if (!deck->readingsQueued())
+        if (deck->readingsQueued() == 0)
         {
             // Last item was already answered.
             close();
@@ -284,8 +303,16 @@ void KanjiReadingPracticeForm::initNextRound()
     }
 
     model->setWordList(deck->dictionary(), std::move(words), std::move(readings));
+    updateLabels();
 
     ui->answerEdit->setFocus();
+}
+
+void KanjiReadingPracticeForm::updateLabels()
+{
+    dueLabel->setText(QString("%1").arg(QString::number(deck->readingsQueued())));
+    correctLabel->setText(QString("%1").arg(QString::number(correct)));
+    wrongLabel->setText(QString("%1").arg(QString::number(wrong)));
 }
 
 

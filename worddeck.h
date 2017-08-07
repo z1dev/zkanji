@@ -191,17 +191,18 @@ public:
 
     // Removes all data from the reading test list.
     void clear();
-    // Returns whether there are no more readings that can be tested on
-    // the current test day.
+    // Returns whether there are no more readings that can be tested on the current test day.
     bool empty() const;
+    // Returns the number of kanji/reading pair to be tested.
+    int size() const;
 
     // Called when the dictionary is updated.
-    // mainword: [new index, word data] - word data which will be kept in deck
-    //           and its new index.
-    // match: [new index, old kanji and kana matches new] - whether the word
-    //           data in mainword with the same new index is exact match.
-    // Every reading for words where the match is not exact, or mergedest does
-    // not contain it must be removed from the readings test.
+    // mainword: [new index, word data] - word data which will be kept in deck and its new
+    //           index.
+    // match: [new index, old kanji and kana matches new] - whether the word data in mainword
+    //           with the same new index is exact match.
+    // Every reading for words where the match is not exact, or mergedest does not contain it
+    // must be removed from the readings test.
     void applyChanges(const std::map<int, int> &changes, const std::map<int, WordDeckWord*> &mainword, const std::map<int, bool> &match);
 
     void copy(ReadingTestList *src);
@@ -233,11 +234,10 @@ public:
     bool readingMatches(QString answer);
     // Returns the correct answer to the currently tested kanji reading.
     QString correctReading();
-    // Removes the current reading item from the list, after it has been
-    // answered.
+    // Removes the current reading item from the list, after it has been answered.
     void readingAnswered();
-    // Returns the list of words to be shown with the current kanji's reading
-    // in a kanji reading practice.
+    // Returns the list of words to be shown with the current kanji's reading in a kanji
+    // reading practice.
     void nextWords(std::vector<int> &words);
 private:
     WordDeck *owner;
@@ -416,7 +416,7 @@ public:
 
     // Returns whether there are kanji readings to be tested from words tested
     // today.
-    bool readingsQueued() const;
+    int readingsQueued() const;
 
     // Returns data of a word added to the deck. Only a single data is added
     // for each word even if multiple items are added for them.

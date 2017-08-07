@@ -56,6 +56,7 @@ private:
 
 class WordDeck;
 class DictionaryWordListItemModel;
+class QLabel;
 class KanjiReadingPracticeForm : public DialogWindow
 {
     Q_OBJECT
@@ -72,10 +73,20 @@ private:
     // Updates the labes, buttons etc. to show the next reading.
     void initNextRound();
 
+    // Updates the numbers in the status bar.
+    void updateLabels();
+
     Ui::KanjiReadingPracticeForm *ui;
     WordDeck *deck;
 
+    QLabel *dueLabel;
+    QLabel *correctLabel;
+    QLabel *wrongLabel;
+
     int tries;
+
+    int correct;
+    int wrong;
 
     KanjiReadingPracticeListModel *model;
 

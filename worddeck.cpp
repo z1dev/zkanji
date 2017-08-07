@@ -327,6 +327,11 @@ bool ReadingTestList::empty() const
     return list.empty();
 }
 
+int ReadingTestList::size() const
+{
+    return list.size();
+}
+
 void ReadingTestList::applyChanges(const std::map<int, int> &changes, const std::map<int, WordDeckWord*> &mainword, const std::map<int, bool> &match)
 {
     undoindex = -1;
@@ -1545,9 +1550,9 @@ bool WordDeck::firstTest() const
     return study->firstTest();
 }
 
-bool WordDeck::readingsQueued() const
+int WordDeck::readingsQueued() const
 {
-    return !testreadings.empty();
+    return testreadings.size();
 }
 
 WordDeckWord* WordDeck::wordData(int index)
