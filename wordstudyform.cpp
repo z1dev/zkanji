@@ -502,6 +502,7 @@ void WordStudyForm::exec(WordStudy *s)
 void WordStudyForm::closeEvent(QCloseEvent *e)
 {
     e->accept();
+    qApp->removeEventFilter(this);
 
     if (deck || result != ModalResult::Suspend)
         qApp->postEvent(this, new EndEvent());
@@ -747,6 +748,25 @@ void WordStudyForm::keyPressEvent(QKeyEvent *e)
             return;
         }
     }
+
+    if (ui->decideCorrectButton->isVisibleTo(this) && ui->decideWrongButton->isVisibleTo(this) && ((e->modifiers() & Qt::KeyboardModifierMask) == Qt::NoModifier))
+    {
+        QChar ch;
+
+        int pos = ui->decideCorrectButton->text().indexOf(QChar('&'));
+        if (pos != -1 && pos < ui->decideCorrectButton->text().size() - 1 && e == QKeySequence(ui->decideCorrectButton->text().mid(pos + 1, 1)))
+        {
+            ui->decideCorrectButton->click();
+            return;
+        }
+        pos = ui->decideWrongButton->text().indexOf(QChar('&'));
+        if (pos != -1 && pos < ui->decideWrongButton->text().size() - 1 && e == QKeySequence(ui->decideWrongButton->text().mid(pos + 1, 1)))
+        {
+            ui->decideWrongButton->click();
+            return;
+        }
+    }
+        
 
     base::keyPressEvent(e);
 }
