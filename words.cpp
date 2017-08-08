@@ -40,7 +40,7 @@
 
 // WARNING: none of these strings should be longer than 255 bytes.
 
-char ZKANJI_PROGRAM_VERSION[] = "v0.0.2-alpha";
+char ZKANJI_PROGRAM_VERSION[] = "v0.0.3-alpha";
 
 static char ZKANJI_BASE_FILE_VERSION[] = "002";
 static char ZKANJI_DICTIONARY_FILE_VERSION[] = "001";
