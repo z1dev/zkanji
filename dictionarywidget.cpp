@@ -1063,7 +1063,7 @@ bool DictionaryWidget::eventFilter(QObject *obj, QEvent *e)
 {
     if (obj == ui->wordsTable)
     {
-        if (e->type() == QEvent::KeyPress && ((QKeyEvent*)e)->text() != QString())
+        if (e->type() == QEvent::KeyPress && ((QKeyEvent*)e)->text() != QString() && (((QKeyEvent*)e)->modifiers() & ~Qt::ShiftModifier) == Qt::NoModifier)
         {
             if ((
                 //TODO: (later with Qt5.6 or newer) replace all Key_Escape keys where appropriate with QKeySequence::Cancel

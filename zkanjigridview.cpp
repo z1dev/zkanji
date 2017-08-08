@@ -1196,31 +1196,36 @@ void ZKanjiGridView::resizeEvent(QResizeEvent *event)
     recomputeScrollbar(event->size());
 }
 
-void ZKanjiGridView::keyPressEvent(QKeyEvent *event)
+void ZKanjiGridView::keyPressEvent(QKeyEvent *e)
 {
     if (model() == nullptr || model()->empty())
     {
-        QFrame::keyPressEvent(event);
+        QFrame::keyPressEvent(e);
         return;
     }
 
-    if (event == QKeySequence::SelectAll)
+    if (e == QKeySequence::SelectAll)
     {
         selectAll();
-        QFrame::keyPressEvent(event);
+        QFrame::keyPressEvent(e);
         return;
     }
 
-    if (event == QKeySequence::Deselect)
+    if (e == QKeySequence::Deselect
+#ifndef Q_OS_LINUX
+        // Qt is missing this important key combination for Windows and Mac.
+        || e == QKeySequence(tr("Ctrl+D", "Deselect")) || e == QKeySequence(tr("Ctrl+Shift+A", "Deselect"))
+#endif
+        )
     {
         clearSelection();
-        QFrame::keyPressEvent(event);
+        QFrame::keyPressEvent(e);
         return;
     }
 
     //int index;
-    bool multi = event->modifiers().testFlag(Qt::ShiftModifier);
-    bool toggle = event->modifiers().testFlag(Qt::ControlModifier);
+    bool multi = e->modifiers().testFlag(Qt::ShiftModifier);
+    bool toggle = e->modifiers().testFlag(Qt::ControlModifier);
 
     if (multi && selpivot == -1)
         selpivot = current;
@@ -1234,70 +1239,70 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *event)
     int endindex = -1;
     QSize size = viewport()->size();
 
-    if (event->key() == Qt::Key_PageUp)
+    if (e->key() == Qt::Key_PageUp)
     {
         endindex = std::max(current % cols, current - std::max(1, size.height() / cellsize) * cols);
     }
-    else if (event->key() == Qt::Key_PageDown)
+    else if (e->key() == Qt::Key_PageDown)
     {
         int change = std::max(1, size.height() / cellsize) * cols;
         while (current + change >= itemmodel->size())
             change -= cols;
         endindex = current + change;
     }
-    else if (event->key() == Qt::Key_Home && toggle)
+    else if (e->key() == Qt::Key_Home && toggle)
     {
         toggle = false;
 
         endindex = 0;
     }
-    else if (event->key() == Qt::Key_End && toggle)
+    else if (e->key() == Qt::Key_End && toggle)
     {
         toggle = false;
 
         endindex = itemmodel->size() - 1;
     }
-    else if (event->key() == Qt::Key_Home && !toggle)
+    else if (e->key() == Qt::Key_Home && !toggle)
     {
         toggle = false;
 
         endindex = current - (current % cols);
     }
-    else if (event->key() == Qt::Key_End && !toggle)
+    else if (e->key() == Qt::Key_End && !toggle)
     {
         toggle = false;
 
         endindex = std::min(itemmodel->size() - 1, current + (cols - (current % cols)) - 1);
     }
-    else if (event->key() == Qt::Key_Up)
+    else if (e->key() == Qt::Key_Up)
     {
         endindex = std::max(current % cols, current - cols);
     }
-    else if (event->key() == Qt::Key_Down)
+    else if (e->key() == Qt::Key_Down)
     {
         if (current + cols < itemmodel->size())
             endindex = current + cols;
         else
             endindex = current;
     }
-    else if (event->key() == Qt::Key_Left)
+    else if (e->key() == Qt::Key_Left)
     {
         endindex = std::max(0, current - 1);
     }
-    else if (event->key() == Qt::Key_Right)
+    else if (e->key() == Qt::Key_Right)
     {
         endindex = std::min(itemmodel->size() - 1, current + 1);
     }
     else
     {
-        if (current != -1 && (event->key() == Qt::Key_Space || event->key() == Qt::Key_Select))
+        if (current != -1 && (e->key() == Qt::Key_Space || e->key() == Qt::Key_Select))
         {
             // Toggle selection of the current item.
             toggleSelect(current);
         }
         //lastkeyindex = -1;
 
-        QFrame::keyPressEvent(event);
+        QFrame::keyPressEvent(e);
         return;
     }
 
@@ -1322,7 +1327,7 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *event)
     else
         multiSelect(endindex, !toggle);
 
-    QFrame::keyPressEvent(event);
+    QFrame::keyPressEvent(e);
 }
 
 void ZKanjiGridView::mousePressEvent(QMouseEvent *e)

@@ -1212,7 +1212,12 @@ void ZListView::keyPressEvent(QKeyEvent *e)
         return;
     }
 
-    if (e == QKeySequence::Deselect)
+    if (e == QKeySequence::Deselect
+#ifndef Q_OS_LINUX
+        // Qt is missing this important key combination for Windows and Mac.
+        || e == QKeySequence(tr("Ctrl+D", "Deselect")) || e == QKeySequence(tr("Ctrl+Shift+A", "Deselect"))
+#endif
+        )
     {
         clearSelection();
         QFrame::keyPressEvent(e);
