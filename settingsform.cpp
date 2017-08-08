@@ -470,6 +470,7 @@ void SettingsForm::reset()
 
     ui->studyIncludeCBox->setCurrentIndex((int)Settings::study.includedays);
     ui->studyIncludeEdit->setText(QString::number(Settings::study.includecount));
+    on_studyIncludeEdit_textChanged(ui->studyIncludeEdit->text());
     ui->studyUniqueBox->setChecked(Settings::study.onlyunique);
     ui->studyLimitBox->setChecked(Settings::study.limitnew);
     ui->studyLimitEdit->setText(QString::number(Settings::study.limitcount));

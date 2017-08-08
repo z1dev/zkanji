@@ -1502,6 +1502,7 @@ void WordDeck::startTest()
     StudyDeck *study = studyDeck();
 
     currentix.reset();
+    nextix.reset();
 
     if (!study->startTestDay())
         return;

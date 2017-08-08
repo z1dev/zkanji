@@ -234,7 +234,7 @@ void WordStudyForm::studyDeck(WordDeck *deck)
     int due = deck->dueSize();
     int queue = deck->queueSize();
 
-    if (deck->firstTest() || (due == 0 && queue != 0 && Settings::study.includecount == 0))
+    if (deck->firstTest() || (due == 0 && queue != 0 && deck->newSize() == 0 && Settings::study.includecount == 0))
     {
         // One, Two, Three, Five, Seven
         int includedays[] = { 1, 2, 3, 5, 7 };
@@ -263,7 +263,7 @@ void WordStudyForm::studyDeck(WordDeck *deck)
         }
     }
 
-    if (ok == false || (r == 0 && due == 0))
+    if (ok == false || (r == 0 && due == 0 && deck->newSize() == 0))
     {
         if (ok)
         {
