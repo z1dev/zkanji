@@ -321,7 +321,7 @@ void WordStudyListForm::rowSelectionChanged()
 
     ui->addButton->setEnabled(!indexes.empty());
     ui->delButton->setEnabled(!indexes.empty());
-    ui->backButton->setEnabled(ui->studiedButton->isChecked() && !indexes.empty());
+    ui->backButton->setEnabled((ui->studiedButton->isChecked() || ui->testedButton->isChecked()) && !indexes.empty());
 }
 
 void WordStudyListForm::modeButtonClicked(bool checked)
