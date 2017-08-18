@@ -21,15 +21,13 @@
 //-------------------------------------------------------------
 
 
-WordsToDeckItemModel::WordsToDeckItemModel(WordDeck* deck, const std::vector<int> &list, QObject *parent) : base(parent), deck(deck)
+WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, const std::vector<int> &list, QObject *parent) : base(parent), dict(dict), deck(deck)
 {
     setColumns({
         { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, 80, tr("Written") },
         { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, 100, tr("Kana") },
         { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, 6400, tr("Definition") }
     });
-
-    Dictionary *d = deck->dictionary();
 
     std::vector<int> indexes = list;
 
@@ -62,28 +60,28 @@ WordsToDeckItemModel::WordsToDeckItemModel(WordDeck* deck, const std::vector<int
     {
         char val = 0;
 
-        WordEntry *w = d->wordEntry(indexes[ix]);
+        WordEntry *w = dict->wordEntry(indexes[ix]);
         bool haskanji = false;
         bool haskana = false;
         bool hasdef = false;
 
-        WordDeckWord *dw = deck->wordFromIndex(indexes[ix]);
+        WordDeckWord *dw = deck == nullptr ? nullptr : deck->wordFromIndex(indexes[ix]);
 
         bool kanaonly = (w->defs[0].attrib.notes & (int)WordNotes::KanaOnly) != 0;
 
-        if (dw == 0 || (dw->types & (int)WordPartBits::Kanji) == 0)
+        if (dw == nullptr || (dw->types & (int)WordPartBits::Kanji) == 0)
         {
             int ksiz = w->kanji.size();
             for (int iy = 0; !haskanji && iy != ksiz; ++iy)
                 if (KANJI(w->kanji[iy].unicode()))
                     haskanji = true;
         }
-        haskana = (dw == 0 || (dw->types & (int)WordPartBits::Kana) == 0);
-        hasdef = (dw == 0 || (dw->types & (int)WordPartBits::Definition) == 0);
+        haskana = (dw == nullptr || (dw->types & (int)WordPartBits::Kana) == 0);
+        hasdef = (dw == nullptr || (dw->types & (int)WordPartBits::Definition) == 0);
 
         if (!haskanji)
             val |= (1 << 3);
-        if ((haskanji && !kanaonly) || (dw != 0 && dw->types & (int)WordPartBits::Kanji) != 0)
+        if ((haskanji && !kanaonly) || (dw != nullptr && dw->types & (int)WordPartBits::Kanji) != 0)
             val |= 1;
 
         if (!haskana)
@@ -106,7 +104,7 @@ WordsToDeckItemModel::WordsToDeckItemModel(WordDeck* deck, const std::vector<int
 
     indexes.resize(std::remove(indexes.begin(), indexes.end(), -1) - indexes.begin());
 
-    setWordList(d, indexes);
+    setWordList(dict, indexes);
 }
 
 WordsToDeckItemModel::~WordsToDeckItemModel()
@@ -126,11 +124,11 @@ bool WordsToDeckItemModel::hasBoxChecked() const
     return false;
 }
 
-WordDeck* WordsToDeckItemModel::wordDeck() const
-{
-    return deck;
-}
-
+//WordDeck* WordsToDeckItemModel::wordDeck() const
+//{
+//    return deck;
+//}
+//
 Qt::ItemFlags WordsToDeckItemModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -655,17 +653,38 @@ void WordToDeckForm::exec(Dictionary *_dest, WordDeck* _deck, const std::vector<
     connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &WordToDeckForm::selChanged);
 
     deck = _deck;
-    Dictionary *d = deck->dictionary();
-    for (int ix = 0, siz = d->wordDecks()->size(); ix != siz; ++ix)
-        ui->decksCBox->addItem(d->wordDecks()->items(ix)->getName());
-    ui->decksCBox->setCurrentIndex(d->wordDecks()->indexOf(deck));
 
-    model = new WordsToDeckItemModel(deck, indexes, this);
+    // TODO: remove before final release if the deck and dest matches
+    if (deck != nullptr && deck->dictionary() != _dest)
+    {
+        QMessageBox::warning(gUI->activeMainForm(), "zkanji", "Error in program. Invalid call to show word to deck form. Please notify me!");
+        deleteLater();
+        return;
+    }
+    dict = _dest;
+
+    if (!dict->wordDecks()->empty())
+    {
+        for (int ix = 0, siz = dict->wordDecks()->size(); ix != siz; ++ix)
+            ui->decksCBox->addItem(dict->wordDecks()->items(ix)->getName());
+        ui->decksCBox->setCurrentIndex(dict->wordDecks()->indexOf(deck));
+    }
+    else
+    {
+        ui->decksCBox->addItem(tr("Deck 1"));
+        ui->decksCBox->setCurrentIndex(0);
+    }
+    ui->decksCBox->setEnabled(!dict->wordDecks()->empty());
+
+    model = new WordsToDeckItemModel(dict, deck, indexes, this);
     if (model->rowCount() == 0)
     {
-        if (deck->dictionary()->wordDecks()->size() == 1)
+        if (deck == nullptr || deck->dictionary()->wordDecks()->size() == 1)
         {
-            QMessageBox::information(parentWidget(), "zkanji", tr("No new words can be added to this deck."), QMessageBox::Ok);
+            if (deck == nullptr)
+                QMessageBox::information(parentWidget(), "zkanji", tr("No words to add to a deck."), QMessageBox::Ok);
+            else
+                QMessageBox::information(parentWidget(), "zkanji", tr("No new words can be added to this deck."), QMessageBox::Ok);
 
             deleteLater();
             return;
@@ -722,7 +741,7 @@ void WordToDeckForm::selChanged()
     ui->wordsTable->selectedRows(sel);
     for (int ix = 0, siz = sel.size(); ix != siz; ++ix)
         sel[ix] = model->indexes(sel[ix]);
-    ui->defEditor->setWords(deck->dictionary(), sel);
+    ui->defEditor->setWords(dict, sel);
 }
 
 void WordToDeckForm::okButtonClicked(bool)
@@ -730,7 +749,6 @@ void WordToDeckForm::okButtonClicked(bool)
     WordsToDeckItemModel *m = (WordsToDeckItemModel*)ui->wordsTable->model();
     int cnt = m->rowCount();
 
-    WordDeck *deck = m->wordDeck();
     std::vector<std::pair<int, int>> words;
     for (int ix = 0; ix != cnt; ++ix)
     {
@@ -739,6 +757,12 @@ void WordToDeckForm::okButtonClicked(bool)
         int val = m->data(m->index(ix, 0), (int)CellRoles::Custom).toInt();
         if (val != 0)
             words.push_back(std::make_pair(m->indexes(ix), val));
+    }
+
+    if (deck == nullptr)
+    {
+        dict->wordDecks()->add(tr("Deck 1"));
+        deck = dict->wordDecks()->items(0);
     }
     deck->queueWordItems(words);
     deck->owner()->setLastSelected(deck);
@@ -751,12 +775,12 @@ void WordToDeckForm::okButtonClicked(bool)
 
 void WordToDeckForm::on_decksCBox_currentIndexChanged(int index)
 {
-    if (model == nullptr)
+    if (model == nullptr || deck == nullptr)
         return;
 
-    deck = deck->dictionary()->wordDecks()->items(index);
+    deck = dict->wordDecks()->items(index);
     model->deleteLater();
-    model = new WordsToDeckItemModel(deck, indexes, this);
+    model = new WordsToDeckItemModel(dict, deck, indexes, this);
     ui->wordsTable->setModel(model);
 
     updateOkButton();

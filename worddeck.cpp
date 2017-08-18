@@ -757,6 +757,11 @@ int WordDeckList::size() const
     return list.size();
 }
 
+bool WordDeckList::empty() const
+{
+    return list.empty();
+}
+
 WordDeck* WordDeckList::items(int index)
 {
     return list[index];

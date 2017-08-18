@@ -26,13 +26,13 @@ class WordsToDeckItemModel : public DictionaryWordListItemModel
 {
     Q_OBJECT
 public:
-    WordsToDeckItemModel(WordDeck* deck, const std::vector<int> &list, QObject *parent = nullptr);
+    WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, const std::vector<int> &list, QObject *parent = nullptr);
     ~WordsToDeckItemModel();
 
     // Returns whether there's a checkbox which is checked so the form enables the ok button.
     bool hasBoxChecked() const;
 
-    WordDeck* wordDeck() const;
+    //WordDeck* wordDeck() const;
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -43,6 +43,7 @@ protected slots:
     virtual void entryChanged(int windex, bool studydef) override;
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
 private:
+    Dictionary *dict;
     WordDeck* deck;
 
     // Bits for the checkbox states. Bit 1: kanji, 2: kana, 3: definition, 4: kanjidisabled, 5: kanadisabled, 6: defdisabled

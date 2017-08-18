@@ -298,6 +298,8 @@ public:
 
     // Number of long-term study decks in the dictionary.
     int size() const;
+    // Returns true if size() is 0.
+    bool empty() const;
     // Returns the long-term study deck at index.
     WordDeck* items(int index);
     // Last deck that has been selected as destination to add words to. If the inner value is
