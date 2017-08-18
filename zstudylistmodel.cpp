@@ -711,7 +711,7 @@ bool StudyListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     for (int ix = 0; ix != cnt; ++ix, ++dat)
         indexes.push_back(*dat);
 
-    addWordsToDeck(deck, indexes, (QWidget*)gUI->activeMainForm());
+    addWordsToDeck(dictionary(), deck, indexes, (QWidget*)gUI->activeMainForm());
 
     return true;
 }

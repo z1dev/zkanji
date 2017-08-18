@@ -214,7 +214,7 @@ bool DeckListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         for (int ix = 0; ix != cnt; ++ix, ++dat)
             windexes.push_back(*dat);
 
-        addWordsToDeck(decks->items(parent.row()), windexes, WordDeckForm::Instance(false));
+        addWordsToDeck(decks->items(parent.row())->dictionary(), decks->items(parent.row()), windexes, WordDeckForm::Instance(false));
 
         return true;
     }

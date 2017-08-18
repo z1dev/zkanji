@@ -58,6 +58,6 @@ class WordDeck;
 // Shows the Add words to deck dialog window to select words to be added to a deck. The
 // initial deck should be passed in deck, with the index of words to be listed. This window
 // is always shown as a modal dialog.
-void addWordsToDeck(WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent = nullptr);
+void addWordsToDeck(Dictionary *dict, WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent = nullptr);
 
 #endif // DIALOGS_H

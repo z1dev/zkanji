@@ -117,7 +117,7 @@ public:
     WordToDeckForm(QWidget *parent = nullptr);
     virtual ~WordToDeckForm();
 
-    void exec(WordDeck* deck, const std::vector<int> &indexes);
+    void exec(Dictionary *dict, WordDeck* deck, const std::vector<int> &indexes);
 protected slots:
     // Connected to the model's dataChanged to look for CheckState changes.
     void checkStateChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> roles = QVector<int>());
@@ -138,6 +138,7 @@ private:
 
     WordsToDeckItemModel *model;
     WordDeck *deck;
+    Dictionary *dict;
 
     std::vector<int> indexes;
 

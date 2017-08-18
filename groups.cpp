@@ -380,7 +380,8 @@ void GroupCategoryBase::deleteGroup(int index)
     groups.erase(groups.begin() + index);
     dictionary()->setToUserModified();
 
-    emit owner->groupDeleted(this, index, oldptr);
+    owner->emitGroupDeleted(this, index, oldptr);
+    //emit owner->groupDeleted(this, index, oldptr);
 }
 
 void GroupCategoryBase::remove(const std::vector<GroupBase*> &which)
@@ -405,7 +406,9 @@ void GroupCategoryBase::remove(const std::vector<GroupBase*> &which)
             int index = p->groupIndex(items[ix]);
             emit owner->groupAboutToBeDeleted(p, index, p->groups[index]);
             p->groups.erase(p->groups.begin() + index);
-            emit owner->groupDeleted(p, index, items[ix]);
+
+            owner->emitGroupDeleted(p, index, items[ix]);
+            //emit owner->groupDeleted(p, index, items[ix]);
         }
     }
 
@@ -783,8 +786,14 @@ void GroupCategoryBase::emitDeleted()
     for (GroupBase *grp : groups)
     {
         emit owner->groupAboutToBeDeleted(nullptr, -1, grp);
-        emit owner->groupDeleted(nullptr, -1, (void*)grp);
+        owner->emitGroupDeleted(nullptr, -1, (void*)grp);
+        //emit owner->groupDeleted(nullptr, -1, (void*)grp);
     }
+}
+
+void GroupCategoryBase::emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress)
+{
+    emit groupDeleted(parent, index, oldaddress);
 }
 
 void GroupCategoryBase::selectTopItems(const std::vector<GroupBase*> &src, std::vector<GroupBase*> &items) const
@@ -2100,6 +2109,13 @@ void WordGroups::setLastSelected(const QString &name)
         lastgroup = groupFromEncodedName(name);
 }
 
+void WordGroups::emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress)
+{
+    base::emitGroupDeleted(parent, index, oldaddress);
+    if (lastgroup == oldaddress)
+        lastgroup = nullptr;
+}
+
 void WordGroups::groupsApplyChanges(GroupCategoryBase *cat, const std::map<int, int> &changes)
 {
     for (int ix = 0, siz = cat->size(); ix != siz; ++ix)
@@ -2654,6 +2670,13 @@ void KanjiGroups::setLastSelected(const QString &name)
         lastgroup = nullptr;
     else
         lastgroup = groupFromEncodedName(name);
+}
+
+void KanjiGroups::emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress)
+{
+    base::emitGroupDeleted(parent, index, oldaddress);
+    if (lastgroup == oldaddress)
+        lastgroup = nullptr;
 }
 
 

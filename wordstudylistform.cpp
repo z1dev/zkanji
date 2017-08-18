@@ -235,7 +235,7 @@ void WordStudyListForm::startTest()
 
 void WordStudyListForm::addQuestions(const std::vector<int> &wordlist)
 {
-    addWordsToDeck(deck, wordlist, this);
+    addWordsToDeck(dict, deck, wordlist, this);
 }
 
 void WordStudyListForm::removeItems(const std::vector<int> &items, bool queued)

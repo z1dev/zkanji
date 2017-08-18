@@ -113,6 +113,7 @@ signals:
     // shouldn't be used apart from identifying it.
     // When deleting a category, this signal is sent out for every group in its branch, with
     // parent set to null.
+    // Note: do not directly emit this signal. Call emitGroupDeleted() instead.
     void groupDeleted(GroupCategoryBase *parent, int index, void *oldaddress);
 
     // Signaled when a category's name has been changed.
@@ -289,6 +290,9 @@ protected:
     // Should return a newly constructed WordGroup or KanjiGroup. The object's ownership is
     // handed to this category.
     virtual GroupBase* createGroup(QString name) = 0;
+
+    // Emits the groupDeleted signal with the passed arguments. Override for other operations.
+    virtual void emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress);
 private:
     // Emits the groupDeleted() signal for every child group in the category and its child
     // categories.
@@ -578,6 +582,8 @@ public:
     // The passed name is a full encoded name.
     void setLastSelected(const QString &name);
 private:
+    virtual void emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress) override;
+
     // Calls applyChanges for the passed category's items and sub categories.
     void groupsApplyChanges(GroupCategoryBase *cat, const std::map<int, int> &changes);
 
@@ -736,6 +742,8 @@ public:
     // The passed name is a full encoded name.
     void setLastSelected(const QString &name);
 private:
+    virtual void emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress);
+
     Groups *owner;
 
     // Group last selected in a kanji to group dialog as destination.

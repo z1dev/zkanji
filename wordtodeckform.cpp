@@ -641,7 +641,7 @@ WordToDeckForm::~WordToDeckForm()
     delete ui;
 }
 
-void WordToDeckForm::exec(WordDeck* _deck, const std::vector<int> &ind)
+void WordToDeckForm::exec(Dictionary *_dest, WordDeck* _deck, const std::vector<int> &ind)
 {
     if (ind.empty())
     {
@@ -770,12 +770,12 @@ void WordToDeckForm::updateOkButton()
 //-------------------------------------------------------------
 
 
-void addWordsToDeck(WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent)
+void addWordsToDeck(Dictionary *dict, WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent)
 {
     if (dialogParent == nullptr)
         dialogParent = gUI->activeMainForm();
     WordToDeckForm *frm = new WordToDeckForm(dialogParent);
-    frm->exec(deck, indexes);
+    frm->exec(dict, deck, indexes);
 }
 
 

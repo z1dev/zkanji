@@ -1091,7 +1091,7 @@ void ZDictionaryListView::wordsToDeck() const
 
 void ZDictionaryListView::wordsToDeck(const std::vector<int> &windexes) const
 {
-    addWordsToDeck(dictionary()->wordDecks()->lastSelected(), windexes);
+    addWordsToDeck(dictionary(), dictionary()->wordDecks()->lastSelected(), windexes);
 }
 
 void ZDictionaryListView::copyWordDef() const

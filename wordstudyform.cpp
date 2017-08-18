@@ -1039,7 +1039,7 @@ void WordStudyForm::currentToGroup()
 void WordStudyForm::currentToStudy()
 {
     WordEntry *w = dictionary()->wordEntry(windex);
-    addWordsToDeck(deck, { windex }, this);
+    addWordsToDeck(dictionary(), deck, { windex }, this);
 }
 
 void WordStudyForm::currentLookup(int ix)
