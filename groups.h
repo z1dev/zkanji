@@ -269,6 +269,10 @@ public:
 
     // Executes a function on every group under this category.
     void walkGroups(const std::function<void(GroupBase*)> &callback);
+
+    // Returns whether the passed item is a child of this category. If recursive is false,
+    // only checks direct children, otherwise checks the whole tree below this category.
+    bool isChild(GroupBase *item, bool recursive = false) const;
 protected:
     virtual void clear();
 
@@ -565,6 +569,14 @@ public:
     // group does not exist, the value of create determines whether a group will be created
     // and returned. Otherwise returns the existing or created group.
     WordGroup* groupFromEncodedName(const QString &fullname, int pos = 0, int len = -1, bool create = false);
+
+    // Returns the group which had words last added to it or null.
+    WordGroup* lastSelected() const;
+    // Sets which group to return in lastSelected(), when accepting the word to group dialog.
+    void setLastSelected(WordGroup *g);
+    // Sets which group to return in lastSelected(), when accepting the word to group dialog.
+    // The passed name is a full encoded name.
+    void setLastSelected(const QString &name);
 private:
     // Calls applyChanges for the passed category's items and sub categories.
     void groupsApplyChanges(GroupCategoryBase *cat, const std::map<int, int> &changes);
@@ -576,6 +588,9 @@ private:
 
     // [word index, groups list] where the word is found in.
     std::map<int, std::forward_list<WordGroup*>> wordsgroups;
+
+    // Group last selected in a word to group dialog as destination.
+    WordGroup *lastgroup;
 
     typedef WordGroupCategory base;
 };
@@ -712,8 +727,19 @@ public:
     // group does not exist, the value of create determines whether a group will be created
     // and returned. Otherwise returns the existing or created group.
     KanjiGroup* groupFromEncodedName(const QString &fullname, int pos = 0, int len = -1, bool create = false);
+
+    // Returns the group which had kanji last added to it or null.
+    KanjiGroup* lastSelected() const;
+    // Sets which group to return in lastSelected(), when accepting the kanji to group dialog.
+    void setLastSelected(KanjiGroup *g);
+    // Sets which group to return in lastSelected(), when accepting the kanji to group dialog.
+    // The passed name is a full encoded name.
+    void setLastSelected(const QString &name);
 private:
     Groups *owner;
+
+    // Group last selected in a kanji to group dialog as destination.
+    KanjiGroup *lastgroup;
 
     typedef KanjiGroupCategory base;
 };

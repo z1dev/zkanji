@@ -12,9 +12,6 @@ class GroupBase;
 // Saved state or settings for dialog windows. For example default selections.
 struct DialogSettings
 {
-    QString defwordgroup;
-    QString defkanjigroup;
-
     // Name of the last page that was open in the settings window.
     QString lastsettingspage;
 };

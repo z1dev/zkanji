@@ -762,6 +762,19 @@ void GroupCategoryBase::walkGroups(const std::function<void(GroupBase*)> &callba
     }
 }
 
+bool GroupCategoryBase::isChild(GroupBase *item, bool recursive) const
+{
+    for (int ix = 0, siz = size(); ix != siz; ++ix)
+        if (groups[ix] == item)
+            return true;
+    if (!recursive)
+        return false;
+    for (int ix = 0, siz = categoryCount(); ix != siz; ++ix)
+        if (list[ix]->isChild(item, true))
+            return true;
+    return false;
+}
+
 void GroupCategoryBase::emitDeleted()
 {
     for (GroupCategoryBase *cat : list)
@@ -1944,7 +1957,7 @@ WordGroups::GroupBase* GroupCategory<T>::createGroup(QString name)
 //-------------------------------------------------------------
 
 
-WordGroups::WordGroups(Groups *owner) : base(nullptr, QString()), owner(owner)
+WordGroups::WordGroups(Groups *owner) : base(nullptr, QString()), owner(owner), lastgroup(nullptr)
 {
 }
 
@@ -2064,6 +2077,27 @@ void WordGroups::checkGroupsOfWord(int windex)
 WordGroup* WordGroups::groupFromEncodedName(const QString &fullname, int pos, int len, bool create)
 {
     return base::groupFromEncodedName(fullname, pos, len, create);
+}
+
+WordGroup* WordGroups::lastSelected() const
+{
+    return lastgroup;
+}
+
+void WordGroups::setLastSelected(WordGroup *g)
+{
+    if (g != nullptr && !isChild(g, true))
+        return;
+
+    lastgroup = g;
+}
+
+void WordGroups::setLastSelected(const QString &name)
+{
+    if (name.isEmpty())
+        lastgroup = nullptr;
+    else
+        lastgroup = groupFromEncodedName(name);
 }
 
 void WordGroups::groupsApplyChanges(GroupCategoryBase *cat, const std::map<int, int> &changes)
@@ -2571,7 +2605,7 @@ const KanjiGroups& KanjiGroup::owner() const
 //-------------------------------------------------------------
 
 
-KanjiGroups::KanjiGroups(Groups *owner) : base(nullptr, QString()), owner(owner)
+KanjiGroups::KanjiGroups(Groups *owner) : base(nullptr, QString()), owner(owner), lastgroup(nullptr)
 {
 }
 
@@ -2600,6 +2634,28 @@ KanjiGroup* KanjiGroups::groupFromEncodedName(const QString &fullname, int pos, 
 {
     return base::groupFromEncodedName(fullname, pos, len, create);
 }
+
+KanjiGroup* KanjiGroups::lastSelected() const
+{
+    return lastgroup;
+}
+
+void KanjiGroups::setLastSelected(KanjiGroup *g)
+{
+    if (g != nullptr && !isChild(g, true))
+        return;
+
+    lastgroup = g;
+}
+
+void KanjiGroups::setLastSelected(const QString &name)
+{
+    if (name.isEmpty())
+        lastgroup = nullptr;
+    else
+        lastgroup = groupFromEncodedName(name);
+}
+
 
 
 //-------------------------------------------------------------

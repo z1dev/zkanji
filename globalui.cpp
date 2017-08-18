@@ -25,6 +25,7 @@
 #include "settingsform.h"
 #include "words.h"
 #include "worddeck.h"
+#include "groups.h"
 #include "popupdict.h"
 #include "popupkanjisearch.h"
 #include "settings.h"
@@ -223,7 +224,7 @@ void GlobalUI::saveXMLLastDecks(QXmlStreamWriter &writer)
     for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
     {
         Dictionary *d = ZKanji::dictionary(ix);
-        writer.writeEmptyElement("DictionaryDeck");
+        writer.writeEmptyElement("Item");
         WordDeck *wd = d->wordDecks()->lastSelected();
         writer.writeAttribute("dictionary", d->name());
         writer.writeAttribute("deck", wd == nullptr ? "" : wd->getName());
@@ -234,7 +235,7 @@ void GlobalUI::loadXMLLastDecks(QXmlStreamReader &reader)
 {
     while (reader.readNextStartElement())
     {
-        if (reader.name() == "DictionaryDeck")
+        if (reader.name() == "Item")
         {
             int ix = ZKanji::dictionaryIndex(reader.attributes().value("dictionary").toString());
             if (ix == -1)
@@ -246,6 +247,36 @@ void GlobalUI::loadXMLLastDecks(QXmlStreamReader &reader)
     }
 }
 
+void GlobalUI::saveXMLLastGroups(QXmlStreamWriter &writer)
+{
+    for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
+    {
+        Dictionary *d = ZKanji::dictionary(ix);
+        writer.writeEmptyElement("Item");
+        WordGroup *wg = d->wordGroups().lastSelected();
+        KanjiGroup *kg = d->kanjiGroups().lastSelected();
+        writer.writeAttribute("dictionary", d->name());
+        writer.writeAttribute("wordgroup", wg == nullptr ? "" : wg->fullEncodedName());
+        writer.writeAttribute("kanjigroup", kg == nullptr ? "" : kg->fullEncodedName());
+    }
+}
+
+void GlobalUI::loadXMLLastGroups(QXmlStreamReader &reader)
+{
+    while (reader.readNextStartElement())
+    {
+        if (reader.name() == "Item")
+        {
+            int ix = ZKanji::dictionaryIndex(reader.attributes().value("dictionary").toString());
+            if (ix == -1)
+                continue;
+            ZKanji::dictionary(ix)->wordGroups().setLastSelected(reader.attributes().value("wordgroup").toString());
+            ZKanji::dictionary(ix)->kanjiGroups().setLastSelected(reader.attributes().value("kanjigroup").toString());
+        }
+
+        reader.skipCurrentElement();
+    }
+}
 
 void GlobalUI::createWindow(bool ismain)
 {

@@ -98,7 +98,7 @@ void KanjiToGroupForm::accept()
 {
     KanjiGroup *g = ((KanjiGroup*)ui->groupWidget->singleSelected(false));
     g->add(model->getList());
-    Settings::dialog.defkanjigroup = g != nullptr ? g->fullEncodedName() : QString();
+    dict->kanjiGroups().setLastSelected(g);
     close();
 }
 
@@ -127,7 +127,7 @@ void kanjiToGroupSelect(Dictionary *d, ushort kindex, bool showmodal/*, QWidget 
     KanjiToGroupForm *form = new KanjiToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, kindex, d->kanjiGroups().groupFromEncodedName(Settings::dialog.defkanjigroup));
+    form->exec(d, kindex, d->kanjiGroups().lastSelected());
 }
 
 void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, bool showmodal/*, QWidget *dialogParent*/)
@@ -135,7 +135,7 @@ void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, bool 
     KanjiToGroupForm *form = new KanjiToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, kindexes, d->kanjiGroups().groupFromEncodedName(Settings::dialog.defkanjigroup));
+    form->exec(d, kindexes, d->kanjiGroups().lastSelected());
 }
 
 

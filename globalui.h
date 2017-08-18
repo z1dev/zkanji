@@ -128,6 +128,13 @@ public:
     // Loads which study decks had new words added to them last in each dictionary.
     void loadXMLLastDecks(QXmlStreamReader &reader);
 
+    // Saves which word and kanji groups were last selected in a select group dialog in each
+    // dictionary.
+    void saveXMLLastGroups(QXmlStreamWriter &writer);
+    // Loads which word and kanji groups were last selected in a select group dialog in each
+    // dictionary.
+    void loadXMLLastGroups(QXmlStreamReader &reader);
+
     // Creates and shows a ZKanji window. Pass true in ismain for the first created window.
     // If ismain is true and a main window already exists, the function returns immediately.
     void createWindow(bool ismain = false);

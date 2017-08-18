@@ -114,8 +114,6 @@ namespace Settings
 
         // Dialog settings
 
-        ini.setValue("dialogs/defaultwordgroup", dialog.defwordgroup);
-        ini.setValue("dialogs/defaultkanjigroup", dialog.defkanjigroup);
         ini.setValue("dialogs/settingspage", dialog.lastsettingspage);
 
         // Popup settings
@@ -387,21 +385,15 @@ namespace Settings
 
         writer.writeEndElement(); /* Windows */
 
-        /*
-        else if (reader.name() == "Misc")
-        {
-        while (reader.readNextStartElement())
-        {
-        if (reader.name() == "LastDecks")
-        loadXMLLastDecks(reader);
-        }
-        }
-        */
         writer.writeStartElement("Misc");
 
         writer.writeStartElement("LastDecks");
         gUI->saveXMLLastDecks(writer);
         writer.writeEndElement(); /* LastDecks */
+
+        writer.writeStartElement("LastGroups");
+        gUI->saveXMLLastGroups(writer);
+        writer.writeEndElement(); /* LastGroups */
 
         writer.writeEndElement(); /* Misc */
 
@@ -700,8 +692,6 @@ namespace Settings
 
         // Dialog settings
 
-        dialog.defwordgroup = ini.value("dialogs/defaultwordgroup", QString()).toString();
-        dialog.defkanjigroup = ini.value("dialogs/defaultkanjigroup", QString()).toString();
         dialog.lastsettingspage = ini.value("dialogs/settingspage", QString()).toString();
 
         // Popup settings
@@ -1092,7 +1082,21 @@ namespace Settings
                 while (reader.readNextStartElement())
                 {
                     if (reader.name() == "LastDecks")
-                        gUI->loadXMLLastDecks(reader);
+                    {
+                        if (!Settings::general.savewinstates)
+                            reader.skipCurrentElement();
+                        else
+                            gUI->loadXMLLastDecks(reader);
+                    }
+                    else if (reader.name() == "LastGroups")
+                    {
+                        if (!Settings::general.savewinstates)
+                            reader.skipCurrentElement();
+                        else
+                            gUI->loadXMLLastGroups(reader);
+                    }
+                    else
+                        reader.skipCurrentElement();
                 }
             }
             else

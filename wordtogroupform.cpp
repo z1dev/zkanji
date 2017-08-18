@@ -118,7 +118,7 @@ void WordToGroupForm::accept()
 {
     WordGroup *g = ((WordGroup*)ui->groupWidget->singleSelected(false));
     g->add(list);
-    Settings::dialog.defwordgroup = g != nullptr ? g->fullEncodedName() : QString();
+    dict->wordGroups().setLastSelected(g);
 
     close();
 }
@@ -163,7 +163,7 @@ void wordToGroupSelect(Dictionary *d, int windex, bool showmodal/*, QWidget *dia
     WordToGroupForm *form = new WordToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, windex, d->wordGroups().groupFromEncodedName(Settings::dialog.defwordgroup));
+    form->exec(d, windex, d->wordGroups().lastSelected());
 }
 
 void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool showmodal/*, QWidget *dialogParent*/)
@@ -171,7 +171,7 @@ void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool show
     WordToGroupForm *form = new WordToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, indexes, d->wordGroups().groupFromEncodedName(Settings::dialog.defwordgroup));
+    form->exec(d, indexes, d->wordGroups().lastSelected());
 }
 
 
