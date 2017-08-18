@@ -4438,7 +4438,7 @@ bool Dictionary::isModified() const
 
 void Dictionary::setToModified()
 {
-    if (mod == false)
+    if (mod)
         return;
     mod = true;
     emit dictionaryModified(true);

@@ -209,6 +209,7 @@ void DictionaryEditorForm::on_createButton_clicked(bool checked)
 
     Dictionary *dict = new Dictionary();
     dict->setName(str);
+    dict->setToModified();
 
     ZKanji::addDictionary(dict);
 }

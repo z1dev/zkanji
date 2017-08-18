@@ -237,7 +237,7 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
     cancelBtn = ui->buttonBox->button(QDialogButtonBox::Discard);
     applyBtn = ui->buttonBox->button(QDialogButtonBox::Apply);
 
-    okBtn->setText(tr("Save and Close"));
+    okBtn->setText(tr("Save and close"));
 
     ui->attribWidget->setShowGlobal(false);
 
@@ -327,7 +327,7 @@ void WordEditorForm::exec(Dictionary *d, int windex, int defindex)
             ((QCheckBox*)ui->wordAttribWidget->layout()->itemAt(ix)->widget())->setCheckState((entry->inf & (1 << ix)) != 0 ? Qt::Checked : Qt::Unchecked);
     }
     else
-        ui->freqEdit->setText(0);
+        ui->freqEdit->setText("0");
 
     // Adding an extra empty definition at the end of the entry to allow inserting new definitions.
     //entry->defs.resize(entry->defs.size() + 1);
@@ -716,10 +716,6 @@ void WordEditorForm::applyClicked()
         return;
     }
 
-    // The last fake definition is removed before the update, so the dictionary word
-    // doesn't get an empty last definition.
-    //entry->defs.resize(entry->defs.size() - 1);
-
     WordEntry *e = nullptr;
     if (index == -1)
     {
@@ -737,9 +733,6 @@ void WordEditorForm::applyClicked()
             ignoreedits = false;
         }
     }
-
-    // Restoring the empty definition for editing.
-    //entry->defs.resize(entry->defs.size() + 1);
 
     ZKanji::cloneWordData(original.get(), entry.get(), true);
 
