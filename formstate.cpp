@@ -588,6 +588,7 @@ namespace FormStates
                 reader.skipCurrentElement();
         }
     }
+
     void saveXMLSettings(const KanjiInfoFormData &data, QXmlStreamWriter &writer)
     {
         writer.writeAttribute("kanjiindex", QString::number(data.kindex));

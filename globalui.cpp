@@ -24,6 +24,7 @@
 #include "dictionaryimportform.h"
 #include "settingsform.h"
 #include "words.h"
+#include "worddeck.h"
 #include "popupdict.h"
 #include "popupkanjisearch.h"
 #include "settings.h"
@@ -216,6 +217,35 @@ void GlobalUI::loadXMLKanjiInfo(QXmlStreamReader &reader)
             reader.skipCurrentElement();
     }
 }
+
+void GlobalUI::saveXMLLastDecks(QXmlStreamWriter &writer)
+{
+    for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
+    {
+        Dictionary *d = ZKanji::dictionary(ix);
+        writer.writeEmptyElement("DictionaryDeck");
+        WordDeck *wd = d->wordDecks()->lastSelected();
+        writer.writeAttribute("dictionary", d->name());
+        writer.writeAttribute("deck", wd == nullptr ? "" : wd->getName());
+    }
+}
+
+void GlobalUI::loadXMLLastDecks(QXmlStreamReader &reader)
+{
+    while (reader.readNextStartElement())
+    {
+        if (reader.name() == "DictionaryDeck")
+        {
+            int ix = ZKanji::dictionaryIndex(reader.attributes().value("dictionary").toString());
+            if (ix == -1)
+                continue;
+            ZKanji::dictionary(ix)->wordDecks()->setLastSelected(reader.attributes().value("deck").toString());
+        }
+
+        reader.skipCurrentElement();
+    }
+}
+
 
 void GlobalUI::createWindow(bool ismain)
 {

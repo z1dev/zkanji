@@ -682,7 +682,7 @@ void ReadingTestList::nextWords(std::vector<int> &wlist)
 //-------------------------------------------------------------
 
 
-WordDeckList::WordDeckList(Dictionary *dict) : base(dict), dict(dict)
+WordDeckList::WordDeckList(Dictionary *dict) : base(dict), dict(dict), lastdeck(nullptr)
 {
     //list.push_back(new WordDeck(this));
 }
@@ -762,12 +762,43 @@ WordDeck* WordDeckList::items(int index)
     return list[index];
 }
 
+WordDeck* WordDeckList::lastSelected() const
+{
+    if (lastdeck != nullptr || list.empty())
+        return lastdeck;
+    return list[0];
+}
+
+void WordDeckList::setLastSelected(const QString &deckname)
+{
+    int ix = indexOf(deckname);
+    if (ix == -1)
+        lastdeck = nullptr;
+    else
+        lastdeck = list[ix];
+}
+
+void WordDeckList::setLastSelected(WordDeck *deck)
+{
+    if (indexOf(deck) == -1)
+        return;
+    lastdeck = deck;
+}
+
 int WordDeckList::indexOf(WordDeck *deck) const
 {
     auto it = std::find(list.begin(), list.end(), deck);
     if (it == list.end())
         return -1;
     return it - list.begin();
+}
+
+int WordDeckList::indexOf(const QString &name) const
+{
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        if (list[ix]->getName() == name)
+            return ix;
+    return -1;
 }
 
 bool WordDeckList::rename(int index, const QString &name)
@@ -812,6 +843,9 @@ void WordDeckList::remove(int index)
 {
     void *addr = list[index];
     emit deckToBeRemoved(index, list[index]);
+
+    if (lastdeck == list[index])
+        lastdeck = nullptr;
 
     list.erase(list.begin() + index);
 

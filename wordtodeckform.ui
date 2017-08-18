@@ -57,7 +57,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Destination:</string>
+          <string>Destination deck:</string>
          </property>
         </widget>
        </item>
@@ -78,6 +78,20 @@
         </spacer>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Select parts of words to add to the study deck:</string>
+      </property>
      </widget>
     </item>
     <item>

@@ -628,6 +628,8 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
     ui->wordsTable->setSelectionType(ListSelectionType::Extended);
     ui->wordsTable->setStudyDefinitionUsed(true);
 
+    restrictWidgetSize(ui->decksCBox, 16, AdjustedValue::Min);
+
     okbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     cancelbutton = ui->buttonBox->button(QDialogButtonBox::Cancel);
     connect(okbutton, &QPushButton::clicked, this, &WordToDeckForm::okButtonClicked);
@@ -739,6 +741,7 @@ void WordToDeckForm::okButtonClicked(bool)
             words.push_back(std::make_pair(m->indexes(ix), val));
     }
     deck->queueWordItems(words);
+    deck->owner()->setLastSelected(deck);
 
     WordStudyListForm *f = WordStudyListForm::Instance(deck, true);
     f->showQueue();

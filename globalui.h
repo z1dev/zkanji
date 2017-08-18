@@ -123,6 +123,11 @@ public:
     // Loads kanji information windows' positions and their states from the XML with reader.
     void loadXMLKanjiInfo(QXmlStreamReader &reader);
 
+    // Saves which study decks had new words added to them last in each dictionary.
+    void saveXMLLastDecks(QXmlStreamWriter &writer);
+    // Loads which study decks had new words added to them last in each dictionary.
+    void loadXMLLastDecks(QXmlStreamReader &reader);
+
     // Creates and shows a ZKanji window. Pass true in ismain for the first created window.
     // If ismain is true and a main window already exists, the function returns immediately.
     void createWindow(bool ismain = false);

@@ -300,8 +300,20 @@ public:
     int size() const;
     // Returns the long-term study deck at index.
     WordDeck* items(int index);
+    // Last deck that has been selected as destination to add words to. If the inner value is
+    // null, returns the first deck if it exists.
+    WordDeck* lastSelected() const;
+    // Sets the deck which had words added to it last. If deckname is empty or not found, the
+    // last selected will be set to null, but lastSelected() can still return a valid deck
+    // then.
+    void setLastSelected(const QString &deckname);
+    // Sets the deck to be returned as having words added to it last. If deck is not part of
+    // this list, it's not set.
+    void setLastSelected(WordDeck *deck);
     // Returns the index of deck in items.
     int indexOf(WordDeck *deck) const;
+    // Returns the index of deck in items.
+    int indexOf(const QString &name) const;
     // Changes the name of the deck at index if it's valid and doesn't conflict with the names
     // of other decks. Returns whether the change was made.
     bool rename(int index, const QString &name);
@@ -320,6 +332,8 @@ private:
     Dictionary *dict;
 
     smartvector<WordDeck> list;
+
+    WordDeck* lastdeck;
 
     typedef QObject base;
 };

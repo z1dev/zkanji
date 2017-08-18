@@ -397,9 +397,9 @@ public:
         return base::at(n);
     }
 
-    const value_base_type* at(size_type n) const
+    value_base_type* at(size_type n) const
     {
-        return base::at(n);
+        return const_cast<value_base_type*>(base::at(n));
     }
 
     value_base_type*& front()
@@ -407,9 +407,9 @@ public:
         return base::front();
     }
 
-    const value_base_type* front() const
+    value_base_type* front() const
     {
-        return base::front();
+        return const_cast<value_base_type*>(base::front());
     }
 
     value_base_type*& back()
@@ -417,9 +417,9 @@ public:
         return base::back();
     }
 
-    const value_base_type* back() const
+    value_base_type* back() const
     {
-        return base::back();
+        return const_cast<value_base_type*>(base::back());
     }
 
     bool isNull(size_type n)
@@ -437,9 +437,9 @@ public:
         return base::operator[](n);
     }
 
-    const value_base_type* operator[](size_type n) const
+    value_base_type* operator[](size_type n) const
     {
-        return base::operator[](n);
+        return const_cast<value_base_type*>(base::operator[](n));
     }
 
     void assign(size_type n, const value_base_type &val)

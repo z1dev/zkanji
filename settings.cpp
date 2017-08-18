@@ -387,6 +387,25 @@ namespace Settings
 
         writer.writeEndElement(); /* Windows */
 
+        /*
+        else if (reader.name() == "Misc")
+        {
+        while (reader.readNextStartElement())
+        {
+        if (reader.name() == "LastDecks")
+        loadXMLLastDecks(reader);
+        }
+        }
+        */
+        writer.writeStartElement("Misc");
+
+        writer.writeStartElement("LastDecks");
+        gUI->saveXMLLastDecks(writer);
+        writer.writeEndElement(); /* LastDecks */
+
+        writer.writeEndElement(); /* Misc */
+
+
         writer.writeEndElement(); /* ZKanjiSettings */
 
         writer.writeEndDocument();
@@ -1066,6 +1085,14 @@ namespace Settings
                         gUI->loadXMLKanjiInfo(reader);
                     else
                         reader.skipCurrentElement();
+                }
+            }
+            else if (reader.name() == "Misc")
+            {
+                while (reader.readNextStartElement())
+                {
+                    if (reader.name() == "LastDecks")
+                        gUI->loadXMLLastDecks(reader);
                 }
             }
             else

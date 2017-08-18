@@ -1091,8 +1091,7 @@ void ZDictionaryListView::wordsToDeck() const
 
 void ZDictionaryListView::wordsToDeck(const std::vector<int> &windexes) const
 {
-    // TODO: save the last deck and use that. All dialogs called this way should find the parent widget by themselves.
-    addWordsToDeck(dictionary()->wordDecks()->items(0), windexes);
+    addWordsToDeck(dictionary()->wordDecks()->lastSelected(), windexes);
 }
 
 void ZDictionaryListView::copyWordDef() const
