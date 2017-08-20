@@ -46,11 +46,14 @@ compatible and can use Qt.
 
 On Windows, the minimal Visual Studio version capable of compiling zkanji is VS2013
 but the project file is for VS2015. I don't plan to make future changes compatible
-with previous compiler veresions.
+with previous compiler versions.
 It is recommended, and possibly required, to use the Qt add-on for Visual Studio. GNU
 C++ compilers should have no problem compiling zkanji either but I haven't tested it
 yet. Currently only the Visual Studio project file is included. If it is set up
 correctly, zkanji should compile out of the box.
+If you plan to debug zkanji in Visual Studio, see the VS folder for natvis extension
+for zkanji data types. Copy 'zkanji.natvis' to
+'%VSInstallLocation%\Common7\Packages\Debugger\Visualizers\'.
 
 When compiling for the Linux platform, use Qt Creator and open the `.pro` file found
 in the root folder. If Qt was installed the default way, the program will compile

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+    <Type Name="QCharString">
+        <DisplayString>{(reinterpret_cast&lt;unsigned short*&gt;(arr)),sub}</DisplayString>
+        <StringView>(reinterpret_cast&lt;unsigned short*&gt;(arr)),sub</StringView>
+        <Expand>
+            <Item Name="[size]">siz</Item>
+            <ArrayItems>
+                <Size>siz</Size>
+                <ValuePointer>(reinterpret_cast&lt;unsigned short*&gt;(arr)),c</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+    
+    <Type Name="QCharStringList">
+        <DisplayString>{{size={used}}}</DisplayString>
+        <Expand>
+            <Item Name="[Used]">used</Item>
+            <Item Name="[Reserved]">reserved</Item>
+            <ArrayItems>
+                <Size>used</Size>
+                <ValuePointer>arr</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+    
+    <Type Name="fastarray&lt;*&gt;">
+        <DisplayString>{{size={s}}}</DisplayString>
+        <Expand>
+            <Item Name="[Size]">s</Item>
+            <ArrayItems>
+                <Size>s</Size>
+                <ValuePointer>arr</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+    
+</AutoVisualizer>

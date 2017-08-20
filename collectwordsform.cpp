@@ -524,7 +524,7 @@ void CollectWordsForm::on_generateButton_clicked()
                     else if (!limit)
                         it = listkanji.find(e->kanji[iy].unicode());
 
-                    if (!checkkanji || it->second.first == 0)
+                    if (!checkkanji || it == listkanji.end() || it->second.first == 0)
                         continue;
 
                     bool goodplace = (it->second.second == KanjiPlacement::Anywhere ||
