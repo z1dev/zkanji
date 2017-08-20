@@ -2247,8 +2247,8 @@ void ZListView::doResizeColumns()
 
 void ZListView::saveColumnData(ZAbstractTableModel *columnmodel)
 {
-    if (autosize)
-        return;
+    //if (autosize)
+    //    return;
 
     bool selfmodel = model() != nullptr;
     ZAbstractTableModel *m = selfmodel ? model() : columnmodel;
