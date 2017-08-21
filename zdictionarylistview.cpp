@@ -952,6 +952,7 @@ void ZDictionaryListView::mouseMoveEvent(QMouseEvent *e)
 
         if (k == -1)
         {
+            ZToolTip::startHide();
             kanjitippos = -1;
             kanjitipcell = QModelIndex();
         }
