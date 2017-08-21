@@ -223,7 +223,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>12</number>
+             <number>8</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -2896,7 +2896,14 @@ Scales everything in the program, including icons and text. The main menu, popup
               <property name="bottomMargin">
                <number>0</number>
               </property>
-              <item row="0" column="0">
+              <item row="0" column="0" colspan="2">
+               <widget class="QLabel" name="label_130">
+                <property name="text">
+                 <string>Font used in kanji grids:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
                <widget class="QLabel" name="label_51">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -2909,7 +2916,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
+              <item row="1" column="1">
                <widget class="QFontComboBox" name="kanjiFontCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -2922,7 +2929,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="1" column="0" colspan="2">
+              <item row="2" column="0" colspan="2">
                <widget class="QCheckBox" name="kanjiAliasBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2935,7 +2942,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="3" column="0">
                <widget class="QLabel" name="label_56">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -2948,7 +2955,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
+              <item row="3" column="1">
                <widget class="QComboBox" name="kanjiSizeCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2993,8 +3000,19 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </item>
                </widget>
               </item>
-              <item row="3" column="0" colspan="2">
-               <widget class="QWidget" name="widget_2" native="true"/>
+              <item row="4" column="0" colspan="2">
+               <widget class="QLabel" name="label_131">
+                <property name="text">
+                 <string>Preview:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0" colspan="2">
+               <widget class="QFrame" name="kanjiPreview">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -5238,8 +5256,8 @@ Scales everything in the program, including icons and text. The main menu, popup
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

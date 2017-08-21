@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QSystemTrayIcon>
 #include <QFileDialog>
+#include <QStylePainter>
 #include "settingsform.h"
 #include "ui_settingsform.h"
 #include "zevents.h"
@@ -319,10 +320,15 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
 
     reset();
 
+    ui->kanjiPreview->installEventFilter(this);
+
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &SettingsForm::okClicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Reset), &QPushButton::clicked, this, &SettingsForm::reset);
     connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &SettingsForm::applyClicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Discard), &QPushButton::clicked, this, &SettingsForm::close);
+    connect(ui->kanjiAliasBox, &QCheckBox::toggled, ui->kanjiPreview, (void (QWidget::*)())&QWidget::update);
+    connect(ui->kanjiFontCBox, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, ui->kanjiPreview, (void (QWidget::*)())&QWidget::update);
+    
 }
 
 SettingsForm::~SettingsForm()
@@ -438,6 +444,7 @@ void SettingsForm::reset()
     ui->kanjiFontCBox->setCurrentIndex(ui->kanjiFontCBox->findText(Settings::fonts.kanji));
     ui->kanjiAliasBox->setChecked(Settings::fonts.nokanjialias);
     ui->kanjiSizeCBox->setCurrentText(QString::number(Settings::fonts.kanjifontsize));
+    on_kanjiSizeCBox_currentIndexChanged(ui->kanjiSizeCBox->currentIndex());
 
     ui->colGridCBox->setCurrentColor(Settings::colors.grid);
     ui->bgGridCBox->setCurrentColor(Settings::colors.bg);
@@ -1042,6 +1049,53 @@ void SettingsForm::on_siteDelButton_clicked()
     m->deleteSite(row);
 
     ui->sitesTable->setCurrentRow(std::max(0, std::min(row, m->rowCount() - 2)));
+}
+
+void SettingsForm::on_kanjiSizeCBox_currentIndexChanged(int index)
+{
+    int fontsize;
+    if (ui->kanjiSizeCBox->currentIndex() == -1)
+        fontsize = Settings::fonts.kanjifontsize;
+    else
+        fontsize = ui->kanjiSizeCBox->currentText().toInt();
+
+    int cellsize = std::ceil(fontsize / 0.7);
+    int mleft, mtop, mright, mbottom;
+    ui->kanjiPreview->getContentsMargins(&mleft, &mtop, &mright, &mbottom);
+    ui->kanjiPreview->setFixedSize(cellsize + mleft + mright, cellsize + mtop + mbottom);
+    ui->kanjiPreview->update();
+}
+
+bool SettingsForm::eventFilter(QObject *o, QEvent *e)
+{
+    if (o == ui->kanjiPreview && e->type() == QEvent::Paint)
+    {
+        QPaintEvent *pe = (QPaintEvent*)e;
+        QRect r = ui->kanjiPreview->rect();
+
+        int mleft, mtop, mright, mbottom;
+        ui->kanjiPreview->getContentsMargins(&mleft, &mtop, &mright, &mbottom);
+        r.adjust(mleft, mtop, -mright, -mbottom);
+        QStylePainter p(ui->kanjiPreview);
+        QPalette pal = qApp->palette();
+
+        p.fillRect(r, Settings::textColor(pal, QPalette::Active, ColorSettings::TextColorTypes::Bg));
+
+        QFont kfont = { ui->kanjiFontCBox->currentText(), ui->kanjiSizeCBox->currentText().toInt() };
+        if (ui->kanjiAliasBox->isChecked())
+        {
+            QFont::StyleStrategy ss = kfont.styleStrategy();
+            ss = QFont::StyleStrategy(ss | QFont::NoSubpixelAntialias);
+            kfont.setStyleStrategy(ss);
+        }
+
+        p.setFont(kfont);
+
+        drawTextBaseline(&p, r.left(), r.top() + r.height() * 0.86, true, QRect(r.left(), r.top(), r.width() - 1, r.height() - 1), QChar(0x6f22)) ;
+
+        return false;
+    }
+    return base::eventFilter(o, e);
 }
 
 void SettingsForm::getSiteUrlSel(int &ss, int &se)

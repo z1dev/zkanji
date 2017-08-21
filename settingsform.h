@@ -89,6 +89,9 @@ public slots:
     void on_siteUrlEdit_selectionChanged();
     void on_siteLockButton_toggled(bool checked);
     void on_siteDelButton_clicked();
+    void on_kanjiSizeCBox_currentIndexChanged(int index);
+protected:
+    bool eventFilter(QObject *o, QEvent *e) override;
 private:
     // Updates se and ss to contain the selection start and selection end. The end of the
     // selection can be in front of the start, which is the cursor position.
