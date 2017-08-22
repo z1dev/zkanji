@@ -176,7 +176,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     // Instruction text when the recognizer is empty.
     if (!drawing && strokes.empty())
     {
-        p.setFont(QFont(Settings::fonts.definition, ptsize));
+        p.setFont(QFont(Settings::fonts.main, ptsize));
         p.drawText(QRectF(hx * 3, hx * 3, area.width() - hx * 6, area.height() - hx * 6), Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, instructions());
     }
 
@@ -415,7 +415,7 @@ void RecognizerArea::recalculate()
         int w;
         do
         {
-            QFont f(Settings::fonts.definition, ptsize);
+            QFont f(Settings::fonts.main, ptsize);
             QFontMetrics fm(f);
 
             w = fm.boundingRect(instructions()).width();

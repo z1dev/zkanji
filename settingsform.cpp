@@ -33,6 +33,40 @@
 #include "zkanjimain.h"
 #include "zui.h"
 
+
+//-------------------------------------------------------------
+
+
+fontPreviewWidget::fontPreviewWidget(QWidget *parent) : base(parent)
+{
+
+}
+
+void fontPreviewWidget::setFonts(const QString &kf, const QString &df, const QString &nf)
+{
+    kanafont = kf;
+    deffont = df;
+    notesfont = nf;
+
+    update();
+}
+
+QSize fontPreviewWidget::minimumSizeHint() const
+{
+    return sizeHint();
+}
+
+QSize fontPreviewWidget::sizeHint() const
+{
+    return QSize(1, 72);
+}
+
+void fontPreviewWidget::paintEvent(QPaintEvent *e)
+{
+
+}
+
+
 //-------------------------------------------------------------
 
 
@@ -433,11 +467,11 @@ void SettingsForm::reset()
     ui->sitesTable->setCurrentRow(0);
 
     ui->dictKanaFontCBox->setCurrentIndex(ui->dictKanaFontCBox->findText(Settings::fonts.kana));
-    ui->dictDefFontCBox->setCurrentIndex(ui->dictDefFontCBox->findText(Settings::fonts.definition));
+    ui->mainFontCBox->setCurrentIndex(ui->mainFontCBox->findText(Settings::fonts.main));
     ui->dictInfoFontCBox->setCurrentIndex(ui->dictInfoFontCBox->findText(Settings::fonts.info));
     ui->dictInfoStyleCBox->setCurrentIndex((int)Settings::fonts.infostyle);
-    ui->extraFontCBox->setCurrentIndex(ui->extraFontCBox->findText(Settings::fonts.extra));
-    ui->extraStyleCBox->setCurrentIndex((int)Settings::fonts.extrastyle);
+    //ui->extraFontCBox->setCurrentIndex(ui->extraFontCBox->findText(Settings::fonts.extra));
+    //ui->extraStyleCBox->setCurrentIndex((int)Settings::fonts.extrastyle);
     ui->dictSizeCBox->setCurrentIndex((int)Settings::fonts.mainsize);
     ui->popupSizeCBox->setCurrentIndex((int)Settings::fonts.popsize);
 
@@ -674,21 +708,21 @@ void SettingsForm::applyClicked()
     if (ui->dictKanaFontCBox->currentIndex() == -1)
         ui->dictKanaFontCBox->setCurrentIndex(ui->dictKanaFontCBox->findText(Settings::fonts.kana));
     Settings::fonts.kana = ui->dictKanaFontCBox->currentText();
-    if (ui->dictDefFontCBox->currentIndex() == -1)
-        ui->dictDefFontCBox->setCurrentIndex(ui->dictDefFontCBox->findText(Settings::fonts.definition));
-    Settings::fonts.definition = ui->dictDefFontCBox->currentText();
+    if (ui->mainFontCBox->currentIndex() == -1)
+        ui->mainFontCBox->setCurrentIndex(ui->mainFontCBox->findText(Settings::fonts.main));
+    Settings::fonts.main = ui->mainFontCBox->currentText();
     if (ui->dictInfoFontCBox->currentIndex() == -1)
         ui->dictInfoFontCBox->setCurrentIndex(ui->dictInfoFontCBox->findText(Settings::fonts.info));
     Settings::fonts.info = ui->dictInfoFontCBox->currentText();
     if (ui->dictInfoStyleCBox->currentIndex() == -1)
         ui->dictInfoStyleCBox->setCurrentIndex((int)Settings::fonts.infostyle);
     Settings::fonts.infostyle = (FontSettings::FontStyle)ui->dictInfoStyleCBox->currentIndex();
-    if (ui->extraFontCBox->currentIndex() == -1)
-        ui->extraFontCBox->setCurrentIndex(ui->extraFontCBox->findText(Settings::fonts.extra));
-    Settings::fonts.extra = ui->extraFontCBox->currentText();
-    if (ui->extraStyleCBox->currentIndex() == -1)
-        ui->extraStyleCBox->setCurrentIndex((int)Settings::fonts.extrastyle);
-    Settings::fonts.extrastyle = (FontSettings::FontStyle)ui->extraStyleCBox->currentIndex();
+    //if (ui->extraFontCBox->currentIndex() == -1)
+    //    ui->extraFontCBox->setCurrentIndex(ui->extraFontCBox->findText(Settings::fonts.extra));
+    //Settings::fonts.extra = ui->extraFontCBox->currentText();
+    //if (ui->extraStyleCBox->currentIndex() == -1)
+    //    ui->extraStyleCBox->setCurrentIndex((int)Settings::fonts.extrastyle);
+    //Settings::fonts.extrastyle = (FontSettings::FontStyle)ui->extraStyleCBox->currentIndex();
 
     if (ui->dictSizeCBox->currentIndex() == -1)
         ui->dictSizeCBox->setCurrentIndex((int)Settings::fonts.mainsize);

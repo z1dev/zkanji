@@ -20,26 +20,22 @@ struct FontSettings
     int kanjifontsize = 35;
     // Whether to disable sub-pixel rendering of the kanji grid font.
     bool nokanjialias = true;
+    // Widget and dictionary definition text font.
+    QString main;
     // Written and kana parts of word in the dictionary.
     QString kana;
-    // Definition text displayed in the dictionary.
-    QString definition;
-    // Small info text displayed in the dictionary.
+    // Small info text font displayed in the dictionary.
     QString info;
-    // Style of small info text displayed in the dictionary.
+    // Style of small info text font displayed in the dictionary.
     FontStyle infostyle = Normal;
-    // Inflection/conjugation text when displayed in the dictionary.
-    QString extra;
-    // Style of inflection/conjugation text when displayed in the dictionary.
-    FontStyle extrastyle = Bold;
 
     // Written and kana parts of word in the dictionary.
     QString printkana;
-    // Definition text displayed in the dictionary.
+    // Printed word definition text font name.
     QString printdefinition;
-    // Small info text displayed in the dictionary.
+    // Printed small info text font name.
     QString printinfo;
-    // Style of small info text displayed in the dictionary.
+    // Printed small info text font stgyle.
     FontStyle printinfostyle = Italic;
 
     // Line size of dictionary entries in the main windows.

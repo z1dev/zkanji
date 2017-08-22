@@ -9,6 +9,7 @@
 
 #include <QtCore>
 #include <QMainWindow>
+#include <QFrame>
 #include "dialogwindow.h"
 #include "zlistboxmodel.h"
 
@@ -16,6 +17,25 @@ namespace Ui {
     class SettingsForm;
 }
 
+class fontPreviewWidget : public QFrame
+{
+    Q_OBJECT
+public:
+    fontPreviewWidget(QWidget *parent = nullptr);
+
+    void setFonts(const QString &kf, const QString &df, const QString &nf);
+
+    virtual QSize minimumSizeHint() const override;
+    virtual QSize sizeHint() const override;
+protected:
+    virtual void paintEvent(QPaintEvent *e) override;
+private:
+    QString kanafont;
+    QString deffont;
+    QString notesfont;
+
+    typedef QFrame  base;
+};
 
 class KanjiRefListModel : public ZAbstractListBoxModel
 {

@@ -71,11 +71,11 @@ namespace Settings
 
         ini.setValue("fonts/nokanjialias", fonts.nokanjialias);
         ini.setValue("fonts/kana", fonts.kana);
-        ini.setValue("fonts/definition", fonts.definition);
+        ini.setValue("fonts/main", fonts.main);
         ini.setValue("fonts/notes", fonts.info);
         ini.setValue("fonts/notesstyle", fonts.infostyle == FontSettings::Bold ? "Bold" : fonts.infostyle == FontSettings::Italic ? "Italic" : fonts.infostyle == FontSettings::BoldItalic ? "BoldItalic" : "Normal");
-        ini.setValue("fonts/extra", fonts.extra);
-        ini.setValue("fonts/extrastyle", fonts.extrastyle == FontSettings::Bold ? "Bold" : fonts.extrastyle == FontSettings::Italic ? "Italic" : fonts.extrastyle == FontSettings::BoldItalic ? "BoldItalic" : "Normal");
+        //ini.setValue("fonts/extra", fonts.extra);
+        //ini.setValue("fonts/extrastyle", fonts.extrastyle == FontSettings::Bold ? "Bold" : fonts.extrastyle == FontSettings::Italic ? "Italic" : fonts.extrastyle == FontSettings::BoldItalic ? "BoldItalic" : "Normal");
 
         ini.setValue("fonts/printkana", fonts.printkana);
         ini.setValue("fonts/printdefinition", fonts.printdefinition);
@@ -620,13 +620,13 @@ namespace Settings
             fonts.kanjifontsize = val;
         fonts.nokanjialias = ini.value("fonts/nokanjialias", true).toBool();
         fonts.kana = ini.value("fonts/kana", QString()).toString();
-        fonts.definition = ini.value("fonts/definition", qApp->font().family()).toString();
+        fonts.main = ini.value("fonts/main", qApp->font().family()).toString();
         fonts.info = ini.value("fonts/notes", qApp->font().family()).toString();
         tmp = ini.value("fonts/notesstyle", "Normal").toString();
         fonts.infostyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
-        fonts.extra = ini.value("fonts/extra", qApp->font().family()).toString();
-        tmp = ini.value("fonts/extrastyle", "Bold").toString();
-        fonts.extrastyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
+        //fonts.extra = ini.value("fonts/extra", qApp->font().family()).toString();
+        //tmp = ini.value("fonts/extrastyle", "Bold").toString();
+        //fonts.extrastyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
 
         fonts.printkana = ini.value("fonts/printkana", QString()).toString();
         fonts.printdefinition = ini.value("fonts/printdefinition", qApp->font().family()).toString();
@@ -1162,7 +1162,7 @@ namespace Settings
 
     QFont defFont()
     {
-        return QFont{ Settings::fonts.definition, 9 };
+        return QFont{ Settings::fonts.main, 9 };
     }
 
     QFont notesFont()
@@ -1172,7 +1172,7 @@ namespace Settings
 
     QFont extraFont()
     {
-        return QFont{ Settings::fonts.extra, 9, Settings::fonts.extrastyle == FontSettings::Bold || Settings::fonts.extrastyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::fonts.extrastyle == FontSettings::Italic || Settings::fonts.extrastyle == FontSettings::BoldItalic };
+        return QFont{ Settings::fonts.main, 9, QFont::Bold };
     }
 
     QFont printKanaFont()
@@ -1182,7 +1182,7 @@ namespace Settings
 
     QFont printDefFont()
     {
-        return QFont{ !Settings::print.dictfonts ? Settings::fonts.printdefinition : Settings::fonts.definition, 120 };
+        return QFont{ !Settings::print.dictfonts ? Settings::fonts.printdefinition : Settings::fonts.main, 120 };
     }
 
     QFont printInfoFont()

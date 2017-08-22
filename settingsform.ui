@@ -223,7 +223,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>8</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -2632,7 +2632,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Dictionary Fonts:</string>
+                 <string>Font settings:</string>
                 </property>
                </widget>
               </item>
@@ -2659,12 +2659,12 @@ Scales everything in the program, including icons and text. The main menu, popup
               <item row="2" column="0">
                <widget class="QLabel" name="label_54">
                 <property name="text">
-                 <string>Definition:</string>
+                 <string>Main font:</string>
                 </property>
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QFontComboBox" name="dictDefFontCBox">
+               <widget class="QFontComboBox" name="mainFontCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -2727,64 +2727,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </item>
                </layout>
               </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_115">
-                <property name="text">
-                 <string>Inflection:</string>
-                </property>
-               </widget>
-              </item>
               <item row="4" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_22">
-                <property name="spacing">
-                 <number>4</number>
-                </property>
-                <item>
-                 <widget class="QFontComboBox" name="extraFontCBox">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="extraStyleCBox">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="currentIndex">
-                   <number>1</number>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>Normal</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Bold</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Italic</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Bold Italic</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="5" column="1">
                <spacer name="verticalSpacer_15">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -2800,21 +2743,21 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </property>
                </spacer>
               </item>
-              <item row="6" column="0">
+              <item row="5" column="0">
                <widget class="QLabel" name="label_48">
                 <property name="text">
-                 <string>Line sizes:</string>
+                 <string>Dictionary line sizes:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="0">
+              <item row="6" column="0">
                <widget class="QLabel" name="label_49">
                 <property name="text">
                  <string>General:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="6" column="1">
                <widget class="QComboBox" name="dictSizeCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -2842,8 +2785,28 @@ Scales everything in the program, including icons and text. The main menu, popup
                 </item>
                </widget>
               </item>
-              <item row="8" column="0" colspan="2">
-               <widget class="QWidget" name="widget_3" native="true"/>
+              <item row="7" column="0" colspan="2">
+               <widget class="fontPreviewWidget" name="fontPreview">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <spacer name="verticalSpacer_29">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>6</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item row="9" column="0">
                <widget class="QLabel" name="label_50">
@@ -2881,7 +2844,11 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="10" column="0" colspan="2">
-               <widget class="QWidget" name="widget_4" native="true"/>
+               <widget class="fontPreviewWidget" name="popupPreview">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -5042,7 +5009,7 @@ Scales everything in the program, including icons and text. The main menu, popup
                </layout>
               </item>
               <item row="5" column="0" colspan="2">
-               <widget class="QFrame" name="frame">
+               <widget class="fontPreviewWidget" name="printPreview">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -5098,6 +5065,12 @@ Scales everything in the program, including icons and text. The main menu, popup
    <class>ZColorComboBox</class>
    <extends>QComboBox</extends>
    <header>zcolorcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>fontPreviewWidget</class>
+   <extends>QFrame</extends>
+   <header>settingsform.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -5160,11 +5133,9 @@ Scales everything in the program, including icons and text. The main menu, popup
   <tabstop>sitesTable</tabstop>
   <tabstop>horizontalSlider_2</tabstop>
   <tabstop>dictKanaFontCBox</tabstop>
-  <tabstop>dictDefFontCBox</tabstop>
+  <tabstop>mainFontCBox</tabstop>
   <tabstop>dictInfoFontCBox</tabstop>
   <tabstop>dictInfoStyleCBox</tabstop>
-  <tabstop>extraFontCBox</tabstop>
-  <tabstop>extraStyleCBox</tabstop>
   <tabstop>dictSizeCBox</tabstop>
   <tabstop>popupSizeCBox</tabstop>
   <tabstop>kanjiFontCBox</tabstop>
