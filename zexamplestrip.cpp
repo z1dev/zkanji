@@ -306,7 +306,7 @@ ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), dis
     setAutoFillBackground(true);
 
     QFont jf = Settings::kanaFont();
-    QFont tf = Settings::defFont();
+    QFont tf = Settings::mainFont();
     jf.setPointSize(11);
     tf.setPointSize(8);
     QFontMetrics jfm(jf);
@@ -513,7 +513,7 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
     painter.setClipRect(r);
 
     QFont jf = Settings::kanaFont();
-    QFont tf = Settings::defFont();
+    QFont tf = Settings::mainFont();
     if (display == ExampleDisplay::Both)
     {
         adjustFontSize(jf, (r.height() - 4) * 0.5);
@@ -703,7 +703,7 @@ int ZExampleStrip::scrollMax() const
     if ((display == ExampleDisplay::Japanese && jpwidth == -1) || (display == ExampleDisplay::Translated && trwidth == -1) || (display == ExampleDisplay::Both && (trwidth == -1 || jpwidth == -1)))
     {
         QFont jf = Settings::kanaFont();
-        QFont tf = Settings::defFont();
+        QFont tf = Settings::mainFont();
 
         QRect r = drawArea();
 
@@ -842,7 +842,7 @@ void ZExampleStrip::fillWordRects()
     QRect r = drawArea();
 
     QFont jf = Settings::kanaFont();
-    QFont tf = Settings::defFont();
+    QFont tf = Settings::mainFont();
     if (display == ExampleDisplay::Both)
     {
         adjustFontSize(jf, (r.height() - 4) * 0.5);

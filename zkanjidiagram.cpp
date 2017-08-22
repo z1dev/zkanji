@@ -606,7 +606,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
         p.setBrush(qApp->palette().base());
         p.setPen(qApp->palette().color(QPalette::Text));
 
-        //QFont f = Settings::defFont();
+        //QFont f = Settings::mainFont();
         //f.setPointSize(10);
         //p.setFont(f);
         //QString str = tr("Strokes") + ": ";
@@ -628,7 +628,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
         //p.setFont(f);
         //drawTextBaseline(&p, QPointF(rf.left(), rf.top() + rf.height() * 0.8), true, rf, QString::number(ZKanji::kanjis[kindex]->strokes));
 
-        QFont f = Settings::defFont();
+        QFont f = Settings::mainFont();
         f.setPointSize(13);
         QFontMetricsF fm(f);
 
@@ -652,7 +652,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
         QFontMetricsF fm(radf);
         qreal rh = fm.height();
 
-        QFont f = Settings::defFont();
+        QFont f = Settings::mainFont();
         f.setPointSize(8);
         fm = QFontMetricsF(f);
         QSizeF s = fm.boundingRect("909").size();
@@ -760,7 +760,7 @@ void ZKanjiDiagram::addNumberRect(int strokeix, StrokeDirection dir, QPoint pt)
 
     double pw = ZKanji::elements()->basePenWidth(std::min(image->width(), image->height()));
 
-    QFont f = Settings::defFont();
+    QFont f = Settings::mainFont();
     f.setBold(true);
     f.setPixelSize(std::max<int>(10, pw * 1.35));
     QFontInfo fi(f);
@@ -932,7 +932,7 @@ void ZKanjiDiagram::drawNumberRect(QPainter &p, int strokeix, bool numdraw)
     QFont f;
     if (numdraw)
     {
-        f = Settings::defFont();
+        f = Settings::mainFont();
         f.setBold(true);
         f.setPixelSize(std::max<int>(10, pw * 1.35));
         QFontInfo fi(f);

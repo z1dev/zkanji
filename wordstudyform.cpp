@@ -48,7 +48,7 @@ ChoiceLabel::ChoiceLabel(int index, QWidget *parent) : base(parent), index(index
     setAttribute(Qt::WA_MouseTracking);
 
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    QFont f = Settings::defFont();
+    QFont f = Settings::mainFont();
     f.setPointSize(f.pointSize() * 1.3);
     setFont(f);
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);

@@ -23,7 +23,11 @@ class fontPreviewWidget : public QFrame
 public:
     fontPreviewWidget(QWidget *parent = nullptr);
 
-    void setFonts(const QString &kf, const QString &df, const QString &nf);
+    enum FontStyle { Normal, Bold, Italic, BoldItalic };
+    enum LineSize { Small, Medium, Large };
+
+    // Changes the fonts displayed in the preview.
+    void setFonts(const QString &kf, const QString &df, const QString &nf, FontStyle nfs, LineSize siz);
 
     virtual QSize minimumSizeHint() const override;
     virtual QSize sizeHint() const override;
@@ -33,6 +37,11 @@ private:
     QString kanafont;
     QString deffont;
     QString notesfont;
+    FontStyle notestyle;
+    LineSize sizes;
+
+    // Cached size hint height.
+    mutable int sizeheight;
 
     typedef QFrame  base;
 };
@@ -110,6 +119,12 @@ public slots:
     void on_siteLockButton_toggled(bool checked);
     void on_siteDelButton_clicked();
     void on_kanjiSizeCBox_currentIndexChanged(int index);
+
+    void fontCBoxChanged();
+    void fontSizeCBoxChanged();
+    void popupSizeCBoxChanged();
+    void printBoxToggled();
+    void printCBoxChanged();
 protected:
     bool eventFilter(QObject *o, QEvent *e) override;
 private:

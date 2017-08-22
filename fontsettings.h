@@ -55,7 +55,7 @@ namespace Settings
     QFont kanjiFont();
     QFont radicalFont();
     QFont kanaFont();
-    QFont defFont();
+    QFont mainFont();
     QFont notesFont();
     QFont extraFont();
 

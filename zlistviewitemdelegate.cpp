@@ -63,7 +63,7 @@ void ZListViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         chkr = drawCheckBox(painter, index);
 
     QString str = index.data(Qt::DisplayRole).toString();
-    QFont f = Settings::defFont();
+    QFont f = Settings::mainFont();
     painter->save();
 
     painter->setFont(f);
@@ -135,7 +135,7 @@ QSize ZListViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const 
         chkr = checkBoxRect(index);
 
     QString str = index.data(Qt::DisplayRole).toString();
-    QFontMetrics fm = QFontMetrics(Settings::defFont());
+    QFontMetrics fm = QFontMetrics(Settings::mainFont());
 
     QSize siz = fm.boundingRect(str).size();
     siz.setWidth(siz.width() + 8);

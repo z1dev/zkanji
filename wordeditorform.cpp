@@ -29,6 +29,8 @@ DictionaryListEditDelegate::DictionaryListEditDelegate(ZDictionaryListView *pare
     ;
 }
 
+extern const double defRowSize;
+
 void DictionaryListEditDelegate::paintDefinition(QPainter *painter, QColor textcolor, QRect r, int y, WordEntry *e, std::vector<InfTypes> *inf, int defix, bool selected) const
 {
     if (defix != e->defs.size())
@@ -38,8 +40,8 @@ void DictionaryListEditDelegate::paintDefinition(QPainter *painter, QColor textc
     }
 
     // Main definition font.
-    QFont f = Settings::defFont();
-    f.setPixelSize(r.height() * 0.78);
+    QFont f = Settings::mainFont();
+    f.setPixelSize(r.height() * defRowSize);
     f.setItalic(true);
 
     QString str = tr("Edit to create a new definition for this word.");

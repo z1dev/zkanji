@@ -1160,7 +1160,7 @@ namespace Settings
         return QFont{ Settings::fonts.kana, 9 };
     }
 
-    QFont defFont()
+    QFont mainFont()
     {
         return QFont{ Settings::fonts.main, 9 };
     }

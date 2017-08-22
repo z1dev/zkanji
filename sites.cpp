@@ -348,7 +348,7 @@ void SitesItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     if (m == nullptr || row < m->rowCount() - 1)
         return;
 
-    QFont f = Settings::defFont();
+    QFont f = Settings::mainFont();
     f.setItalic(true);
 
     QString str;

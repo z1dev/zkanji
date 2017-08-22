@@ -359,4 +359,8 @@ private:
     typedef ZListViewItemDelegate base;
 };
 
+extern const double kanjiRowSize;
+extern const double defRowSize;
+extern const double notesRowSize;
+
 #endif // ZDICTIONARYLISTVIEW_H

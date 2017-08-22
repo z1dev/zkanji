@@ -41,6 +41,8 @@
 
 
 const double kanjiRowSize = 0.78;
+const double defRowSize = 0.78;
+const double notesRowSize = 0.55;
 
 ZDictionaryListView::ZDictionaryListView(QWidget *parent) : base(parent), multi(false), /*selection(new RangeSelection), */studydefs(false), ignorechange(false), textselectable(true), selecting(false)
 {
@@ -1911,8 +1913,8 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
             paintDefinition(painter, textcol, r, y, e, (current && Settings::dictionary.inflection == DictionarySettings::CurrentRow) || (Settings::dictionary.inflection == DictionarySettings::Everywhere) ? inf : nullptr, defix, selected);
         else
         {
-            QFont f = Settings::defFont(); //{ kanaFontName(), 9 };
-            f.setPixelSize(r.height() * 0.78 /*/ 2 + 1*/);
+            QFont f = Settings::mainFont(); //{ kanaFontName(), 9 };
+            f.setPixelSize(r.height() * defRowSize /*/ 2 + 1*/);
             painter->setFont(f);
             drawTextBaseline(painter, r.left(), y, false, r, owner()->dictionary()->displayedStudyDefinition(index.data((int)DictRowRoles::WordIndex).toInt()));
             //painter->drawText(r.left(), y, owner()->dictionary()->displayedStudyDefinition(index.data((int)DictRowRoles::WordIndex).toInt()));
@@ -1997,15 +1999,15 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
         painter->setPen(textcolor);
 
     // Main definition font.
-    QFont f = Settings::defFont();
-    f.setPixelSize(r.height() * 0.78/* / 2 + 1*/);
+    QFont f = Settings::mainFont();
+    f.setPixelSize(r.height() * defRowSize/* / 2 + 1*/);
     //f.setPointSize(r.height() / 2 + 1);
     // Small font for word notes text.
     QFont fs = Settings::notesFont();
-    fs.setPixelSize(r.height() * 0.55 /*/ 2 - 2*/);
+    fs.setPixelSize(r.height() * notesRowSize /*/ 2 - 2*/);
     //fs.setPointSize(r.height() / 2 - 2);
     // Font used for drawing def number.
-    QFont fsf = Settings::defFont();
+    QFont fsf = Settings::mainFont();
     fsf.setPixelSize(f.pixelSize());
     QFont fse = Settings::extraFont();
     fse.setPixelSize(f.pixelSize());
