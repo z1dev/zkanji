@@ -1702,7 +1702,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     std::vector<InfTypes> *inf = (std::vector<InfTypes>*)index.data((int)DictRowRoles::Inflection).value<intptr_t>();
 
     // The painted item is in the current row of the owner view.
-    bool current = index.isValid() ? owner()->hasFocus() && owner()->currentRow() == index.row() : false;
+    bool current = index.isValid() ? owner()->currentRow() == index.row() : false;
     // This row is selected in the view.
     bool selected = /*owner()->selectionType() == ListSelectionType::Single ? current : */owner()->rowSelected(index.row());
 
@@ -1929,7 +1929,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         base::paint(painter, opt, index);
     }
 
-    if (current)
+    if (current && owner()->hasFocus())
     {
         // Draw the focus rectangle.
         QStyleOptionFocusRect fop;
