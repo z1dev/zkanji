@@ -1278,6 +1278,11 @@ void GlobalUI::quit()
     mainforms.at(0)->close();
 }
 
+void GlobalUI::practiceKana()
+{
+    setupKanaPractice();
+}
+
 void GlobalUI::showDecks()
 {
     int dictix = activeDictionaryIndex();

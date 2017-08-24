@@ -243,6 +243,10 @@ public slots:
     // the main window is hidden because the program is minimized, the application exits.
     void quit();
 
+    // Shows the dialog to practice hiragana and katakana.
+    void practiceKana();
+
+    // Shows the long term study list deck listing.
     void showDecks();
 
     // Hides every currently visible window and saves them in a list to show them later with

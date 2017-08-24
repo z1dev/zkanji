@@ -1277,6 +1277,11 @@ void ZKanjiForm::fillMainMenu()
 
         QMenu *studymenu = menu->addMenu(tr("&Study"));
 
+        a = new QAction(tr("Hiragana/Katakana practice..."), this);
+        //a->setShortcut(Qt::CTRL + Qt::Key_S);
+        connect(a, &QAction::triggered, gUI, &GlobalUI::practiceKana);
+        studymenu->addAction(a);
+
         a = new QAction(tr("Long-term study lists..."), this);
         a->setShortcut(Qt::CTRL + Qt::Key_S);
         connect(a, &QAction::triggered, gUI, &GlobalUI::showDecks);

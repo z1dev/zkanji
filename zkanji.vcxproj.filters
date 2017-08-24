@@ -926,6 +926,15 @@
     <ClCompile Include="kanjireadingpracticeform.cpp">
       <Filter>Code\Files with .ui\Study\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kanapracticesettingsform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="kanapracticesettingsform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kanapracticesettingsform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1315,6 +1324,12 @@
     <CustomBuild Include="kanjireadingpracticeform.h">
       <Filter>Code\Files with .ui\Study\Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="kanapracticesettingsform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanapracticesettingsform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kanji.h">
@@ -1561,6 +1576,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_kanapracticesettingsform.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>

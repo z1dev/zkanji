@@ -60,4 +60,9 @@ class WordDeck;
 // is always shown as a modal dialog.
 void addWordsToDeck(Dictionary *dict, WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent = nullptr);
 
+// Shows the KanaPracticeSettingsForm to allow the user to select which kana to practice. From
+// the form, the kana practice can be started.
+void setupKanaPractice();
+
+
 #endif // DIALOGS_H
