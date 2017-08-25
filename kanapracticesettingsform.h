@@ -15,6 +15,8 @@ namespace Ui {
 
 
 class QCheckBox;
+class QSignalMapper;
+class QGridLayout;
 class KanaPracticeSettingsForm : public DialogWindow
 {
     Q_OBJECT
@@ -25,13 +27,17 @@ public:
     void exec();
 public slots:
     void boxToggled(int index);
-    void on_kanaCBox_currentIndexChanged(int ind);
+    void on_checkButton_clicked();
 private:
+    void setupBoxes(QSignalMapper *map, QGridLayout *g, std::vector<QCheckBox*> &boxes);
     Ui::KanaPracticeSettingsForm *ui;
 
     bool updating;
 
-    std::vector<QCheckBox*> boxes;
+    QSignalMapper *hiramap;
+    QSignalMapper *katamap;
+    std::vector<QCheckBox*> hiraboxes;
+    std::vector<QCheckBox*> kataboxes;
     std::vector<uchar> hirause;
     std::vector<uchar> katause;
 

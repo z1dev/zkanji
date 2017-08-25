@@ -99,9 +99,9 @@
       <stop
          id="stop4210"
          offset="0.40837383"
-         style="stop-color:#e4cf62;stop-opacity:0.97196263" />
+         style="stop-color:#e4cf62;stop-opacity:1" />
       <stop
-         style="stop-color:#e9d56e;stop-opacity:0.76078433"
+         style="stop-color:#e9d56e;stop-opacity:1"
          offset="1"
          id="stop4206" />
     </linearGradient>
@@ -144,7 +144,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.2"
-     inkscape:cx="21.785714"
+     inkscape:cx="5.4464283"
      inkscape:cy="20.714286"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -163,7 +163,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

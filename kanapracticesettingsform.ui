@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>492</width>
-    <height>326</height>
+    <width>433</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,10 +20,7 @@
    <string>zkanji</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
-    <property name="spacing">
-     <number>4</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
      <number>6</number>
     </property>
@@ -48,390 +45,975 @@
     </item>
     <item>
      <widget class="QWidget" name="widget" native="true">
-      <layout class="QGridLayout" name="gridLayout_2">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing">
-        <number>12</number>
-       </property>
-       <item row="0" column="1" rowspan="3">
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="spacing">
-          <number>9</number>
-         </property>
-         <item row="8" column="3">
-          <widget class="QLabel" name="label_30">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_116">
            <property name="text">
-            <string>a</string>
+            <string>Current:</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="16">
-          <widget class="QLabel" name="label_26">
+         <item>
+          <widget class="QToolButton" name="hiraButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
-            <string>dy</string>
+            <string>Hiragana</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="10" column="3">
-          <widget class="QLabel" name="label_46">
+         <item>
+          <widget class="QToolButton" name="kataButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
            <property name="text">
-            <string>o</string>
+            <string>Katakana</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="7" column="18">
-          <widget class="QLabel" name="label_28">
-           <property name="text">
-            <string>py</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <spacer name="verticalSpacer_3">
+         <item>
+          <spacer name="horizontalSpacer_3">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>15</width>
-             <height>5</height>
+             <width>40</width>
+             <height>20</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="7" column="17">
-          <widget class="QLabel" name="label_27">
+         <item>
+          <widget class="QToolButton" name="checkButton">
            <property name="text">
-            <string>by</string>
+            <string>Check/uncheck all</string>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_18">
-           <property name="text">
-            <string>a</string>
+           <property name="icon">
+            <iconset resource="Resources/resources.qrc">
+             <normaloff>:/checkall.svg</normaloff>:/checkall.svg</iconset>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="13">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
+           <property name="iconSize">
             <size>
-             <width>15</width>
-             <height>5</height>
+             <width>18</width>
+             <height>18</height>
             </size>
            </property>
-          </spacer>
-         </item>
-         <item row="9" column="3">
-          <widget class="QLabel" name="label_44">
-           <property name="text">
-            <string>u</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_50">
-           <property name="text">
-            <string>o</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_49">
-           <property name="text">
-            <string>u</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_48">
-           <property name="text">
-            <string>i</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="11">
-          <widget class="QLabel" name="label_29">
-           <property name="text">
-            <string>ry</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_51">
-           <property name="text">
-            <string>e</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_32">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="7">
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>n</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="8">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>h</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="9">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>m</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="6">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>t</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="4">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>k</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="16">
-          <widget class="QLabel" name="label_14">
-           <property name="text">
-            <string>d</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="18">
-          <widget class="QLabel" name="label_16">
-           <property name="text">
-            <string>p</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="15">
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string>z</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="17">
-          <widget class="QLabel" name="label_15">
-           <property name="text">
-            <string>b</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="19">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>15</width>
-             <height>5</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="14">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>g</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="11">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>r</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>a</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="12">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>w</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="4">
-          <widget class="QLabel" name="label_19">
-           <property name="text">
-            <string>ky</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="5">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>s</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="10">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>y</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="7">
-          <widget class="QLabel" name="label_23">
-           <property name="text">
-            <string>ny</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QLabel" name="label_40">
-           <property name="text">
-            <string>i</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="3">
-          <widget class="QLabel" name="label_43">
-           <property name="text">
-            <string>o</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="3">
-          <widget class="QLabel" name="label_41">
-           <property name="text">
-            <string>u</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="8">
-          <widget class="QLabel" name="label_22">
-           <property name="text">
-            <string>hy</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="5">
-          <widget class="QLabel" name="label_20">
-           <property name="text">
-            <string>sh</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="6">
-          <widget class="QLabel" name="label_21">
-           <property name="text">
-            <string>ch</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="3">
-          <widget class="QLabel" name="label_42">
-           <property name="text">
-            <string>e</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="15">
-          <widget class="QLabel" name="label_25">
-           <property name="text">
-            <string>j</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="14">
-          <widget class="QLabel" name="label_24">
-           <property name="text">
-            <string>gy</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_31">
-           <property name="text">
-            <string>n'</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="label_33">
-           <property name="text">
-            <string> </string>
+           <property name="autoRaise">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_17">
-         <property name="text">
-          <string>Shown syllabary:</string>
+       <item>
+        <widget class="QStackedWidget" name="stack">
+         <property name="currentIndex">
+          <number>0</number>
          </property>
+         <widget class="QWidget" name="hiraPage">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QGridLayout" name="hiraLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item row="6" column="1">
+              <widget class="QLabel" name="label_33">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_31">
+               <property name="text">
+                <string>n'</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="15">
+              <widget class="QLabel" name="label_25">
+               <property name="text">
+                <string>j</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="14">
+              <widget class="QLabel" name="label_24">
+               <property name="text">
+                <string>gy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="13">
+              <widget class="QLabel" name="label_100">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="3">
+              <widget class="QLabel" name="label_44">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_49">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_32">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="6">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>t</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>k</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_48">
+               <property name="text">
+                <string>i</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_51">
+               <property name="text">
+                <string>e</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>m</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="17">
+              <widget class="QLabel" name="label_15">
+               <property name="text">
+                <string>b</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="18">
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>p</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="14">
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>g</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="16">
+              <widget class="QLabel" name="label_14">
+               <property name="text">
+                <string>d</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="15">
+              <widget class="QLabel" name="label_13">
+               <property name="text">
+                <string>z</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="4">
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>ky</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="11">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>r</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="12">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>w</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="16">
+              <widget class="QLabel" name="label_26">
+               <property name="text">
+                <string>dy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="17">
+              <widget class="QLabel" name="label_27">
+               <property name="text">
+                <string>by</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="3">
+              <widget class="QLabel" name="label_30">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="3">
+              <widget class="QLabel" name="label_46">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_50">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>n</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="18">
+              <widget class="QLabel" name="label_28">
+               <property name="text">
+                <string>py</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>15</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="7" column="11">
+              <widget class="QLabel" name="label_29">
+               <property name="text">
+                <string>ry</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="8">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>h</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="3">
+              <widget class="QLabel" name="label_43">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>s</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>y</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QLabel" name="label_40">
+               <property name="text">
+                <string>i</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QLabel" name="label_41">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="7">
+              <widget class="QLabel" name="label_23">
+               <property name="text">
+                <string>ny</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="6">
+              <widget class="QLabel" name="label_21">
+               <property name="text">
+                <string>ch</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="5">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>sh</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="8">
+              <widget class="QLabel" name="label_22">
+               <property name="text">
+                <string>hy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="13">
+              <widget class="QLabel" name="label_102">
+               <property name="text">
+                <string>i</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="19">
+              <widget class="QLabel" name="label_103">
+               <property name="text">
+                <string>i</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="19">
+              <widget class="QLabel" name="label_101">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="13">
+              <widget class="QLabel" name="label_104">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="13">
+              <widget class="QLabel" name="label_106">
+               <property name="text">
+                <string>e</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="19">
+              <widget class="QLabel" name="label_105">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="3">
+              <widget class="QLabel" name="label_42">
+               <property name="text">
+                <string>e</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="19">
+              <widget class="QLabel" name="label_107">
+               <property name="text">
+                <string>e</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="13">
+              <widget class="QLabel" name="label_110">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="19">
+              <widget class="QLabel" name="label_109">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="13">
+              <widget class="QLabel" name="label_112">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="19">
+              <widget class="QLabel" name="label_111">
+               <property name="text">
+                <string>a</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="13">
+              <widget class="QLabel" name="label_108">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="19">
+              <widget class="QLabel" name="label_115">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="19">
+              <widget class="QLabel" name="label_113">
+               <property name="text">
+                <string>u</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="13">
+              <widget class="QLabel" name="label_114">
+               <property name="text">
+                <string>o</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="kataPage">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QGridLayout" name="kataLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item row="8" column="3">
+              <widget class="QLabel" name="label_34">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="16">
+              <widget class="QLabel" name="label_35">
+               <property name="text">
+                <string>DY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="3">
+              <widget class="QLabel" name="label_47">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="18">
+              <widget class="QLabel" name="label_36">
+               <property name="text">
+                <string>PY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <spacer name="verticalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>15</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="7" column="17">
+              <widget class="QLabel" name="label_37">
+               <property name="text">
+                <string>BY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_38">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="3">
+              <widget class="QLabel" name="label_45">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_52">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_53">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_54">
+               <property name="text">
+                <string>I</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="11">
+              <widget class="QLabel" name="label_39">
+               <property name="text">
+                <string>RY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_55">
+               <property name="text">
+                <string>E</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_56">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>N</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="8">
+              <widget class="QLabel" name="label_57">
+               <property name="text">
+                <string>H</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QLabel" name="label_58">
+               <property name="text">
+                <string>M</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="6">
+              <widget class="QLabel" name="label_59">
+               <property name="text">
+                <string>T</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QLabel" name="label_60">
+               <property name="text">
+                <string>K</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="16">
+              <widget class="QLabel" name="label_61">
+               <property name="text">
+                <string>D</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="18">
+              <widget class="QLabel" name="label_62">
+               <property name="text">
+                <string>P</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="15">
+              <widget class="QLabel" name="label_63">
+               <property name="text">
+                <string>Z</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="17">
+              <widget class="QLabel" name="label_64">
+               <property name="text">
+                <string>B</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="14">
+              <widget class="QLabel" name="label_65">
+               <property name="text">
+                <string>G</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="11">
+              <widget class="QLabel" name="label_66">
+               <property name="text">
+                <string>R</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLabel" name="label_67">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="12">
+              <widget class="QLabel" name="label_68">
+               <property name="text">
+                <string>W</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="4">
+              <widget class="QLabel" name="label_69">
+               <property name="text">
+                <string>KY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="QLabel" name="label_70">
+               <property name="text">
+                <string>S</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QLabel" name="label_71">
+               <property name="text">
+                <string>Y</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="7">
+              <widget class="QLabel" name="label_72">
+               <property name="text">
+                <string>NY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QLabel" name="label_73">
+               <property name="text">
+                <string>I</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="3">
+              <widget class="QLabel" name="label_74">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QLabel" name="label_75">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="8">
+              <widget class="QLabel" name="label_76">
+               <property name="text">
+                <string>HY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="5">
+              <widget class="QLabel" name="label_77">
+               <property name="text">
+                <string>SH</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="6">
+              <widget class="QLabel" name="label_78">
+               <property name="text">
+                <string>CH</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="3">
+              <widget class="QLabel" name="label_79">
+               <property name="text">
+                <string>E</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="15">
+              <widget class="QLabel" name="label_80">
+               <property name="text">
+                <string>J</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="14">
+              <widget class="QLabel" name="label_81">
+               <property name="text">
+                <string>GY</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_82">
+               <property name="text">
+                <string>N'</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLabel" name="label_83">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="13">
+              <widget class="QLabel" name="label_84">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="19">
+              <widget class="QLabel" name="label_85">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="13">
+              <widget class="QLabel" name="label_86">
+               <property name="text">
+                <string>I</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="19">
+              <widget class="QLabel" name="label_87">
+               <property name="text">
+                <string>I</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="13">
+              <widget class="QLabel" name="label_88">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="19">
+              <widget class="QLabel" name="label_89">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="13">
+              <widget class="QLabel" name="label_90">
+               <property name="text">
+                <string>E</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="19">
+              <widget class="QLabel" name="label_91">
+               <property name="text">
+                <string>E</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="13">
+              <widget class="QLabel" name="label_92">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="19">
+              <widget class="QLabel" name="label_93">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="13">
+              <widget class="QLabel" name="label_94">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="19">
+              <widget class="QLabel" name="label_95">
+               <property name="text">
+                <string>A</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="13">
+              <widget class="QLabel" name="label_96">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="13">
+              <widget class="QLabel" name="label_97">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="19">
+              <widget class="QLabel" name="label_98">
+               <property name="text">
+                <string>U</string>
+               </property>
+              </widget>
+             </item>
+             <item row="10" column="19">
+              <widget class="QLabel" name="label_99">
+               <property name="text">
+                <string>O</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QComboBox" name="kanaCBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <item>
-          <property name="text">
-           <string>Hiragana</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Katakana</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>165</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
      </widget>
     </item>
     <item>
@@ -492,6 +1074,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="Resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
