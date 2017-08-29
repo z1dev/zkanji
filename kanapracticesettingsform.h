@@ -13,10 +13,27 @@ namespace Ui {
     class KanaPracticeSettingsForm;
 }
 
+enum class KanaSounds
+{
+    a, i, u, e, o,
+    n,
+    ka, ki, ku, ke, ko, sa, si, su, se, so, ta, ti, tu, te, to, na, ni, nu, ne, no,
+    ha, hi, hu, he, ho, ma, mi, mu, me, mo, ya, yu, yo, ra, ri, ru, re, ro, wa, wo,
+
+    ga, gi, gu, ge, go, za, zi, zu, ze, zo, da, di, du, de, ddo, ba, bi, bu, be, bo, pa, pi, pu, pe, po,
+
+    kya, kyu, kyo, sha, shu, sho, cha, chu, cho, nya, nyu, nyo, hya, hyu, hyo,
+    rya, ryu, ryo,
+    gya, gyu, gyo, ja, ju, jo, dya, dyu, dyo, bya, byu, byo, pya, pyu, pyo,
+
+    Count
+};
+
 
 class QCheckBox;
 class QSignalMapper;
 class QGridLayout;
+struct KanarPracticeData;
 class KanaPracticeSettingsForm : public DialogWindow
 {
     Q_OBJECT
@@ -28,11 +45,19 @@ public:
 public slots:
     void boxToggled(int index);
     void on_checkButton_clicked();
+    void on_test1Button_clicked();
+    void on_test2Button_clicked();
 private:
+    void saveState(KanarPracticeData &data);
+    void restoreState(const KanarPracticeData &data);
+
     void setupBoxes(QSignalMapper *map, QGridLayout *g, std::vector<QCheckBox*> &boxes);
     Ui::KanaPracticeSettingsForm *ui;
 
+    // True when programmatically changing kana use so the checkbox signals should be ignored.
     bool updating;
+    // Number of boxes checked.
+    int checkcnt;
 
     QSignalMapper *hiramap;
     QSignalMapper *katamap;
@@ -41,9 +66,10 @@ private:
     std::vector<uchar> hirause;
     std::vector<uchar> katause;
 
-
     typedef DialogWindow    base;
 };
+
+extern const QString kanaStrings[];
 
 
 #endif // KANAPRACTICESETTINGSFORM_H

@@ -17,6 +17,7 @@
 #include "kanjistrokes.h"
 #include "kanji.h"
 #include "zstudylistmodel.h"
+#include "kanapracticesettingsform.h"
 
 
 //-------------------------------------------------------------
@@ -908,6 +909,87 @@ namespace FormStates
         {
             if (reader.name() == "Dictionary")
                 loadXMLSettings(data.dict, reader);
+            else
+                reader.skipCurrentElement();
+        }
+    }
+
+    void saveXMLSettings(const KanarPracticeData &data, QXmlStreamWriter &writer)
+    {
+        writer.writeStartElement("Hiragana");
+        for (int ix = 0, siz = data.hirause.size(); ix != siz; ++ix)
+        {
+            if (data.hirause[ix] == 1 && (ix == 0 || data.hirause[ix - 1] != 1))
+            {
+                for (int iy = ix + 1; iy != siz + 1; ++iy)
+                {
+                    if (iy == siz || data.hirause[iy] == 0)
+                    {
+                        writer.writeEmptyElement("On");
+                        writer.writeAttribute("v", QString::number(ix));
+                        writer.writeAttribute("c", QString::number(iy - ix));
+                        ix = iy - 1;
+                        break;
+                    }
+                }
+            }
+        }
+        writer.writeEndElement(); /* Hiragana */
+
+        writer.writeStartElement("Katakana");
+        for (int ix = 0, siz = data.katause.size(); ix != siz; ++ix)
+        {
+            if (data.katause[ix] == 1 && (ix == 0 || data.katause[ix - 1] != 1))
+            {
+                for (int iy = ix + 1; iy != siz + 1; ++iy)
+                {
+                    if (iy == siz || data.katause[iy] == 0)
+                    {
+                        writer.writeEmptyElement("On");
+                        writer.writeAttribute("v", QString::number(ix));
+                        writer.writeAttribute("c", QString::number(iy - ix));
+                        ix = iy - 1;
+                        break;
+                    }
+                }
+            }
+        }
+        writer.writeEndElement(); /* Katakana */
+    }
+
+    void loadXMLSettings(KanarPracticeData &data, QXmlStreamReader &reader)
+    {
+        data.hirause.resize((int)KanaSounds::Count);
+        data.katause.resize((int)KanaSounds::Count);
+
+        bool ok;
+
+        while (reader.readNextStartElement())
+        {
+            if (reader.name() == "Hiragana" || reader.name() == "Katakana")
+            {
+                std::vector<uchar> &vec = reader.name() == "Hiragana" ? data.hirause : data.katause;
+
+                while (reader.readNextStartElement())
+                {
+                    if (reader.name() == "On")
+                    {
+                        int c;
+                        int v;
+                        v = reader.attributes().value("v").toInt(&ok);
+                        if (ok)
+                            c = reader.attributes().value("c").toInt(&ok);
+                        ok = ok && (v >= 0 && v < (int)KanaSounds::Count && c > 0 && v + c <= (int)KanaSounds::Count);
+                        if (ok)
+                        {
+                            for (int ix = 0; ix != c; ++ix)
+                                vec[ix + v] = 1;
+                        }
+                    }
+                    else
+                        reader.skipCurrentElement();
+                }
+            }
             else
                 reader.skipCurrentElement();
         }

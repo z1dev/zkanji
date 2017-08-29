@@ -9,6 +9,9 @@
 #include <QStylePainter>
 #include <qfont.h>
 #include <QDesktopWidget>
+
+#include <cmath>
+
 #include "recognizerform.h"
 #include "ui_recognizer.h"
 #include "zui.h"

@@ -8,6 +8,9 @@
 #include <QSystemTrayIcon>
 #include <QFileDialog>
 #include <QStylePainter>
+
+#include <cmath>
+
 #include "settingsform.h"
 #include "ui_settingsform.h"
 #include "zevents.h"

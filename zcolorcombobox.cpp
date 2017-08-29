@@ -9,7 +9,9 @@
 #include <QApplication>
 #include <QAbstractItemView>
 #include <QColorDialog>
+
 #include <cmath>
+
 #include "zcolorcombobox.h"
 
 

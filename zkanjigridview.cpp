@@ -14,6 +14,8 @@
 #include <QMimeData>
 #include <QPixmap>
 
+#include <cmath>
+
 #include "zkanjigridview.h"
 #include "ranges.h"
 #include "zkanjimain.h"

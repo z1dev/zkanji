@@ -17,6 +17,7 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#include <cmath>
 #include <memory>
 #include <stack>
 #include <map>
@@ -389,19 +390,19 @@ void adjustFontSize(QFont &f, int height/*, QString str*/)
     f.setPixelSize(f.pixelSize() / dif);
 }
 
-void restrictWidgetSize(QWidget *widget, int charnum, AdjustedValue val)
+void restrictWidgetSize(QWidget *widget, double charnum, AdjustedValue val)
 {
     int w = widget->fontMetrics().averageCharWidth();
     if (val == AdjustedValue::Min || val == AdjustedValue::MinMax)
-        widget->setMinimumWidth(w * charnum);
+        widget->setMinimumWidth((int)std::ceil(w * charnum));
     if (val == AdjustedValue::Max || val == AdjustedValue::MinMax)
-        widget->setMaximumWidth(w * charnum);
+        widget->setMaximumWidth((int)std::ceil(w * charnum));
 }
 
-int restrictedWidgetSize(QWidget *widget, int charnum)
+int restrictedWidgetSize(QWidget *widget, double charnum)
 {
     int w = widget->fontMetrics().averageCharWidth();
-    return w * charnum;
+    return std::ceil(w * charnum);
 }
 
 int fixedLabelWidth(QLabel *label)
@@ -437,7 +438,7 @@ void fixWrapLabelsHeight(QWidget *form, int labelwidth)
     }
 }
 
-void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, int sizing1)
+void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1)
 {
     if (lb1 == nullptr)
         lb1 = new QLabel(w);
@@ -1408,11 +1409,11 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
         switch (Settings::general.dateformat)
         {
         case GeneralSettings::DayMonthYear:
-            return dt.toString("dd.MM.yyyy");
+            return dt.toString(tr("dd.MM.yyyy"));
         case GeneralSettings::MonthDayYear:
-            return dt.toString("MM.dd.yyyy");
+            return dt.toString(tr("MM.dd.yyyy"));
         case GeneralSettings::YearMonthDay:
-            return dt.toString("yyyy.MM.dd");
+            return dt.toString(tr("yyyy.MM.dd"));
         }
     }
 
@@ -1461,6 +1462,15 @@ QDate DateTimeFunctions::getLTDay(const QDateTime &dt)
     // Currently: subtracts X hours from the date time. Its QDate part will
     // represent a test day starting at 4am.
     return dt.addMSecs(-1000 * 60 * 60 * Settings::study.starthour).toLocalTime().date();
+}
+
+QString DateTimeFunctions::formatPassedTime(int seconds, bool showhours)
+{
+    int h = (seconds / 60 / 60);
+    int m = (seconds / 60) % 60;
+    int s = seconds % 60;
+
+    return showhours ? tr("%1:%2:%3").arg(h, 2, 10, QChar('0')).arg(m, 2, 10, QChar('0')).arg(s, 2, 10, QChar('0')) : tr("%1:%2").arg(m, 2, 10, QChar('0')).arg(s, 2, 10, QChar('0'));
 }
 
 

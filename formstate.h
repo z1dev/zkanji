@@ -182,6 +182,14 @@ struct PopupDictData
     DictionaryWidgetData dict;
 };
 
+struct KanarPracticeData
+{
+    // Whether the hiragana at vector positions are to be tested or not. See
+    // kanapracticesettingsform.h enum KanaSounds for list.
+    std::vector<uchar> hirause;
+    std::vector<uchar> katause;
+};
+
 struct KanjiFilterData;
 struct PopupKanjiData;
 
@@ -197,6 +205,7 @@ namespace FormStates
     extern WordStudyListFormData wordstudylist;
     extern PopupKanjiData popupkanji;
     extern PopupDictData popupdict;
+    extern KanarPracticeData kanapractice;
 
     bool emptyState(const SplitterFormData &data);
     bool emptyState(const CollectFormData &data);
@@ -237,6 +246,10 @@ namespace FormStates
 
     void saveXMLSettings(const PopupDictData &data, QXmlStreamWriter &writer);
     void loadXMLSettings(PopupDictData &data, QXmlStreamReader &reader);
+
+    void saveXMLSettings(const KanarPracticeData &data, QXmlStreamWriter &writer);
+    void loadXMLSettings(KanarPracticeData &data, QXmlStreamReader &reader);
+
 
     void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
     void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);

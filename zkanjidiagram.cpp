@@ -11,6 +11,8 @@
 #include <QStyle>
 #include <QStyleOptionViewItem>
 
+#include <cmath>
+
 #include "zkanjidiagram.h"
 #include "kanji.h"
 #include "zui.h"

@@ -4,6 +4,8 @@
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QCheckBox>
 #include <QSignalMapper>
 #include <QtEvents>
@@ -11,26 +13,18 @@
 #include "ui_kanapracticesettingsform.h"
 #include "globalui.h"
 #include "zui.h"
+#include "kanareadingpracticeform.h"
+#include "formstate.h"
 
 
 //-------------------------------------------------------------
 
 
-enum class KanaSounds
+namespace FormStates
 {
-    a, i, u, e, o,
-    n, 
-    ka, ki, ku, ke, ko,  sa, si, su, se, so,  ta, ti, tu, te, to,  na, ni, nu, ne, no,
-    ha, hi, hu, he, ho,  ma, mi, mu, me, mo,  ya, yu, yo,  ra, ri, ru, re, ro,  wa, wo,
+    KanarPracticeData kanapractice;
+}
 
-    ga, gi, gu, ge, go,  za, zi, zu, ze, zo,  da, di, du, de, ddo,  ba, bi, bu, be, bo,  pa, pi, pu, pe, po,
-
-    kya, kyu, kyo,  sha, shu, sho,  cha, chu, cho, nya, nyu, nyo, hya, hyu, hyo,
-    rya, ryu, ryo,
-    gya, gyu, gyo,  ja, ju, jo,  dya, dyu, dyo,  bya, byu, byo,  pya, pyu, pyo ,
-
-    Count
-};
 
 static const int KanaGroupSizes[] = {
     5, 1,
@@ -45,7 +39,7 @@ static const int KanaGroupSizes[] = {
 const QString kanaStrings[]
 {
     "a", "i", "u", "e", "o",
-    "n",
+    "n'",
     "ka", "ki", "ku", "ke", "ko", "sa", "shi", "su", "se", "so", "ta", "chi", "tsu", "te", "to", "na", "ni", "nu", "ne", "no",
     "ha", "hi", "fu", "he", "ho", "ma", "mi", "mu", "me", "mo", "ya", "yu", "yo", "ra", "ri", "ru", "re", "ro", "wa", "wo",
 
@@ -57,7 +51,7 @@ const QString kanaStrings[]
 };
 
 
-KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(parent), ui(new Ui::KanaPracticeSettingsForm), updating(false)
+KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(parent), ui(new Ui::KanaPracticeSettingsForm), updating(false), checkcnt(0)
 {
     ui->setupUi(this);
 
@@ -68,8 +62,8 @@ KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(paren
 
     updating = true;
 
-    hirause.resize((int)KanaSounds::Count);
-    katause.resize((int)KanaSounds::Count);
+    hirause.resize((int)KanaSounds::Count, 0);
+    katause.resize((int)KanaSounds::Count, 0);
 
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
@@ -157,6 +151,12 @@ KanaPracticeSettingsForm::~KanaPracticeSettingsForm()
 
 void KanaPracticeSettingsForm::exec()
 {
+    QRect r = frameGeometry();
+    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
+
+    restoreState(FormStates::kanapractice);
+
     showModal();
 }
 
@@ -167,7 +167,16 @@ void KanaPracticeSettingsForm::boxToggled(int index)
 
     std::vector<uchar> &vec = sender() == hiramap ? hirause : katause;
     std::vector<QCheckBox*> &boxes = sender() == hiramap ? hiraboxes : kataboxes;
+
+    if ((vec[index] == 1) != boxes[index]->isChecked())
+    {
+        checkcnt += boxes[index]->isChecked() ? 1 : -1;
+        ui->test1Button->setEnabled(checkcnt >= 5);
+        ui->test2Button->setEnabled(checkcnt >= 5);
+    }
+
     vec[index] = boxes[index]->isChecked() ? 1 : 0;
+
 
     if ((qApp->keyboardModifiers() & Qt::ControlModifier) == 0)
         return;
@@ -203,11 +212,69 @@ void KanaPracticeSettingsForm::on_checkButton_clicked()
 
     for (int ix = 0, siz = boxes.size(); ix != siz; ++ix)
     {
-        vec[ix] = unchecked ? 1 : 0;
+        //vec[ix] = unchecked ? 1 : 0;
         boxes[ix]->setChecked(unchecked);
     }
 }
 
+void KanaPracticeSettingsForm::on_test1Button_clicked()
+{
+    saveState(FormStates::kanapractice);
+
+    KanaReadingPracticeForm *form = new KanaReadingPracticeForm();
+    form->exec();
+
+    close();
+}
+
+void KanaPracticeSettingsForm::on_test2Button_clicked()
+{
+    saveState(FormStates::kanapractice);
+    close();
+}
+
+void KanaPracticeSettingsForm::saveState(KanarPracticeData &data)
+{
+    data.hirause = hirause;
+    data.katause = katause;
+}
+
+void KanaPracticeSettingsForm::restoreState(const KanarPracticeData &data)
+{
+    updating = true;
+    hirause = data.hirause;
+    katause = data.katause;
+    hirause.resize((int)KanaSounds::Count, 0);
+    katause.resize((int)KanaSounds::Count, 0);
+
+    checkcnt = 0;
+
+    for (int ix = 0, siz = hirause.size(); ix != siz; ++ix)
+    {
+        if (hirause[ix] == 1)
+        {
+            ++checkcnt;
+            hiraboxes[ix]->setChecked(true);
+        }
+        else
+            hiraboxes[ix]->setChecked(false);
+    }
+    for (int ix = 0, siz = katause.size(); ix != siz; ++ix)
+    {
+        if (katause[ix] == 1)
+        {
+            ++checkcnt;
+            kataboxes[ix]->setChecked(true);
+        }
+        else
+            kataboxes[ix]->setChecked(false);
+    }
+
+    ui->test1Button->setEnabled(checkcnt >= 5);
+    ui->test2Button->setEnabled(checkcnt >= 5);
+
+    updating = false;
+}
 
 void KanaPracticeSettingsForm::setupBoxes(QSignalMapper *map, QGridLayout *g, std::vector<QCheckBox*> &boxes)
 {

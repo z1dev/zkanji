@@ -8,7 +8,10 @@
 #include <QDataStream>
 #include <QMessageBox>
 #include <QApplication>
+
+#include <cmath>
 #include <set>
+
 #include "kanjistrokes.h"
 #include "kanji.h"
 #include "zkanjimain.h"

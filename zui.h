@@ -102,10 +102,10 @@ enum class AdjustedValue : int { Min, Max, MinMax };
 
 // Updates the minimum and/or maximum width of the passed widget, to fit charnum number of
 // characters. The measurement uses the currently set font in the widget.
-void restrictWidgetSize(QWidget *widget, int charnum, AdjustedValue val = AdjustedValue::MinMax);
+void restrictWidgetSize(QWidget *widget, double charnum, AdjustedValue val = AdjustedValue::MinMax);
 // Returns the width in pixels for widget if it was restricted to the given charnum number of
 // characters using the widget's current font.
-int restrictedWidgetSize(QWidget *widget, int charnum);
+int restrictedWidgetSize(QWidget *widget, double charnum);
 // Returns the width of the label's current text.
 int fixedLabelWidth(QLabel *label);
 
@@ -114,10 +114,10 @@ int fixedLabelWidth(QLabel *label);
 // correctly.
 void fixWrapLabelsHeight(QWidget *form, int labelwidth);
 
-void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, int sizing1);
+void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1);
 
 template<typename... PARAMS>
-void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, int sizing1, QLabel *lb2, QString lbstr2, int sizing2, PARAMS... params)
+void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1, QLabel *lb2, QString lbstr2, double sizing2, PARAMS... params)
 {
     helper_createStatusWidget(w, lb1, lbstr1, sizing1);
     helper_createStatusWidget(w, lb2, lbstr2, sizing2, params...);
@@ -133,7 +133,7 @@ void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, int sizi
 // size of the label to that number of average character widths of the current font used. Set
 // the spacing to other than -1, to change the default spacing of the horizontal layout.
 template<typename... PARAMS>
-QWidget* createStatusWidget(QWidget *parent, int spacing, QLabel *lb1, QString lbstr1, int sizing1, PARAMS... params)
+QWidget* createStatusWidget(QWidget *parent, int spacing, QLabel *lb1, QString lbstr1, double sizing1, PARAMS... params)
 {
     QWidget *w = new QWidget(parent);
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight, w);
@@ -353,6 +353,10 @@ public:
     // study list, by subtracting hours from it. Beware that the time part is
     // not cleared, though its value becomes unusable.
     static QDate getLTDay(const QDateTime &dt);
+
+    // Returns a string formatting a number as passed time, like the format 00:00:00. If
+    // 'showhours' is false, only the minutes and seconds are returned.
+    static QString formatPassedTime(int seconds, bool showhours);
 private:
     DateTimeFunctions(QObject *parent = nullptr);
     ~DateTimeFunctions();

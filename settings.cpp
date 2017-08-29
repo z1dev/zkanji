@@ -361,6 +361,10 @@ namespace Settings
             writer.writeEndElement();
         }
 
+        writer.writeStartElement("KanaPractice");
+        FormStates::saveXMLSettings(FormStates::kanapractice, writer);
+        writer.writeEndElement();
+
         writer.writeEndElement(); /* WindowStates */
 
         writer.writeStartElement("Windows");
@@ -1052,6 +1056,8 @@ namespace Settings
                         FormStates::loadXMLSettings(FormStates::popupkanji, reader);
                     else if (reader.name() == "PopupDictionary")
                         FormStates::loadXMLSettings(FormStates::popupdict, reader);
+                    else if (reader.name() == "KanaPractice")
+                        FormStates::loadXMLSettings(FormStates::kanapractice, reader);
                     else
                         reader.skipCurrentElement();
                 }

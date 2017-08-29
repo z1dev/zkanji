@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>433</width>
-    <height>379</height>
+    <height>381</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,7 +36,7 @@
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Select which syllables you'd like to practice. Ctrl+Click a checkbox to select/deselect every syllable in the same vowel group.</string>
+       <string>Select which syllables to practice. Ctrl+Click a checkbox to select/deselect the whole consonant group. At least 5 syllables must be selected to start practicing.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
