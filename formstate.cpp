@@ -985,6 +985,7 @@ namespace FormStates
                             for (int ix = 0; ix != c; ++ix)
                                 vec[ix + v] = 1;
                         }
+                        reader.skipCurrentElement();
                     }
                     else
                         reader.skipCurrentElement();

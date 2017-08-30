@@ -29,8 +29,6 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
 {
     ui->setupUi(this);
 
-    setAttribute(Qt::WA_DeleteOnClose, true);
-
     QFont f = ui->mainLabel->font();
     f.setFamily(Settings::fonts.kana);
     ui->mainLabel->setFont(f);
@@ -105,6 +103,8 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
     ui->resultLabel->setText(QString());
 }
  
@@ -112,6 +112,9 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
 KanaReadingPracticeForm::~KanaReadingPracticeForm()
 {
     delete ui;
+
+    gUI->showAppWindows();
+    setupKanaPractice();
 }
 
 void KanaReadingPracticeForm::exec()
@@ -149,10 +152,8 @@ bool KanaReadingPracticeForm::event(QEvent *e)
 
 void KanaReadingPracticeForm::closeEvent(QCloseEvent *e)
 {
+    stopTimer(false);
     base::closeEvent(e);
-
-    gUI->showAppWindows();
-    setupKanaPractice();
 }
 
 void KanaReadingPracticeForm::keyPressEvent(QKeyEvent *e)

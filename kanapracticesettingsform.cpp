@@ -220,11 +220,10 @@ void KanaPracticeSettingsForm::on_checkButton_clicked()
 void KanaPracticeSettingsForm::on_test1Button_clicked()
 {
     saveState(FormStates::kanapractice);
+    close();
 
     KanaReadingPracticeForm *form = new KanaReadingPracticeForm();
     form->exec();
-
-    close();
 }
 
 void KanaPracticeSettingsForm::on_test2Button_clicked()
