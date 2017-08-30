@@ -147,6 +147,9 @@ namespace Settings
         ini.setValue("colors/texti", colors.texti);
         ini.setValue("colors/selbgi", colors.selbgi);
         ini.setValue("colors/seltexti", colors.seltexti);
+        ini.setValue("colors/studycorrect", colors.studycorrect);
+        ini.setValue("colors/studywrong", colors.studywrong);
+        ini.setValue("colors/studynew", colors.studynew);
         ini.setValue("colors/inf", colors.inf);
         ini.setValue("colors/attrib", colors.attrib);
         ini.setValue("colors/types", colors.types);
@@ -736,6 +739,9 @@ namespace Settings
         colors.texti = ini.value("colors/texti").value<QColor>();
         colors.selbgi = ini.value("colors/selbgi").value<QColor>();
         colors.seltexti = ini.value("colors/seltexti").value<QColor>();
+        colors.studycorrect = ini.value("colors/studycorrect").value<QColor>();
+        colors.studywrong = ini.value("colors/studywrong").value<QColor>();
+        colors.studynew = ini.value("colors/studynew").value<QColor>();
         colors.inf = ini.value("colors/inf").value<QColor>();
         colors.attrib = ini.value("colors/attrib").value<QColor>();
         colors.types = ini.value("colors/types").value<QColor>();
@@ -1225,6 +1231,18 @@ namespace Settings
     {
         switch (type)
         {
+        case ColorSettings::StudyCorrect:
+            if (colors.studycorrect.isValid())
+                return colors.studycorrect;
+            break;
+        case ColorSettings::StudyWrong:
+            if (colors.studywrong.isValid())
+                return colors.studywrong;
+            break;
+        case ColorSettings::StudyNew:
+            if (colors.studynew.isValid())
+                return colors.studynew;
+            break;
         case ColorSettings::Inf:
             if (colors.inf.isValid())
                 return colors.inf;
@@ -1326,6 +1344,12 @@ namespace Settings
     {
         switch (type)
         {
+        case ColorSettings::StudyCorrect:
+            return colors.lighttheme ? colors.studycorrectldef : colors.studycorrectddef;
+        case ColorSettings::StudyWrong:
+            return colors.lighttheme ? colors.studywrongldef : colors.studywrongddef;
+        case ColorSettings::StudyNew:
+            return colors.lighttheme ? colors.studynewldef : colors.studynewddef;
         case ColorSettings::Inf:
             return colors.lighttheme ? colors.infldef : colors.infddef;
         case ColorSettings::Attrib:

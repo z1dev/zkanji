@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>362</width>
-    <height>221</height>
+    <width>371</width>
+    <height>202</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,52 +49,18 @@
        <enum>QFrame::Plain</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="4">
-        <spacer name="horizontalSpacer">
+       <item row="0" column="0" rowspan="3">
+        <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>18</width>
-           <height>28</height>
+           <width>1</width>
+           <height>5</height>
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="1" column="5">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>18</width>
-           <height>28</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="5">
-        <widget class="QLabel" name="k4Label">
-         <property name="font">
-          <font>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string notr="true">きゃ</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-         </property>
-        </widget>
        </item>
        <item row="1" column="2">
         <widget class="QLabel" name="r1Label">
@@ -110,32 +76,6 @@
           <set>Qt::AlignCenter</set>
          </property>
         </widget>
-       </item>
-       <item row="0" column="6" rowspan="3">
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>33</width>
-           <height>107</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="0" rowspan="3">
-        <spacer name="horizontalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>33</width>
-           <height>107</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="0" column="2">
         <widget class="QLabel" name="k1Label">
@@ -157,21 +97,6 @@
          <property name="font">
           <font>
            <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string notr="true">きゃ</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="mainLabel">
-         <property name="font">
-          <font>
-           <pointsize>32</pointsize>
           </font>
          </property>
          <property name="text">
@@ -212,8 +137,39 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="mainLabel">
+         <property name="font">
+          <font>
+           <pointsize>32</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string notr="true">きゃ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="3">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>5</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item>
           <widget class="QLabel" name="text1Label">
            <property name="font">
@@ -262,36 +218,113 @@
            </property>
           </widget>
          </item>
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>5</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="k4Label">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string notr="true">きゃ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>1</width>
+           <height>5</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>2</number>
-      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="spacing">
-         <number>8</number>
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>5</number>
         </property>
         <item>
-         <widget class="QLabel" name="timeCaptionLabel">
+         <widget class="QPushButton" name="restartButton">
           <property name="text">
-           <string>Time:</string>
+           <string>Restart</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="timeLabel">
-          <property name="text">
-           <string notr="true">99:99</string>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>5</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="resultLabel">
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Incorrect</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_5">
@@ -300,25 +333,41 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>88</width>
-          <height>20</height>
+          <width>5</width>
+          <height>5</height>
          </size>
         </property>
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="restartButton">
-        <property name="text">
-         <string>Restart</string>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <property name="spacing">
+         <number>2</number>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="abortButton">
-        <property name="text">
-         <string>Abort practice</string>
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="abortButton">
+          <property name="text">
+           <string>Quit practice</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -330,10 +379,6 @@
    </property>
   </widget>
  </widget>
- <tabstops>
-  <tabstop>restartButton</tabstop>
-  <tabstop>abortButton</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

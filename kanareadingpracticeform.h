@@ -49,6 +49,11 @@ private:
     // Resets the timer and shows the labels showing the passed time.
     void startTimer();
 
+    // Updates text1-text4 labels text with the entered string.
+    void setTextLabels();
+
+    void hideLabelAnimation();
+
     Ui::KanaReadingPracticeForm *ui;
 
     // Time the test started.
@@ -74,6 +79,9 @@ private:
 
     // Label showing number of items that were retried twice and failed.
     QLabel *wrongLabel;
+
+    // Label showing passed time.
+    QLabel *timeLabel;
 
     QBasicTimer timer;
 

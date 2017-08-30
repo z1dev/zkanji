@@ -872,7 +872,7 @@ WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
-    fixWrapLabelsHeight(this, 500);
+    fixWrapLabelsHeight(this, -1/*500*/);
 
     setWindowTitle(tr("Word test settings") + QString(" - %1").arg(group->name()));
 

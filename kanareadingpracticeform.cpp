@@ -7,6 +7,8 @@
 #include <QtEvents>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 #include "kanareadingpracticeform.h"
 #include "ui_kanareadingpracticeform.h"
 #include "kanapracticesettingsform.h"
@@ -17,6 +19,7 @@
 #include "fontsettings.h"
 #include "romajizer.h"
 #include "formstate.h"
+#include "colorsettings.h"
 
 
 //-------------------------------------------------------------
@@ -65,9 +68,9 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
     f.setFamily(Settings::fonts.main);
     ui->text4Label->setFont(f);
 
-    restrictWidgetSize(ui->mainLabel, 3.5, AdjustedValue::Min);
-    int rk1 = std::max(restrictedWidgetSize(ui->k1Label, 3.5), restrictedWidgetSize(ui->r1Label, 3.5));
-    int rk2 = std::max(restrictedWidgetSize(ui->k2Label, 3.5), restrictedWidgetSize(ui->r2Label, 3.5));
+    restrictWidgetSize(ui->mainLabel, 3.2, AdjustedValue::Min);
+    int rk1 = std::max(restrictedWidgetSize(ui->k1Label, 3.2), restrictedWidgetSize(ui->r1Label, 3.2));
+    int rk2 = std::max(restrictedWidgetSize(ui->k2Label, 3.2), restrictedWidgetSize(ui->r2Label, 3.2));
     ui->k1Label->setFixedWidth(rk1);
     ui->r1Label->setFixedWidth(rk1);
     ui->k3Label->setFixedWidth(rk1);
@@ -76,13 +79,13 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
     ui->r2Label->setFixedWidth(rk2);
     ui->k4Label->setFixedWidth(rk2);
 
-    restrictWidgetSize(ui->text1Label, 1.1);
-    restrictWidgetSize(ui->text2Label, 1.1);
-    restrictWidgetSize(ui->text3Label, 1.1);
-    restrictWidgetSize(ui->text4Label, 1.1);
+    restrictWidgetWiderSize(ui->text1Label, 1.05);
+    restrictWidgetWiderSize(ui->text2Label, 1.05);
+    restrictWidgetWiderSize(ui->text3Label, 1.05);
+    restrictWidgetWiderSize(ui->text4Label, 1.05);
 
-    connect(ui->abortButton, &QPushButton::clicked, this, &DialogWindow::closeAbort);
-    
+    statusBar()->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Time:"), 0, timeLabel = new QLabel(this), "99:99", 6));
+    timeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     statusBar()->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Remaining:"), 0, dueLabel = new QLabel(this), "0", 4));
     dueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -92,11 +95,17 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
 
     ui->frame->setStyleSheet(QString("background: %1").arg(qApp->palette().color(QPalette::Active, QPalette::Base).name()));
 
+    connect(ui->abortButton, &QPushButton::clicked, this, &DialogWindow::closeAbort);
+
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
+    fixWrapLabelsHeight(this, -1);
+    adjustSize();
     setFixedSize(size());
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    ui->resultLabel->setText(QString());
 }
  
 
@@ -124,7 +133,7 @@ void KanaReadingPracticeForm::on_restartButton_clicked()
 
 bool KanaReadingPracticeForm::event(QEvent *e)
 {
-    if (e->type() == QEvent::Timer && ((QTimerEvent*)e)->timerId() == timer.timerId() && ui->timeLabel->isVisibleTo(this))
+    if (e->type() == QEvent::Timer && ((QTimerEvent*)e)->timerId() == timer.timerId() && timeLabel->text() != "-")
     {
 
         QDateTime now = QDateTime::currentDateTimeUtc();
@@ -132,7 +141,7 @@ bool KanaReadingPracticeForm::event(QEvent *e)
         if (passed >= 60 * 60)
             stopTimer(true);
         else
-            ui->timeLabel->setText(DateTimeFunctions::formatPassedTime(passed, false));
+            timeLabel->setText(DateTimeFunctions::formatPassedTime(passed, false));
     }
 
     return base::event(e);
@@ -158,22 +167,22 @@ void KanaReadingPracticeForm::keyPressEvent(QKeyEvent *e)
 
     // Updating the entered string and checking for the correct answer.
 
-    QLabel *labels[]{ ui->text1Label, ui->text2Label, ui->text3Label, ui->text4Label };
+    //QLabel *labels[]{ ui->text1Label, ui->text2Label, ui->text3Label, ui->text4Label };
 
     if (backspace)
     {
-        if (entered.isEmpty())
-            return;
-        entered.resize(entered.size() - 1);
-        labels[entered.size()]->setText("_");
+        if (!entered.isEmpty())
+            entered.resize(entered.size() - 1);
+        setTextLabels();
+        //labels[entered.size()]->setText("_");
 
         return;
     }
 
     entered += e->text();
-    QLabel *lb = labels[entered.size() - 1];
-
-    lb->setText(e->text());
+    //QLabel *lb = labels[entered.size() - 1];
+    //lb->setText(e->text());
+    setTextLabels();
 
     int strpos = list[pos];
     bool kata = false;
@@ -254,6 +263,12 @@ void KanaReadingPracticeForm::next()
     if (pos == list.size())
     {
         stopTimer(false);
+
+        ui->resultLabel->setStyleSheet(QString());
+
+        ui->resultLabel->setGraphicsEffect(nullptr);
+        ui->resultLabel->setText(tr("Well done"));
+
         return;
     }
 
@@ -263,10 +278,8 @@ void KanaReadingPracticeForm::next()
     retries = 0;
 
     entered = QString();
-    ui->text1Label->setText("_");
-    ui->text2Label->setText("_");
-    ui->text3Label->setText("_");
-    ui->text4Label->setText("_");
+    setTextLabels();
+
 
     setLabelText(pos, ui->mainLabel);
     setLabelText(pos - 1, ui->k1Label, ui->r1Label);
@@ -307,6 +320,9 @@ void KanaReadingPracticeForm::answered(bool correct)
         if (retries == 3)
         {
             // Too many mistakes made in the same syllable.
+            ui->resultLabel->setText(tr("Mistake"));
+            ui->resultLabel->setStyleSheet(QString("color: %1").arg(Settings::uiColor(ColorSettings::StudyWrong).name()));
+            hideLabelAnimation();
 
             ++mistakes;
             if (mistakes == 3)
@@ -316,15 +332,26 @@ void KanaReadingPracticeForm::answered(bool correct)
         else
         {
             // Just a mistake, start over entering the same text.
+            ui->resultLabel->setText(tr("Try again"));
+            ui->resultLabel->setStyleSheet(QString("color: %1").arg(Settings::uiColor(ColorSettings::StudyWrong).name()));
+            hideLabelAnimation();
 
             entered = QString();
-            ui->text1Label->setText("_");
-            ui->text2Label->setText("_");
-            ui->text3Label->setText("_");
-            ui->text4Label->setText("_");
+            setTextLabels();
+
+
+            //ui->text1Label->setText("_");
+            //ui->text2Label->setText("_");
+            //ui->text3Label->setText("_");
+            //ui->text4Label->setText("_");
         }
         return;
     }
+
+
+    ui->resultLabel->setText(tr("Correct"));
+    ui->resultLabel->setStyleSheet(QString("color: %1").arg(Settings::uiColor(ColorSettings::StudyCorrect).name()));
+    hideLabelAnimation();
 
     next();
 }
@@ -334,8 +361,8 @@ void KanaReadingPracticeForm::stopTimer(bool hide)
     timer.stop();
     if (hide)
     {
-        ui->timeCaptionLabel->hide();
-        ui->timeLabel->hide();
+        //ui->timeCaptionLabel->hide();
+        timeLabel->setText("-");
     }
 }
 
@@ -343,9 +370,33 @@ void KanaReadingPracticeForm::startTimer()
 {
     timer.start(1000, this);
     starttime = QDateTime::currentDateTimeUtc();
-    ui->timeLabel->setText(DateTimeFunctions::formatPassedTime(0, false));
-    ui->timeCaptionLabel->show();
-    ui->timeLabel->show();
+    timeLabel->setText(DateTimeFunctions::formatPassedTime(0, false));
+    //ui->timeCaptionLabel->show();
+    //timeLabel->show();
+}
+
+void KanaReadingPracticeForm::setTextLabels()
+{
+    QLabel *labels[]{ ui->text1Label, ui->text2Label, ui->text3Label, ui->text4Label };
+
+    for (int ix = 0; ix != 4; ++ix)
+    {
+        if (entered.size() > ix)
+            labels[ix]->setText(entered.at(ix));
+        else
+            labels[ix]->setText("_");
+    }
+}
+
+void KanaReadingPracticeForm::hideLabelAnimation()
+{
+    QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(this);
+    ui->resultLabel->setGraphicsEffect(eff);
+    QPropertyAnimation *a = new QPropertyAnimation(eff, "opacity");
+    a->setDuration(1000);
+    a->setStartValue(1);
+    a->setEndValue(0);
+    a->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
 

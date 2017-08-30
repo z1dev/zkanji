@@ -101,11 +101,17 @@ void adjustFontSize(QFont &f, int height/*, QString str*/);
 enum class AdjustedValue : int { Min, Max, MinMax };
 
 // Updates the minimum and/or maximum width of the passed widget, to fit charnum number of
-// characters. The measurement uses the currently set font in the widget.
+// average width characters. The measurement uses the currently set font in the widget.
 void restrictWidgetSize(QWidget *widget, double charnum, AdjustedValue val = AdjustedValue::MinMax);
 // Returns the width in pixels for widget if it was restricted to the given charnum number of
-// characters using the widget's current font.
+// average width characters using the widget's current font.
 int restrictedWidgetSize(QWidget *widget, double charnum);
+// Updates the minimum and/or maximum width of the passed widget, to fit charnum number of
+// wide characters. The measurement uses the currently set font in the widget.
+void restrictWidgetWiderSize(QWidget *widget, double charnum, AdjustedValue val = AdjustedValue::MinMax);
+// Returns the width in pixels for widget if it was restricted to the given charnum number of
+// wide characters using the widget's current font.
+int restrictedWidgetWiderSize(QWidget *widget, double charnum);
 // Returns the width of the label's current text.
 int fixedLabelWidth(QLabel *label);
 

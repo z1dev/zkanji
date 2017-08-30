@@ -315,7 +315,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    fixWrapLabelsHeight(this, 200);
+    fixWrapLabelsHeight(this, -1/*200*/);
     adjustSize();
 
     ui->pagesTree->expandAll();
@@ -341,6 +341,10 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->textiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
     ui->selbgiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Highlight));
     ui->seltextiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::HighlightedText));
+
+    ui->colStudyCorrectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyCorrect));
+    ui->colStudyWrongCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyWrong));
+    ui->colStudyNewCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyNew));
 
     ui->colInfCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Inf));
     ui->colAttribCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Attrib));
@@ -574,6 +578,10 @@ void SettingsForm::reset()
     ui->textiGridCBox->setCurrentColor(Settings::colors.texti);
     ui->selbgiGridCBox->setCurrentColor(Settings::colors.selbgi);
     ui->seltextiGridCBox->setCurrentColor(Settings::colors.seltexti);
+
+    ui->colStudyCorrectCBox->setCurrentColor(Settings::colors.studycorrect);
+    ui->colStudyWrongCBox->setCurrentColor(Settings::colors.studywrong);
+    ui->colStudyNewCBox->setCurrentColor(Settings::colors.studynew);
 
     ui->colInfCBox->setCurrentColor(Settings::colors.inf);
     ui->colAttribCBox->setCurrentColor(Settings::colors.attrib);
@@ -837,6 +845,10 @@ void SettingsForm::applyClicked()
     Settings::colors.texti = ui->textiGridCBox->currentColor();
     Settings::colors.selbgi = ui->selbgiGridCBox->currentColor();
     Settings::colors.seltexti = ui->seltextiGridCBox->currentColor();
+
+    Settings::colors.studycorrect = ui->colStudyCorrectCBox->currentColor();
+    Settings::colors.studywrong = ui->colStudyWrongCBox->currentColor();
+    Settings::colors.studynew = ui->colStudyNewCBox->currentColor();
 
     Settings::colors.inf = ui->colInfCBox->currentColor();
     Settings::colors.attrib = ui->colAttribCBox->currentColor();

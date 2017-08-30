@@ -13,6 +13,10 @@
 struct ColorSettings
 {
     // Default colors for the light user interface.
+    const QColor studycorrectldef = QColor(30, 160, 70);
+    const QColor studywrongldef = QColor(245, 0, 0);
+    const QColor studynewldef = QColor(80, 140, 200);
+
     const QColor infldef = QColor(255, 255, 234);
     const QColor attribldef = Qt::black;
     const QColor typesldef = QColor(64, 128, 48);
@@ -43,6 +47,10 @@ struct ColorSettings
     const QColor partofbgldef = QColor(227, 220, 214);
 
     // Default colors for the dark user interface.
+    const QColor studycorrectddef = QColor(30, 160, 70);
+    const QColor studywrongddef = QColor(245, 0, 0);
+    const QColor studynewddef = QColor(80, 140, 200);
+
     const QColor infddef = QColor(255, 255, 234);
     const QColor attribddef = Qt::black;
     const QColor typesddef = QColor(64, 128, 48);
@@ -85,6 +93,7 @@ struct ColorSettings
     QColor seltexti;
 
     enum UIColorTypes {
+        StudyCorrect, StudyWrong, StudyNew,
         Inf, Attrib, Types, Notes,
         Fields, Dialects, KanaOnly, KanjiExBg, KanjiTestPos,
         Oku, N5, N4, N3, N2, N1, KanjiNoWords,
@@ -92,6 +101,10 @@ struct ColorSettings
         SimilarText, SimilarBg, PartsBg,
         PartOfBg
     };
+
+    QColor studycorrect;
+    QColor studywrong;
+    QColor studynew;
 
     QColor inf;
     QColor attrib;

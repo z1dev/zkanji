@@ -923,6 +923,7 @@ void ZKanjiDiagram::drawNumberRect(QPainter &p, int strokeix, bool numdraw)
         return;
 
     // [stroke position of next color, current color]
+    // TODO: make these colors available in the settings.
     const std::pair<int, QColor> colors[] = { { 7, QColor(0, 64, 180) }, { 10, QColor(0, 140, 100) }, { 14, QColor(20, 190, 0) }, { 16, QColor(140, 170, 0) }, { 20, QColor(220, 150, 0) }, { 25, QColor(160, 80, 0) }, { 30, QColor(160, 0, 0) }, { 100, QColor(120, 0, 150) } };
 
     double pw = ZKanji::elements()->basePenWidth(std::min(image->width(), image->height()));

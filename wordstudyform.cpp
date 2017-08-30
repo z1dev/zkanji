@@ -30,15 +30,8 @@
 #include "zstrings.h"
 #include "sites.h"
 #include "dialogs.h"
+#include "colorsettings.h"
 
-// Color of border and "New" text during long term study.
-static const QColor newcolor(80, 140, 200);
-// Color for invalid or retried answer.
-static const QColor retrycolor(245, 0, 0);
-// Color when answer was correctly entered.
-static const QColor correctcolor(30, 160, 70);
-// Color of answer when the answer wasn't entered correctly.
-static const QColor answercolor(30, 70, 160);
 
 //-------------------------------------------------------------
 
@@ -645,7 +638,7 @@ void WordStudyForm::paintEvent(QPaintEvent *e)
 
     QPainter p(this);
 
-    QColor c = newcard ? newcolor : retrycolor;
+    QColor c = newcard ? Settings::uiColor(ColorSettings::StudyNew) :  Settings::uiColor(ColorSettings::StudyWrong);
     p.fillRect(rect(), mixColors(c, palette().color(QPalette::Background), 0.03));
 
     p.setPen(QPen(c, 4));
@@ -814,7 +807,7 @@ void WordStudyForm::answerEntered()
             }
             correct = entered == solution;
 
-            QColor c = correct ? correctcolor : retrycolor;
+            QColor c = correct ? Settings::uiColor(ColorSettings::StudyCorrect) : Settings::uiColor(ColorSettings::StudyWrong);
             enterLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); // red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
         }
         else
@@ -846,18 +839,19 @@ void WordStudyForm::answerEntered()
 
         if (correct == 1)
         {
-            QColor c = correctcolor;
-            ui->choiceWidget->layout()->itemAt(wchoice)->widget()->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
+            QColor c = Settings::uiColor(ColorSettings::StudyCorrect);
+            ui->choiceWidget->layout()->itemAt(wchoice)->widget()->setStyleSheet(QStringLiteral("color: %1").arg(c.name()));
         }
         else if (correct == 0)
         {
-            QColor c = answercolor;
-            ui->choiceWidget->layout()->itemAt(wchoice)->widget()->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
+            //QColor c = answercolor;
+            QColor c = Settings::uiColor(ColorSettings::StudyCorrect);
+            ui->choiceWidget->layout()->itemAt(wchoice)->widget()->setStyleSheet(QStringLiteral("color: %1").arg(c.name()));
             if (picked != -1)
             {
                 QFont tmpfont = ui->choiceWidget->layout()->itemAt(picked)->widget()->font();
-                c = retrycolor;
-                ui->choiceWidget->layout()->itemAt(picked)->widget()->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
+                c = Settings::uiColor(ColorSettings::StudyWrong);
+                ui->choiceWidget->layout()->itemAt(picked)->widget()->setStyleSheet(QStringLiteral("color: %1").arg(c.name()));
                 ui->choiceWidget->layout()->itemAt(picked)->widget()->setFont(tmpfont);
             }
         }
@@ -873,7 +867,7 @@ void WordStudyForm::answerEntered()
     {
         QFont tmpfont = ui->kanjiLabel->font();
 
-        QColor c = retrycolor;
+        QColor c = Settings::uiColor(ColorSettings::StudyWrong);
         if ((wquestion & (int)WordPartBits::Kanji) != 0)
         {
             ui->kanjiLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
@@ -893,7 +887,7 @@ void WordStudyForm::answerEntered()
     }
     else if (correct == 1)
     {
-        QColor c = correctcolor;
+        QColor c = Settings::uiColor(ColorSettings::StudyCorrect);
         if ((wquestion & (int)WordPartBits::Kanji) != 0)
             ui->kanjiLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
         if ((wquestion & (int)WordPartBits::Kana) != 0)
@@ -1335,7 +1329,7 @@ void WordStudyForm::updateDeckLabels()
     if (newcard || failedcard)
     {
         ui->statusLabel->setText(newcard ? tr("New") : tr("Retry"));
-        QColor c = newcard ? newcolor : retrycolor;
+        QColor c = newcard ? Settings::uiColor(ColorSettings::StudyNew) : Settings::uiColor(ColorSettings::StudyWrong);
         ui->statusLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); // red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
 
         ui->statusLabel->show();
@@ -1361,7 +1355,7 @@ void WordStudyForm::updateStudyLabels()
     if (newcard || failedcard)
     {
         ui->statusLabel->setText(newcard ? tr("New") : tr("Retry"));
-        QColor c = newcard ? newcolor : retrycolor;
+        QColor c = newcard ? Settings::uiColor(ColorSettings::StudyNew) : Settings::uiColor(ColorSettings::StudyWrong);
         ui->statusLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name()));
         ui->statusLabel->show();
     }

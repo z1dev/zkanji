@@ -390,19 +390,39 @@ void adjustFontSize(QFont &f, int height/*, QString str*/)
     f.setPixelSize(f.pixelSize() / dif);
 }
 
+static int _sizeHelper(double charnum, int charw)
+{
+    return std::ceil(charw * charnum);
+}
+
 void restrictWidgetSize(QWidget *widget, double charnum, AdjustedValue val)
 {
-    int w = widget->fontMetrics().averageCharWidth();
+    int w = _sizeHelper(charnum, widget->fontMetrics().averageCharWidth());
     if (val == AdjustedValue::Min || val == AdjustedValue::MinMax)
-        widget->setMinimumWidth((int)std::ceil(w * charnum));
+        widget->setMinimumWidth(w);
     if (val == AdjustedValue::Max || val == AdjustedValue::MinMax)
-        widget->setMaximumWidth((int)std::ceil(w * charnum));
+        widget->setMaximumWidth(w);
 }
 
 int restrictedWidgetSize(QWidget *widget, double charnum)
 {
-    int w = widget->fontMetrics().averageCharWidth();
-    return std::ceil(w * charnum);
+    return _sizeHelper(charnum, widget->fontMetrics().averageCharWidth());
+}
+
+void restrictWidgetWiderSize(QWidget *widget, double charnum, AdjustedValue val)
+{
+    QFontMetrics fm = widget->fontMetrics();
+    int w = _sizeHelper(charnum, mmax(fm.averageCharWidth(), fm.width('W'), fm.width('M'), fm.width('X')));
+    if (val == AdjustedValue::Min || val == AdjustedValue::MinMax)
+        widget->setMinimumWidth(w);
+    if (val == AdjustedValue::Max || val == AdjustedValue::MinMax)
+        widget->setMaximumWidth(w);
+}
+
+int restrictedWidgetWiderSize(QWidget *widget, double charnum)
+{
+    QFontMetrics fm = widget->fontMetrics();
+    return _sizeHelper(charnum, mmax(fm.averageCharWidth(), fm.width('W'), fm.width('M'), fm.width('X')));
 }
 
 int fixedLabelWidth(QLabel *label)
@@ -427,8 +447,8 @@ void fixWrapLabelsHeight(QWidget *form, int labelwidth)
     {
         if (!ch->wordWrap())
             continue;
-        ch->setMinimumWidth(ch->width()/*labelwidth*/);
-        ch->setMaximumWidth(ch->width()/*labelwidth*/);
+        ch->setMinimumWidth(labelwidth <= 0 ? ch->width() : labelwidth);
+        ch->setMaximumWidth(labelwidth <= 0 ? ch->width() : labelwidth);
         ch->setMinimumHeight(ch->height());
         //ch->setMaximumHeight(ch->height());
         QSizePolicy sp = ch->sizePolicy();
