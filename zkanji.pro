@@ -139,6 +139,8 @@ SOURCES += \
     zwindow.cpp \
     main.cpp \
 	kanapracticesettingsform.cpp \
+	kanareadingpracticeform.cpp \
+	kanawritingpracticeform.cpp \
 	stayontop_x11.cpp
 
 HEADERS += \
@@ -262,6 +264,8 @@ HEADERS += \
     zui.h \
     zwindow.h \
 	kanapracticesettingsform.h \
+	kanareadingpracticeform.h \
+	kanawritingpracticeform.h \
 	stayontop_x11.h
 
 FORMS += \
@@ -310,6 +314,8 @@ FORMS += \
     wordtogroupform.ui \
     zkanjiform.ui \
     zkanjiwidget.ui \
+	kanareadingpracticeform.ui \
+	kanawritingpracticeform.ui \
 	kanapracticesettingsform.ui
 
 DISTFILES +=

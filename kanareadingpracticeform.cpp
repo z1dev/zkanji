@@ -380,10 +380,7 @@ void KanaReadingPracticeForm::stopTimer(bool hide)
 {
     timer.stop();
     if (hide)
-    {
-        //ui->timeCaptionLabel->hide();
         timeLabel->setText("-");
-    }
 }
 
 void KanaReadingPracticeForm::startTimer()
@@ -391,8 +388,6 @@ void KanaReadingPracticeForm::startTimer()
     timer.start(1000, this);
     starttime = QDateTime::currentDateTimeUtc();
     timeLabel->setText(DateTimeFunctions::formatPassedTime(0, false));
-    //ui->timeCaptionLabel->show();
-    //timeLabel->show();
 }
 
 void KanaReadingPracticeForm::setTextLabels()

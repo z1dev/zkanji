@@ -13,8 +13,9 @@
 #include "ui_kanapracticesettingsform.h"
 #include "globalui.h"
 #include "zui.h"
-#include "kanareadingpracticeform.h"
 #include "formstate.h"
+#include "kanareadingpracticeform.h"
+#include "kanawritingpracticeform.h"
 
 
 //-------------------------------------------------------------
@@ -230,6 +231,9 @@ void KanaPracticeSettingsForm::on_test2Button_clicked()
 {
     saveState(FormStates::kanapractice);
     close();
+
+    KanaWritingPracticeForm *form = new KanaWritingPracticeForm();
+    form->exec();
 }
 
 void KanaPracticeSettingsForm::saveState(KanarPracticeData &data)

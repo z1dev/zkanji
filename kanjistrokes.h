@@ -534,7 +534,8 @@ public:
 
     // Returns the element index associated with a kanji at kindex. Checking the element value
     // of a KanjiEntry fails before the dictionary is loaded, but this function works as soon
-    // as the recognizer data is loaded.
+    // as the recognizer data is loaded. Pass a negative value to look for a character with
+    // a given unicode value instead.
     int elementOf(int kindex) const;
     // Updates the kanji in the kanji list with the loaded kanji stroke order elements after
     // load. Should only be called once after the main dictionary is loaded.
@@ -553,7 +554,7 @@ public:
     // Matches the strokes in stroke list with characters that have recognizer
     // data. Stores the indexes of possible character element matches in their
     // order of similarity to strokes in results.
-    void findCandidates(const StrokeList &strokes, std::vector<int> &result, int size = -1, bool includegeneral = true, bool includekanji = true);
+    void findCandidates(const StrokeList &strokes, std::vector<int> &result, int size = -1, bool includekanji = true, bool includekana = true, bool includeother = true);
 
     // Number of elements in the recognizer list. Not all elements correspond
     // to a valid character, many are parts of others.

@@ -1406,6 +1406,13 @@ void KanjiElementList::load(const QString &filename)
 
 int KanjiElementList::elementOf(int kindex) const
 {
+    if (kindex < 0)
+    {
+        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+            if (list[ix]->unicode == -kindex)
+                return ix;
+        return -1;
+    }
     if (ZKanji::kanjis.empty())
     {
         auto it = kanjimap.find(kindex);
@@ -1538,7 +1545,7 @@ void KanjiElementList::computeStrokePositions(BitArray &bits, QRectF orig, QRect
         bits.set(15, true);
 }
 
-void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int> &result, int siz, bool general, bool kanji)
+void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int> &result, int siz, bool kanji, bool kana, bool other)
 {
     // Number of items to include in result at most.
     const int cntlimit = 256;
@@ -1557,7 +1564,7 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
         KanjiElement *e = list[ix];
         if (kanji && !e->recdata.empty() && e->owner != (ushort)-1)
             hasrec++;
-        else if (!e->recdata.empty() && e->unicode != 0 && general)
+        else if (!e->recdata.empty() && e->unicode != 0 && ((KANA(e->unicode) && kana) || (VALIDCODE(e->unicode) && other)))
             charrec++;
     }
 
@@ -1580,7 +1587,7 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
         {
             KanjiElement *e = list[ix];
 
-            if (e->recdata.empty() || (e->owner != (ushort)-1 && !kanji) || (cntlimit >= 0 && abs(e->variants[0]->strokecnt - siz) > cntlimit || !cntlimit && e->variants[0]->strokecnt < std::max(1, std::min(siz - 3, siz / 2))) || (e->unicode != 0 && !general))
+            if (e->recdata.empty() || (e->owner != (ushort)-1 && !kanji) || (cntlimit >= 0 && abs(e->variants[0]->strokecnt - siz) > cntlimit || !cntlimit && e->variants[0]->strokecnt < std::max(1, std::min(siz - 3, siz / 2))) || (e->unicode != 0 && ((KANA(e->unicode) && !kana) || (VALIDCODE(e->unicode) && !other) || (!other && !kana) )))
                 continue;
 
             memset(used, -1, sizeof(int) * 255);

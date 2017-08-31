@@ -429,10 +429,10 @@ bool ZKanjiDiagram::event(QEvent *e)
                 }
                 else
                 {
-                    emit strokeChanged(strokepos, true);
                     stroke.reset();
                     delaycnt = 0;
                     timer.stop();
+                    emit strokeChanged(strokepos, true);
                 }
             }
 

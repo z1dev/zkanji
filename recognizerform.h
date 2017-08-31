@@ -38,10 +38,13 @@ public:
     bool showGrid();
     void setShowGrid(bool showgrid);
 
+    enum CharacterMatch { Kanji = 0x01, Kana = 0x02, Other = 0x04 };
+    Q_DECLARE_FLAGS(CharacterMatches, CharacterMatch);
+
     // Whether to list kana and other characters in the results not just kanji.
-    bool matchGeneral();
+    CharacterMatches characterMatch();
     // Set whether to list kana and other characters in the results not just kanji.
-    void setMatchGeneral(bool match);
+    void setCharacterMatch(CharacterMatches charmatch);
 
     // Like an undo, removes the last stroke from the area and updates the results.
     void prev();
@@ -113,8 +116,8 @@ private:
 
     // Show the visual guide grid or not.
     bool grid;
-    // Whether to find general character candidates, not only kanji.
-    bool matchgen;
+    // Type of characters to list among the candidates.
+    CharacterMatches match;
 
     // The area in the widget where the user can paint, and the grid is
     // displayed. Only the background is painted outside of it.
@@ -141,6 +144,8 @@ private:
 
     typedef QFrame base;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(RecognizerArea::CharacterMatches)
 
 // Handler for installed button and edit box signals, as the RecognizerForm
 // must be destroyed every time it's hidden. (Handle with care. Should be
@@ -221,19 +226,18 @@ private:
 
     void savePosition();
 
-    // Only object created of this class. Only not null while the form is
-    // visible.
+    Ui::RecognizerForm *ui;
+
+    // Only object created of this class. Only not null while the form is visible.
     static RecognizerForm *instance;
 
-    // Handler for installed button and edit box signals. Valid after the
-    // first install call.
+    // Handler for installed button and edit box signals. Valid after the first install call.
     static RecognizerObject *p;
 
     // Button, edit box and settings installed for use with the recognizer
     // window.
     static std::map<QToolButton*, std::pair<ZKanaLineEdit*, RecognizerPosition>> controls;
-    // Mapping edit box to buttons installed in controls. Symmetric with
-    // the controls map.
+    // Mapping edit box to buttons installed in controls. Symmetric with the controls map.
     static std::map<ZKanaLineEdit*, QToolButton*> editforbuttons;
 
     static CandidateKanjiScrollerModel *candidates;
@@ -246,8 +250,6 @@ private:
     // Safety flag to know that the editor's dictionaryChange() event is currently donnected
     // to the recognizer or not. Only for error detection.
     static bool connected;
-
-    Ui::RecognizerForm *ui;
 
     typedef ZWindow base;
 

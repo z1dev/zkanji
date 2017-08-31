@@ -60,7 +60,7 @@ ZEVENT(RecognizerHiddenEvent);
 //-------------------------------------------------------------
 
 
-RecognizerArea::RecognizerArea(QWidget *parent) : base(parent), grid(true), matchgen(true), recalc(true), drawing(false), strokepos(0)
+RecognizerArea::RecognizerArea(QWidget *parent) : base(parent), grid(true), match(Kanji | Kana | Other), recalc(true), drawing(false), strokepos(0)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
@@ -94,16 +94,16 @@ void RecognizerArea::setShowGrid(bool showgrid)
     update();
 }
 
-bool RecognizerArea::matchGeneral()
+RecognizerArea::CharacterMatches RecognizerArea::characterMatch()
 {
-    return matchgen;
+    return match;
 }
 
-void RecognizerArea::setMatchGeneral(bool match)
+void RecognizerArea::setCharacterMatch(CharacterMatches charmatch)
 {
-    if (matchgen == match)
+    if (charmatch == match)
         return;
-    matchgen = match;
+    match = charmatch;
     updateCandidates();
 }
 
@@ -284,7 +284,7 @@ void RecognizerArea::updateCandidates()
 {
     std::vector<int> l;
     if (strokepos != 0)
-        ZKanji::elements()->findCandidates(strokes, l, strokepos, matchgen);
+        ZKanji::elements()->findCandidates(strokes, l, strokepos, match.testFlag(Kanji), match.testFlag(Kana), match.testFlag(Other));
 
     emit changed(l);
 
@@ -436,7 +436,7 @@ void RecognizerArea::recalculate()
 
 QString RecognizerArea::instructions()
 {
-    return tr("Try drawing a Japanese character here and select a candidate below! (Right-click removes drawing)");
+    return tr("Draw a Japanese character here and select a candidate! (Right-click removes drawing)");
 }
 
 QPointF RecognizerArea::areaToUnit(QPointF pt)
@@ -583,7 +583,7 @@ void RecognizerForm::on_gridButton_toggled(bool checked)
 
 void RecognizerForm::on_generalButton_toggled(bool checked)
 {
-    ui->drawArea->setMatchGeneral(checked);
+    ui->drawArea->setCharacterMatch(!checked ? (RecognizerArea::Kanji) : (RecognizerArea::Kanji | RecognizerArea::Kana | RecognizerArea::Other));
 }
 
 void RecognizerForm::on_clearButton_clicked()
