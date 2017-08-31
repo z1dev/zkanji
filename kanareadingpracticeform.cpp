@@ -266,9 +266,24 @@ void KanaReadingPracticeForm::next()
         stopTimer(false);
 
         ui->resultLabel->setStyleSheet(QString());
+        dueLabel->setText(0);
+        wrongLabel->setText(QString::number(mistakes));
+
+        if (retries == 2)
+            ui->r1Label->setStyleSheet(QString("color: %1").arg(Settings::uiColor(ColorSettings::StudyWrong).name()));
+        else
+            ui->r1Label->setStyleSheet(QString());
+        setLabelText(pos, ui->mainLabel);
+        setLabelText(pos - 1, ui->k1Label, ui->r1Label);
+        setLabelText(pos - 2, ui->k2Label, ui->r2Label);
+        setLabelText(pos + 1, ui->k3Label);
+        setLabelText(pos + 2, ui->k4Label);
+
+        entered = QString();
+        setTextLabels();
 
         ui->resultLabel->setGraphicsEffect(nullptr);
-        ui->resultLabel->setText(tr("Well done"));
+        ui->resultLabel->setText(tr("Finished"));
 
         return;
     }
@@ -276,11 +291,15 @@ void KanaReadingPracticeForm::next()
     dueLabel->setText(QString::number(std::max(0, (int)list.size() - pos)));
     wrongLabel->setText(QString::number(mistakes));
 
-    retries = 0;
-
     entered = QString();
     setTextLabels();
+    
+    if (retries == 2)
+        ui->r1Label->setStyleSheet(QString("color: %1").arg(Settings::uiColor(ColorSettings::StudyWrong).name()));
+    else
+        ui->r1Label->setStyleSheet(QString());
 
+    retries = 0;
 
     setLabelText(pos, ui->mainLabel);
     setLabelText(pos - 1, ui->k1Label, ui->r1Label);
@@ -318,7 +337,7 @@ void KanaReadingPracticeForm::answered(bool correct)
     if (correct == false)
     {
         ++retries;
-        if (retries == 3)
+        if (retries == 2)
         {
             // Too many mistakes made in the same syllable.
             ui->resultLabel->setText(tr("Mistake"));

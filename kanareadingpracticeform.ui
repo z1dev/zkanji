@@ -33,7 +33,7 @@
     <item>
      <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Type the kana with roomaji. You can retry each character twice. Failing three times will reveal the answer and stop the timer.</string>
+       <string>Type the kana with roomaji. You can retry each character once. Failing a second time will reveal the answer and stop the timer.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
