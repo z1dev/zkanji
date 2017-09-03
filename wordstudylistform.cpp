@@ -100,6 +100,7 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, QWidget *parent) : base(par
 
     ui->dictWidget->view()->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->dictWidget->view()->horizontalHeader(), &QWidget::customContextMenuRequested, this, &WordStudyListForm::showColumnContextMenu);
+    connect(ui->dictWidget, &DictionaryWidget::customizeContextMenu, this, &WordStudyListForm::showContextMenu);
 
     //ui->dictWidget->view()->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -404,6 +405,29 @@ void WordStudyListForm::showColumnContextMenu(const QPoint &p)
 
     if (vec[aix])
         ui->dictWidget->view()->setColumnWidth(aix, sizvec[aix]);
+}
+
+void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes)
+{
+    if (ui->queuedButton->isChecked())
+    {
+        QMenu *m = new QMenu(tr("Priority"));
+        menu->insertMenu(insertpos, m);
+        QAction *a[9];
+
+        QString str[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
+
+        QSignalMapper *map = new QSignalMapper(menu);
+        connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
+
+        for (int ix = 0; ix != 9; ++ix)
+        {
+            a[ix] = new QAction(str[ix]);
+            a[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
+        }
+        return;
+    }
+    return;
 }
 
 void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)

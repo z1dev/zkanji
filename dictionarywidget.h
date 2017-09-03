@@ -61,6 +61,8 @@ signals:
     void wordDoubleClicked(int windex, int dindex);
     void sortIndicatorChanged(int index, Qt::SortOrder order);
     void requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex);
+
+    void customizeContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
 public:
     // Determines where the displayed words come from and how they are looked up.
     // DictSearch: The displayed words are taken from dictionary searches. The browse mode
@@ -211,7 +213,7 @@ public:
     // selecting the matching word. In Japanese mode the kanji is used, while in Browse mode,
     // the kana will be the search text. If a matching word is not found, the top result will
     // be selected.
-    void search(const QString &kanji, const QString &kana);
+    //void search(const QString &kanji, const QString &kana);
 
     // Returns the text in the currently shown line edit.
     QString searchText() const;
@@ -299,7 +301,7 @@ private slots:
     // Moves the condition at index in front of the new position to.
     void filterMoved(int index, int to);
 
-    void customizeContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
+    void showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
 
     // Starts a timer when editing the dictionary search so the entered search text is saved
     // in the drop down list after the timeout is over.

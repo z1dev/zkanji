@@ -98,7 +98,7 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &DictionaryWidget::rowSelectionChanged);
     connect(ui->wordsTable, &ZDictionaryListView::currentRowChanged, this, &DictionaryWidget::tableRowChanged);
     connect(ui->wordsTable, &ZDictionaryListView::requestingContextMenu, this, &DictionaryWidget::requestingContextMenu);
-    connect(ui->wordsTable, &ZDictionaryListView::contextMenuCreated, this, &DictionaryWidget::customizeContextMenu);
+    connect(ui->wordsTable, &ZDictionaryListView::contextMenuCreated, this, &DictionaryWidget::showContextMenu);
 
     connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterErased, this, &DictionaryWidget::filterErased);
     connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterChanged, this, &DictionaryWidget::filterChanged);
@@ -1288,10 +1288,13 @@ void DictionaryWidget::filterMoved(int index, int to)
         inc.pop_back();
 }
 
-void DictionaryWidget::customizeContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes)
+void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes)
 {
     if (dict == nullptr || (!ui->jpButton->isVisibleTo(this) && !ui->browseButton->isVisibleTo(this) && searchMode() == SearchMode::Definition))
+    {
+        emit customizeContextMenu(menu, insertpos, dict, coltype, selstr, windexes, kindexes);
         return;
+    }
 
     if (!selstr.isEmpty() || (windexes.size() == 1 && coltype != DictColumnTypes::Definition))
     {
@@ -1314,6 +1317,8 @@ void DictionaryWidget::customizeContextMenu(QMenu *menu, QAction *insertpos, Dic
         });
         //menu->insertSeparator(insertpos);
     }
+
+    emit customizeContextMenu(menu, insertpos, dict, coltype, selstr, windexes, kindexes);
 }
 
 void DictionaryWidget::searchEdited()

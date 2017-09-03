@@ -54,7 +54,7 @@ ZDictionaryListView::ZDictionaryListView(QWidget *parent) : base(parent), multi(
 
     setMouseTracking(true);
 
-    popup = new QMenu(this);
+    //popup = new QMenu(this);
 
     //savedselmode = base::selectionMode();
     //if (savedselmode == QAbstractItemView::ExtendedSelection)
@@ -1272,7 +1272,8 @@ CommandCategories ZDictionaryListView::activeCategory() const
 
 void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QString selstr, int kindex)
 {
-    popup->clear();
+    popup = new QMenu(this);
+    popup->setAttribute(Qt::WA_DeleteOnClose);
 
     //if (selstr.isEmpty())
     //    selstr = index.data(Qt::DisplayRole).toString();

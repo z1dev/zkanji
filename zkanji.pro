@@ -138,10 +138,10 @@ SOURCES += \
     zui.cpp \
     zwindow.cpp \
     main.cpp \
-	kanapracticesettingsform.cpp \
-	kanareadingpracticeform.cpp \
-	kanawritingpracticeform.cpp \
-	stayontop_x11.cpp
+    kanapracticesettingsform.cpp \
+    kanareadingpracticeform.cpp \
+    kanawritingpracticeform.cpp \
+    stayontop_x11.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -263,10 +263,10 @@ HEADERS += \
     ztreeview.h \
     zui.h \
     zwindow.h \
-	kanapracticesettingsform.h \
-	kanareadingpracticeform.h \
-	kanawritingpracticeform.h \
-	stayontop_x11.h
+    kanapracticesettingsform.h \
+    kanareadingpracticeform.h \
+    kanawritingpracticeform.h \
+    stayontop_x11.h
 
 FORMS += \
     collectwordsform.ui \
@@ -314,9 +314,9 @@ FORMS += \
     wordtogroupform.ui \
     zkanjiform.ui \
     zkanjiwidget.ui \
-	kanareadingpracticeform.ui \
-	kanawritingpracticeform.ui \
-	kanapracticesettingsform.ui
+    kanareadingpracticeform.ui \
+    kanawritingpracticeform.ui \
+    kanapracticesettingsform.ui
 
 DISTFILES +=
 

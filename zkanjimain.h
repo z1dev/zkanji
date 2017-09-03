@@ -526,23 +526,23 @@ ZRect ZRectS(int left, int top, int width, int height);
 // Min and max functions for a varied number of numbers.
 
 template <typename T1, typename T2>
-auto mmax(T1 arg1, T2 arg2) -> decltype(std::max(arg1, arg2))
+auto mmax(const T1 &arg1, const T2 &arg2) -> decltype(std::max(arg1, arg2))
 {
     return std::max(arg1, arg2);
 }
 template <typename T1, typename T2, typename ...T>
-auto mmax(T1 arg1, T2 arg2, T ... args) -> decltype(mmax(std::max(arg1, arg2), args...))
+/*auto*/ typename std::common_type<T1, T2, T...>::type mmax(const T1 &arg1, const T2 &arg2, const T& ... args) //-> decltype(mmax(std::max(arg1, arg2), args...))
 {
     return mmax(std::max(arg1, arg2), args...);
 }
 
 template <typename T1, typename T2>
-auto mmin(T1 arg1, T2 arg2) -> decltype(std::min(arg1, arg2))
+auto mmin(const T1 &arg1, const T2 &arg2) -> decltype(std::min(arg1, arg2))
 {
     return std::min(arg1, arg2);
 }
 template <typename T1, typename T2, typename ...T>
-auto mmin(T1 arg1, T2 arg2, T ... args) -> decltype(mmin(std::min(arg1, arg2), args...))
+/*auto*/ typename std::common_type<T1, T2, T...>::type mmin(const T1 &arg1, const T2& arg2, const T& ... args) //-> decltype(mmin(std::min(arg1, arg2), args...))
 {
     return mmin(std::min(arg1, arg2), args...);
 }

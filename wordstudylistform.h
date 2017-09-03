@@ -29,6 +29,9 @@ struct WordStudySorting {
 };
 
 
+class QMenu;
+class QAction;
+enum class DictColumnTypes;
 class WordStudyListForm : public DialogWindow
 {
     Q_OBJECT
@@ -69,6 +72,7 @@ protected slots:
     void on_delButton_clicked();
     void on_backButton_clicked();
     void showColumnContextMenu(const QPoint &p);
+    void showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
     void dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex);
 
     void dictReset();
