@@ -202,7 +202,7 @@ bool StudyListModel::sortOrder(int column, int rowa, int rowb)
             return rowa < rowb;
         case (int)DeckColumnTypes::Priority:
             if (itema->priority != itemb->priority)
-                return itema->priority < itemb->priority;
+                return itema->priority > itemb->priority;
             return rowa < rowb;
         case (int)DeckColumnTypes::StudiedPart:
         {

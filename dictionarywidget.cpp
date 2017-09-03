@@ -1296,14 +1296,14 @@ void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictiona
         return;
     }
 
-    if (!selstr.isEmpty() || (windexes.size() == 1 && coltype != DictColumnTypes::Definition))
+    if (!selstr.isEmpty() || (windexes.size() == 1 && (coltype == DictColumnTypes::Kanji || coltype == DictColumnTypes::Kana)))
     {
-        QAction *atrans = new QAction(tr("Search"), menu);
-        menu->insertAction(insertpos, atrans);
+        QAction *asrc = new QAction(tr("Search"), menu);
+        menu->insertAction(insertpos, asrc);
         
         QString str = !selstr.isEmpty() ? selstr : coltype == DictColumnTypes::Kanji ? dict->wordEntry(windexes[0])->kanji.toQString() : dict->wordEntry(windexes[0])->kana.toQString();
 
-        connect(atrans, &QAction::triggered, [this, str]() {
+        connect(asrc, &QAction::triggered, [this, str]() {
             if (mode == SearchMode::Definition)
             {
                 if (ui->jpButton->isVisibleTo(this))
@@ -1315,7 +1315,9 @@ void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictiona
             }
             setSearchText(str);
         });
+
         //menu->insertSeparator(insertpos);
+        insertpos = asrc;
     }
 
     emit customizeContextMenu(menu, insertpos, dict, coltype, selstr, windexes, kindexes);

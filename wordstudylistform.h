@@ -60,6 +60,8 @@ public:
     // Shows a message box for comfirmation and moves the passed studied deck items back to
     // the queue.
     void requeueItems(const std::vector<int> &items);
+    // Changes the priority of the passed deck items in the queued list to val.
+    void changePriority(const std::vector<int> &items, uchar val);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;

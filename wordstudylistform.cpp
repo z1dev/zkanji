@@ -263,6 +263,11 @@ void WordStudyListForm::requeueItems(const std::vector<int> &items)
     deck->requeueStudiedItems(items);
 }
 
+void WordStudyListForm::changePriority(const std::vector<int> &items, uchar val)
+{
+    deck->setQueuedPriority(items, val);
+}
+
 void WordStudyListForm::closeEvent(QCloseEvent *e)
 {
     saveColumns();
@@ -412,19 +417,43 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
     if (ui->queuedButton->isChecked())
     {
         QMenu *m = new QMenu(tr("Priority"));
-        menu->insertMenu(insertpos, m);
-        QAction *a[9];
+        menu->insertMenu(insertpos, m)->setEnabled(ui->dictWidget->hasSelection());
+        QAction *actions[9];
 
         QString str[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
 
         QSignalMapper *map = new QSignalMapper(menu);
         connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
 
+        connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, [this](int val) {
+            std::vector<int> rowlist;
+            ui->dictWidget->selectedRows(rowlist);
+            for (int &ix : rowlist)
+                ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+            changePriority(rowlist, val);
+        });
+
         for (int ix = 0; ix != 9; ++ix)
         {
-            a[ix] = new QAction(str[ix]);
-            a[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
+            actions[ix] = m->addAction(str[ix]);
+            actions[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
+            connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+            map->setMapping(actions[ix], 9 - ix);
         }
+
+        QAction *a = new QAction(tr("Remove from deck"), this);
+        menu->insertAction(insertpos, a);
+        connect(a, &QAction::triggered, this, [this]() {
+            std::vector<int> rowlist;
+            ui->dictWidget->selectedRows(rowlist);
+            for (int &ix : rowlist)
+                ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+            removeItems(rowlist, true);
+        });
+        a->setEnabled(ui->dictWidget->hasSelection());
+
+        menu->insertSeparator(insertpos);
+
         return;
     }
     return;
