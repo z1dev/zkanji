@@ -1296,28 +1296,40 @@ void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictiona
         return;
     }
 
-    if (!selstr.isEmpty() || (windexes.size() == 1 && (coltype == DictColumnTypes::Kanji || coltype == DictColumnTypes::Kana)))
+    if (!selstr.isEmpty() || (windexes.size() == 1 && (ui->jpButton->isVisibleTo(this) || ui->browseButton->isVisibleTo(this)) && (coltype == DictColumnTypes::Kanji || coltype == DictColumnTypes::Kana)))
     {
-        QAction *asrc = new QAction(tr("Search"), menu);
-        menu->insertAction(insertpos, asrc);
-        
         QString str = !selstr.isEmpty() ? selstr : coltype == DictColumnTypes::Kanji ? dict->wordEntry(windexes[0])->kanji.toQString() : dict->wordEntry(windexes[0])->kana.toQString();
 
-        connect(asrc, &QAction::triggered, [this, str]() {
-            if (mode == SearchMode::Definition)
-            {
-                if (ui->jpButton->isVisibleTo(this))
-                    setSearchMode(SearchMode::Japanese);
-                else if (ui->browseButton->isVisibleTo(this))
-                    setSearchMode(SearchMode::Browse);
-                else
-                    return;
-            }
-            setSearchText(str);
-        });
+        bool haskanji = false;
+        for (int ix = 0, siz = str.size(); !haskanji && ix != siz; ++ix)
+            if (KANJI(str.at(ix).unicode()))
+                haskanji = true;
 
-        //menu->insertSeparator(insertpos);
-        insertpos = asrc;
+        if (!haskanji || ui->jpButton->isVisibleTo(this) || mode == SearchMode::Japanese)
+        {
+            QAction *asrc = new QAction(tr("Search"), menu);
+            menu->insertAction(insertpos, asrc);
+            connect(asrc, &QAction::triggered, [this, str, coltype, haskanji]() {
+                if (mode == SearchMode::Definition)
+                {
+                    if (ui->jpButton->isVisibleTo(this))
+                        setSearchMode(SearchMode::Japanese);
+                    else if (!haskanji && ui->browseButton->isVisibleTo(this))
+                        setSearchMode(SearchMode::Browse);
+                    else
+                        return;
+                }
+                else if (mode == SearchMode::Browse && haskanji)
+                {
+                    if (ui->jpButton->isVisibleTo(this))
+                        setSearchMode(SearchMode::Japanese);
+                    else
+                        return;
+                }
+                setSearchText(str);
+            });
+            insertpos = asrc;
+        }
     }
 
     emit customizeContextMenu(menu, insertpos, dict, coltype, selstr, windexes, kindexes);
