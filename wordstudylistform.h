@@ -65,6 +65,12 @@ public:
     void changePriority(const std::vector<int> &items, uchar val);
     // Changes the shown main hint of the passed deck items in the queued or studied lists.
     void changeMainHint(const std::vector<int> &items, bool queued, WordParts val);
+    // Increases the level and the interval of the item at deckitem index in the study deck.
+    void increaseLevel(int deckitem);
+    // Decreases the level and the interval of the item at deckitem index in the study deck.
+    void decreaseLevel(int deckitem);
+    // Removes the study data for the selected items, like they were not tested before.
+    void resetItems(const std::vector<int> &items);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
@@ -78,7 +84,6 @@ protected slots:
     void on_backButton_clicked();
     void showColumnContextMenu(const QPoint &p);
     void showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
-    void dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex);
 
     void dictReset();
     void dictRemoved(int index, int orderindex, void *oldaddress);

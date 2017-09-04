@@ -114,7 +114,6 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, QWidget *parent) : base(par
 
     connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &WordStudyListForm::rowSelectionChanged);
     connect(ui->dictWidget, &DictionaryWidget::sortIndicatorChanged, this, &WordStudyListForm::headerSortChanged);
-    connect(ui->dictWidget, &DictionaryWidget::requestingContextMenu, this, &WordStudyListForm::dictContextMenu);
 
     connect(startButton, &QPushButton::clicked, this, &WordStudyListForm::startTest);
     connect(closeButton, &QPushButton::clicked, this, &WordStudyListForm::close);
@@ -273,6 +272,22 @@ void WordStudyListForm::changeMainHint(const std::vector<int> &items, bool queue
     deck->setItemHints(items, queued, val);
 }
 
+void WordStudyListForm::increaseLevel(int deckitem)
+{
+    deck->increaseSpacingLevel(deckitem);
+}
+
+void WordStudyListForm::decreaseLevel(int deckitem)
+{
+    deck->decreaseSpacingLevel(deckitem);
+}
+
+void WordStudyListForm::resetItems(const std::vector<int> &items)
+{
+    if (QMessageBox::question(this, "zkanji", tr("All study data, including past statistics, item level and difficulty will be reset for the selected items. The items will be shown like they were new the next time the test starts. Consider moving the items back to the queue instead.\n\nDo you want to reset the study data?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+        deck->resetCardStudyData(items);
+}
+
 void WordStudyListForm::closeEvent(QCloseEvent *e)
 {
     saveColumns();
@@ -421,53 +436,22 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 {
     if (ui->queuedButton->isChecked())
     {
-        QMenu *m = new QMenu(tr("Priority"));
-        menu->insertMenu(insertpos, m)->setEnabled(ui->dictWidget->hasSelection());
         QAction *actions[9];
 
-        QSignalMapper *map = new QSignalMapper(menu);
-        connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
-
-        connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, [this](int val) {
-            std::vector<int> rowlist;
-            ui->dictWidget->selectedRows(rowlist);
-            for (int &ix : rowlist)
-                ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
-            changePriority(rowlist, val);
-        });
-
-        QString strpriority[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
-        for (int ix = 0; ix != 9; ++ix)
-        {
-            actions[ix] = m->addAction(strpriority[ix]);
-            actions[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
-            connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
-            map->setMapping(actions[ix], 9 - ix);
-        }
-
-        QAction *a = new QAction(tr("Remove from deck"), this);
-        menu->insertAction(insertpos, a);
-        connect(a, &QAction::triggered, this, [this]() {
-            std::vector<int> rowlist;
-            ui->dictWidget->selectedRows(rowlist);
-            for (int &ix : rowlist)
-                ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
-            removeItems(rowlist, true);
-        });
-        a->setEnabled(ui->dictWidget->hasSelection());
-
-        m = new QMenu(tr("Main hint"));
+        QMenu *m = new QMenu(tr("Main hint"));
         menu->insertMenu(insertpos, m);
+        menu->addSeparator();
 
+        std::vector<int> selrows;
         std::vector<int> rowlist;
-        ui->dictWidget->selectedRows(rowlist);
+        ui->dictWidget->selectedRows(selrows);
 
         // Used in checking if all items have the same hint type. In case this is false, it
         // will be set to something else than the valid values. (=anything above 3)
         uchar mainhint = 255;
         // Lists all hint types that should be shown in the context menu.
         uchar shownhints = (uchar)WordPartBits::Default;
-        for (int &ix : rowlist)
+        for (int &ix : selrows)
         {
             uchar question = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::ItemQuestion).toInt();
             uchar hint = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::ItemHint).toInt();
@@ -478,10 +462,10 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
             shownhints |= (int)WordPartBits::AllParts - question;
 
-            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
+            rowlist.push_back(ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt());
         }
 
-        map = new QSignalMapper(menu);
+        QSignalMapper *map = new QSignalMapper(menu);
         connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
         QString strhint[4] = { tr("Default"), tr("Written"), tr("Kana"), tr("Definition") };
         for (int ix = 0; ix != 4; ++ix)
@@ -507,213 +491,333 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
         });
         m->setEnabled(ui->dictWidget->hasSelection());
 
+        m = new QMenu(tr("Priority"));
+        menu->insertMenu(insertpos, m)->setEnabled(ui->dictWidget->hasSelection());
+
+        map = new QSignalMapper(menu);
+        connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
+
+        connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, [this, rowlist](int val) {
+            changePriority(rowlist, val);
+        });
+
+        QString strpriority[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
+        for (int ix = 0; ix != 9; ++ix)
+        {
+            actions[ix] = m->addAction(strpriority[ix]);
+            actions[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
+            connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+            map->setMapping(actions[ix], 9 - ix);
+        }
+
+        QAction *a = new QAction(tr("Remove from deck"), this);
+        menu->insertAction(insertpos, a);
+        connect(a, &QAction::triggered, this, [this, rowlist]() {
+            removeItems(rowlist, true);
+        });
+        a->setEnabled(ui->dictWidget->hasSelection());
+
         menu->insertSeparator(insertpos);
 
         return;
     }
-    else
-    {
 
-    }
-    return;
-}
+    QMenu *m = new QMenu(tr("Main hint"));
+    menu->insertMenu(insertpos, m);
+    menu->addSeparator();
 
-void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
-{
-    int ix = ui->dictWidget->view()->rowAt(pos.y());
-    if (ix < 0)
-        return;
-
-    bool queue = model->viewMode() == DeckViewModes::Queued;
-    //WordDeckItem *item = nullptr;
-
-    QMenu m;
-    QAction *a = nullptr;
-    QMenu *sub = nullptr;
-
+    std::vector<int> selrows;
     std::vector<int> rowlist;
-    ui->dictWidget->selectedRows(rowlist);
-    if (rowlist.empty())
-        rowlist.push_back(ix);
-    for (int ix = 0, siz = rowlist.size(); ix != siz; ++ix)
-        rowlist[ix] = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(rowlist[ix], 0), (int)DeckRowRoles::DeckIndex).toInt();
+    ui->dictWidget->selectedRows(selrows);
 
-    // Single item clicked. Even if selection is 0, the mouse was over a row.
-    if (rowlist.size() < 2)
+    // Used in checking if all items have the same hint type. In case this is false, it
+    // will be set to something else than the valid values. (=anything above 3)
+    uchar mainhint = 255;
+    // Lists all hint types that should be shown in the context menu.
+    uchar shownhints = (uchar)WordPartBits::Default;
+    for (int &ix : selrows)
     {
-        if (rowlist.size() == 1)
-            ix = rowlist.front();
-        else
-            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
-        //item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
+        uchar question = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::ItemQuestion).toInt();
+        uchar hint = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::ItemHint).toInt();
+        if (mainhint == 255)
+            mainhint = hint;
+        else if (mainhint != hint) // No match. Set mainhint to invalid.
+            mainhint = 254;
+
+        shownhints |= (int)WordPartBits::AllParts - question;
+
+        rowlist.push_back(ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt());
     }
 
-    if (queue)
+    QAction *actions[4];
+
+    QSignalMapper *map = new QSignalMapper(menu);
+    connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
+    QString strhint[4] = { tr("Default"), tr("Written"), tr("Kana"), tr("Definition") };
+    for (int ix = 0; ix != 4; ++ix)
     {
-        sub = new QMenu(tr("Priority"), &m);
+        if (ix != 0 && ((shownhints & (1 << (ix - 1))) == 0))
+            continue;
 
-        QActionGroup *prioritygroup = new QActionGroup(sub);
-        prioritygroup->addAction(sub->addAction(QString(tr("Highest") + "\tShift+9")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Very high") + "\tShift+8")));
-        prioritygroup->addAction(sub->addAction(QString(tr("High") + "\tShift+7")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Higher") + "\tShift+6")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Medium") + "\tShift+5")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Lower") + "\tShift+4")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Low") + "\tShift+3")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Very low") + "\tShift+2")));
-        prioritygroup->addAction(sub->addAction(QString(tr("Lowest") + "\tShift+1")));
-        prioritygroup->setExclusive(false);
-
-        QSet<uchar> priset;
-        deck->queuedPriorities(rowlist, priset);
-
-        for (uchar ix = 0; ix != 9; ++ix)
+        actions[ix] = m->addAction(strhint[ix]);
+        // The Default value in mainhint is 3 but we want to place default at the front.
+        // Because of that ix must be converted to match mainhint.
+        if ((mainhint == 3 && ix == 0) || (ix != 0 && ix - 1 == mainhint))
         {
-            a = prioritygroup->actions().at(ix);
-            if (priset.contains(9 - ix))
-            {
-                a->setCheckable(true);
-                a->setChecked(true);
-            }
+            actions[ix]->setCheckable(true);
+            actions[ix]->setChecked(true);
         }
 
-        connect(prioritygroup, &QActionGroup::triggered, this, [this, &rowlist](QAction *action)
-        {
-            int priority = action->actionGroup()->actions().indexOf(action);
-            deck->setQueuedPriority(rowlist, 9 - priority);
-        });
-
-        m.addMenu(sub);
-        m.addSeparator();
+        connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+        map->setMapping(actions[ix], ix == 0 ? 3 : ix - 1);
     }
 
-
-    uchar hintset;
-    uchar selset;
-    deck->itemHints(rowlist, queue, hintset, selset);
-
-    sub = new QMenu(tr("Primary hint"));
-    QActionGroup *hintgroup = new QActionGroup(sub);
-    QAction *defa = nullptr;
-    hintgroup->addAction(defa = a = sub->addAction(tr("Default")));
-    hintgroup->setExclusive(false);
-    a->setCheckable(true);
-    if (selset & (int)WordPartBits::Default)
-        a->setChecked(a);
-    QAction *kanjia = nullptr;
-    if (hintset & (int)WordPartBits::Kanji)
-    {
-        hintgroup->addAction(kanjia = a = sub->addAction(tr("Written")));
-        a->setCheckable(true);
-        if (selset & (int)WordPartBits::Kanji)
-            a->setChecked(a);
-    }
-    QAction *kanaa = nullptr;
-    if (hintset & (int)WordPartBits::Kana)
-    {
-        hintgroup->addAction(kanaa = a = sub->addAction(tr("Kana")));
-        a->setCheckable(true);
-        if (selset & (int)WordPartBits::Kana)
-            a->setChecked(a);
-    }
-    QAction *defna = nullptr;
-    if (hintset & (int)WordPartBits::Definition)
-    {
-        hintgroup->addAction(defna = a = sub->addAction(tr("Definition")));
-        a->setCheckable(true);
-        if (selset & (int)WordPartBits::Definition)
-            a->setChecked(a);
-    }
-
-    connect(hintgroup, &QActionGroup::triggered, this, [this, &rowlist, queue, defa, kanjia, kanaa, defna](QAction *action)
-    {
-        deck->setItemHints(rowlist, queue, action == kanjia ? WordParts::Kanji : action == kanaa ? WordParts::Kana : action == defna ? WordParts::Definition : WordParts::Default);
+    connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, [this, rowlist](int val) {
+        changeMainHint(rowlist, false, (WordParts)val);
     });
+    m->setEnabled(ui->dictWidget->hasSelection());
 
-    m.addMenu(sub);
-
-    a = m.addAction(tr("Add question..."));
-    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked) {
-        std::vector<int> wordlist;
-        deck->itemsToWords(rowlist, queue, wordlist);
-        addQuestions(wordlist);
+    QAction *a = new QAction(tr("Remove from deck"), this);
+    menu->insertAction(insertpos, a);
+    connect(a, &QAction::triggered, this, [this, rowlist]() {
+        removeItems(rowlist, false);
     });
-    m.addSeparator();
+    a->setEnabled(ui->dictWidget->hasSelection());
 
-    StudyDeck *study = deck->getStudyDeck();
-
-    a = m.addAction(tr("Remove..."));
-    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked){
-        removeItems(rowlist, queue);
+    a = new QAction(tr("Back to queue"), this);
+    menu->insertAction(insertpos, a);
+    connect(a, &QAction::triggered, this, [this, rowlist]() {
+        requeueItems(rowlist);
     });
+    a->setEnabled(ui->dictWidget->hasSelection());
 
-    if (!queue)
+    menu->addSeparator();
+
+    m = new QMenu(tr("Study options"));
+    menu->insertMenu(insertpos, m);
+
+    a = m->addAction(tr("Increase level"));
+    m->setEnabled(rowlist.size() == 1);
+    if (rowlist.size() == 1)
     {
-        a = m.addAction(tr("Back to queue..."));
-        connect(a, &QAction::triggered, this, [this, &rowlist](bool checked){
-            requeueItems(rowlist);
-        });
-
-        m.addSeparator();
-
-        sub = new QMenu(tr("Study options"));
-        if (rowlist.size() < 2)
-        {
-            a = sub->addAction(tr("Level+") + QString(" (%1)").arg(formatSpacing(study->increasedSpacing(deck->studiedItems(ix)->cardid))));
-            connect(a, &QAction::triggered, this, [this, &rowlist, ix, study](bool checked) {
-                deck->increaseSpacingLevel(ix);
-            });
-            a = sub->addAction(tr("Level-") + QString(" (%1)").arg(formatSpacing(study->decreasedSpacing(deck->studiedItems(ix)->cardid))));
-            connect(a, &QAction::triggered, this, [this, &rowlist, ix, study](bool checked) {
-                deck->decreaseSpacingLevel(ix);
-            });
-        }
-        else
-        {
-            a = sub->addAction(tr("Level+"));
-            a->setEnabled(false);
-            a = sub->addAction(tr("Level-"));
-            a->setEnabled(false);
-        }
-        sub->addSeparator();
-
-        a = sub->addAction(tr("Reset study data"));
-        connect(a, &QAction::triggered, this, [this, &rowlist/*, item*/, study](bool checked) {
-            if (QMessageBox::question(this, "zkanji", tr("All study data, including past statistics, item level and difficulty will be reset for the selected items. The items will be shown like they were new the next time the test starts. Consider moving the items back to the queue instead.\n\nDo you want to reset the study data?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
-            {
-                deck->resetCardStudyData(rowlist);
-            }
-        });
-
-        m.addMenu(sub);
-        m.addSeparator();
+        int dix = rowlist.front();
+        connect(a, &QAction::triggered, this, [this, dix]() { increaseLevel(dix); } );
     }
-    a = m.addAction(tr("Add to group..."));
-    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked) {
-        std::vector<int> indexes;
-        QSet<int> added;
-        for (int ix : rowlist)
-        {
-            WordDeckItem *item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
-            if (added.contains(item->data->index))
-                continue;
-            indexes.push_back(item->data->index);
-            added << item->data->index;
-        }
 
-        WordGroup *group = (WordGroup*)GroupPickerForm::select(GroupWidget::Words, tr("Select a word group for the words of the selected items."), dict, false, false, this);
-        if (group == nullptr)
-            return;
-        
-        int r = group->add(indexes);
-        if (r == 0)
-            QMessageBox::information(this, "zkanji", tr("No new words from the selected items were added to the group."), QMessageBox::Ok);
-        else
-            QMessageBox::information(this, "zkanji", tr("%1 words from the selected items were added to the group.").arg(r), QMessageBox::Ok);
-    });
+    a = m->addAction(tr("Decrease level"));
+    m->setEnabled(rowlist.size() == 1);
+    if (rowlist.size() == 1)
+    {
+        int dix = rowlist.front();
+        connect(a, &QAction::triggered, this, [this, dix]() { decreaseLevel(dix); });
+    }
 
-    a = m.exec(globalpos);
+    m->addSeparator();
+    a = m->addAction(tr("Reset study data"));
+    connect(a, &QAction::triggered, this, [this, rowlist]() { resetItems(rowlist); });
+    a->setEnabled(ui->dictWidget->hasSelection());
+
+    m->setEnabled(ui->dictWidget->hasSelection());
+    menu->insertSeparator(insertpos);
+
 }
+
+//void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
+//{
+//    int ix = ui->dictWidget->view()->rowAt(pos.y());
+//    if (ix < 0)
+//        return;
+//
+//    bool queue = model->viewMode() == DeckViewModes::Queued;
+//    //WordDeckItem *item = nullptr;
+//
+//    QMenu m;
+//    QAction *a = nullptr;
+//    QMenu *sub = nullptr;
+//
+//    std::vector<int> rowlist;
+//    ui->dictWidget->selectedRows(rowlist);
+//    if (rowlist.empty())
+//        rowlist.push_back(ix);
+//    for (int ix = 0, siz = rowlist.size(); ix != siz; ++ix)
+//        rowlist[ix] = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(rowlist[ix], 0), (int)DeckRowRoles::DeckIndex).toInt();
+//
+//    // Single item clicked. Even if selection is 0, the mouse was over a row.
+//    if (rowlist.size() < 2)
+//    {
+//        if (rowlist.size() == 1)
+//            ix = rowlist.front();
+//        else
+//            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
+//        //item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
+//    }
+//
+//    if (queue)
+//    {
+//        sub = new QMenu(tr("Priority"), &m);
+//
+//        QActionGroup *prioritygroup = new QActionGroup(sub);
+//        prioritygroup->addAction(sub->addAction(QString(tr("Highest") + "\tShift+9")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Very high") + "\tShift+8")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("High") + "\tShift+7")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Higher") + "\tShift+6")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Medium") + "\tShift+5")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Lower") + "\tShift+4")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Low") + "\tShift+3")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Very low") + "\tShift+2")));
+//        prioritygroup->addAction(sub->addAction(QString(tr("Lowest") + "\tShift+1")));
+//        prioritygroup->setExclusive(false);
+//
+//        QSet<uchar> priset;
+//        deck->queuedPriorities(rowlist, priset);
+//
+//        for (uchar ix = 0; ix != 9; ++ix)
+//        {
+//            a = prioritygroup->actions().at(ix);
+//            if (priset.contains(9 - ix))
+//            {
+//                a->setCheckable(true);
+//                a->setChecked(true);
+//            }
+//        }
+//
+//        connect(prioritygroup, &QActionGroup::triggered, this, [this, &rowlist](QAction *action)
+//        {
+//            int priority = action->actionGroup()->actions().indexOf(action);
+//            deck->setQueuedPriority(rowlist, 9 - priority);
+//        });
+//
+//        m.addMenu(sub);
+//        m.addSeparator();
+//    }
+//
+//
+//    uchar hintset;
+//    uchar selset;
+//    deck->itemHints(rowlist, queue, hintset, selset);
+//
+//    sub = new QMenu(tr("Primary hint"));
+//    QActionGroup *hintgroup = new QActionGroup(sub);
+//    QAction *defa = nullptr;
+//    hintgroup->addAction(defa = a = sub->addAction(tr("Default")));
+//    hintgroup->setExclusive(false);
+//    a->setCheckable(true);
+//    if (selset & (int)WordPartBits::Default)
+//        a->setChecked(a);
+//    QAction *kanjia = nullptr;
+//    if (hintset & (int)WordPartBits::Kanji)
+//    {
+//        hintgroup->addAction(kanjia = a = sub->addAction(tr("Written")));
+//        a->setCheckable(true);
+//        if (selset & (int)WordPartBits::Kanji)
+//            a->setChecked(a);
+//    }
+//    QAction *kanaa = nullptr;
+//    if (hintset & (int)WordPartBits::Kana)
+//    {
+//        hintgroup->addAction(kanaa = a = sub->addAction(tr("Kana")));
+//        a->setCheckable(true);
+//        if (selset & (int)WordPartBits::Kana)
+//            a->setChecked(a);
+//    }
+//    QAction *defna = nullptr;
+//    if (hintset & (int)WordPartBits::Definition)
+//    {
+//        hintgroup->addAction(defna = a = sub->addAction(tr("Definition")));
+//        a->setCheckable(true);
+//        if (selset & (int)WordPartBits::Definition)
+//            a->setChecked(a);
+//    }
+//
+//    connect(hintgroup, &QActionGroup::triggered, this, [this, &rowlist, queue, defa, kanjia, kanaa, defna](QAction *action)
+//    {
+//        deck->setItemHints(rowlist, queue, action == kanjia ? WordParts::Kanji : action == kanaa ? WordParts::Kana : action == defna ? WordParts::Definition : WordParts::Default);
+//    });
+//
+//    m.addMenu(sub);
+//
+//    a = m.addAction(tr("Add question..."));
+//    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked) {
+//        std::vector<int> wordlist;
+//        deck->itemsToWords(rowlist, queue, wordlist);
+//        addQuestions(wordlist);
+//    });
+//    m.addSeparator();
+//
+//    StudyDeck *study = deck->getStudyDeck();
+//
+//    a = m.addAction(tr("Remove..."));
+//    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked){
+//        removeItems(rowlist, queue);
+//    });
+//
+//    if (!queue)
+//    {
+//        a = m.addAction(tr("Back to queue..."));
+//        connect(a, &QAction::triggered, this, [this, &rowlist](bool checked){
+//            requeueItems(rowlist);
+//        });
+//
+//        m.addSeparator();
+//
+//        sub = new QMenu(tr("Study options"));
+//        if (rowlist.size() < 2)
+//        {
+//            a = sub->addAction(tr("Level+") + QString(" (%1)").arg(formatSpacing(study->increasedSpacing(deck->studiedItems(ix)->cardid))));
+//            connect(a, &QAction::triggered, this, [this, &rowlist, ix, study](bool checked) {
+//                deck->increaseSpacingLevel(ix);
+//            });
+//            a = sub->addAction(tr("Level-") + QString(" (%1)").arg(formatSpacing(study->decreasedSpacing(deck->studiedItems(ix)->cardid))));
+//            connect(a, &QAction::triggered, this, [this, &rowlist, ix, study](bool checked) {
+//                deck->decreaseSpacingLevel(ix);
+//            });
+//        }
+//        else
+//        {
+//            a = sub->addAction(tr("Level+"));
+//            a->setEnabled(false);
+//            a = sub->addAction(tr("Level-"));
+//            a->setEnabled(false);
+//        }
+//        sub->addSeparator();
+//
+//        a = sub->addAction(tr("Reset study data"));
+//        connect(a, &QAction::triggered, this, [this, &rowlist/*, item*/, study](bool checked) {
+//            if (QMessageBox::question(this, "zkanji", tr("All study data, including past statistics, item level and difficulty will be reset for the selected items. The items will be shown like they were new the next time the test starts. Consider moving the items back to the queue instead.\n\nDo you want to reset the study data?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
+//            {
+//                deck->resetCardStudyData(rowlist);
+//            }
+//        });
+//
+//        m.addMenu(sub);
+//        m.addSeparator();
+//    }
+//    a = m.addAction(tr("Add to group..."));
+//    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked) {
+//        std::vector<int> indexes;
+//        QSet<int> added;
+//        for (int ix : rowlist)
+//        {
+//            WordDeckItem *item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
+//            if (added.contains(item->data->index))
+//                continue;
+//            indexes.push_back(item->data->index);
+//            added << item->data->index;
+//        }
+//
+//        WordGroup *group = (WordGroup*)GroupPickerForm::select(GroupWidget::Words, tr("Select a word group for the words of the selected items."), dict, false, false, this);
+//        if (group == nullptr)
+//            return;
+//        
+//        int r = group->add(indexes);
+//        if (r == 0)
+//            QMessageBox::information(this, "zkanji", tr("No new words from the selected items were added to the group."), QMessageBox::Ok);
+//        else
+//            QMessageBox::information(this, "zkanji", tr("%1 words from the selected items were added to the group.").arg(r), QMessageBox::Ok);
+//    });
+//
+//    a = m.exec(globalpos);
+//}
 
 void WordStudyListForm::dictReset()
 {

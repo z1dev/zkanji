@@ -218,7 +218,9 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *e) override;
     virtual void leaveEvent(QEvent *e) override;
 
-    virtual void contextMenuEvent(QContextMenuEvent *e) override;
+    virtual bool requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex) override;
+
+    //virtual void contextMenuEvent(QContextMenuEvent *e) override;
 
     //virtual void dragEnterEvent(QDragEnterEvent *e) override;
 //private slots:

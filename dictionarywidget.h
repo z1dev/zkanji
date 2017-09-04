@@ -60,7 +60,6 @@ signals:
     void rowSelectionChanged();
     void wordDoubleClicked(int windex, int dindex);
     void sortIndicatorChanged(int index, Qt::SortOrder order);
-    void requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex);
 
     void customizeContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
 public:

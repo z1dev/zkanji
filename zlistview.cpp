@@ -242,60 +242,6 @@ void ZListView::scrollTo(const QModelIndex &index, ScrollHint hint)
     horizontalScrollBar()->setValue(v);
 }
 
-void ZListView::scrollContentsBy(int dx, int dy)
-{
-    base::scrollContentsBy(dx, dy);
-
-    if (state != State::Dragging)
-        return;
-
-    QDragMoveEvent e = QDragMoveEvent(viewport()->mapFromGlobal(QCursor::pos()), savedDropActions, savedMimeData, savedMouseButtons, savedKeyboardModifiers);
-    dragMoveEvent(&e);
-}
-
-void ZListView::dataChanged(const QModelIndex &topleft, const QModelIndex &bottomright, const QVector<int> &roles)
-{
-    base::dataChanged(topleft, bottomright, roles);
-
-    ZAbstractTableModel *m = model();
-    if (m == nullptr)
-        return;
-
-    autoResizeColumns(true);
-}
-
-bool tmptmp = false;
-
-bool ZListView::event(QEvent *e)
-{
-    //if (e->type() == QEvent::DragEnter)
-    //{
-    //    setStyleSheet("background-color: yellow;");
-    //    update();
-    //    tmptmp = true;
-    //    dragEnterEvent((QDragEnterEvent*)e);
-    //    tmptmp = false;
-    //    return true;
-    //}
-    //if (e->type() == ConstructedEvent::Type())
-    //{
-    //    // Only create our custom delegate if one hasn't been set previously.
-    //    if (dynamic_cast<ZListViewItemDelegate*>(base::itemDelegate()) == nullptr)
-    //    {
-    //        base::itemDelegate()->deleteLater();
-    //        setItemDelegate(createItemDelegate());
-    //    }
-    //    else
-    //    {
-    //        saveColumnData();
-    //        resetColumnData();
-    //    }
-
-    //    return true;
-    //}
-    return base::event(e);
-}
-
 //QItemSelectionModel::SelectionFlags ZListView::selectionCommand(const QModelIndex &index, const QEvent *e) const
 //{
 //    QItemSelectionModel::SelectionFlags flags = base::selectionCommand(index, e);
@@ -1069,24 +1015,6 @@ void ZListView::rowsMoved(const smartvector<Range> &ranges, int pos)
     updateGeometries();
 }
 
-void ZListView::selRemoved(const smartvector<Range> &ranges)
-{
-    if (selection->remove(ranges))
-        signalSelectionChanged();
-}
-
-void ZListView::selInserted(const smartvector<Interval> &intervals)
-{
-    if (selection->insert(intervals))
-        signalSelectionChanged();
-}
-
-void ZListView::selMoved(const smartvector<Range> &ranges, int pos)
-{
-    if (selection->move(ranges, pos))
-        signalSelectionChanged();
-}
-
 void ZListView::layoutAboutToBeChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
 {
     commitPivotSelection();
@@ -1129,6 +1057,167 @@ void ZListView::layoutChanged(const QList<QPersistentModelIndex> &parents, QAbst
     scrollToRow(currentrow);
 
     viewport()->update();
+}
+
+void ZListView::selRemoved(const smartvector<Range> &ranges)
+{
+    if (selection->remove(ranges))
+        signalSelectionChanged();
+}
+
+void ZListView::selInserted(const smartvector<Interval> &intervals)
+{
+    if (selection->insert(intervals))
+        signalSelectionChanged();
+}
+
+void ZListView::selMoved(const smartvector<Range> &ranges, int pos)
+{
+    if (selection->move(ranges, pos))
+        signalSelectionChanged();
+}
+
+int ZListView::mapToSelection(int row) const
+{
+    return row;
+}
+
+int ZListView::mapFromSelection(int index, bool top) const
+{
+    return index;
+}
+
+int ZListView::dropRow(int ypos) const
+{
+    int row = ypos;
+
+    if (verticalScrollMode() == QAbstractItemView::ScrollPerItem)
+    {
+
+        row = row / verticalHeader()->defaultSectionSize() + verticalScrollBar()->value();
+        if ((ypos % verticalHeader()->defaultSectionSize()) > verticalHeader()->defaultSectionSize() / 2)
+            ++row;
+    }
+    else
+    {
+        row = (row + verticalScrollBar()->value()) / verticalHeader()->defaultSectionSize();
+        if (((ypos + verticalScrollBar()->value()) % verticalHeader()->defaultSectionSize()) > verticalHeader()->defaultSectionSize() / 2)
+            ++row;
+    }
+    row = std::min(row, model()->rowCount());
+
+    return row;
+}
+
+//ZListViewItemDelegate* ZListView::createItemDelegate()
+//{
+//    return new ZListViewItemDelegate(this);
+//}
+
+//bool ZListView::isRowDragSelected(int row) const
+//{
+//    return rowSelected(row); //selectionModel()->isRowSelected(row, QModelIndex());
+//}
+
+QMimeData* ZListView::dragMimeData() const
+{
+    //auto rows = selectionModel()->selectedRows();
+    //std::sort(rows.begin(), rows.end(), [](const QModelIndex &a, const QModelIndex &b) { return a.row() < b.row(); });
+
+    QModelIndexList indexes;
+    if (seltype != ListSelectionType::None)
+        indexes = selectedIndexes();
+    else if (currentrow != -1)
+        indexes << model()->index(currentrow, 0);
+    return model()->mimeData(indexes);
+}
+
+//void ZListView::toggleRowSelect(int row, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+//{
+//    // It might be necessary to create our own selectRow function.
+//    // ** KEEP THIS **
+//    //selectionModel()->setCurrentIndex(mousecell, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
+//    //selectionModel()->select(QItemSelection(model()->index(mousecell.row(), 0), model()->index(mousecell.row(), model()->columnCount() - 1)), QItemSelectionModel::SelectCurrent);
+//
+//    //QItemSelectionModel::SelectionFlags flags = model() != nullptr ? selectionCommand(model()->index(0, 0)) : 0;
+//
+//    if (seltype == NoSelection)
+//        return;
+//
+//    selectRow(row);
+//}
+
+void ZListView::changeCurrent(int rowindex)
+{
+    int row = currentrow;
+    currentrow = rowindex;
+    if (row != currentrow)
+    {
+        if (row != -1)
+            updateRow(row);
+        if (currentrow != -1)
+            updateRow(currentrow);
+        emit currentRowChanged(currentrow, row);
+    }
+}
+
+bool ZListView::requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
+{
+    return false;
+}
+
+void ZListView::scrollContentsBy(int dx, int dy)
+{
+    base::scrollContentsBy(dx, dy);
+
+    if (state != State::Dragging)
+        return;
+
+    QDragMoveEvent e = QDragMoveEvent(viewport()->mapFromGlobal(QCursor::pos()), savedDropActions, savedMimeData, savedMouseButtons, savedKeyboardModifiers);
+    dragMoveEvent(&e);
+}
+
+void ZListView::dataChanged(const QModelIndex &topleft, const QModelIndex &bottomright, const QVector<int> &roles)
+{
+    base::dataChanged(topleft, bottomright, roles);
+
+    ZAbstractTableModel *m = model();
+    if (m == nullptr)
+        return;
+
+    autoResizeColumns(true);
+}
+
+//bool tmptmp = false;
+
+bool ZListView::event(QEvent *e)
+{
+    //if (e->type() == QEvent::DragEnter)
+    //{
+    //    setStyleSheet("background-color: yellow;");
+    //    update();
+    //    tmptmp = true;
+    //    dragEnterEvent((QDragEnterEvent*)e);
+    //    tmptmp = false;
+    //    return true;
+    //}
+    //if (e->type() == ConstructedEvent::Type())
+    //{
+    //    // Only create our custom delegate if one hasn't been set previously.
+    //    if (dynamic_cast<ZListViewItemDelegate*>(base::itemDelegate()) == nullptr)
+    //    {
+    //        base::itemDelegate()->deleteLater();
+    //        setItemDelegate(createItemDelegate());
+    //    }
+    //    else
+    //    {
+    //        saveColumnData();
+    //        resetColumnData();
+    //    }
+
+    //    return true;
+    //}
+    return base::event(e);
 }
 
 void ZListView::timerEvent(QTimerEvent *e)
@@ -2093,8 +2182,8 @@ void ZListView::contextMenuEvent(QContextMenuEvent *e)
 
     QModelIndex index = indexAt(e->pos());
     int row = index.isValid() ? mapToSelection(index.row()) : -1;
-    emit requestingContextMenu(e->pos(), e->globalPos(), row);
-    e->accept();
+    if (requestingContextMenu(e->pos(), e->globalPos(), row))
+        e->accept();
 }
 
 bool ZListView::viewportEvent(QEvent *e)
@@ -2395,90 +2484,6 @@ void ZListView::_invalidate()
 {
     if (parentWidget()->layout() != nullptr)
         parentWidget()->layout()->invalidate();
-}
-
-int ZListView::mapToSelection(int row) const
-{
-    return row;
-}
-
-int ZListView::mapFromSelection(int index, bool top) const
-{
-    return index;
-}
-
-int ZListView::dropRow(int ypos) const
-{
-    int row = ypos;
-
-    if (verticalScrollMode() == QAbstractItemView::ScrollPerItem)
-    {
-
-        row = row / verticalHeader()->defaultSectionSize() + verticalScrollBar()->value();
-        if ((ypos % verticalHeader()->defaultSectionSize()) > verticalHeader()->defaultSectionSize() / 2)
-            ++row;
-    }
-    else
-    {
-        row = (row + verticalScrollBar()->value()) / verticalHeader()->defaultSectionSize();
-        if (((ypos + verticalScrollBar()->value()) % verticalHeader()->defaultSectionSize()) > verticalHeader()->defaultSectionSize() / 2)
-            ++row;
-    }
-    row = std::min(row, model()->rowCount());
-
-    return row;
-}
-
-//ZListViewItemDelegate* ZListView::createItemDelegate()
-//{
-//    return new ZListViewItemDelegate(this);
-//}
-
-//bool ZListView::isRowDragSelected(int row) const
-//{
-//    return rowSelected(row); //selectionModel()->isRowSelected(row, QModelIndex());
-//}
-
-QMimeData* ZListView::dragMimeData() const
-{
-    //auto rows = selectionModel()->selectedRows();
-    //std::sort(rows.begin(), rows.end(), [](const QModelIndex &a, const QModelIndex &b) { return a.row() < b.row(); });
-
-    QModelIndexList indexes;
-    if (seltype != ListSelectionType::None)
-        indexes = selectedIndexes();
-    else if (currentrow != -1)
-        indexes << model()->index(currentrow, 0);
-    return model()->mimeData(indexes);
-}
-
-//void ZListView::toggleRowSelect(int row, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
-//{
-//    // It might be necessary to create our own selectRow function.
-//    // ** KEEP THIS **
-//    //selectionModel()->setCurrentIndex(mousecell, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
-//    //selectionModel()->select(QItemSelection(model()->index(mousecell.row(), 0), model()->index(mousecell.row(), model()->columnCount() - 1)), QItemSelectionModel::SelectCurrent);
-//
-//    //QItemSelectionModel::SelectionFlags flags = model() != nullptr ? selectionCommand(model()->index(0, 0)) : 0;
-//
-//    if (seltype == NoSelection)
-//        return;
-//
-//    selectRow(row);
-//}
-
-void ZListView::changeCurrent(int rowindex)
-{
-    int row = currentrow;
-    currentrow = rowindex;
-    if (row != currentrow)
-    {
-        if (row != -1)
-            updateRow(row);
-        if (currentrow != -1)
-            updateRow(currentrow);
-        emit currentRowChanged(currentrow, row);
-    }
 }
 
 

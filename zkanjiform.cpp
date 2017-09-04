@@ -981,15 +981,6 @@ void ZKanjiForm::resizeEvent(QResizeEvent *e)
     base::resizeEvent(e);
 }
 
-//void ZKanjiForm::contextMenuEvent(QContextMenuEvent *e)
-//{
-//    if (!mainform)
-//    {
-//        dockmenu.popup(e->globalPos());
-//        e->accept();
-//    }
-//}
-
 void ZKanjiForm::changeEvent(QEvent *e)
 {
     if (mainform && e->type() == QEvent::WindowStateChange && !skipchange)

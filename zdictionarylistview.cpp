@@ -1027,20 +1027,28 @@ void ZDictionaryListView::leaveEvent(QEvent *e)
     kanjitipcell = QModelIndex();
 }
 
-void ZDictionaryListView::contextMenuEvent(QContextMenuEvent *e)
+bool ZDictionaryListView::requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
 {
-    //base::contextMenuEvent(e);
+    QModelIndex index = indexAt(pos);
+    if (!index.isValid())
+        return false;
 
-    QModelIndex index = indexAt(e->pos());
-    if (index.isValid())
-    {
-        //DictColumnTypes coltype = (DictColumnTypes)index.data((int)DictColumnRoles::Type).toInt();
-        DictionaryListDelegate *del = (DictionaryListDelegate*)itemDelegate();
-        
-        showPopup(e->globalPos(), index, QString(), del->kanjiAt(e->pos(), visualRect(index), index));
-        e->accept();
-    }
+    DictionaryListDelegate *del = (DictionaryListDelegate*)itemDelegate();
+    showPopup(globalpos, index, QString(), del->kanjiAt(pos, visualRect(index), index));
+    return true;
 }
+
+//void ZDictionaryListView::contextMenuEvent(QContextMenuEvent *e)
+//{
+//    QModelIndex index = indexAt(e->pos());
+//    if (index.isValid())
+//    {
+//        DictionaryListDelegate *del = (DictionaryListDelegate*)itemDelegate();
+//        
+//        showPopup(e->globalPos(), index, QString(), del->kanjiAt(e->pos(), visualRect(index), index));
+//        e->accept();
+//    }
+//}
 
 void ZDictionaryListView::selectionToGroup() const
 {

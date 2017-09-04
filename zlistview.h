@@ -96,13 +96,6 @@ signals:
     void rowSelectionChanged();
 
     void rowDoubleClicked(int row);
-
-    // Sent when the user right-clicked inside the list view at pos. The value of selindex is
-    // the selection row the user clicked. This can differ from the actual row if the model
-    // displays items spread to multiple rows. The item's index is passed in selindex. It can
-    // be -1, when pos doesn't point to a row. globalpos is the cursor's position on the
-    // screen.
-    void requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex);
 public:
     ZListView(QWidget *parent = nullptr);
     ~ZListView();
@@ -326,6 +319,15 @@ protected:
     // necessary.
     void changeCurrent(int row);
 
+    // Called when the user right-clicked inside the list view at pos. The value of selindex
+    // is the selection row the user clicked. This can differ from the actual row if the model
+    // displays items spread to multiple rows. The item's index is passed in selindex. It can
+    // be -1, when pos doesn't point to a row. globalpos is the cursor's position on the
+    // screen.
+    // The function returns whether the event for the context menu should be accepted. This is
+    // false by default.
+    virtual bool requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex);
+
     // Inherited from Qt.
 
     // Makes sure the drag drop indicator is updated while draggong.
@@ -362,8 +364,6 @@ protected:
 
     virtual void paintEvent(QPaintEvent *e) override;
 
-    virtual void contextMenuEvent(QContextMenuEvent *e) override;
-
     // Skips some handling in the base class that would create persistent indexes, and handles
     // leave events.
     virtual bool viewportEvent(QEvent *e) override;
@@ -371,6 +371,10 @@ protected slots:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) { ; }
 //    void curSelRowChanged(const QModelIndex &current, const QModelIndex &previous);
 private:
+    // Moved here from protected to hide it from derived classes, that should handle the
+    // requestingContextMenu signal.
+    virtual void contextMenuEvent(QContextMenuEvent *e) override;
+
     using QTableView::selectionModel;
     using QTableView::setSelectionModel;
     using QTableView::currentIndex;

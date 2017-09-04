@@ -97,7 +97,6 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     connect(ui->wordsTable, &ZDictionaryListView::wordDoubleClicked, this, &DictionaryWidget::wordDoubleClicked);
     connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &DictionaryWidget::rowSelectionChanged);
     connect(ui->wordsTable, &ZDictionaryListView::currentRowChanged, this, &DictionaryWidget::tableRowChanged);
-    connect(ui->wordsTable, &ZDictionaryListView::requestingContextMenu, this, &DictionaryWidget::requestingContextMenu);
     connect(ui->wordsTable, &ZDictionaryListView::contextMenuCreated, this, &DictionaryWidget::showContextMenu);
 
     connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterErased, this, &DictionaryWidget::filterErased);
