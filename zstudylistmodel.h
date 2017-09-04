@@ -44,12 +44,16 @@ enum class DeckColumnTypes
     OldMultiplier,
     Multiplier,
 
-    Last = Interval + 255
+    Last = Multiplier + 255
 };
 
 enum class DeckRowRoles
 {
-    DeckIndex = (int)DeckColumnTypes::Last
+    DeckIndex = (int)DeckColumnTypes::Last,
+    // The tested part of an item. Value is of type WordPartBits.
+    ItemQuestion,
+    // The selected hint for the item which can be default. Value is of type WordParts.
+    ItemHint,
 };
 
 enum class DeckViewModes : int { Queued, Studied, Tested };

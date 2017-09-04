@@ -206,9 +206,13 @@ bool StudyListModel::sortOrder(int column, int rowa, int rowb)
             return rowa < rowb;
         case (int)DeckColumnTypes::StudiedPart:
         {
-            WordPartBits vala = itema->questiontype;
-            WordPartBits valb = itemb->questiontype;
+            uchar vala = (uchar)itema->questiontype;
+            uchar valb = (uchar)itemb->questiontype;
             if (vala != valb)
+                return vala < valb;
+            vala = (uchar)itema->mainhint;
+            valb = (uchar)itemb->mainhint;
+            if (itema->mainhint != itemb->mainhint)
                 return vala < valb;
             return rowa < rowb;
         }
@@ -559,6 +563,13 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
         //if (mode == DeckViewModes::Tested)
         //    return deck->testedIndex(itemindex);
         return itemindex;
+    }
+    if (role == (int)DeckRowRoles::ItemQuestion || role == (int)DeckRowRoles::ItemHint)
+    {
+        WordDeckItem *item = mode == DeckViewModes::Queued ? (WordDeckItem*)deck->queuedItems(itemindex) : (WordDeckItem*)deck->studiedItems(itemindex);
+        if (role == (int)DeckRowRoles::ItemQuestion)
+            return (int)item->questiontype;
+        return (int)item->mainhint;
     }
 
     if (role != Qt::DisplayRole)

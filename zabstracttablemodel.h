@@ -113,7 +113,11 @@ public:
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     //virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
     virtual QMap<int, QVariant> itemData(const QModelIndex &index) const override;
+
+    // Same as data, but always returns it for column 0.
+    QVariant rowData(int row, int role = Qt::DisplayRole) const;
 
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
 

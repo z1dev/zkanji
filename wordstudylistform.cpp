@@ -268,6 +268,11 @@ void WordStudyListForm::changePriority(const std::vector<int> &items, uchar val)
     deck->setQueuedPriority(items, val);
 }
 
+void WordStudyListForm::changeMainHint(const std::vector<int> &items, bool queued, WordParts val)
+{
+    deck->setItemHints(items, queued, val);
+}
+
 void WordStudyListForm::closeEvent(QCloseEvent *e)
 {
     saveColumns();
@@ -289,7 +294,7 @@ void WordStudyListForm::keyPressEvent(QKeyEvent *e)
             return;
         }
         for (int &ix : rowlist)
-            ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
         deck->setQueuedPriority(rowlist, e->key() - Qt::Key_1 + 1);
     }
 
@@ -365,7 +370,7 @@ void WordStudyListForm::on_delButton_clicked()
     std::vector<int> rowlist;
     ui->dictWidget->selectedRows(rowlist);
     for (int &ix : rowlist)
-        ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+        ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
 
     removeItems(rowlist, ui->queuedButton->isChecked());
 }
@@ -378,7 +383,7 @@ void WordStudyListForm::on_backButton_clicked()
     std::vector<int> rowlist;
     ui->dictWidget->selectedRows(rowlist);
     for (int &ix : rowlist)
-        ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+        ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
 
     requeueItems(rowlist);
 }
@@ -420,8 +425,6 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
         menu->insertMenu(insertpos, m)->setEnabled(ui->dictWidget->hasSelection());
         QAction *actions[9];
 
-        QString str[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
-
         QSignalMapper *map = new QSignalMapper(menu);
         connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
 
@@ -429,13 +432,14 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
             std::vector<int> rowlist;
             ui->dictWidget->selectedRows(rowlist);
             for (int &ix : rowlist)
-                ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+                ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
             changePriority(rowlist, val);
         });
 
+        QString strpriority[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
         for (int ix = 0; ix != 9; ++ix)
         {
-            actions[ix] = m->addAction(str[ix]);
+            actions[ix] = m->addAction(strpriority[ix]);
             actions[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
             connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
             map->setMapping(actions[ix], 9 - ix);
@@ -447,14 +451,69 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
             std::vector<int> rowlist;
             ui->dictWidget->selectedRows(rowlist);
             for (int &ix : rowlist)
-                ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+                ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
             removeItems(rowlist, true);
         });
         a->setEnabled(ui->dictWidget->hasSelection());
 
+        m = new QMenu(tr("Main hint"));
+        menu->insertMenu(insertpos, m);
+
+        std::vector<int> rowlist;
+        ui->dictWidget->selectedRows(rowlist);
+
+        // Used in checking if all items have the same hint type. In case this is false, it
+        // will be set to something else than the valid values. (=anything above 3)
+        uchar mainhint = 255;
+        // Lists all hint types that should be shown in the context menu.
+        uchar shownhints = (uchar)WordPartBits::Default;
+        for (int &ix : rowlist)
+        {
+            uchar question = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::ItemQuestion).toInt();
+            uchar hint = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::ItemHint).toInt();
+            if (mainhint == 255)
+                mainhint = hint;
+            else if (mainhint != hint) // No match. Set mainhint to invalid.
+                mainhint = 254;
+
+            shownhints |= (int)WordPartBits::AllParts - question;
+
+            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
+        }
+
+        map = new QSignalMapper(menu);
+        connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
+        QString strhint[4] = { tr("Default"), tr("Written"), tr("Kana"), tr("Definition") };
+        for (int ix = 0; ix != 4; ++ix)
+        {
+            if (ix != 0 && ((shownhints & (1 << (ix - 1))) == 0))
+                continue;
+
+            actions[ix] = m->addAction(strhint[ix]);
+            // The Default value in mainhint is 3 but we want to place default at the front.
+            // Because of that ix must be converted to match mainhint.
+            if ((mainhint == 3 && ix == 0) || (ix != 0 && ix - 1 == mainhint))
+            {
+                actions[ix]->setCheckable(true);
+                actions[ix]->setChecked(true);
+            }
+
+            connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+            map->setMapping(actions[ix], ix == 0 ? 3 : ix - 1);
+        }
+
+        connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, [this, rowlist](int val) {
+            changeMainHint(rowlist, true, (WordParts)val);
+        });
+        m->setEnabled(ui->dictWidget->hasSelection());
+
         menu->insertSeparator(insertpos);
 
         return;
+    }
+    else
+    {
+
     }
     return;
 }
@@ -485,7 +544,7 @@ void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalp
         if (rowlist.size() == 1)
             ix = rowlist.front();
         else
-            ix = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(ix, 0), (int)DeckRowRoles::DeckIndex).toInt();
+            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
         //item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
     }
 

@@ -59,6 +59,11 @@ QMap<int, QVariant> ZAbstractTableModel::itemData(const QModelIndex &index) cons
     return roles;
 }
 
+QVariant ZAbstractTableModel::rowData(int row, int role) const
+{
+    return data(index(row, 0), role);
+}
+
 bool ZAbstractTableModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
     return (row != -1 && column != -1);

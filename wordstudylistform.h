@@ -32,6 +32,7 @@ struct WordStudySorting {
 class QMenu;
 class QAction;
 enum class DictColumnTypes;
+enum class WordParts : uchar;
 class WordStudyListForm : public DialogWindow
 {
     Q_OBJECT
@@ -62,6 +63,8 @@ public:
     void requeueItems(const std::vector<int> &items);
     // Changes the priority of the passed deck items in the queued list to val.
     void changePriority(const std::vector<int> &items, uchar val);
+    // Changes the shown main hint of the passed deck items in the queued or studied lists.
+    void changeMainHint(const std::vector<int> &items, bool queued, WordParts val);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;

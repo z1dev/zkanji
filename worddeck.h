@@ -477,7 +477,7 @@ public:
     // Fills sel with the priorities the items in the queue have selected.
     void queuedPriorities(const std::vector<int> &items, QSet<uchar> &sel) const;
     // Updates the priority of items in the queue between 1 and 9 and emits the
-    // prioritiesChanged signal. The indexes list in the signal is sorted by value.
+    // itemDataChanged signal. The indexes list in the signal is sorted by value.
     void setQueuedPriority(const std::vector<int> &items, uchar priority);
 
     // Sets hints to the possible main hints of the passed items and sel with hints
@@ -485,9 +485,9 @@ public:
     // to get the main hint of queued items, and false to get those of the studied items.
     void itemHints(const std::vector<int> &items, bool queued, uchar &hints, uchar &sel) const;
     // Updates the main hints for the passed items. If the main hint matches the question
-    // type, that item is not changed. Emits the hintsChanged signal. The indexes list in the
-    // signal is sorted by value. Set queued to true to change the main hint of queued items,
-    // and false to change the studied items.
+    // type, that item is not changed. Emits the itemDataChanged signal. The indexes list in
+    // the signal is sorted by value. Set queued to true to change the main hint of queued
+    // items, and false to change the studied items.
     void setItemHints(const std::vector<int> &items, bool queued, WordParts hint);
 
     // Increases the current level and spacing of the studied item at index, updating the word
