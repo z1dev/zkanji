@@ -299,7 +299,7 @@ void WordStudyListForm::closeEvent(QCloseEvent *e)
 void WordStudyListForm::keyPressEvent(QKeyEvent *e)
 {
     bool queue = model->viewMode() == DeckViewModes::Queued;
-    if (queue && e->modifiers().testFlag(Qt::ShiftModifier) && e->key() >= Qt::Key_1 && e->key() <= Qt::Key_9)
+    if (queue && e->modifiers().testFlag(Qt::ControlModifier) && e->key() >= Qt::Key_1 && e->key() <= Qt::Key_9)
     {
         std::vector<int> rowlist;
         ui->dictWidget->selectedRows(rowlist);
@@ -440,7 +440,7 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
         QMenu *m = new QMenu(tr("Main hint"));
         menu->insertMenu(insertpos, m);
-        menu->addSeparator();
+        menu->insertSeparator(insertpos);
 
         std::vector<int> selrows;
         std::vector<int> rowlist;
@@ -505,12 +505,12 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
         for (int ix = 0; ix != 9; ++ix)
         {
             actions[ix] = m->addAction(strpriority[ix]);
-            actions[ix]->setShortcut(QKeySequence(QString("Shift+%1").arg(9 - ix)));
+            actions[ix]->setShortcut(QKeySequence(tr("Ctrl+%1").arg(9 - ix)));
             connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
             map->setMapping(actions[ix], 9 - ix);
         }
 
-        QAction *a = new QAction(tr("Remove from deck"), this);
+        QAction *a = new QAction(tr("Remove from deck..."), this);
         menu->insertAction(insertpos, a);
         connect(a, &QAction::triggered, this, [this, rowlist]() {
             removeItems(rowlist, true);
@@ -524,7 +524,7 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
     QMenu *m = new QMenu(tr("Main hint"));
     menu->insertMenu(insertpos, m);
-    menu->addSeparator();
+    menu->insertSeparator(insertpos);
 
     std::vector<int> selrows;
     std::vector<int> rowlist;
@@ -577,21 +577,21 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
     });
     m->setEnabled(ui->dictWidget->hasSelection());
 
-    QAction *a = new QAction(tr("Remove from deck"), this);
+    QAction *a = new QAction(tr("Remove from deck..."), this);
     menu->insertAction(insertpos, a);
     connect(a, &QAction::triggered, this, [this, rowlist]() {
         removeItems(rowlist, false);
     });
     a->setEnabled(ui->dictWidget->hasSelection());
 
-    a = new QAction(tr("Back to queue"), this);
+    a = new QAction(tr("Move to queue..."), this);
     menu->insertAction(insertpos, a);
     connect(a, &QAction::triggered, this, [this, rowlist]() {
         requeueItems(rowlist);
     });
     a->setEnabled(ui->dictWidget->hasSelection());
 
-    menu->addSeparator();
+    menu->insertSeparator(insertpos);
 
     m = new QMenu(tr("Study options"));
     menu->insertMenu(insertpos, m);
