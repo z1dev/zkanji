@@ -467,6 +467,13 @@ void WordDeckForm::keyPressEvent(QKeyEvent *e)
         return;
     }
     
+    if (e->modifiers().testFlag(Qt::AltModifier) && e->key() >= Qt::Key_1 && e->key() <= Qt::Key_9)
+    {
+        SetDictEvent *se = new SetDictEvent(e->key() - Qt::Key_1);
+        qApp->postEvent(this, se);
+    }
+
+
     base::keyPressEvent(e);
 }
 
