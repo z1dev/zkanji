@@ -440,7 +440,6 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
         QMenu *m = new QMenu(tr("Main hint"));
         menu->insertMenu(insertpos, m);
-        menu->insertSeparator(insertpos);
 
         std::vector<int> selrows;
         std::vector<int> rowlist;
@@ -493,6 +492,7 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
         m = new QMenu(tr("Priority"));
         menu->insertMenu(insertpos, m)->setEnabled(ui->dictWidget->hasSelection());
+        menu->insertSeparator(insertpos);
 
         map = new QSignalMapper(menu);
         connect(menu, &QMenu::aboutToHide, map, &QObject::deleteLater);
@@ -524,7 +524,6 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
     QMenu *m = new QMenu(tr("Main hint"));
     menu->insertMenu(insertpos, m);
-    menu->insertSeparator(insertpos);
 
     std::vector<int> selrows;
     std::vector<int> rowlist;
@@ -577,31 +576,17 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
     });
     m->setEnabled(ui->dictWidget->hasSelection());
 
-    QAction *a = new QAction(tr("Remove from deck..."), this);
-    menu->insertAction(insertpos, a);
-    connect(a, &QAction::triggered, this, [this, rowlist]() {
-        removeItems(rowlist, false);
-    });
-    a->setEnabled(ui->dictWidget->hasSelection());
-
-    a = new QAction(tr("Move to queue..."), this);
-    menu->insertAction(insertpos, a);
-    connect(a, &QAction::triggered, this, [this, rowlist]() {
-        requeueItems(rowlist);
-    });
-    a->setEnabled(ui->dictWidget->hasSelection());
-
-    menu->insertSeparator(insertpos);
+    //menu->insertSeparator(insertpos);
 
     m = new QMenu(tr("Study options"));
     menu->insertMenu(insertpos, m);
 
-    a = m->addAction(tr("Increase level"));
+    QAction *a = m->addAction(tr("Increase level"));
     m->setEnabled(rowlist.size() == 1);
     if (rowlist.size() == 1)
     {
         int dix = rowlist.front();
-        connect(a, &QAction::triggered, this, [this, dix]() { increaseLevel(dix); } );
+        connect(a, &QAction::triggered, this, [this, dix]() { increaseLevel(dix); });
     }
 
     a = m->addAction(tr("Decrease level"));
@@ -618,8 +603,24 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
     a->setEnabled(ui->dictWidget->hasSelection());
 
     m->setEnabled(ui->dictWidget->hasSelection());
+
     menu->insertSeparator(insertpos);
 
+    a = new QAction(tr("Remove from deck..."), this);
+    menu->insertAction(insertpos, a);
+    connect(a, &QAction::triggered, this, [this, rowlist]() {
+        removeItems(rowlist, false);
+    });
+    a->setEnabled(ui->dictWidget->hasSelection());
+
+    a = new QAction(tr("Move back to queue..."), this);
+    menu->insertAction(insertpos, a);
+    connect(a, &QAction::triggered, this, [this, rowlist]() {
+        requeueItems(rowlist);
+    });
+    a->setEnabled(ui->dictWidget->hasSelection());
+
+    menu->insertSeparator(insertpos);
 }
 
 //void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
