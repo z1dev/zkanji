@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>stats.svg</file>
     <file>checkall.svg</file>
     <file>pagesetup.svg</file>
     <file>prevpage.svg</file>

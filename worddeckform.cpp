@@ -68,7 +68,7 @@ int DeckListModel::columnCount(const QModelIndex &parent) const
 {
     if (parent.isValid() || decks == nullptr)
         return 0;
-    return 3;
+    return 5;
 }
 
 QModelIndex DeckListModel::parent(const QModelIndex &index) const
@@ -88,11 +88,13 @@ QVariant DeckListModel::headerData(int section, Qt::Orientation orientation, int
         case 0:
             return tr("Deck name");
         case 1:
-            return tr("Due today");
+            return tr("Due");
         case 2:
-            return tr("Last studied");
-        //case 3:
-        //    return tr("Queued");
+            return tr("Last study");
+        case 3:
+            return tr("Queued");
+        case 4:
+            return tr("Studied");
         }
     }
 
@@ -146,13 +148,17 @@ QVariant DeckListModel::data(const QModelIndex &index, int role) const
 
         if (col == 1)
             return decks->items(row)->dueSize();
-        if (col == 2)
+        else if (col == 2)
         {
             QDate date = decks->items(row)->lastDay();
             if (!date.isValid())
                 return QString("Never");
             return formatDate(date);
         }
+        else if (col == 3)
+            return decks->items(row)->queueSize();
+        else if (col == 4)
+            return decks->items(row)->studySize();
 
         return decks->items(row)->getName();
 
@@ -406,12 +412,19 @@ void WordDeckForm::on_addButton_clicked(bool checked)
     ui->deckTable->edit(model->index(row, 0));
 }
 
+void WordDeckForm::on_statsButton_clicked(bool checked)
+{
+
+}
+
 void WordDeckForm::on_deckTable_rowSelectionChanged()
 {
-    bool hassel = ui->deckTable->selectionSize() != 0;
+    bool hassel = ui->deckTable->hasSelection() && !model->hasTempItem();
+    ui->addButton->setEnabled(!model->hasTempItem());
     ui->delButton->setEnabled(hassel);
     ui->viewButton->setEnabled(hassel);
     ui->studyButton->setEnabled(hassel);
+    ui->statsButton->setEnabled(hassel);
 }
 
 void WordDeckForm::on_dictCBox_currentIndexChanged(int index)
@@ -493,6 +506,7 @@ void WordDeckForm::fillDeckList()
         ui->delButton->setEnabled(false);
         ui->viewButton->setEnabled(false);
         ui->studyButton->setEnabled(false);
+        ui->statsButton->setEnabled(false);
     }
 }
 
@@ -508,8 +522,11 @@ void WordDeckForm::studyClicked()
 
 void WordDeckForm::currentDeckChanged(int current, int previous)
 {
-    ui->viewButton->setEnabled(current != -1);
-    ui->studyButton->setEnabled(current != -1);
+    ui->addButton->setEnabled(!model->hasTempItem());
+    //ui->viewButton->setEnabled(current != -1);
+    //ui->studyButton->setEnabled(current != -1);
+    //ui->delButton->setEnabled(current != -1);
+    //ui->statsButton->setEnabled(current != -1);
 }
 
 void WordDeckForm::deckDoubleClicked(int index)

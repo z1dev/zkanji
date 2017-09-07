@@ -100,6 +100,7 @@ public:
 public slots:
     void on_delButton_clicked(bool checked);
     void on_addButton_clicked(bool checked);
+    void on_statsButton_clicked(bool checked);
     void on_deckTable_rowSelectionChanged();
     void on_dictCBox_currentIndexChanged(int index);
     void editorClosed();
