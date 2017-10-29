@@ -141,7 +141,8 @@ SOURCES += \
     kanapracticesettingsform.cpp \
     kanareadingpracticeform.cpp \
     kanawritingpracticeform.cpp \
-    stayontop_x11.cpp
+    stayontop_x11.cpp \
+	worddeckstatsform.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -266,7 +267,8 @@ HEADERS += \
     kanapracticesettingsform.h \
     kanareadingpracticeform.h \
     kanawritingpracticeform.h \
-    stayontop_x11.h
+    stayontop_x11.h \
+	worddeckstatsform.h
 
 FORMS += \
     collectwordsform.ui \
@@ -316,7 +318,8 @@ FORMS += \
     zkanjiwidget.ui \
     kanareadingpracticeform.ui \
     kanawritingpracticeform.ui \
-    kanapracticesettingsform.ui
+    kanapracticesettingsform.ui \
+	worddeckstatsform.ui
 
 DISTFILES +=
 
