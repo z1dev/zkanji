@@ -14,6 +14,7 @@
 #include "smartvector.h"
 #include "fastarray.h"
 
+// WARNING: The following explanation is outdated.
 // Long-term study algorithm and structures description.
 //
 // The exact things to memorize are not stored by these structures as they
@@ -140,6 +141,7 @@
 // Finished: combined with the other statuses, the last given answer was correct or easy and
 //       the card wasn't needed again.
 //enum class StudyCardStatus : uchar { /*Learned = 0x01,*/ /*Incorrect = 0x01,*/ /*Problematic = 0x02,*/ Finished = 0x40 };
+
 // StudyCardStat: statistics for cards for each day they were studied on
 struct StudyCardStat // - ex TRepStat
 {
@@ -219,8 +221,7 @@ struct StudyCard // - ex TRepetitionItem
     quint32 spacing;
 
 
-    // TO-NOT-DO: is wrongcnt and answercnt imported from old data? is the student
-    // also updated with it?
+    // TO-NOT-DO: is wrongcnt and answercnt imported from old data? is the student also updated with it?
 
     // Number of answers since the last time the counting started. (After
     // an item is flagged problematic, this counter starts over.)
@@ -240,8 +241,8 @@ struct StudyCard // - ex TRepetitionItem
     bool learned;
 
 
-    // Number of times the item got repeated in the last test so far.
-    // Only 255 repeats are stored and nothing above this is measured.
+    // Number of times the item got repeated in the last test so far. Only 255 repeats are
+    // stored and nothing above this is measured.
     uchar repeats;
     // Level of item when it was first included in today's test.
     uchar testlevel;
@@ -441,7 +442,7 @@ public:
     StudyDeckId(StudyDeckId &&orig);
     StudyDeckId& operator=(const StudyDeckId &orig);
     StudyDeckId& operator=(StudyDeckId &&orig);
-    bool valid();
+    bool valid() const;
 private:
     // Returns a new study deck id which is unique from both a and b, and comes after them.
     static StudyDeckId next(StudyDeckId a, StudyDeckId b);
@@ -545,6 +546,11 @@ public:
     // same group.
     void mergeGroups(CardId *g1, CardId *g2);
 
+    // Returns the number of day statistics stored.
+    ushort dayStatSize() const;
+    // Returns a day statistic for the given index. 
+    const DeckDayStat& dayStat(int index) const;
+
     // Number of study cards stored in the deck.
     //int cardCount();
 
@@ -567,9 +573,12 @@ public:
     // right after an answer.
     bool cardFirstShow(CardId *cardid) const;
 
+    // Number of times a card was studied.
     ushort cardInclusion(CardId *cardid) const;
+    // Study card's date of the last test.
     QDateTime cardTestDate(CardId *cardid) const;
-    const StudyCardStat& cardLastStats(CardId *cardid) const;
+    // Statistics of a card when it was first tested.
+    const StudyCardStat& cardFirstStats(CardId *cardid) const;
 
     // Returns the date of the card when it was last answered.
     QDateTime cardItemDate(CardId *cardid) const;

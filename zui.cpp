@@ -1440,6 +1440,21 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
     return QString();
 }
 
+QString DateTimeFunctions::formatDay(QDate dt)
+{
+    switch (Settings::general.dateformat)
+    {
+    case GeneralSettings::DayMonthYear:
+        return dt.toString(tr("dd.MM.yyyy"));
+    case GeneralSettings::MonthDayYear:
+        return dt.toString(tr("MM.dd.yyyy"));
+    case GeneralSettings::YearMonthDay:
+        return dt.toString(tr("yyyy.MM.dd"));
+    default:
+        return QString();
+    }
+}
+
 QString DateTimeFunctions::formatPast(QDateTime dt)
 {
     if (!dt.isValid())
@@ -1458,6 +1473,47 @@ QString DateTimeFunctions::formatNext(QDateTime dt)
     if (getLTDay(QDateTime::currentDateTimeUtc()) >= getLTDay(dt))
         return tr("Due");
     return format(dt, DayFixedDate);
+}
+
+QString DateTimeFunctions::formatPastDay(QDate dt)
+{
+    if (!dt.isValid())
+        return tr("Never");
+
+    int d = dt.daysTo(QDateTime::currentDateTime().date());
+    if (d == 0)
+        return tr("Today");
+    if (d == 1)
+        return tr("Yesterday");
+    return formatDay(dt);
+}
+
+QString DateTimeFunctions::formatLength(int sec)
+{
+    int sc = sec % 60;
+    sec = (sec - sc) / 60;
+    int min = sec % 60;
+    sec = (sec - min) / 60;
+    int hour = sec % 24;
+    sec = (sec - hour) / 24;
+    int month = (int)(sec / 30.417);
+    int day = (int)std::fmod((sec - (int)(month * 30.417)), 30.417);
+    month %= 12;
+    sec = (int)std::round((sec - day) / 30.417);
+    sec = (sec - month) / 12;
+    int year = sec % 10;
+    sec = (sec - year) / 10;
+    int decade = sec;
+
+    QString r = (decade == 0 ? QString() : QString(tr("%1d", "decade") % " ").arg(decade)) % (year == 0 ? QString() : QString(tr("%1y", "year") % " ").arg(year))
+        % (month == 0 ? QString() : QString(tr("%1m", "month") % " ").arg(month)) % (day == 0 ? QString() : QString(tr("%1d", "day") % " ").arg(day))
+        % (hour == 0 ? QString() : QString(tr("%1h", "hour") % " ").arg(hour)) % (min == 0 ? QString() : QString(tr("%1m", "minute") % " ").arg(min))
+        % (sc == 0 ? QString() : QString(tr("%1s", "second") % " ").arg(sc));
+
+    r = r.trimmed();
+    if (r.isEmpty())
+        return "-";
+    return r;
 }
 
 QString DateTimeFunctions::formatSpacing(quint32 sec) 
@@ -1479,8 +1535,8 @@ QString DateTimeFunctions::formatSpacing(quint32 sec)
 
 QDate DateTimeFunctions::getLTDay(const QDateTime &dt)
 {
-    // Currently: subtracts X hours from the date time. Its QDate part will
-    // represent a test day starting at 4am.
+    // Currently: subtracts X hours from the date time. Its QDate part will represent a test
+    // day starting at Settings::study.starthour.
     return dt.addMSecs(-1000 * 60 * 60 * Settings::study.starthour).toLocalTime().date();
 }
 

@@ -56,13 +56,16 @@ void editKanjiDefinition(Dictionary *d, ushort kindex);
 
 class WordDeck;
 // Shows the Add words to deck dialog window to select words to be added to a deck. The
-// initial deck should be passed in deck, with the index of words to be listed. This window
-// is always shown as a modal dialog.
+// initial deck should be passed in deck, with the index of words to be listed. This window is
+// always shown as a modal dialog. Dict must be set to the dictionary where deck is, or to the
+// one where a new deck will be created if deck is null.
 void addWordsToDeck(Dictionary *dict, WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent = nullptr);
 
 // Shows the KanaPracticeSettingsForm to allow the user to select which kana to practice. From
 // the form, the kana practice can be started.
 void setupKanaPractice();
 
+// Shows the long term study deck statistics window for the passed deck.
+void showDeckStats(WordDeck *deck);
 
 #endif // DIALOGS_H

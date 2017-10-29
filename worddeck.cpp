@@ -1595,14 +1595,19 @@ int WordDeck::readingsQueued() const
     return testreadings.size();
 }
 
+int WordDeck::wordDataSize() const
+{
+    return list.size();
+}
+
 WordDeckWord* WordDeck::wordData(int index)
 {
     return list[index];
 }
 
-int WordDeck::wordDataSize() const
+bool WordDeck::wordDataStudied(int index) const
 {
-    return list.size();
+    return list[index]->lastinclude.isValid();
 }
 
 //StudyDeckId WordDeck::deckId()
@@ -1619,6 +1624,60 @@ StudyDeck* WordDeck::getStudyDeck()
 //{
 //    return romanize(dict->wordEntry(windex)->kana.data());
 //}
+
+int WordDeck::totalTime() const
+{
+    if (!deckid.valid())
+        return 0;
+    const StudyDeck *study = studyDeck();
+    if (study->dayStatSize() == 0)
+        return 0;
+    int sum = 0;
+    for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+        sum += study->dayStat(ix).timespent;
+
+    return sum;
+}
+
+int WordDeck::studyAverage() const
+{
+    if (!deckid.valid())
+        return 0;
+    const StudyDeck *study = studyDeck();
+    if (study->dayStatSize() == 0)
+        return 0;
+
+    int sum = 0;
+    int cnt = 0;
+    for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+    {
+        int spent = study->dayStat(ix).timespent;
+        if (spent != 0)
+        {
+            sum += study->dayStat(ix).timespent;
+            ++cnt;
+        }
+    }
+
+    return cnt == 0 ? 0 : sum / cnt;
+}
+
+int WordDeck::answerAverage() const
+{
+    int sum = totalTime();
+    if (totalTime() == 0)
+        return 0;
+
+    int itemcnt = 0;
+
+    const StudyDeck *study = studyDeck();
+    for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+    {
+        if (study->dayStat(ix).timespent != 0)
+            itemcnt += study->dayStat(ix).testcount;
+    }
+    return sum / itemcnt;
+}
 
 int WordDeck::queueSize() const
 {
@@ -1945,6 +2004,12 @@ LockedWordDeckItem* WordDeck::studiedItems(int index)
     return lockitems.items(index);
 }
 
+int WordDeck::studyLevel(int index) const
+{
+    const StudyDeck *study = studyDeck();
+    return study->cardLevel(lockitems.items(index)->cardid);
+}
+
 int WordDeck::testedSize() const
 {
     const StudyDeck *study = studyDeck();
@@ -1975,6 +2040,43 @@ int WordDeck::testedIndex(int index) const
 QDate WordDeck::lastDay() const
 {
     return lastday;
+}
+
+QDate WordDeck::firstDay() const
+{
+    if (!deckid.valid())
+        return QDate();
+    const StudyDeck *study = studyDeck();
+    if (study->dayStatSize() == 0)
+        return QDate();
+    return study->dayStat(0).day;
+}
+
+int WordDeck::testDayCount() const
+{
+    if (!deckid.valid())
+        return 0;
+    const StudyDeck *study = studyDeck();
+    if (study->dayStatSize() == 0)
+        return 0;
+
+    int r = 0;
+    for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+    {
+        const DeckDayStat &stat = study->dayStat(ix);
+        if (stat.testcount != 0)
+            ++r;
+    }
+    return r;
+}
+
+int WordDeck::skippedDayCount() const
+{
+    if (!deckid.valid())
+        return 0;
+    int r = testDayCount();
+
+    return firstDay().daysTo(ltDay(QDateTime::currentDateTimeUtc())) - r + 1;
 }
 
 void WordDeck::sortDueList()

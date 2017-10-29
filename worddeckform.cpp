@@ -21,6 +21,7 @@
 #include "globalui.h"
 #include "ranges.h"
 #include "dialogs.h"
+#include "worddeckstatsform.h"
 
 
 //-------------------------------------------------------------
@@ -414,7 +415,7 @@ void WordDeckForm::on_addButton_clicked(bool checked)
 
 void WordDeckForm::on_statsButton_clicked(bool checked)
 {
-
+    showDeckStats(decks->items(ui->deckTable->currentRow()));
 }
 
 void WordDeckForm::on_deckTable_rowSelectionChanged()

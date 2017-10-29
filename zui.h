@@ -343,13 +343,27 @@ public:
 
     };
 
-    // Formats a string for the passed date time in the passed format.
-    // Set utc to true if the date should be shown in UTC time instead
-    // of local.
+    // Formats a string for the passed date time in the passed format. Set utc to true if the
+    // date should be shown in UTC time instead of local.
     static QString format(QDateTime dt, FormatTypes type, bool utc = false);
 
+    // Returns the string representation of a date depending on the program settings to
+    // determine order of parts.
+    static QString formatDay(QDate dt);
+
+    // Formats date to string that show when was the last test, with words like "Today" or
+    // "Yesterday" or the date if these are not valid. The passed date's time must be UTC.
     static QString formatPast(QDateTime dt);
     static QString formatNext(QDateTime dt);
+
+    // Formats date to string that show when was the last test, with words like "Today" or
+    // "Yesterday" or the date if these are not valid.
+    static QString formatPastDay(QDate dt);
+
+    // Formats number of seconds as Xd Xy Xm Xd Xm Xs (decades, years, months, days, minutes,
+    // seconds). A month will be calculated as 30.417 days, which is the average. 0 length
+    // time parts will be left out.
+    static QString formatLength(int sec);
 
     // Formats a string for the passed seconds length spacing in a human readable format.
     // Using words like days, years etc.

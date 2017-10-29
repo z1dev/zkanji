@@ -538,7 +538,7 @@ void DeckDayStatList::fixStats(const std::vector<std::tuple<StudyCard*, int, boo
         bool newlearned = cardgood && cardstatix != 0 && card->stats[cardstatix - 1].day.daysTo(card->stats[cardstatix].day) >= 61;
         if (!card->learned && newlearned)
         {
-            stat.testlearned = true;
+            ++stat.testlearned;
             ++stat.itemlearned;
         }
         else if (card->learned && !newlearned)
@@ -718,7 +718,7 @@ StudyDeckId& StudyDeckId::operator=(StudyDeckId &&orig)
     return *this;
 }
 
-bool StudyDeckId::valid()
+bool StudyDeckId::valid() const
 {
     return id != 0;
 }
@@ -1281,6 +1281,17 @@ void StudyDeck::mergeGroups(CardId *g1, CardId *g2)
     daystats.groupsMerged();
 }
 
+ushort StudyDeck::dayStatSize() const
+{
+    return daystats.size();
+}
+
+const DeckDayStat& StudyDeck::dayStat(int index) const
+{
+    return daystats.items(index);
+}
+
+
 //int StudyDeck::cardCount()
 //{
 //    return list.size();
@@ -1351,7 +1362,7 @@ QDateTime StudyDeck::cardTestDate(CardId *cardid) const
 }
 
 static StudyCardStat emptystat;
-const StudyCardStat& StudyDeck::cardLastStats(CardId *cardid) const
+const StudyCardStat& StudyDeck::cardFirstStats(CardId *cardid) const
 {
     const StudyCard *card = fromId(cardid);
     if (card == nullptr || card->stats.empty())

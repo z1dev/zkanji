@@ -434,18 +434,31 @@ public:
     // today.
     int readingsQueued() const;
 
-    // Returns data of a word added to the deck. Only a single data is added
-    // for each word even if multiple items are added for them.
-    WordDeckWord* wordData(int index);
-
     // Number of word data in the deck.
     int wordDataSize() const;
+
+    // Returns data of a word added to the deck. Only a single data is added for each word
+    // even if multiple items are added for them.
+    WordDeckWord* wordData(int index);
+
+    // Returns whether the word marked by word data at index has ever been studied or not.
+    bool wordDataStudied(int index) const;
+
 
     //StudyDeckId deckId();
     StudyDeck* getStudyDeck();
 
     // Returns the romanized kana of a word by the given word index.
     //QString wordRomaji(int windex);
+
+    // Number of tenth seconds spent on study in total.
+    int totalTime() const;
+
+    // Average time in tenth seconds spent on study each day.
+    int studyAverage() const;
+
+    // Average time spent on a single item in tenth seconds.
+    int answerAverage() const;
 
     // Number of queued items.
     int queueSize() const;
@@ -518,6 +531,9 @@ public:
     // Returns the index of the passed item in the list of studied items.
     //int studiedIndex(LockedWordDeckItem *item) const;
 
+    // Returns the level of the studied item at index.
+    int studyLevel(int index) const;
+
     // Number of items tested during the last test.
     int testedSize() const;
     // Studied deck items tested in the last test.
@@ -527,6 +543,14 @@ public:
 
     // Returns the date of the last day the deck was studied.
     QDate lastDay() const;
+
+    // Returns the date of the first day the deck was studied.
+    QDate firstDay() const;
+
+    // Number of days when test took place since the first test day.
+    int testDayCount() const;
+    // Number of days when no test took place since the first test date till today.
+    int skippedDayCount() const;
 
     // Sorts the duelist so the items are in order of the next test date. Only used in legacy
     // data loading and shouldn't be used elsewhere.
