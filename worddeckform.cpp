@@ -21,7 +21,6 @@
 #include "globalui.h"
 #include "ranges.h"
 #include "dialogs.h"
-#include "worddeckstatsform.h"
 
 
 //-------------------------------------------------------------
@@ -415,7 +414,7 @@ void WordDeckForm::on_addButton_clicked(bool checked)
 
 void WordDeckForm::on_statsButton_clicked(bool checked)
 {
-    showDeckStats(decks->items(ui->deckTable->currentRow()));
+    WordStudyListForm::Instance(decks->items(ui->deckTable->currentRow()), DeckStudyPages::Stats, true);
 }
 
 void WordDeckForm::on_deckTable_rowSelectionChanged()
@@ -513,7 +512,7 @@ void WordDeckForm::fillDeckList()
 
 void WordDeckForm::viewClicked()
 {
-    WordStudyListForm::Instance(decks->items(ui->deckTable->currentRow()), true);
+    WordStudyListForm::Instance(decks->items(ui->deckTable->currentRow()), DeckStudyPages::Items, true);
 }
 
 void WordDeckForm::studyClicked()
@@ -534,7 +533,7 @@ void WordDeckForm::deckDoubleClicked(int index)
 {
     if (index == -1)
         return;
-    WordStudyListForm::Instance(decks->items(index), true);
+    WordStudyListForm::Instance(decks->items(index), DeckStudyPages::Items, true);
 }
 
 

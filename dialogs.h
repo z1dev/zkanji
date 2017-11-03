@@ -65,7 +65,4 @@ void addWordsToDeck(Dictionary *dict, WordDeck *deck, const std::vector<int> &in
 // the form, the kana practice can be started.
 void setupKanaPractice();
 
-// Shows the long term study deck statistics window for the passed deck.
-void showDeckStats(WordDeck *deck);
-
 #endif // DIALOGS_H

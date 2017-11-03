@@ -63,6 +63,12 @@ class StudyListModel : public DictionaryItemModel
     Q_OBJECT
 
 public:
+    // Fills the passed list with the default column sizes in the requested mode.
+    static void defaultColumnWidths(DeckViewModes mode, std::vector<int> &result);
+    // Returns the default column width of a column at columnindex. Returns -1 on invalid
+    // index.
+    static int defaultColumnWidth(DeckViewModes mode, int columnindex);
+
     StudyListModel() = delete;
     StudyListModel(WordDeck *deck, QObject *parent = nullptr);
     virtual ~StudyListModel();
@@ -72,12 +78,6 @@ public:
 
     void setViewMode(DeckViewModes newmode);
     DeckViewModes viewMode() const;
-
-    // Fills the passed list with the default column sizes in the requested mode.
-    void defaultColumnWidths(DeckViewModes mode, std::vector<int> &result) const;
-    // Returns the default column width of a column at columnindex. Returns -1 on invalid
-    // index.
-    int defaultColumnWidth(DeckViewModes mode, int columnindex) const;
 
     //int deckColumnCount() const;
     //int testColumnCount() const;

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>395</width>
+    <width>412</width>
     <height>307</height>
    </rect>
   </property>
@@ -86,9 +86,12 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <property name="spacing">
           <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>5</number>
          </property>
          <item>
           <widget class="QLabel" name="label_6">
@@ -155,10 +158,24 @@
            </property>
           </widget>
          </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QToolButton" name="viewButton">
            <property name="text">
-            <string>View</string>
+            <string>Items</string>
            </property>
            <property name="icon">
             <iconset resource="Resources/resources.qrc">

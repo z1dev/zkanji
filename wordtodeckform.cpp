@@ -767,7 +767,7 @@ void WordToDeckForm::okButtonClicked(bool)
     deck->queueWordItems(words);
     deck->owner()->setLastSelected(deck);
 
-    WordStudyListForm *f = WordStudyListForm::Instance(deck, true);
+    WordStudyListForm *f = WordStudyListForm::Instance(deck, DeckStudyPages::Items, true);
     f->showQueue();
 
     close();

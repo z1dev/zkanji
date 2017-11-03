@@ -9,6 +9,10 @@
 
 #include <QMainWindow>
 #include <map>
+
+#include <QtCharts/QChart>
+QT_CHARTS_USE_NAMESPACE
+
 #include "dialogwindow.h"
 
 namespace Ui {
@@ -28,6 +32,9 @@ struct WordStudySorting {
     Qt::SortOrder order;
 };
 
+enum class DeckStudyPages { Items, Stats, None };
+enum class DeckStatPages { Items, Decks, Tests };
+
 
 class QMenu;
 class QAction;
@@ -40,14 +47,17 @@ public:
     // Shows and returns a WordStudyListForm displaying deck if one exists. Pass true in
     // createshow to make sure the form gets created if it doesn't exist. If a form is already
     // shown, it's only activated when createshow is true.
-    static WordStudyListForm* Instance(WordDeck *deck, bool createshow);
+    static WordStudyListForm* Instance(WordDeck *deck, DeckStudyPages page, bool createshow);
 
     /* constructor is private */
 
     virtual ~WordStudyListForm();
 
     void saveState(WordStudyListFormData &data) const;
-    void restoreState(const WordStudyListFormData &data);
+    void restoreItemsState(const WordStudyListFormData &data);
+
+    // Changes the active page shown in the window.
+    void showPage(DeckStudyPages newpage, bool forceinit = false);
 
     // Switches to the queue tab.
     void showQueue();
@@ -74,7 +84,9 @@ public:
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
+    virtual bool eventFilter(QObject *o, QEvent *e) override;
 protected slots:
+    void on_tabWidget_currentChanged(int index);
     void headerSortChanged(int index, Qt::SortOrder order);
     void rowSelectionChanged();
     void modeButtonClicked(bool checked);
@@ -93,15 +105,21 @@ private:
     // Restores the column sizes and visibility for the current mode to the dictionary view.
     void restoreColumns();
 
-    WordStudyListForm(WordDeck *deck, QWidget *parent = nullptr);
+    void showStat(DeckStatPages page);
+
+    WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidget *parent = nullptr);
     WordStudyListForm() = delete;
 
     // Instances of this form for each word deck, to avoid multiple forms for the same deck.
     static std::map<WordDeck*, WordStudyListForm*> insts;
 
     Ui::WordStudyListForm *ui;
+
     Dictionary *dict;
     WordDeck *deck;
+
+    bool itemsinited;
+    bool statsinited;
 
     StudyListModel *model;
 

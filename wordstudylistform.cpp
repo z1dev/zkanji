@@ -6,8 +6,18 @@
 
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSignalMapper>
 #include <QMenu>
 #include <QtEvents>
+#include <QtCharts/QBarSeries> 
+#include <QtCharts/QStackedBarSeries> 
+#include <QtCharts/QBarSet> 
+#include <QtCharts/QBarCategoryAxis> 
+#include <QtCharts/QAreaSeries> 
+#include <QtCharts/QLineSeries> 
+#include <QtCharts/QValueAxis> 
+#include <QtCharts/QDateTimeAxis> 
+#include <map>
 
 #include "wordstudylistform.h"
 #include "ui_wordstudylistform.h"
@@ -35,7 +45,7 @@
 // Single instance of WordDeckForm 
 std::map<WordDeck*, WordStudyListForm*> WordStudyListForm::insts;
 
-WordStudyListForm* WordStudyListForm::Instance(WordDeck *deck, bool createshow)
+WordStudyListForm* WordStudyListForm::Instance(WordDeck *deck, DeckStudyPages page, bool createshow)
 {
     auto it = insts.find(deck);
 
@@ -45,11 +55,13 @@ WordStudyListForm* WordStudyListForm::Instance(WordDeck *deck, bool createshow)
 
     if (inst == nullptr && createshow)
     {
-        inst = insts[deck] = new WordStudyListForm(deck, gUI->activeMainForm());
+        inst = insts[deck] = new WordStudyListForm(deck, page, gUI->activeMainForm());
         //i->connect(worddeckform, &QMainWindow::destroyed, i, &GlobalUI::formDestroyed);
 
         inst->show();
     }
+    else if (page != DeckStudyPages::None && inst != nullptr)
+        inst->showPage(page);
 
     if (createshow)
     {
@@ -61,7 +73,7 @@ WordStudyListForm* WordStudyListForm::Instance(WordDeck *deck, bool createshow)
     return inst;
 }
 
-WordStudyListForm::WordStudyListForm(WordDeck *deck, QWidget *parent) : base(parent), ui(new Ui::WordStudyListForm), dict(deck->dictionary()), deck(deck), ignoresort(false)
+WordStudyListForm::WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidget *parent) : base(parent), ui(new Ui::WordStudyListForm), dict(deck->dictionary()), deck(deck), itemsinited(false), statsinited(false), ignoresort(false)
 {
     ui->setupUi(this);
 
@@ -71,6 +83,9 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, QWidget *parent) : base(par
 
     QPushButton *startButton = ui->buttonBox->addButton(tr("Start the test"), QDialogButtonBox::AcceptRole);
     QPushButton *closeButton = ui->buttonBox->button(QDialogButtonBox::Close);
+
+    connect(startButton, &QPushButton::clicked, this, &WordStudyListForm::startTest);
+    connect(closeButton, &QPushButton::clicked, this, &WordStudyListForm::close);
 
     queuesort = { 0, Qt::AscendingOrder };
     studiedsort = { 0, Qt::AscendingOrder };
@@ -87,22 +102,18 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, QWidget *parent) : base(par
     ui->dictWidget->setStudyDefinitionUsed(true);
     ui->dictWidget->setDictionary(dict);
 
-    model = new StudyListModel(deck, this);
-    ui->dictWidget->setModel(model);
-    ui->dictWidget->setSortFunction([this](DictionaryItemModel *d, int c, int a, int b){ return model->sortOrder(c, a, b); });
-    model->defaultColumnWidths(DeckViewModes::Queued, queuesizes);
-    model->defaultColumnWidths(DeckViewModes::Studied, studiedsizes);
-    model->defaultColumnWidths(DeckViewModes::Tested, testedsizes);
+    StudyListModel::defaultColumnWidths(DeckViewModes::Queued, queuesizes);
+    StudyListModel::defaultColumnWidths(DeckViewModes::Studied, studiedsizes);
+    StudyListModel::defaultColumnWidths(DeckViewModes::Tested, testedsizes);
 
     queuecols.assign(queuesizes.size() - 2, 1);
     studiedcols.assign(studiedsizes.size() - 2, 1);
     testedcols.assign(testedsizes.size() - 2, 1);
 
     ui->dictWidget->view()->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+
     connect(ui->dictWidget->view()->horizontalHeader(), &QWidget::customContextMenuRequested, this, &WordStudyListForm::showColumnContextMenu);
     connect(ui->dictWidget, &DictionaryWidget::customizeContextMenu, this, &WordStudyListForm::showContextMenu);
-
-    //ui->dictWidget->view()->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(ui->queuedButton, &QToolButton::toggled, this, &WordStudyListForm::modeButtonClicked);
     connect(ui->studiedButton, &QToolButton::toggled, this, &WordStudyListForm::modeButtonClicked);
@@ -112,22 +123,16 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, QWidget *parent) : base(par
     connect(ui->kButton, &QToolButton::toggled, this, &WordStudyListForm::partButtonClicked);
     connect(ui->dButton, &QToolButton::toggled, this, &WordStudyListForm::partButtonClicked);
 
-    connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &WordStudyListForm::rowSelectionChanged);
-    connect(ui->dictWidget, &DictionaryWidget::sortIndicatorChanged, this, &WordStudyListForm::headerSortChanged);
-
-    connect(startButton, &QPushButton::clicked, this, &WordStudyListForm::startTest);
-    connect(closeButton, &QPushButton::clicked, this, &WordStudyListForm::close);
-
-    auto &s = ui->queuedButton->isChecked() ? queuesort : ui->studiedButton->isChecked() ? studiedsort : testedsort;
-    ui->dictWidget->setSortIndicator(s.column, s.order);
-    ui->dictWidget->sortByIndicator();
-
-    connect(dict, &Dictionary::dictionaryReset, this, &WordStudyListForm::dictReset);
-    connect(gUI, &GlobalUI::dictionaryRemoved, this, &WordStudyListForm::dictRemoved);
-
     connect(deck->owner(), &WordDeckList::deckToBeRemoved, this, &WordStudyListForm::closeCancel);
 
-    restoreState(FormStates::wordstudylist);
+    if (!FormStates::emptyState(FormStates::wordstudylist))
+        resize(FormStates::wordstudylist.siz);
+
+    ui->tabWidget->setCurrentIndex(-1);
+
+    if (page == DeckStudyPages::None)
+        page = DeckStudyPages::Items;
+    showPage(page, true);
 }
 
 WordStudyListForm::~WordStudyListForm()
@@ -140,37 +145,36 @@ void WordStudyListForm::saveState(WordStudyListFormData &data) const
 {
     data.siz = isMaximized() ? normalGeometry().size() : rect().size();
 
-    data.showkanji = ui->wButton->isChecked();
-    data.showkana = ui->kButton->isChecked();
-    data.showdef = ui->dButton->isChecked();
+    if (itemsinited)
+    {
+        data.showkanji = ui->wButton->isChecked();
+        data.showkana = ui->kButton->isChecked();
+        data.showdef = ui->dButton->isChecked();
 
-    data.mode = ui->queuedButton->isChecked() ? DeckViewModes::Queued : ui->studiedButton->isChecked() ? DeckViewModes::Studied : DeckViewModes::Tested;
+        data.mode = ui->queuedButton->isChecked() ? DeckViewModes::Queued : ui->studiedButton->isChecked() ? DeckViewModes::Studied : DeckViewModes::Tested;
 
-    ui->dictWidget->saveState(data.dict);
+        ui->dictWidget->saveState(data.dict);
 
-    data.queuesort.column = queuesort.column;
-    data.queuesort.order = queuesort.order;
-    data.studysort.column = studiedsort.column;
-    data.studysort.order = studiedsort.order;
-    data.testedsort.column = testedsort.column;
-    data.testedsort.order = testedsort.order;
+        data.queuesort.column = queuesort.column;
+        data.queuesort.order = queuesort.order;
+        data.studysort.column = studiedsort.column;
+        data.studysort.order = studiedsort.order;
+        data.testedsort.column = testedsort.column;
+        data.testedsort.order = testedsort.order;
 
-    data.queuesizes = queuesizes;
-    data.studysizes = studiedsizes;
-    data.testedsizes = testedsizes;
-    data.queuecols = queuecols;
-    data.studycols = studiedcols;
-    data.testedcols = testedcols;
+        data.queuesizes = queuesizes;
+        data.studysizes = studiedsizes;
+        data.testedsizes = testedsizes;
+        data.queuecols = queuecols;
+        data.studycols = studiedcols;
+        data.testedcols = testedcols;
+    }
 }
 
-void WordStudyListForm::restoreState(const WordStudyListFormData &data)
+void WordStudyListForm::restoreItemsState(const WordStudyListFormData &data)
 {
-    if (FormStates::emptyState(data))
-        return;
-
     ignoresort = true;
 
-    resize(data.siz);
     ui->wButton->setChecked(data.showkanji);
     ui->kButton->setChecked(data.showkana);
     ui->dButton->setChecked(data.showdef);
@@ -216,6 +220,27 @@ void WordStudyListForm::restoreState(const WordStudyListFormData &data)
     ui->dictWidget->sortByIndicator();
 
     restoreColumns();
+}
+
+void WordStudyListForm::showPage(DeckStudyPages newpage, bool forceinit)
+{
+    switch (newpage)
+    {
+    case DeckStudyPages::Items:
+        if (ui->tabWidget->currentIndex() != 0)
+            ui->tabWidget->setCurrentIndex(0);
+        else if (forceinit)
+            on_tabWidget_currentChanged(0);
+        break;
+    case DeckStudyPages::Stats:
+        if (ui->tabWidget->currentIndex() != 1)
+            ui->tabWidget->setCurrentIndex(1);
+        else if (forceinit)
+            on_tabWidget_currentChanged(1);
+        break;
+    default:
+        return;
+    }
 }
 
 void WordStudyListForm::showQueue()
@@ -290,7 +315,8 @@ void WordStudyListForm::resetItems(const std::vector<int> &items)
 
 void WordStudyListForm::closeEvent(QCloseEvent *e)
 {
-    saveColumns();
+    if (itemsinited)
+        saveColumns();
 
     saveState(FormStates::wordstudylist);
     base::closeEvent(e);
@@ -298,22 +324,111 @@ void WordStudyListForm::closeEvent(QCloseEvent *e)
 
 void WordStudyListForm::keyPressEvent(QKeyEvent *e)
 {
-    bool queue = model->viewMode() == DeckViewModes::Queued;
-    if (queue && e->modifiers().testFlag(Qt::ControlModifier) && e->key() >= Qt::Key_1 && e->key() <= Qt::Key_9)
+    if (itemsinited && ui->tabWidget->currentIndex() == 0)
     {
-        std::vector<int> rowlist;
-        ui->dictWidget->selectedRows(rowlist);
-        if (rowlist.empty())
+        bool queue = model->viewMode() == DeckViewModes::Queued;
+        if (queue && e->modifiers().testFlag(Qt::ControlModifier) && e->key() >= Qt::Key_1 && e->key() <= Qt::Key_9)
         {
-            base::keyPressEvent(e);
-            return;
+            std::vector<int> rowlist;
+            ui->dictWidget->selectedRows(rowlist);
+            if (rowlist.empty())
+            {
+                base::keyPressEvent(e);
+                return;
+            }
+            for (int &ix : rowlist)
+                ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
+            deck->setQueuedPriority(rowlist, e->key() - Qt::Key_1 + 1);
         }
-        for (int &ix : rowlist)
-            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
-        deck->setQueuedPriority(rowlist, e->key() - Qt::Key_1 + 1);
     }
 
     base::keyPressEvent(e);
+}
+
+bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
+{
+    if (o == ui->statView && e->type() == QEvent::Resize && ui->statView->chart() != nullptr && ui->statView->chart()->axisY() != nullptr)
+    {
+        ((QValueAxis*)ui->statView->chart()->axisY())->setTickCount(std::max(2, ui->statView->height() / 70));
+        if (ui->itemsButton->isChecked())
+            ((QDateTimeAxis*)ui->statView->chart()->axisX())->setTickCount(std::max(2, ui->statView->width() / 70));
+    }
+    return base::eventFilter(o, e);
+}
+
+void WordStudyListForm::on_tabWidget_currentChanged(int index)
+{
+    if (index == -1 || (index == 0 && itemsinited) || (index == 1 && statsinited))
+        return;
+
+    if (index == 0)
+    {
+        itemsinited = true;
+
+        model = new StudyListModel(deck, this);
+        ui->dictWidget->setModel(model);
+        ui->dictWidget->setSortFunction([this](DictionaryItemModel *d, int c, int a, int b) { return model->sortOrder(c, a, b); });
+
+        connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &WordStudyListForm::rowSelectionChanged);
+        connect(ui->dictWidget, &DictionaryWidget::sortIndicatorChanged, this, &WordStudyListForm::headerSortChanged);
+
+        auto &s = ui->queuedButton->isChecked() ? queuesort : ui->studiedButton->isChecked() ? studiedsort : testedsort;
+        ui->dictWidget->setSortIndicator(s.column, s.order);
+        ui->dictWidget->sortByIndicator();
+
+        connect(dict, &Dictionary::dictionaryReset, this, &WordStudyListForm::dictReset);
+        connect(gUI, &GlobalUI::dictionaryRemoved, this, &WordStudyListForm::dictRemoved);
+
+        restoreItemsState(FormStates::wordstudylist);
+    }
+    else
+    {
+        statsinited = true;
+
+        ui->dueLabel->setText(QString::number(deck->dueSize()));
+        ui->queueLabel->setText(QString::number(deck->queueSize()));
+
+        ui->studiedLabel->setText(QString::number(deck->studySize()));
+
+        // Calculate unique words and kanji count by checking every word data.
+        int wordcnt = 0;
+        QSet<ushort> kanjis;
+        for (int ix = 0, siz = deck->wordDataSize(); ix != siz; ++ix)
+        {
+            if (!deck->wordDataStudied(ix))
+                continue;
+            ++wordcnt;
+            WordEntry *e = dict->wordEntry(deck->wordData(ix)->index);
+            for (int iy = 0, siy = e->kanji.size(); iy != siy; ++iy)
+                if (KANJI(e->kanji[iy].unicode()))
+                    kanjis.insert(e->kanji[iy].unicode());
+        }
+
+        ui->wordsLabel->setText(QString::number(wordcnt));
+        ui->kanjiLabel->setText(QString::number(kanjis.size()));
+
+        ui->firstLabel->setText(DateTimeFunctions::formatPastDay(deck->firstDay()));
+        ui->lastLabel->setText(DateTimeFunctions::formatPastDay(deck->lastDay()));
+        ui->testDaysLabel->setText(QString::number(deck->testDayCount()));
+        ui->skippedDaysLabel->setText(QString::number(deck->skippedDayCount()));
+
+        ui->studyTimeLabel->setText(DateTimeFunctions::formatLength((int)((deck->totalTime() + 5) / 10)));
+        ui->studyTimeAvgLabel->setText(DateTimeFunctions::formatLength((int)((deck->studyAverage() + 5) / 10)));
+        ui->answerTimeAvgLabel->setText(DateTimeFunctions::formatLength((int)((deck->answerAverage() + 5) / 10)));
+
+        showStat(DeckStatPages::Items);
+
+        ui->statView->installEventFilter(this);
+
+        QSignalMapper *map = new QSignalMapper(this);
+        map->setMapping(ui->itemsButton, (int)DeckStatPages::Items);
+        map->setMapping(ui->testsButton, (int)DeckStatPages::Tests);
+        map->setMapping(ui->decksButton, (int)DeckStatPages::Decks);
+        connect(ui->itemsButton, &QToolButton::clicked, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+        connect(ui->testsButton, &QToolButton::clicked, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+        connect(ui->decksButton, &QToolButton::clicked, map, (void (QSignalMapper::*)())&QSignalMapper::map);
+        connect(map, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), [this](int val) { showStat((DeckStatPages)val);  });
+    }
 }
 
 void WordStudyListForm::headerSortChanged(int column, Qt::SortOrder order)
@@ -822,6 +937,9 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
 
 void WordStudyListForm::dictReset()
 {
+    if (!itemsinited)
+        return;
+
     auto &s = ui->queuedButton->isChecked() ? queuesort : ui->studiedButton->isChecked() ? studiedsort : testedsort;
     model->reset();
 
@@ -874,6 +992,199 @@ void WordStudyListForm::restoreColumns()
         if (hid)
             ui->dictWidget->view()->setColumnHidden(ix, true);
     }
+}
+
+void WordStudyListForm::showStat(DeckStatPages page)
+{
+    //if (viewed == page)
+    //    return;
+
+    //viewed = page;
+
+    if (ui->statView->chart() != nullptr)
+        ui->statView->chart()->deleteLater();
+    QChart *chart = new QChart();
+
+    switch (page)
+    {
+    case DeckStatPages::Decks:
+    {
+        QBarSeries *bars = new QBarSeries(chart);
+        QBarSet *dataset = new QBarSet("Levels", chart);
+
+        std::vector<int> levels;
+        for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)
+        {
+            int lv = deck->studyLevel(ix);
+            if (levels.size() <= lv)
+                levels.resize(lv + 1);
+            ++levels[lv];
+        }
+        for (int ix = 0, siz = levels.size(); ix != siz; ++ix)
+            (*dataset) << levels[ix];
+
+        for (int ix = levels.size(), siz = 12; ix < siz; ++ix)
+            (*dataset) << 0;
+
+
+        bars->append(dataset);
+        bars->setLabelsVisible(true);
+        bars->setLabelsPosition(QBarSeries::LabelsOutsideEnd);
+        chart->addSeries(bars);
+        chart->setTitle(tr("Number of items at each level"));
+        chart->legend()->hide();
+        chart->createDefaultAxes();
+        ((QValueAxis*)chart->axisY())->setLabelFormat("%i");
+        ((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statView->height() / 70));
+        break;
+    }
+    case DeckStatPages::Items:
+    {
+        QLineSeries *l1 = new QLineSeries(chart);
+        QLineSeries *l2 = new QLineSeries(chart);
+        QLineSeries *l3 = new QLineSeries(chart);
+
+        const StudyDeck *study = deck->getStudyDeck();
+
+        qreal hi = 0;
+
+        QDate last;
+        for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+        {
+            const DeckDayStat &stat = study->dayStat(ix);
+            last = stat.day;
+            qint64 timesince = QDateTime(stat.day, QTime()).toMSecsSinceEpoch();
+
+            hi = std::max(hi, (qreal)stat.itemcount);
+            l1->append(timesince, stat.itemcount);
+            l2->append(timesince, stat.itemcount - stat.itemlearned);
+            l3->append(timesince, stat.testcount);
+        }
+        QDateTime now = QDateTime(ltDay(QDateTime::currentDateTimeUtc()), QTime());
+        qint64 timesince = now.toMSecsSinceEpoch();
+        if (last != now.date())
+        {
+            l1->append(timesince, static_cast<const QVector<QPointF>>(l1->pointsVector()).last().y());
+            l2->append(timesince, static_cast<const QVector<QPointF>>(l2->pointsVector()).last().y());
+            l3->append(timesince, static_cast<const QVector<QPointF>>(l3->pointsVector()).last().y());
+        }
+
+        QDateTimeAxis *xaxis = new QDateTimeAxis(chart);
+        xaxis->setTickCount(10);
+        xaxis->setFormat("MMM yyyy");
+        xaxis->setTitleText("Study days");
+
+        QValueAxis *yaxis = new QValueAxis(chart);
+        yaxis->setLabelFormat("%i");
+        yaxis->setTitleText("Items");
+        yaxis->setRange(0, hi + 100);
+
+        QAreaSeries *area1 = new QAreaSeries(chart);
+        area1->setUpperSeries(l1);
+        area1->setLowerSeries(l2);
+        chart->addSeries(area1);
+
+        QAreaSeries *area2 = new QAreaSeries(chart);
+        area2->setUpperSeries(l2);
+        area2->setLowerSeries(l3);
+        chart->addSeries(area2);
+
+        QAreaSeries *area3 = new QAreaSeries(chart);
+        area3->setUpperSeries(l3);
+        chart->addSeries(area3);
+
+        xaxis->setTickCount(std::max(2, ui->statView->width() / 70));
+        yaxis->setTickCount(std::max(2, ui->statView->height() / 70));
+
+        chart->setTitle(tr("Number of items on each day"));
+        chart->legend()->hide();
+
+        chart->setAxisX(xaxis);
+        chart->setAxisY(yaxis);
+
+        area1->attachAxis(xaxis);
+        area1->attachAxis(yaxis);
+        area2->attachAxis(xaxis);
+        area2->attachAxis(yaxis);
+        area3->attachAxis(xaxis);
+        area3->attachAxis(yaxis);
+
+        break;
+    }
+    case DeckStatPages::Tests:
+    {
+        const StudyDeck *study = deck->getStudyDeck();
+        QStackedBarSeries *bars = new QStackedBarSeries(chart);
+
+        QBarSet *s1 = new QBarSet(tr("Learned"));
+        QBarSet *s2 = new QBarSet(tr("Correct"));
+        QBarSet *s3 = new QBarSet(tr("Wrong"));
+
+        QBarCategoryAxis *xaxis = new QBarCategoryAxis(chart);
+        QStringList days;
+
+        QDate last;
+        for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+        {
+            const DeckDayStat &stat = study->dayStat(ix);
+            qint64 timesince = QDateTime(stat.day, QTime()).toMSecsSinceEpoch();
+
+            s1->append(stat.testlearned);
+            s2->append(stat.testcount - stat.testwrong);
+            s3->append(stat.testwrong);
+
+            if (last.isValid() && last.daysTo(stat.day) > 1)
+            {
+                for (int iy = 1, siz = last.daysTo(stat.day) - 1; iy != siz; ++iy)
+                {
+                    s1->append(0);
+                    s2->append(0);
+                    s3->append(0);
+                    days.append(DateTimeFunctions::formatDay(last.addDays(iy)));
+                }
+            }
+
+            last = stat.day;
+            days.append(DateTimeFunctions::formatDay(stat.day));
+        }
+        QDate now = ltDay(QDateTime::currentDateTimeUtc());
+        if (last.isValid() && last.daysTo(now) > 0)
+        {
+            for (int iy = 0, siz = last.daysTo(now); iy != siz; ++iy)
+            {
+                s1->append(0);
+                s2->append(0);
+                s3->append(0);
+                days.append(DateTimeFunctions::formatDay(last.addDays(iy + 1)));
+            }
+        }
+
+        bars->append(s1);
+        bars->append(s2);
+        bars->append(s3);
+
+        xaxis->append(days);
+        if (!days.empty())
+            xaxis->setRange(days.at(std::max(0, days.size() - 7)), days.last());
+        QValueAxis *yaxis = new QValueAxis(chart);
+        yaxis->setLabelFormat("%i");
+        yaxis->setTitleText("Tested items");
+        //yaxis->setRange(0, hi + 100);
+
+        chart->addSeries(bars);
+        chart->setTitle(tr("Number of items tested"));
+        chart->legend()->hide();
+
+        chart->setAxisX(xaxis, bars);
+        chart->setAxisY(yaxis, bars);
+
+
+        break;
+    }
+    }
+
+    ui->statView->setChart(chart);
+    ui->statView->setRubberBand(QChartView::HorizontalRubberBand);
 }
 
 

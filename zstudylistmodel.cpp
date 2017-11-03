@@ -68,6 +68,67 @@ const int testedcolcount = testeddata.size();
 //-------------------------------------------------------------
 
 
+void StudyListModel::defaultColumnWidths(DeckViewModes mode, std::vector<int> &result)
+{
+    if (mode == DeckViewModes::Queued)
+    {
+        result.resize(queuedata.size() - 1);
+        int ix = 0;
+        for (const DictColumnData &dat : queuedata)
+        {
+            if (ix == result.size())
+                break;
+            result[ix++] = dat.width;
+        }
+    }
+    else if (mode == DeckViewModes::Studied)
+    {
+        result.resize(studieddata.size() - 1);
+        int ix = 0;
+        for (const DictColumnData &dat : studieddata)
+        {
+            if (ix == result.size())
+                break;
+            result[ix++] = dat.width;
+        }
+    }
+    else if (mode == DeckViewModes::Tested)
+    {
+        result.resize(testeddata.size() - 1);
+        int ix = 0;
+        for (const DictColumnData &dat : testeddata)
+        {
+            if (ix == result.size())
+                break;
+            result[ix++] = dat.width;
+        }
+    }
+}
+
+int StudyListModel::defaultColumnWidth(DeckViewModes mode, int columnindex)
+{
+    if (mode == DeckViewModes::Queued)
+    {
+        if (columnindex < 0 || columnindex >= queuedata.size())
+            return -1;
+        return (queuedata.begin() + columnindex)->width;
+    }
+    else if (mode == DeckViewModes::Studied)
+    {
+        if (columnindex < 0 || columnindex >= studieddata.size())
+            return -1;
+        return (studieddata.begin() + columnindex)->width;
+    }
+    else if (mode == DeckViewModes::Tested)
+    {
+        if (columnindex < 0 || columnindex >= testeddata.size())
+            return -1;
+        return (testeddata.begin() + columnindex)->width;
+    }
+
+    return -1;
+}
+
 StudyListModel::StudyListModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), mode(DeckViewModes::Studied), kanjion(true), kanaon(true), defon(true)
 {
     setViewMode(DeckViewModes::Queued);
@@ -118,67 +179,6 @@ void StudyListModel::setViewMode(DeckViewModes newmode)
 DeckViewModes StudyListModel::viewMode() const
 {
     return mode;
-}
-
-void StudyListModel::defaultColumnWidths(DeckViewModes mode, std::vector<int> &result) const
-{
-    if (mode == DeckViewModes::Queued)
-    {
-        result.resize(queuedata.size() - 1);
-        int ix = 0;
-        for (const DictColumnData &dat : queuedata)
-        {
-            if (ix == result.size())
-                break;
-            result[ix++] = dat.width;
-        }
-    }
-    else if (mode == DeckViewModes::Studied)
-    {
-        result.resize(studieddata.size() - 1);
-        int ix = 0;
-        for (const DictColumnData &dat : studieddata)
-        {
-            if (ix == result.size())
-                break;
-            result[ix++] = dat.width;
-        }
-    }
-    else if (mode == DeckViewModes::Tested)
-    {
-        result.resize(testeddata.size() - 1);
-        int ix = 0;
-        for (const DictColumnData &dat : testeddata)
-        {
-            if (ix == result.size())
-                break;
-            result[ix++] = dat.width;
-        }
-    }
-}
-
-int StudyListModel::defaultColumnWidth(DeckViewModes mode, int columnindex) const
-{
-    if (mode == DeckViewModes::Queued)
-    {
-        if (columnindex < 0 || columnindex >= queuedata.size())
-            return -1;
-        return (queuedata.begin() + columnindex)->width;
-    }
-    else if (mode == DeckViewModes::Studied)
-    {
-        if (columnindex < 0 || columnindex >= studieddata.size())
-            return -1;
-        return (studieddata.begin() + columnindex)->width;
-    }
-    else if (mode == DeckViewModes::Tested)
-    {
-        if (columnindex < 0 || columnindex >= testeddata.size())
-            return -1;
-        return (testeddata.begin() + columnindex)->width;
-    }
-
-    return -1;
 }
 
 bool StudyListModel::sortOrder(int column, int rowa, int rowb)
