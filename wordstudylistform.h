@@ -33,7 +33,7 @@ struct WordStudySorting {
 };
 
 enum class DeckStudyPages { Items, Stats, None };
-enum class DeckStatPages { Items, Decks, Tests };
+enum class DeckStatPages { Items, Levels, Tests };
 
 
 class QMenu;
@@ -96,6 +96,10 @@ protected slots:
     void on_backButton_clicked();
     void showColumnContextMenu(const QPoint &p);
     void showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
+
+    void on_itemsButton_clicked();
+    void on_levelsButton_clicked();
+    void on_testsButton_clicked();
 
     void dictReset();
     void dictRemoved(int index, int orderindex, void *oldaddress);

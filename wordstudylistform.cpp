@@ -419,15 +419,6 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
         showStat(DeckStatPages::Items);
 
         ui->statView->installEventFilter(this);
-
-        QSignalMapper *map = new QSignalMapper(this);
-        map->setMapping(ui->itemsButton, (int)DeckStatPages::Items);
-        map->setMapping(ui->testsButton, (int)DeckStatPages::Tests);
-        map->setMapping(ui->decksButton, (int)DeckStatPages::Decks);
-        connect(ui->itemsButton, &QToolButton::clicked, map, (void (QSignalMapper::*)())&QSignalMapper::map);
-        connect(ui->testsButton, &QToolButton::clicked, map, (void (QSignalMapper::*)())&QSignalMapper::map);
-        connect(ui->decksButton, &QToolButton::clicked, map, (void (QSignalMapper::*)())&QSignalMapper::map);
-        connect(map, static_cast<void(QSignalMapper::*)(int)>(&QSignalMapper::mapped), [this](int val) { showStat((DeckStatPages)val);  });
     }
 }
 
@@ -738,6 +729,21 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
     menu->insertSeparator(insertpos);
 }
 
+void WordStudyListForm::on_itemsButton_clicked()
+{
+    showStat(DeckStatPages::Items);
+}
+
+void WordStudyListForm::on_levelsButton_clicked()
+{
+    showStat(DeckStatPages::Levels);
+}
+
+void WordStudyListForm::on_testsButton_clicked()
+{
+    showStat(DeckStatPages::Tests);
+}
+
 //void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
 //{
 //    int ix = ui->dictWidget->view()->rowAt(pos.y());
@@ -1007,7 +1013,7 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
     switch (page)
     {
-    case DeckStatPages::Decks:
+    case DeckStatPages::Levels:
     {
         QBarSeries *bars = new QBarSeries(chart);
         QBarSet *dataset = new QBarSet("Levels", chart);
@@ -1036,6 +1042,7 @@ void WordStudyListForm::showStat(DeckStatPages page)
         chart->createDefaultAxes();
         ((QValueAxis*)chart->axisY())->setLabelFormat("%i");
         ((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statView->height() / 70));
+        ui->statStack->setCurrentIndex(0);
         break;
     }
     case DeckStatPages::Items:
@@ -1109,75 +1116,77 @@ void WordStudyListForm::showStat(DeckStatPages page)
         area3->attachAxis(xaxis);
         area3->attachAxis(yaxis);
 
+        ui->statStack->setCurrentIndex(0);
         break;
     }
     case DeckStatPages::Tests:
     {
-        const StudyDeck *study = deck->getStudyDeck();
-        QStackedBarSeries *bars = new QStackedBarSeries(chart);
+        //const StudyDeck *study = deck->getStudyDeck();
+        //QStackedBarSeries *bars = new QStackedBarSeries(chart);
 
-        QBarSet *s1 = new QBarSet(tr("Learned"));
-        QBarSet *s2 = new QBarSet(tr("Correct"));
-        QBarSet *s3 = new QBarSet(tr("Wrong"));
+        //QBarSet *s1 = new QBarSet(tr("Learned"));
+        //QBarSet *s2 = new QBarSet(tr("Correct"));
+        //QBarSet *s3 = new QBarSet(tr("Wrong"));
 
-        QBarCategoryAxis *xaxis = new QBarCategoryAxis(chart);
-        QStringList days;
+        //QBarCategoryAxis *xaxis = new QBarCategoryAxis(chart);
+        //QStringList days;
 
-        QDate last;
-        for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
-        {
-            const DeckDayStat &stat = study->dayStat(ix);
-            qint64 timesince = QDateTime(stat.day, QTime()).toMSecsSinceEpoch();
+        //QDate last;
+        //for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+        //{
+        //    const DeckDayStat &stat = study->dayStat(ix);
+        //    qint64 timesince = QDateTime(stat.day, QTime()).toMSecsSinceEpoch();
 
-            s1->append(stat.testlearned);
-            s2->append(stat.testcount - stat.testwrong);
-            s3->append(stat.testwrong);
+        //    s1->append(stat.testlearned);
+        //    s2->append(stat.testcount - stat.testwrong);
+        //    s3->append(stat.testwrong);
 
-            if (last.isValid() && last.daysTo(stat.day) > 1)
-            {
-                for (int iy = 1, siz = last.daysTo(stat.day) - 1; iy != siz; ++iy)
-                {
-                    s1->append(0);
-                    s2->append(0);
-                    s3->append(0);
-                    days.append(DateTimeFunctions::formatDay(last.addDays(iy)));
-                }
-            }
+        //    if (last.isValid() && last.daysTo(stat.day) > 1)
+        //    {
+        //        for (int iy = 1, siz = last.daysTo(stat.day) - 1; iy != siz; ++iy)
+        //        {
+        //            s1->append(0);
+        //            s2->append(0);
+        //            s3->append(0);
+        //            days.append(DateTimeFunctions::formatDay(last.addDays(iy)));
+        //        }
+        //    }
 
-            last = stat.day;
-            days.append(DateTimeFunctions::formatDay(stat.day));
-        }
-        QDate now = ltDay(QDateTime::currentDateTimeUtc());
-        if (last.isValid() && last.daysTo(now) > 0)
-        {
-            for (int iy = 0, siz = last.daysTo(now); iy != siz; ++iy)
-            {
-                s1->append(0);
-                s2->append(0);
-                s3->append(0);
-                days.append(DateTimeFunctions::formatDay(last.addDays(iy + 1)));
-            }
-        }
+        //    last = stat.day;
+        //    days.append(DateTimeFunctions::formatDay(stat.day));
+        //}
+        //QDate now = ltDay(QDateTime::currentDateTimeUtc());
+        //if (last.isValid() && last.daysTo(now) > 0)
+        //{
+        //    for (int iy = 0, siz = last.daysTo(now); iy != siz; ++iy)
+        //    {
+        //        s1->append(0);
+        //        s2->append(0);
+        //        s3->append(0);
+        //        days.append(DateTimeFunctions::formatDay(last.addDays(iy + 1)));
+        //    }
+        //}
 
-        bars->append(s1);
-        bars->append(s2);
-        bars->append(s3);
+        //bars->append(s1);
+        //bars->append(s2);
+        //bars->append(s3);
 
-        xaxis->append(days);
-        if (!days.empty())
-            xaxis->setRange(days.at(std::max(0, days.size() - 7)), days.last());
-        QValueAxis *yaxis = new QValueAxis(chart);
-        yaxis->setLabelFormat("%i");
-        yaxis->setTitleText("Tested items");
-        //yaxis->setRange(0, hi + 100);
+        //xaxis->append(days);
+        //if (!days.empty())
+        //    xaxis->setRange(days.at(std::max(0, days.size() - 7)), days.last());
+        //QValueAxis *yaxis = new QValueAxis(chart);
+        //yaxis->setLabelFormat("%i");
+        //yaxis->setTitleText("Tested items");
+        ////yaxis->setRange(0, hi + 100);
 
-        chart->addSeries(bars);
-        chart->setTitle(tr("Number of items tested"));
-        chart->legend()->hide();
+        //chart->addSeries(bars);
+        //chart->setTitle(tr("Number of items tested"));
+        //chart->legend()->hide();
 
-        chart->setAxisX(xaxis, bars);
-        chart->setAxisY(yaxis, bars);
+        //chart->setAxisX(xaxis, bars);
+        //chart->setAxisY(yaxis, bars);
 
+        ui->statStack->setCurrentIndex(1);
 
         break;
     }

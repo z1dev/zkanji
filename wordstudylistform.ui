@@ -35,6 +35,9 @@
       <property name="styleSheet">
        <string notr="true">QTabBar::tab {height:23px; }</string>
       </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
       <property name="iconSize">
        <size>
         <width>18</width>
@@ -393,28 +396,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="dataButton">
-            <property name="text">
-             <string>Data</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>18</width>
-              <height>18</height>
-             </size>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QToolButton" name="itemsButton">
             <property name="text">
              <string>Items</string>
@@ -429,7 +410,7 @@
              <bool>true</bool>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="autoExclusive">
              <bool>true</bool>
@@ -437,7 +418,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="decksButton">
+           <widget class="QToolButton" name="levelsButton">
             <property name="text">
              <string>Levels</string>
             </property>
@@ -493,9 +474,9 @@
          </layout>
         </item>
         <item>
-         <widget class="QStackedWidget" name="stackedWidget">
+         <widget class="QStackedWidget" name="statStack">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="page">
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -514,16 +495,16 @@
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
               <property name="leftMargin">
-               <number>10</number>
+               <number>0</number>
               </property>
               <property name="topMargin">
-               <number>8</number>
-              </property>
-              <property name="rightMargin">
                <number>10</number>
               </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
               <property name="bottomMargin">
-               <number>8</number>
+               <number>0</number>
               </property>
               <property name="horizontalSpacing">
                <number>10</number>
@@ -531,114 +512,63 @@
               <property name="verticalSpacing">
                <number>4</number>
               </property>
-              <item row="1" column="4">
-               <widget class="QLabel" name="label">
+              <item row="1" column="1">
+               <widget class="QLabel" name="label_13">
                 <property name="text">
-                 <string>Total studied items:</string>
+                 <string>Items queued:</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" colspan="8">
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+              <item row="1" column="7">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Last test:</string>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>5</width>
-                  <height>5</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
-              <item row="5" column="1" colspan="8">
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>5</width>
-                  <height>5</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="0" column="0" rowspan="6">
-               <spacer name="horizontalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="3" rowspan="4">
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>5</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="3" column="8">
-               <widget class="QLabel" name="testDaysLabel">
+              <item row="1" column="5">
+               <widget class="QLabel" name="studyTimeLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="7">
+              <item row="3" column="7">
                <widget class="QLabel" name="label_7">
                 <property name="text">
                  <string>Skipped days:</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="2">
+              <item row="2" column="2">
                <widget class="QLabel" name="wordsLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="5">
+              <item row="0" column="5">
                <widget class="QLabel" name="studiedLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="8">
+              <item row="0" column="8">
                <widget class="QLabel" name="firstLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="4">
+              <item row="1" column="4">
                <widget class="QLabel" name="label_8">
                 <property name="text">
                  <string>Overall time:</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="4">
+              <item row="3" column="4">
                <widget class="QLabel" name="label_10">
                 <property name="text">
                  <string>Average item time:</string>
@@ -646,62 +576,58 @@
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QLabel" name="label_2">
-                <property name="text">
-                 <string>Unique words:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="5">
-               <widget class="QLabel" name="studyTimeAvgLabel">
-                <property name="text">
-                 <string>00000000</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
                <widget class="QLabel" name="label_3">
                 <property name="text">
                  <string>Unique kanji in words:</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="2">
+              <item row="4" column="0" colspan="10">
+               <widget class="QChartView" name="statView"/>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Unique words:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="5">
+               <widget class="QLabel" name="studyTimeAvgLabel">
+                <property name="text">
+                 <string>00000000</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
                <widget class="QLabel" name="kanjiLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="8">
-               <widget class="QLabel" name="lastLabel">
-                <property name="text">
-                 <string>00000000</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QLabel" name="queueLabel">
-                <property name="text">
-                 <string>00000000</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
+              <item row="0" column="2">
                <widget class="QLabel" name="dueLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="5">
-               <widget class="QLabel" name="answerTimeAvgLabel">
+              <item row="1" column="2">
+               <widget class="QLabel" name="queueLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="6" rowspan="4">
+              <item row="1" column="8">
+               <widget class="QLabel" name="lastLabel">
+                <property name="text">
+                 <string>00000000</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="6" rowspan="4">
                <spacer name="horizontalSpacer_3">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -717,95 +643,105 @@
                 </property>
                </spacer>
               </item>
-              <item row="4" column="8">
+              <item row="3" column="5">
+               <widget class="QLabel" name="answerTimeAvgLabel">
+                <property name="text">
+                 <string>00000000</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="8">
                <widget class="QLabel" name="skippedDaysLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="7">
+              <item row="0" column="7">
                <widget class="QLabel" name="label_4">
                 <property name="text">
                  <string>First test:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="label_13">
+              <item row="0" column="4">
+               <widget class="QLabel" name="label">
                 <property name="text">
-                 <string>Items queued:</string>
+                 <string>Total studied items:</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="7">
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>Last test:</string>
+              <item row="0" column="3" rowspan="4">
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-               </widget>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>5</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
-              <item row="2" column="5">
-               <widget class="QLabel" name="studyTimeLabel">
+              <item row="2" column="8">
+               <widget class="QLabel" name="testDaysLabel">
                 <property name="text">
                  <string>00000000</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="4">
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Average study time:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="7">
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>Days with test:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
+              <item row="0" column="1">
                <widget class="QLabel" name="label_11">
                 <property name="text">
                  <string>Items due today:</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="9" rowspan="6">
+              <item row="2" column="7">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Days with test:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="4">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Average study time:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" rowspan="4">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>5</width>
+                  <height>5</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="9" rowspan="4">
                <spacer name="horizontalSpacer_5">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>40</width>
-                  <height>20</height>
+                  <width>5</width>
+                  <height>5</height>
                  </size>
                 </property>
                </spacer>
               </item>
              </layout>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="page_2">
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QChartView" name="statView"/>
             </item>
            </layout>
           </widget>
@@ -824,7 +760,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QTableView" name="tableView"/>
+             <widget class="ZListView" name="tableView"/>
             </item>
            </layout>
           </widget>
@@ -870,6 +806,11 @@
    <extends>QWidget</extends>
    <header>definitionwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZListView</class>
+   <extends>QTableView</extends>
+   <header>zlistview.h</header>
   </customwidget>
  </customwidgets>
  <resources>
