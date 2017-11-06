@@ -617,11 +617,9 @@ public:
     // Returns the estimated time in milliseconds a new card will take to answer.
     quint32 newCardEta() const;
 
-    // Must be called when the test starts for the day. It's not an error to
-    // call this repeatedly in the same day but it only has an effect the
-    // first time.
-    // Returns whether a new test day was started, and not just testing again
-    // on the same day.
+    // Must be called when the test starts for the day. It's not an error to call this
+    // repeatedly in the same day but it only has an effect the first time.
+    // Returns whether a new test day was started, and not just testing again on the same day.
     bool startTestDay();
 
     // Returns the number of days passed since the last time new items have been included.
@@ -631,8 +629,8 @@ public:
     // previous test day.
     bool firstTest() const;
 
-    // The date of the test. While a test takes place this date never changes,
-    // even if the date changes (unless startTestDay() is called again).
+    // The date of the test. While a test takes place this date never changes, even if the
+    // date changes (unless startTestDay() is called again).
     QDate testDay() const;
 
     // Number of items tested on this or the last test day.
@@ -651,10 +649,9 @@ public:
     // the new value of postponed should be used.
     quint32 answer(CardId *cardid, StudyCard::AnswerType a, qint64 answertime, /*bool &postponed,*/ bool simulate = false);
 
-    // Returns the answer passed to answer() the last time it was called
-    // during the current running test. Only valid when a test is running and
-    // answer() was called at least once in the same session. (Suspended tests
-    // lose this information.)
+    // Returns the answer passed to answer() the last time it was called during the current
+    // running test. Only valid when a test is running and answer() was called at least once
+    // in the same session. (Suspended tests lose this information.)
     StudyCard::AnswerType lastAnswer() const;
 
     // Undos the effect of the last call to answer() and calls it again with the passed value.
@@ -665,19 +662,16 @@ public:
     // Returns the id of the card last answered.
     const CardId* lastCard() const;
 private:
-    // Returns the card by its id. Passing an invalid id results in undefined
-    // behavior.
+    // Returns the card by its id. Passing an invalid id results in undefined behavior.
     const StudyCard* fromId(const CardId *cardid) const;
-    // Returns the card by its id. Passing an invalid id results in undefined
-    // behavior.
+    // Returns the card by its id. Passing an invalid id results in undefined behavior.
     StudyCard* fromId(const CardId *cardid);
     // Returns the card's index in list by its id. Passing an invalid id
     // results in undefined behavior.
     int posFromId(const CardId *cardid) const;
 
-    // Saves everything about the last item so its data can be changed. The
-    // data saved is only usable in the same study session. It becomes invalid
-    // on suspend or when the test ends.
+    // Saves everything about the last item so its data can be changed. The data saved is only
+    // usable in the same study session. It becomes invalid on suspend or when the test ends.
     void createUndo(StudyCard *card, StudyCard::AnswerType a, qint64 answertime);
 
     // Reverts the data saved with createUndo(). Only valid during a study session
@@ -711,9 +705,6 @@ private:
 
     // Not saved. Only valid during a study session.
     Undo undodata;
-
-    // The last answer given.
-    // Not saved. Only valid during a study session.
 
     // End of temporary data
 

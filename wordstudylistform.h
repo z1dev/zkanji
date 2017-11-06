@@ -27,6 +27,29 @@ class Dictionary;
 class QMenu;
 struct WordStudyListFormData;
 
+class WordStudyStatsModel : public QAbstractTableModel
+{
+    Q_OBJECT
+public:
+    WordStudyStatsModel(WordDeck *deck, QObject *parent = nullptr);
+    virtual ~WordStudyStatsModel();
+
+    virtual int rowCount(const QModelIndex &parent) const override;
+    virtual int columnCount(const QModelIndex &parent) const override;
+    //virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+private:
+    WordDeck *deck;
+
+    // For each displayed column, links to the given index in the study deck's day statistics.
+    // If a value is -1, it marks a break between tests when the user didn't study. Other
+    // values are indexes to study->dayStat().
+    std::vector<int> stats;
+
+    typedef QAbstractTableModel base;
+};
+
+
 struct WordStudySorting {
     int column;
     Qt::SortOrder order;
@@ -34,7 +57,6 @@ struct WordStudySorting {
 
 enum class DeckStudyPages { Items, Stats, None };
 enum class DeckStatPages { Items, Levels, Tests };
-
 
 class QMenu;
 class QAction;

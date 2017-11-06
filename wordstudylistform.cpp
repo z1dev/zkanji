@@ -37,6 +37,91 @@
 #include "dialogs.h"
 
 
+
+//-------------------------------------------------------------
+
+
+WordStudyStatsModel::WordStudyStatsModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck)
+{
+    StudyDeck *study = deck->getStudyDeck();
+    stats.reserve(study->dayStatSize() * 1.2);
+    for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
+    {
+        if (ix != 0 && study->dayStat(ix - 1).day.daysTo(study->dayStat(ix).day) > 1)
+            stats.push_back(-1);
+        stats.push_back(ix);
+    }
+}
+
+WordStudyStatsModel::~WordStudyStatsModel()
+{
+
+}
+
+int WordStudyStatsModel::rowCount(const QModelIndex &parent) const
+{
+    return 2;
+}
+
+int WordStudyStatsModel::columnCount(const QModelIndex &parent) const
+{
+    return stats.size();
+}
+
+//QVariant WordStudyStatsModel::headerData(int section, Qt::Orientation orientation, int role) const
+//{
+//    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
+//        return base::headerData(section, orientation, role);
+//
+//    switch (section)
+//    {
+//    case 0:
+//        return tr("Date");
+//    case 1:
+//        return tr("Tested");
+//    case 2:
+//        return tr("Learned");
+//    case 3:
+//        return tr("Wrong");
+//    case 4:
+//        return tr("Time spent");
+//    case 5:
+//    default:
+//        return QString();
+//    }
+//}
+
+QVariant WordStudyStatsModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid() || role != Qt::DisplayRole)
+        return QVariant();
+
+    StudyDeck *study = deck->getStudyDeck();
+
+    int col = index.column();
+    int row = index.row();
+    switch (row)
+    {
+    case 0:
+        return QVariant(); // DateTimeFunctions::formatDay(study->dayStat(row).day);
+    case 1:
+        if (stats[col] == -1)
+            return QStringLiteral("...");
+        return DateTimeFunctions::formatDay(study->dayStat(stats[col]).day);
+    //case 2:
+    //    return QString::number(study->dayStat(row).testlearned);
+    //case 3:
+    //    return QString::number(study->dayStat(row).testwrong);
+    //case 4:
+    //    return DateTimeFunctions::formatPassedTime((study->dayStat(row).timespent + 5) / 10, true);
+    //case 5:
+    default:
+        return QString();
+        break;
+    }
+}
+
+
 //-------------------------------------------------------------
 
 // TODO: column sizes not saved in list form.
@@ -353,6 +438,11 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
         if (ui->itemsButton->isChecked())
             ((QDateTimeAxis*)ui->statView->chart()->axisX())->setTickCount(std::max(2, ui->statView->width() / 70));
     }
+    //else if (o == ui->statTable && e->type() == QEvent::Resize && ui->statTable->model() != nullptr)
+    //{
+    //    ui->statTable->verticalHeader()->setSectionSize
+    //}
+
     return base::eventFilter(o, e);
 }
 
@@ -419,6 +509,9 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
         showStat(DeckStatPages::Items);
 
         ui->statView->installEventFilter(this);
+
+        ui->statTable->setModel(new WordStudyStatsModel(deck));
+        ui->statTable->verticalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     }
 }
 
@@ -1007,7 +1100,7 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
     //viewed = page;
 
-    if (ui->statView->chart() != nullptr)
+    if (ui->statView->chart() != nullptr && (page == DeckStatPages::Levels || page == DeckStatPages::Items))
         ui->statView->chart()->deleteLater();
     QChart *chart = new QChart();
 
