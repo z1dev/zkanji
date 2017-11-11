@@ -22,6 +22,7 @@
 #include "kanji.h"
 #include "fontsettings.h"
 #include "recognizersettings.h"
+#include "colorsettings.h"
 
 
 //-------------------------------------------------------------
@@ -147,11 +148,11 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.translate(area.left() + ((area.width() % 2) ? 0. : 0.5), area.top() + ((area.width() % 2) ? 0. : 0.5));
 
-    QStyleOptionViewItem opts;
-    opts.initFrom(this);
-    opts.showDecorationSelected = true;
-    int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-    QColor gridColor = static_cast<QRgb>(gridHint);
+    //QStyleOptionViewItem opts;
+    //opts.initFrom(this);
+    //opts.showDecorationSelected = true;
+    //int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
+    QColor gridColor = Settings::uiColor(ColorSettings::Grid); //static_cast<QRgb>(gridHint);
 
     double hx = area.width() / 20.;
 

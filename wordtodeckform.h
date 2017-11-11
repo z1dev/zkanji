@@ -73,8 +73,8 @@ public:
     ~WordsToDeckHeader();
 
 protected:
-    virtual void paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const;
-    virtual QSize sectionSizeFromContents(int logicalIndex) const;
+    virtual void paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const override;
+    virtual QSize sectionSizeFromContents(int logicalIndex) const override;
 
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     virtual void mousePressEvent(QMouseEvent *e) override;

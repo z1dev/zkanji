@@ -502,7 +502,7 @@ QVariant TestWordsItemModel::data(const QModelIndex &index, int role) const
 
     //QPalette::ColorGroup colgrp = ((QWidget*)parent())->window()->isActiveWindow() ? QPalette::Active : QPalette::Inactive;
     //QColor col = qApp->palette().color(colgrp, role == (int)CellRoles::CellColor ? QPalette::Base : QPalette::Text);
-    return mixColors(QColor(160, 160, 160), Settings::textColor(qApp->palette(), QPalette::Active, ColorSettings::Bg), 0.2); /*mixColors(col, QColor(Qt::gray));*/
+    return mixColors(QColor(160, 160, 160), Settings::textColor(ColorSettings::Bg), 0.2); /*mixColors(col, QColor(Qt::gray));*/
 }
 
 Qt::ItemFlags TestWordsItemModel::flags(const QModelIndex &index) const

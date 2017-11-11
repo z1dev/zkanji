@@ -99,12 +99,12 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
     getContentsMargins(&l, &t, &rr, &b);
     QRect r = rect();
     r.adjust(l, t, -rr, -b);
-    p.fillRect(r, Settings::textColor(qApp->palette(), QPalette::Active, ColorSettings::Bg));
+    p.fillRect(r, Settings::textColor(hasFocus(), ColorSettings::Bg));
 
     r.adjust(4, 0, -4, 0);
     p.setClipRect(r);
 
-    p.setPen(Settings::textColor(qApp->palette(), QPalette::Active, ColorSettings::Text));
+    p.setPen(Settings::textColor(hasFocus(), ColorSettings::Text));
 
     QString str = toKana(QString("hiraganaKATAKANA"), true) + QChar(0x611f) + QChar(0x3058) + QChar(0x5e79) + QChar(0x4e8b) + QChar(0x6f22) + QChar(0x5b57) + QChar(0x76e3) + QChar(0x4e8b) + QChar(0x5b8c) + QChar(0x6cbb);
 
@@ -329,18 +329,19 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->pagesTree->setCurrentItem(pageTreeItem(ui->pagesStack->indexOf(showpage)));
     ui->pagesStack->setCurrentWidget(showpage);
 
-    QStyleOptionViewItem gridopt;
-    gridopt.initFrom(ui->sitesTable);
-    ui->colGridCBox->setDefaultColor(static_cast<QRgb>(qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &gridopt, ui->sitesTable)));
+    //QStyleOptionViewItem gridopt;
+    //gridopt.initFrom(ui->sitesTable);
+    //ui->colGridCBox->setDefaultColor(static_cast<QRgb>(qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &gridopt, ui->sitesTable)));
+    ui->colGridCBox->setDefaultColor(Settings::uiColor(ColorSettings::Grid));
 
-    ui->bgGridCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
-    ui->textGridCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Text));
-    ui->selbgGridCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Highlight));
-    ui->seltextGridCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::HighlightedText));
-    ui->bgiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Base));
-    ui->textiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
-    ui->selbgiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Highlight));
-    ui->seltextiGridCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::HighlightedText));
+    ui->colBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
+    ui->colTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Text));
+    ui->colSelBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Highlight));
+    ui->colSelTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::HighlightedText));
+    ui->coliBgCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Base));
+    ui->coliTextCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
+    ui->coliSelBgCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Highlight));
+    ui->coliSelTextCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::HighlightedText));
 
     ui->colStudyCorrectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyCorrect));
     ui->colStudyWrongCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyWrong));
@@ -373,6 +374,10 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->textSimilarCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SimilarText));
     ui->bgPartsCBox->setDefaultColor(Settings::defUiColor(ColorSettings::PartsBg));
     ui->bgPartOfCBox->setDefaultColor(Settings::defUiColor(ColorSettings::PartOfBg));
+
+    ui->colStat1CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat1));
+    ui->colStat2CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat2));
+    ui->colStat3CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat3));
 
     QLocale validatorlocale;
     validatorlocale.setNumberOptions(QLocale::OmitGroupSeparator);
@@ -534,6 +539,10 @@ void SettingsForm::reset()
     ui->bgPartsCBox->setCurrentColor(Settings::colors.partsbg);
     ui->bgPartOfCBox->setCurrentColor(Settings::colors.partofbg);
 
+    ui->colStat1CBox->setCurrentColor(Settings::colors.stat1);
+    ui->colStat2CBox->setCurrentColor(Settings::colors.stat2);
+    ui->colStat3CBox->setCurrentColor(Settings::colors.stat3);
+
 
     ((KanjiRefListModel*)ui->refTable->model())->reset();
 
@@ -570,14 +579,14 @@ void SettingsForm::reset()
     on_kanjiSizeCBox_currentIndexChanged(ui->kanjiSizeCBox->currentIndex());
 
     ui->colGridCBox->setCurrentColor(Settings::colors.grid);
-    ui->bgGridCBox->setCurrentColor(Settings::colors.bg);
-    ui->textGridCBox->setCurrentColor(Settings::colors.text);
-    ui->selbgGridCBox->setCurrentColor(Settings::colors.selbg);
-    ui->seltextGridCBox->setCurrentColor(Settings::colors.seltext);
-    ui->bgiGridCBox->setCurrentColor(Settings::colors.bgi);
-    ui->textiGridCBox->setCurrentColor(Settings::colors.texti);
-    ui->selbgiGridCBox->setCurrentColor(Settings::colors.selbgi);
-    ui->seltextiGridCBox->setCurrentColor(Settings::colors.seltexti);
+    ui->colBgCBox->setCurrentColor(Settings::colors.bg);
+    ui->colTextCBox->setCurrentColor(Settings::colors.text);
+    ui->colSelBgCBox->setCurrentColor(Settings::colors.selbg);
+    ui->colSelTextCBox->setCurrentColor(Settings::colors.seltext);
+    ui->coliBgCBox->setCurrentColor(Settings::colors.bgi);
+    ui->coliTextCBox->setCurrentColor(Settings::colors.texti);
+    ui->coliSelBgCBox->setCurrentColor(Settings::colors.selbgi);
+    ui->coliSelTextCBox->setCurrentColor(Settings::colors.seltexti);
 
     ui->colStudyCorrectCBox->setCurrentColor(Settings::colors.studycorrect);
     ui->colStudyWrongCBox->setCurrentColor(Settings::colors.studywrong);
@@ -771,6 +780,10 @@ void SettingsForm::applyClicked()
     Settings::colors.partsbg = ui->bgPartsCBox->currentColor();
     Settings::colors.partofbg = ui->bgPartOfCBox->currentColor();
 
+    Settings::colors.stat1 = ui->colStat1CBox->currentColor();
+    Settings::colors.stat2 = ui->colStat2CBox->currentColor();
+    Settings::colors.stat3 = ui->colStat3CBox->currentColor();
+
     ((KanjiRefListModel*)ui->refTable->model())->apply();
 
 
@@ -837,14 +850,14 @@ void SettingsForm::applyClicked()
 
 
     Settings::colors.grid = ui->colGridCBox->currentColor();
-    Settings::colors.bg = ui->bgGridCBox->currentColor();
-    Settings::colors.text = ui->textGridCBox->currentColor();
-    Settings::colors.selbg = ui->selbgGridCBox->currentColor();
-    Settings::colors.seltext = ui->seltextGridCBox->currentColor();
-    Settings::colors.bgi = ui->bgiGridCBox->currentColor();
-    Settings::colors.texti = ui->textiGridCBox->currentColor();
-    Settings::colors.selbgi = ui->selbgiGridCBox->currentColor();
-    Settings::colors.seltexti = ui->seltextiGridCBox->currentColor();
+    Settings::colors.bg = ui->colBgCBox->currentColor();
+    Settings::colors.text = ui->colTextCBox->currentColor();
+    Settings::colors.selbg = ui->colSelBgCBox->currentColor();
+    Settings::colors.seltext = ui->colSelTextCBox->currentColor();
+    Settings::colors.bgi = ui->coliBgCBox->currentColor();
+    Settings::colors.texti = ui->coliTextCBox->currentColor();
+    Settings::colors.selbgi = ui->coliSelBgCBox->currentColor();
+    Settings::colors.seltexti = ui->coliSelTextCBox->currentColor();
 
     Settings::colors.studycorrect = ui->colStudyCorrectCBox->currentColor();
     Settings::colors.studywrong = ui->colStudyWrongCBox->currentColor();
@@ -1245,9 +1258,8 @@ bool SettingsForm::eventFilter(QObject *o, QEvent *e)
         ui->kanjiPreview->getContentsMargins(&mleft, &mtop, &mright, &mbottom);
         r.adjust(mleft, mtop, -mright, -mbottom);
         QStylePainter p(ui->kanjiPreview);
-        QPalette pal = qApp->palette();
 
-        p.fillRect(r, Settings::textColor(pal, QPalette::Active, ColorSettings::TextColorTypes::Bg));
+        p.fillRect(r, Settings::textColor(ui->kanjiPreview->hasFocus(), ColorSettings::TextColorTypes::Bg));
 
         QFont kfont = { ui->kanjiFontCBox->currentText(), ui->kanjiSizeCBox->currentText().toInt() };
         if (ui->kanjiAliasBox->isChecked())

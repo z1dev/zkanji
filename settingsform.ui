@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>12</number>
+             <number>9</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -3013,14 +3013,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QLabel" name="label_60">
+               <widget class="QLabel" name="label_59">
                 <property name="text">
-                 <string>Grid color:</string>
+                 <string>Widget background:</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="ZColorComboBox" name="colGridCBox">
+               <widget class="ZColorComboBox" name="colBgCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3030,14 +3030,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="2" column="0">
-               <widget class="QLabel" name="label_59">
+               <widget class="QLabel" name="label_118">
                 <property name="text">
-                 <string>Text background:</string>
+                 <string>Inactive bg.:</string>
                 </property>
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="ZColorComboBox" name="bgGridCBox">
+               <widget class="ZColorComboBox" name="coliBgCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3047,14 +3047,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="3" column="0">
-               <widget class="QLabel" name="label_118">
+               <widget class="QLabel" name="label_72">
                 <property name="text">
-                 <string>Inactive bg.:</string>
+                 <string>Text:</string>
                 </property>
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="ZColorComboBox" name="bgiGridCBox">
+               <widget class="ZColorComboBox" name="colTextCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3064,14 +3064,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="4" column="0">
-               <widget class="QLabel" name="label_72">
+               <widget class="QLabel" name="label_120">
                 <property name="text">
-                 <string>Text:</string>
+                 <string>Inactive text:</string>
                 </property>
                </widget>
               </item>
               <item row="4" column="1">
-               <widget class="ZColorComboBox" name="textGridCBox">
+               <widget class="ZColorComboBox" name="coliTextCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3081,14 +3081,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="5" column="0">
-               <widget class="QLabel" name="label_120">
+               <widget class="QLabel" name="label_99">
                 <property name="text">
-                 <string>Inactive text:</string>
+                 <string>Selection background:</string>
                 </property>
                </widget>
               </item>
               <item row="5" column="1">
-               <widget class="ZColorComboBox" name="textiGridCBox">
+               <widget class="ZColorComboBox" name="colSelBgCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3098,14 +3098,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="6" column="0">
-               <widget class="QLabel" name="label_99">
+               <widget class="QLabel" name="label_121">
                 <property name="text">
-                 <string>Selection background:</string>
+                 <string>Inactive sel. bg.:</string>
                 </property>
                </widget>
               </item>
               <item row="6" column="1">
-               <widget class="ZColorComboBox" name="selbgGridCBox">
+               <widget class="ZColorComboBox" name="coliSelBgCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3115,14 +3115,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="7" column="0">
-               <widget class="QLabel" name="label_121">
+               <widget class="QLabel" name="label_117">
                 <property name="text">
-                 <string>Inactive sel. bg.:</string>
+                 <string>Selection text:</string>
                 </property>
                </widget>
               </item>
               <item row="7" column="1">
-               <widget class="ZColorComboBox" name="selbgiGridCBox">
+               <widget class="ZColorComboBox" name="colSelTextCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3132,31 +3132,14 @@ Scales everything in the program, including icons and text. The main menu, popup
                </widget>
               </item>
               <item row="8" column="0">
-               <widget class="QLabel" name="label_117">
-                <property name="text">
-                 <string>Selection text:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <widget class="ZColorComboBox" name="seltextGridCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
                <widget class="QLabel" name="label_122">
                 <property name="text">
                  <string>Inactive sel. text:</string>
                 </property>
                </widget>
               </item>
-              <item row="9" column="1">
-               <widget class="ZColorComboBox" name="seltextiGridCBox">
+              <item row="8" column="1">
+               <widget class="ZColorComboBox" name="coliSelTextCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3164,6 +3147,39 @@ Scales everything in the program, including icons and text. The main menu, popup
                  </sizepolicy>
                 </property>
                </widget>
+              </item>
+              <item row="10" column="0">
+               <widget class="QLabel" name="label_60">
+                <property name="text">
+                 <string>Grid color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="1">
+               <widget class="ZColorComboBox" name="colGridCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <spacer name="verticalSpacer_33">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>13</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
@@ -3803,6 +3819,92 @@ Scales everything in the program, including icons and text. The main menu, popup
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="6" column="1">
+               <spacer name="verticalSpacer_32">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>13</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="7" column="0" colspan="2">
+               <widget class="QLabel" name="label_66">
+                <property name="text">
+                 <string>Study statistics:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_138">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Color 2:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="0">
+               <widget class="QLabel" name="label_139">
+                <property name="text">
+                 <string>Color 3:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_137">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Color 1:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="ZColorComboBox" name="colStat1CBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="ZColorComboBox" name="colStat2CBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="10" column="1">
+               <widget class="ZColorComboBox" name="colStat3CBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -5260,15 +5362,14 @@ Scales everything in the program, including icons and text. The main menu, popup
   <tabstop>kanjiFontCBox</tabstop>
   <tabstop>kanjiAliasBox</tabstop>
   <tabstop>kanjiSizeCBox</tabstop>
-  <tabstop>colGridCBox</tabstop>
-  <tabstop>bgGridCBox</tabstop>
-  <tabstop>bgiGridCBox</tabstop>
-  <tabstop>textGridCBox</tabstop>
-  <tabstop>textiGridCBox</tabstop>
-  <tabstop>selbgGridCBox</tabstop>
-  <tabstop>selbgiGridCBox</tabstop>
-  <tabstop>seltextGridCBox</tabstop>
-  <tabstop>seltextiGridCBox</tabstop>
+  <tabstop>colBgCBox</tabstop>
+  <tabstop>coliBgCBox</tabstop>
+  <tabstop>colTextCBox</tabstop>
+  <tabstop>coliTextCBox</tabstop>
+  <tabstop>colSelBgCBox</tabstop>
+  <tabstop>coliSelBgCBox</tabstop>
+  <tabstop>colSelTextCBox</tabstop>
+  <tabstop>coliSelTextCBox</tabstop>
   <tabstop>colInfCBox</tabstop>
   <tabstop>colAttribCBox</tabstop>
   <tabstop>colTypeCBox</tabstop>
@@ -5343,8 +5444,8 @@ Scales everything in the program, including icons and text. The main menu, popup
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

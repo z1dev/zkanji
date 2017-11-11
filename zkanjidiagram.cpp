@@ -473,17 +473,19 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
 
     if (showgrid)
     {
-        QColor gridColor;
-        if (Settings::colors.grid.isValid())
-            gridColor = Settings::colors.grid;
-        else
-        {
-            QStyleOptionViewItem opts;
-            opts.initFrom(this);
-            opts.showDecorationSelected = true;
-            int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-            gridColor = static_cast<QRgb>(gridHint);
-        }
+        //QColor gridColor;
+        //if (Settings::colors.grid.isValid())
+        //    gridColor = Settings::colors.grid;
+        //else
+        //{
+        //    QStyleOptionViewItem opts;
+        //    opts.initFrom(this);
+        //    opts.showDecorationSelected = true;
+        //    int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
+        //    gridColor = static_cast<QRgb>(gridHint);
+        //}
+
+        QColor gridColor = Settings::uiColor(ColorSettings::Grid);
 
         p.setPen(gridColor);
         p.setBrush(Qt::transparent);

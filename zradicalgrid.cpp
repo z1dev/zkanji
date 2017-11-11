@@ -425,14 +425,16 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
     //int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
     //QColor gridColor = static_cast<QRgb>(gridHint);
 
-    QColor gridColor;
-    if (Settings::colors.grid.isValid())
-        gridColor = Settings::colors.grid;
-    else
-    {
-        int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-        gridColor = static_cast<QRgb>(gridHint);
-    }
+    //QColor gridColor;
+    //if (Settings::colors.grid.isValid())
+    //    gridColor = Settings::colors.grid;
+    //else
+    //{
+    //    int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
+    //    gridColor = static_cast<QRgb>(gridHint);
+    //}
+
+    QColor gridColor = Settings::uiColor(ColorSettings::Grid);
 
     ZRect r(0, y, -1, y + heights - 1);
     int lastwidth = std::numeric_limits<int>::max();

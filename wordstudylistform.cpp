@@ -35,13 +35,29 @@
 #include "groups.h"
 #include "formstate.h"
 #include "dialogs.h"
+#include "colorsettings.h"
 
 
 
 //-------------------------------------------------------------
 
 
-WordStudyStatsModel::WordStudyStatsModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck)
+static const int TickSpacing = 70;
+
+
+//-------------------------------------------------------------
+
+enum class StatRoles {
+    // Role for maximum value to be displayed
+    MaxRole = Qt::UserRole + 1,
+    // Number of statistic values represented in a single bar.
+    StatCountRole,
+    // Role for statistic number 1. To get stat 2 etc. add a positive number to this value.
+    StatRole,
+};
+
+
+WordStudyTestsModel::WordStudyTestsModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), maxval(0)
 {
     StudyDeck *study = deck->getStudyDeck();
     stats.reserve(study->dayStatSize() * 1.2);
@@ -50,79 +66,174 @@ WordStudyStatsModel::WordStudyStatsModel(WordDeck *deck, QObject *parent) : base
         if (ix != 0 && study->dayStat(ix - 1).day.daysTo(study->dayStat(ix).day) > 1)
             stats.push_back(-1);
         stats.push_back(ix);
+        maxval = std::max(maxval, study->dayStat(ix).testcount);
     }
 }
 
-WordStudyStatsModel::~WordStudyStatsModel()
+WordStudyTestsModel::~WordStudyTestsModel()
 {
 
 }
 
-int WordStudyStatsModel::rowCount(const QModelIndex &parent) const
-{
-    return 2;
-}
-
-int WordStudyStatsModel::columnCount(const QModelIndex &parent) const
+int WordStudyTestsModel::count() const
 {
     return stats.size();
 }
 
-//QVariant WordStudyStatsModel::headerData(int section, Qt::Orientation orientation, int role) const
-//{
-//    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
-//        return base::headerData(section, orientation, role);
-//
-//    switch (section)
-//    {
-//    case 0:
-//        return tr("Date");
-//    case 1:
-//        return tr("Tested");
-//    case 2:
-//        return tr("Learned");
-//    case 3:
-//        return tr("Wrong");
-//    case 4:
-//        return tr("Time spent");
-//    case 5:
-//    default:
-//        return QString();
-//    }
-//}
-
-QVariant WordStudyStatsModel::data(const QModelIndex &index, int role) const
+int WordStudyTestsModel::barWidth(ZStatView *view, int col) const
 {
-    if (!index.isValid() || role != Qt::DisplayRole)
-        return QVariant();
+    QFontMetrics fm = view->fontMetrics();
+    if (stats[col] == -1)
+        return fm.width(QStringLiteral("...")) + 16;
+    return fm.width(QStringLiteral("9999:99:99")) + 16;
+}
+
+int WordStudyTestsModel::maxValue() const
+{
+    return maxval;
+}
+
+QString WordStudyTestsModel::axisLabel(Qt::Orientation ori) const
+{
+    if (ori == Qt::Vertical)
+        return "Items";
+    return "Date";
+}
+
+QString WordStudyTestsModel::barLabel(int ix) const
+{
+    if (stats[ix] == -1)
+        return QStringLiteral("...");
 
     StudyDeck *study = deck->getStudyDeck();
+    return DateTimeFunctions::formatDay(study->dayStat(stats[ix]).day);
+}
 
-    int col = index.column();
-    int row = index.row();
-    switch (row)
+int WordStudyTestsModel::valueCount() const
+{
+    return 3;
+}
+
+int WordStudyTestsModel::value(int col, int valpos) const
+{
+    if (stats[col] == -1)
+        return 0;
+
+    StudyDeck *study = deck->getStudyDeck();
+    const DeckDayStat &day = study->dayStat(stats[col]);
+    switch (valpos)
     {
     case 0:
-        return QVariant(); // DateTimeFunctions::formatDay(study->dayStat(row).day);
+        return day.testlearned;
     case 1:
-        if (stats[col] == -1)
-            return QStringLiteral("...");
-        return DateTimeFunctions::formatDay(study->dayStat(stats[col]).day);
-    //case 2:
-    //    return QString::number(study->dayStat(row).testlearned);
-    //case 3:
-    //    return QString::number(study->dayStat(row).testwrong);
-    //case 4:
-    //    return DateTimeFunctions::formatPassedTime((study->dayStat(row).timespent + 5) / 10, true);
-    //case 5:
+        return day.testcount - day.testlearned - day.testwrong;
+    case 2:
+        return day.testwrong;
     default:
-        return QString();
-        break;
+        return 0;
     }
 }
 
 
-//-------------------------------------------------------------
+////-------------------------------------------------------------
+//
+//
+//WordStudyTestDelegate::WordStudyTestDelegate(QObject *parent) : base(parent)
+//{
+//
+//}
+//
+//WordStudyTestDelegate::~WordStudyTestDelegate()
+//{
+//
+//}
+//
+//void WordStudyTestDelegate::paint(QPainter *p, const QStyleOptionViewItem &option, const QModelIndex &index) const
+//{
+//    if (index.row() == 1)
+//    {
+//        base::paint(p, option, index);
+//        return;
+//    }
+//
+//    QRect r = option.rect;
+//    QFontMetrics fm = option.fontMetrics;
+//    int fmh = fm.height();
+//    // Start grids drawing right below the top.
+//    r.setTop(std::min<int>(r.bottom(), r.top() + fmh));
+//
+//    p->setPen(Settings::uiColor(ColorSettings::Grid));
+//    // Drawing right line to separate columns.
+//    p->drawLine(r.topRight(), r.bottomRight());
+//
+//    int maxval = index.data((int)StatRoles::MaxRole).toInt();
+//    // When drawing the bar, another fmh height will be excluded from top to draw the bar
+//    // texts, but the grid should be drawn above it. To compensate, another max val is used.
+//    int gridmaxval = maxval + maxval * (double)fmh / r.height();
+//    if (gridmaxval == 0 || r.height() == 0)
+//        return;
+//
+//    // Calculating the tick steps.
+//    double ticks = (double)r.height() / TickSpacing;
+//    int steps = std::max<int>(gridmaxval / ticks + 0.9, 1);
+//
+//    int v = steps;
+//    int zeroes = 0;
+//    while (v > 0)
+//    {
+//        v /= 10;
+//        ++zeroes;
+//    }
+//    zeroes = (int)std::pow(10, zeroes / 2);
+//    // Final tick step value.
+//    steps = (int((steps - 1) / (zeroes / 2)) + 1) * (zeroes / 2);
+//    v = 0;
+//    int pos = r.bottom();
+//    // Drawing horizontal tick lines.
+//    while (v < gridmaxval)
+//    {
+//        p->drawLine(r.left(), pos, r.right(), pos);
+//        v += steps;
+//        pos = r.bottom() - (r.height() * ((double)v / gridmaxval));
+//    }
+//
+//    p->setPen(Settings::textColor(option.state.testFlag(QStyle::State_HasFocus), ColorSettings::Text));
+//
+//    int cnt = index.data((int)StatRoles::StatCountRole).toInt();
+//    int sum = 0;
+//
+//    fastarray<int> stats(cnt);
+//    for (int ix = 0; ix != cnt; ++ix)
+//    {
+//        int v = index.data((int)StatRoles::StatRole + ix).toInt();
+//        stats[ix] = v;
+//        sum += v;
+//    }
+//
+//
+//    if (sum == 0 || maxval == 0)
+//        return;
+//
+//    // Drawing the bar rectangles.
+//    QRect br;
+//
+//    // Start bar drawing below grid top.
+//    r.setTop(std::min<int>(r.bottom(), r.top() + fmh));
+//
+//    for (int ix = 0; ix != cnt; ++ix)
+//    {
+//        if (br.isNull())
+//            br = QRect(r.left() + r.width() * 0.2, r.bottom() - (r.height() * ((double)sum / maxval)), r.width() * 0.6, 0);
+//        br.setBottom(r.bottom() - (r.height() * (sum - stats[ix]) / maxval));
+//        sum -= stats[ix];
+//        p->fillRect(br, Settings::uiColor((ColorSettings::UIColorTypes)((int)ColorSettings::Stat1 + ix)));
+//        br.setTop(br.bottom());
+//    }
+//}
+//
+//
+////-------------------------------------------------------------
+
 
 // TODO: column sizes not saved in list form.
 
@@ -432,16 +543,12 @@ void WordStudyListForm::keyPressEvent(QKeyEvent *e)
 
 bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
 {
-    if (o == ui->statView && e->type() == QEvent::Resize && ui->statView->chart() != nullptr && ui->statView->chart()->axisY() != nullptr)
+    if (o == ui->statChart && e->type() == QEvent::Resize && ui->statChart->chart() != nullptr && ui->statChart->chart()->axisY() != nullptr)
     {
-        ((QValueAxis*)ui->statView->chart()->axisY())->setTickCount(std::max(2, ui->statView->height() / 70));
+        ((QValueAxis*)ui->statChart->chart()->axisY())->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
         if (ui->itemsButton->isChecked())
-            ((QDateTimeAxis*)ui->statView->chart()->axisX())->setTickCount(std::max(2, ui->statView->width() / 70));
+            ((QDateTimeAxis*)ui->statChart->chart()->axisX())->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
     }
-    //else if (o == ui->statTable && e->type() == QEvent::Resize && ui->statTable->model() != nullptr)
-    //{
-    //    ui->statTable->verticalHeader()->setSectionSize
-    //}
 
     return base::eventFilter(o, e);
 }
@@ -508,10 +615,11 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
 
         showStat(DeckStatPages::Items);
 
-        ui->statView->installEventFilter(this);
+        ui->statChart->installEventFilter(this);
 
-        ui->statTable->setModel(new WordStudyStatsModel(deck));
-        ui->statTable->verticalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+        WordStudyTestsModel *m = new WordStudyTestsModel(deck, ui->statView);
+        ui->statView->setModel(m);
+        ui->statView->scrollTo(m->count() - 1);
     }
 }
 
@@ -1100,9 +1208,10 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
     //viewed = page;
 
-    if (ui->statView->chart() != nullptr && (page == DeckStatPages::Levels || page == DeckStatPages::Items))
-        ui->statView->chart()->deleteLater();
+    if (ui->statChart->chart() != nullptr && (page == DeckStatPages::Levels || page == DeckStatPages::Items))
+        ui->statChart->chart()->deleteLater();
     QChart *chart = new QChart();
+    chart->setBackgroundBrush(Settings::textColor(hasFocus(), ColorSettings::Bg));
 
     switch (page)
     {
@@ -1110,6 +1219,8 @@ void WordStudyListForm::showStat(DeckStatPages page)
     {
         QBarSeries *bars = new QBarSeries(chart);
         QBarSet *dataset = new QBarSet("Levels", chart);
+        dataset->setBrush(Settings::uiColor(ColorSettings::Stat1));
+        dataset->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
 
         std::vector<int> levels;
         for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)
@@ -1133,8 +1244,9 @@ void WordStudyListForm::showStat(DeckStatPages page)
         chart->setTitle(tr("Number of items at each level"));
         chart->legend()->hide();
         chart->createDefaultAxes();
+        ((QValueAxis*)chart->axisY())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
         ((QValueAxis*)chart->axisY())->setLabelFormat("%i");
-        ((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statView->height() / 70));
+        ((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
         ui->statStack->setCurrentIndex(0);
         break;
     }
@@ -1182,19 +1294,25 @@ void WordStudyListForm::showStat(DeckStatPages page)
         QAreaSeries *area1 = new QAreaSeries(chart);
         area1->setUpperSeries(l1);
         area1->setLowerSeries(l2);
+        area1->setBrush(Settings::uiColor(ColorSettings::Stat1));
+        area1->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
         chart->addSeries(area1);
 
         QAreaSeries *area2 = new QAreaSeries(chart);
         area2->setUpperSeries(l2);
         area2->setLowerSeries(l3);
+        area2->setBrush(Settings::uiColor(ColorSettings::Stat2));
+        area2->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
         chart->addSeries(area2);
 
         QAreaSeries *area3 = new QAreaSeries(chart);
         area3->setUpperSeries(l3);
+        area3->setBrush(Settings::uiColor(ColorSettings::Stat3));
+        area3->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
         chart->addSeries(area3);
 
-        xaxis->setTickCount(std::max(2, ui->statView->width() / 70));
-        yaxis->setTickCount(std::max(2, ui->statView->height() / 70));
+        xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
+        yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
 
         chart->setTitle(tr("Number of items on each day"));
         chart->legend()->hide();
@@ -1214,79 +1332,14 @@ void WordStudyListForm::showStat(DeckStatPages page)
     }
     case DeckStatPages::Tests:
     {
-        //const StudyDeck *study = deck->getStudyDeck();
-        //QStackedBarSeries *bars = new QStackedBarSeries(chart);
-
-        //QBarSet *s1 = new QBarSet(tr("Learned"));
-        //QBarSet *s2 = new QBarSet(tr("Correct"));
-        //QBarSet *s3 = new QBarSet(tr("Wrong"));
-
-        //QBarCategoryAxis *xaxis = new QBarCategoryAxis(chart);
-        //QStringList days;
-
-        //QDate last;
-        //for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
-        //{
-        //    const DeckDayStat &stat = study->dayStat(ix);
-        //    qint64 timesince = QDateTime(stat.day, QTime()).toMSecsSinceEpoch();
-
-        //    s1->append(stat.testlearned);
-        //    s2->append(stat.testcount - stat.testwrong);
-        //    s3->append(stat.testwrong);
-
-        //    if (last.isValid() && last.daysTo(stat.day) > 1)
-        //    {
-        //        for (int iy = 1, siz = last.daysTo(stat.day) - 1; iy != siz; ++iy)
-        //        {
-        //            s1->append(0);
-        //            s2->append(0);
-        //            s3->append(0);
-        //            days.append(DateTimeFunctions::formatDay(last.addDays(iy)));
-        //        }
-        //    }
-
-        //    last = stat.day;
-        //    days.append(DateTimeFunctions::formatDay(stat.day));
-        //}
-        //QDate now = ltDay(QDateTime::currentDateTimeUtc());
-        //if (last.isValid() && last.daysTo(now) > 0)
-        //{
-        //    for (int iy = 0, siz = last.daysTo(now); iy != siz; ++iy)
-        //    {
-        //        s1->append(0);
-        //        s2->append(0);
-        //        s3->append(0);
-        //        days.append(DateTimeFunctions::formatDay(last.addDays(iy + 1)));
-        //    }
-        //}
-
-        //bars->append(s1);
-        //bars->append(s2);
-        //bars->append(s3);
-
-        //xaxis->append(days);
-        //if (!days.empty())
-        //    xaxis->setRange(days.at(std::max(0, days.size() - 7)), days.last());
-        //QValueAxis *yaxis = new QValueAxis(chart);
-        //yaxis->setLabelFormat("%i");
-        //yaxis->setTitleText("Tested items");
-        ////yaxis->setRange(0, hi + 100);
-
-        //chart->addSeries(bars);
-        //chart->setTitle(tr("Number of items tested"));
-        //chart->legend()->hide();
-
-        //chart->setAxisX(xaxis, bars);
-        //chart->setAxisY(yaxis, bars);
-
         ui->statStack->setCurrentIndex(1);
 
         break;
     }
     }
 
-    ui->statView->setChart(chart);
-    ui->statView->setRubberBand(QChartView::HorizontalRubberBand);
+    ui->statChart->setChart(chart);
+    ui->statChart->setRubberBand(QChartView::HorizontalRubberBand);
 }
 
 

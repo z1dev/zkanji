@@ -38,6 +38,83 @@
 
 namespace Settings
 {
+    // Default colors for the light user interface.
+    const QColor studycorrectldef = QColor(30, 160, 70);
+    const QColor studywrongldef = QColor(245, 0, 0);
+    const QColor studynewldef = QColor(80, 140, 200);
+
+    const QColor infldef = QColor(255, 255, 234);
+    const QColor attribldef = Qt::black;
+    const QColor typesldef = QColor(64, 128, 48);
+    const QColor notesldef = QColor(144, 64, 32);
+    const QColor fieldsldef = QColor(48, 64, 128);
+    const QColor dialectldef = QColor(128, 48, 64);
+    const QColor kanaonlyldef = QColor(144, 176, 160);
+    const QColor kanjiexbgldef = QColor(210, 255, 210);
+    const QColor kanjitestposldef = QColor(255, 0, 0);
+
+    const QColor okucolorldef = QColor(48, 162, 255);
+
+    const QColor n5ldef = QColor(255, 34, 34);
+    const QColor n4ldef = QColor(50, 68, 220);
+    const QColor n3ldef = QColor(7, 160, 153);
+    const QColor n2ldef = QColor(145, 77, 200);
+    const QColor n1ldef = QColor(Qt::black);
+
+    const QColor nowordsldef = QColor(192, 192, 192);
+    const QColor unsortedldef = QColor(247, 247, 240);
+
+    const QColor katabgldef = QColor(157, 216, 243);
+    const QColor hirabgldef = QColor(157, 243, 149);
+
+    const QColor similartextldef = QColor(0, 145, 245);
+    const QColor similarbgldef = QColor(214, 226, 228);
+    const QColor partsbgldef = QColor(214, 228, 214);
+    const QColor partofbgldef = QColor(227, 220, 214);
+
+    const QColor stat1ldef = QColor(0, 162, 212);
+    const QColor stat2ldef = QColor(120, 212, 40);
+    const QColor stat3ldef = QColor(232, 160, 0);
+
+    // Default colors for the dark user interface.
+    const QColor studycorrectddef = QColor(30, 160, 70);
+    const QColor studywrongddef = QColor(245, 0, 0);
+    const QColor studynewddef = QColor(80, 140, 200);
+
+    const QColor infddef = QColor(255, 255, 234);
+    const QColor attribddef = Qt::black;
+    const QColor typesddef = QColor(64, 128, 48);
+    const QColor notesddef = QColor(144, 64, 32);
+    const QColor fieldsddef = QColor(48, 64, 128);
+    const QColor dialectddef = QColor(128, 48, 64);
+    const QColor kanaonlyddef = QColor(144, 176, 160);
+    const QColor kanjiexbgddef = QColor(210, 255, 210);
+    const QColor kanjitestposddef = QColor(255, 0, 0);
+
+    const QColor okucolorddef = QColor(48, 162, 255);
+
+    const QColor n5ddef = QColor(255, 34, 34);
+    const QColor n4ddef = QColor(50, 68, 220);
+    const QColor n3ddef = QColor(7, 160, 153);
+    const QColor n2ddef = QColor(145, 77, 200);
+    const QColor n1ddef = QColor(Qt::black);
+
+    const QColor nowordsddef = QColor(192, 192, 192);
+    const QColor unsortedddef = QColor(247, 247, 240);
+
+    const QColor katabgddef = QColor(157, 216, 243);
+    const QColor hirabgddef = QColor(157, 243, 149);
+
+    const QColor similartextddef = QColor(0, 145, 245);
+    const QColor similarbgddef = QColor(214, 226, 228);
+    const QColor partsbgddef = QColor(214, 228, 214);
+    const QColor partofbgddef = QColor(227, 220, 214);
+
+    const QColor stat1ddef = QColor(0, 162, 212);
+    const QColor stat2ddef = QColor(120, 212, 40);
+    const QColor stat3ddef = QColor(232, 160, 0);
+
+
     FontSettings fonts;
     GeneralSettings general;
     GroupSettings group;
@@ -138,7 +215,6 @@ namespace Settings
 
         // Color settings
 
-        ini.setValue("colors/grid", colors.grid);
         ini.setValue("colors/bg", colors.bg);
         ini.setValue("colors/text", colors.text);
         ini.setValue("colors/selbg", colors.selbg);
@@ -147,6 +223,7 @@ namespace Settings
         ini.setValue("colors/texti", colors.texti);
         ini.setValue("colors/selbgi", colors.selbgi);
         ini.setValue("colors/seltexti", colors.seltexti);
+        ini.setValue("colors/grid", colors.grid);
         ini.setValue("colors/studycorrect", colors.studycorrect);
         ini.setValue("colors/studywrong", colors.studywrong);
         ini.setValue("colors/studynew", colors.studynew);
@@ -174,6 +251,9 @@ namespace Settings
         ini.setValue("colors/similartext", colors.similartext);
         ini.setValue("colors/partsbg", colors.partsbg);
         ini.setValue("colors/partofbg", colors.partofbg);
+        ini.setValue("colors/stat1", colors.stat1);
+        ini.setValue("colors/stat2", colors.stat2);
+        ini.setValue("colors/stat3", colors.stat3);
 
         // Dictionary
 
@@ -730,7 +810,6 @@ namespace Settings
 
         // Color settings
 
-        colors.grid = ini.value("colors/grid").value<QColor>();
         colors.bg = ini.value("colors/bg").value<QColor>();
         colors.text = ini.value("colors/text").value<QColor>();
         colors.selbg = ini.value("colors/selbg").value<QColor>();
@@ -739,6 +818,7 @@ namespace Settings
         colors.texti = ini.value("colors/texti").value<QColor>();
         colors.selbgi = ini.value("colors/selbgi").value<QColor>();
         colors.seltexti = ini.value("colors/seltexti").value<QColor>();
+        colors.grid = ini.value("colors/grid").value<QColor>();
         colors.studycorrect = ini.value("colors/studycorrect").value<QColor>();
         colors.studywrong = ini.value("colors/studywrong").value<QColor>();
         colors.studynew = ini.value("colors/studynew").value<QColor>();
@@ -768,6 +848,9 @@ namespace Settings
         colors.similartext = ini.value("colors/similartext").value<QColor>();
         colors.partsbg = ini.value("colors/partsbg").value<QColor>();
         colors.partofbg = ini.value("colors/partofbg").value<QColor>();
+        colors.stat1 = ini.value("colors/stat1").value<QColor>();
+        colors.stat2 = ini.value("colors/stat2").value<QColor>();
+        colors.stat3 = ini.value("colors/stat3").value<QColor>();
 
         // Dictionary
 
@@ -1202,35 +1285,61 @@ namespace Settings
         return QFont{ !Settings::print.dictfonts ? Settings::fonts.printinfo : Settings::fonts.info, 120, Settings::print.dictfonts ? false : Settings::fonts.printinfostyle == FontSettings::Bold || Settings::fonts.printinfostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::print.dictfonts ? true : Settings::fonts.printinfostyle == FontSettings::Italic || Settings::fonts.printinfostyle == FontSettings::BoldItalic };
     }
 
-    QColor textColor(const QPalette &pal, QPalette::ColorGroup group, ColorSettings::TextColorTypes type)
+    QColor textColor(const QPalette &pal, bool active, ColorSettings::TextColorTypes type)
     {
         switch (type)
         {
         case ColorSettings::Bg:
-            if ((group == QPalette::Active && colors.bg.isValid()) || (group == QPalette::Inactive && colors.bgi.isValid()))
-                return group == QPalette::Active ? colors.bg : colors.bgi;
-            return pal.color(group, QPalette::Base);
+            if ((active && colors.bg.isValid()) || (!active && colors.bgi.isValid()))
+                return active ? colors.bg : colors.bgi;
+            return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::Base);
         case ColorSettings::Text:
-            if ((group == QPalette::Active && colors.text.isValid()) || (group == QPalette::Inactive && colors.texti.isValid()))
-                return group == QPalette::Active ? colors.text : colors.texti;
-            return pal.color(group, QPalette::Text);
+            if ((active && colors.text.isValid()) || (!active && colors.texti.isValid()))
+                return active ? colors.text : colors.texti;
+            return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::Text);
         case ColorSettings::SelBg:
-            if ((group == QPalette::Active && colors.selbg.isValid()) || (group == QPalette::Inactive && colors.selbgi.isValid()))
-                return group == QPalette::Active ? colors.selbg : colors.selbgi;
-            return pal.color(group, QPalette::Highlight);
+            if ((active && colors.selbg.isValid()) || (!active && colors.selbgi.isValid()))
+                return active ? colors.selbg : colors.selbgi;
+            return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::Highlight);
         case ColorSettings::SelText:
-            if ((group == QPalette::Active && colors.seltext.isValid()) || (group == QPalette::Inactive && colors.seltexti.isValid()))
-                return group == QPalette::Active ? colors.seltext : colors.seltexti;
-            return pal.color(group, QPalette::HighlightedText);
+            if ((active && colors.seltext.isValid()) || (!active && colors.seltexti.isValid()))
+                return active ? colors.seltext : colors.seltexti;
+            return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::HighlightedText);
         default:
             return QColor();
         }
+    }
+
+    QColor textColor(bool active, ColorSettings::TextColorTypes type)
+    {
+        return textColor(qApp->palette(), active, type);
+    }
+
+    QColor textColor(ColorSettings::TextColorTypes type)
+    {
+        return textColor(qApp->palette(), true, type);
     }
 
     QColor uiColor(ColorSettings::UIColorTypes type)
     {
         switch (type)
         {
+        case ColorSettings::Grid:
+            if (colors.grid.isValid())
+                return colors.grid;
+            else
+            {
+                QStyleOptionViewItem opts;
+                opts.widget = nullptr;
+                opts.state = QStyle::State_Enabled | QStyle::State_Active | QStyle::State_HasFocus;
+                opts.direction = Qt::LayoutDirectionAuto;
+                opts.palette = qApp->palette();
+                opts.fontMetrics = qApp->fontMetrics();
+                opts.styleObject = nullptr;
+                opts.showDecorationSelected = true;
+                int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, nullptr);
+                return static_cast<QRgb>(gridHint);
+            }
         case ColorSettings::StudyCorrect:
             if (colors.studycorrect.isValid())
                 return colors.studycorrect;
@@ -1335,6 +1444,18 @@ namespace Settings
             if (colors.partofbg.isValid())
                 return colors.partofbg;
             break;
+        case ColorSettings::Stat1:
+            if (colors.stat1.isValid())
+                return colors.stat1;
+            break;
+        case ColorSettings::Stat2:
+            if (colors.stat2.isValid())
+                return colors.stat2;
+            break;
+        case ColorSettings::Stat3:
+            if (colors.stat3.isValid())
+                return colors.stat3;
+            break;
         }
 
         return defUiColor(type);
@@ -1344,58 +1465,77 @@ namespace Settings
     {
         switch (type)
         {
+        case ColorSettings::Grid:
+        {
+            QStyleOptionViewItem opts;
+            opts.widget = nullptr;
+            opts.state = QStyle::State_Enabled | QStyle::State_Active | QStyle::State_HasFocus;
+            opts.direction = Qt::LayoutDirectionAuto;
+            opts.palette = qApp->palette();
+            opts.fontMetrics = qApp->fontMetrics();
+            opts.styleObject = nullptr;
+            opts.showDecorationSelected = true;
+            int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, nullptr);
+            return static_cast<QRgb>(gridHint);
+        }
         case ColorSettings::StudyCorrect:
-            return colors.lighttheme ? colors.studycorrectldef : colors.studycorrectddef;
+            return colors.lighttheme ? studycorrectldef : studycorrectddef;
         case ColorSettings::StudyWrong:
-            return colors.lighttheme ? colors.studywrongldef : colors.studywrongddef;
+            return colors.lighttheme ? studywrongldef : studywrongddef;
         case ColorSettings::StudyNew:
-            return colors.lighttheme ? colors.studynewldef : colors.studynewddef;
+            return colors.lighttheme ? studynewldef : studynewddef;
         case ColorSettings::Inf:
-            return colors.lighttheme ? colors.infldef : colors.infddef;
+            return colors.lighttheme ? infldef : infddef;
         case ColorSettings::Attrib:
-            return colors.lighttheme ? colors.attribldef : colors.attribddef;
+            return colors.lighttheme ? attribldef : attribddef;
         case ColorSettings::Types:
-            return colors.lighttheme ? colors.typesldef : colors.typesddef;
+            return colors.lighttheme ? typesldef : typesddef;
         case ColorSettings::Notes:
-            return colors.lighttheme ? colors.notesldef : colors.notesddef;
+            return colors.lighttheme ? notesldef : notesddef;
         case ColorSettings::Fields:
-            return colors.lighttheme ? colors.fieldsldef : colors.fieldsddef;
+            return colors.lighttheme ? fieldsldef : fieldsddef;
         case ColorSettings::Dialects:
-            return colors.lighttheme ? colors.dialectldef : colors.dialectddef;
+            return colors.lighttheme ? dialectldef : dialectddef;
         case ColorSettings::KanaOnly:
-            return colors.lighttheme ? colors.kanaonlyldef : colors.kanaonlyddef;
+            return colors.lighttheme ? kanaonlyldef : kanaonlyddef;
         case ColorSettings::KanjiExBg:
-            return colors.lighttheme ? colors.kanjiexbgldef : colors.kanjiexbgddef;
+            return colors.lighttheme ? kanjiexbgldef : kanjiexbgddef;
         case ColorSettings::KanjiTestPos:
-            return colors.lighttheme ? colors.kanjitestposldef : colors.kanjitestposddef;
+            return colors.lighttheme ? kanjitestposldef : kanjitestposddef;
         case ColorSettings::Oku:
-            return colors.lighttheme ? colors.okucolorldef : colors.okucolorddef;
+            return colors.lighttheme ? okucolorldef : okucolorddef;
         case ColorSettings::N5:
-            return colors.lighttheme ? colors.n5ldef : colors.n5ddef;
+            return colors.lighttheme ? n5ldef : n5ddef;
         case ColorSettings::N4:
-            return colors.lighttheme ? colors.n4ldef : colors.n4ddef;
+            return colors.lighttheme ? n4ldef : n4ddef;
         case ColorSettings::N3:
-            return colors.lighttheme ? colors.n3ldef : colors.n3ddef;
+            return colors.lighttheme ? n3ldef : n3ddef;
         case ColorSettings::N2:
-            return colors.lighttheme ? colors.n2ldef : colors.n2ddef;
+            return colors.lighttheme ? n2ldef : n2ddef;
         case ColorSettings::N1:
-            return colors.lighttheme ? colors.n1ldef : colors.n1ddef;
+            return colors.lighttheme ? n1ldef : n1ddef;
         case ColorSettings::KanjiNoWords:
-            return colors.lighttheme ? colors.nowordsldef : colors.nowordsddef;
+            return colors.lighttheme ? nowordsldef : nowordsddef;
         case ColorSettings::KanjiUnsorted:
-            return colors.lighttheme ? colors.unsortedldef : colors.unsortedddef;
+            return colors.lighttheme ? unsortedldef : unsortedddef;
         case ColorSettings::KataBg:
-            return colors.lighttheme ? colors.katabgldef : colors.katabgddef;
+            return colors.lighttheme ? katabgldef : katabgddef;
         case ColorSettings::HiraBg:
-            return colors.lighttheme ? colors.hirabgldef : colors.hirabgddef;
+            return colors.lighttheme ? hirabgldef : hirabgddef;
         case ColorSettings::SimilarText:
-            return colors.lighttheme ? colors.similartextldef : colors.similartextddef;
+            return colors.lighttheme ? similartextldef : similartextddef;
         case ColorSettings::SimilarBg:
-            return colors.lighttheme ? colors.similarbgldef : colors.similarbgddef;
+            return colors.lighttheme ? similarbgldef : similarbgddef;
         case ColorSettings::PartsBg:
-            return colors.lighttheme ? colors.partsbgldef : colors.partsbgddef;
+            return colors.lighttheme ? partsbgldef : partsbgddef;
         case ColorSettings::PartOfBg:
-            return colors.lighttheme ? colors.partofbgldef : colors.partofbgddef;
+            return colors.lighttheme ? partofbgldef : partofbgddef;
+        case ColorSettings::Stat1:
+            return colors.lighttheme ? stat1ldef : stat1ddef;
+        case ColorSettings::Stat2:
+            return colors.lighttheme ? stat2ldef : stat2ddef;
+        case ColorSettings::Stat3:
+            return colors.lighttheme ? stat3ldef : stat3ddef;
         default:
             return QColor(0, 0, 0);
         }
@@ -1404,14 +1544,14 @@ namespace Settings
     void updatePalette(QWidget *w)
     {
         QPalette newpal = w->palette();
-        newpal.setColor(QPalette::Active, QPalette::Base, textColor(qApp->palette(), QPalette::Active, ColorSettings::Bg));
-        newpal.setColor(QPalette::Active, QPalette::Text, textColor(qApp->palette(), QPalette::Active, ColorSettings::Text));
-        newpal.setColor(QPalette::Active, QPalette::Highlight, textColor(qApp->palette(), QPalette::Active, ColorSettings::SelBg));
-        newpal.setColor(QPalette::Active, QPalette::HighlightedText, textColor(qApp->palette(), QPalette::Active, ColorSettings::SelText));
-        newpal.setColor(QPalette::Inactive, QPalette::Base, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::Bg));
-        newpal.setColor(QPalette::Inactive, QPalette::Text, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::Text));
-        newpal.setColor(QPalette::Inactive, QPalette::Highlight, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::SelBg));
-        newpal.setColor(QPalette::Inactive, QPalette::HighlightedText, textColor(qApp->palette(), QPalette::Inactive, ColorSettings::SelText));
+        newpal.setColor(QPalette::Active, QPalette::Base, textColor(true, ColorSettings::Bg));
+        newpal.setColor(QPalette::Active, QPalette::Text, textColor(true, ColorSettings::Text));
+        newpal.setColor(QPalette::Active, QPalette::Highlight, textColor(true, ColorSettings::SelBg));
+        newpal.setColor(QPalette::Active, QPalette::HighlightedText, textColor(true, ColorSettings::SelText));
+        newpal.setColor(QPalette::Inactive, QPalette::Base, textColor(false, ColorSettings::Bg));
+        newpal.setColor(QPalette::Inactive, QPalette::Text, textColor(false, ColorSettings::Text));
+        newpal.setColor(QPalette::Inactive, QPalette::Highlight, textColor(false, ColorSettings::SelBg));
+        newpal.setColor(QPalette::Inactive, QPalette::HighlightedText, textColor(false, ColorSettings::SelText));
         w->setPalette(newpal);
     }
 }

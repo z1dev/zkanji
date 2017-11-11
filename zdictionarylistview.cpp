@@ -1717,14 +1717,16 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
     // This row is selected in the view.
     bool selected = /*owner()->selectionType() == ListSelectionType::Single ? current : */owner()->rowSelected(index.row());
 
-    QColor gridColor;
-    if (Settings::colors.grid.isValid())
-        gridColor = Settings::colors.grid;
-    else
-    {
-        int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &option, (QWidget*)option.styleObject);
-        gridColor = static_cast<QRgb>(gridHint);
-    }
+    //QColor gridColor;
+    //if (Settings::colors.grid.isValid())
+    //    gridColor = Settings::colors.grid;
+    //else
+    //{
+    //    int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &option, (QWidget*)option.styleObject);
+    //    gridColor = static_cast<QRgb>(gridHint);
+    //}
+
+    QColor gridColor = Settings::uiColor(ColorSettings::Grid);
 
     QColor celltextcol = index.data((int)CellRoles::TextColor).value<QColor>();
     QColor basetextcol = option.palette.color(colorgrp, QPalette::Text);
