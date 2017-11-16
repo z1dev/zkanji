@@ -94,7 +94,7 @@ struct WordStudySorting {
 };
 
 enum class DeckStudyPages { Items, Stats, None };
-enum class DeckStatPages { Items, Levels, Tests };
+enum class DeckStatPages { Items, Forecast, Levels, Tests };
 
 class QMenu;
 class QAction;
@@ -157,7 +157,13 @@ protected slots:
     void showColumnContextMenu(const QPoint &p);
     void showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
 
+    void on_int1Radio_toggled(bool checked);
+    void on_int2Radio_toggled(bool checked);
+    void on_int3Radio_toggled(bool checked);
+    void on_int4Radio_toggled(bool checked);
+
     void on_itemsButton_clicked();
+    void on_forecastButton_clicked();
     void on_levelsButton_clicked();
     void on_testsButton_clicked();
 
@@ -170,6 +176,7 @@ private:
     void restoreColumns();
 
     void showStat(DeckStatPages page);
+    void updateStat();
 
     WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidget *parent = nullptr);
     WordStudyListForm() = delete;

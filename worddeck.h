@@ -524,6 +524,11 @@ public:
     // Number of words in the queue, only counting one of the question types.
     int queueUniqueSize() const;
 
+    // Returns item indexes in the passed vector for studiedItems() to be studied in order
+    // they are to be included in tests by the current standing. The list always starts with
+    // failed items from the past test if found.
+    void dueItems(std::vector<int> &items) const;
+
     // Number of studied items.
     int studySize() const;
     // Deck items already in the study list and not the queue.

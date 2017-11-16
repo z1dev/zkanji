@@ -1414,6 +1414,20 @@ DateTimeFunctions::~DateTimeFunctions()
 
 }
 
+QString DateTimeFunctions::formatString()
+{
+    switch (Settings::general.dateformat)
+    {
+    case GeneralSettings::DayMonthYear:
+        return tr("dd.MM.yyyy");
+    case GeneralSettings::MonthDayYear:
+        return tr("MM.dd.yyyy");
+    case GeneralSettings::YearMonthDay:
+    default:
+        return tr("yyyy.MM.dd");
+    }
+}
+
 QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
 {
     if (utc)
@@ -1426,15 +1440,7 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
     case DayFixedDate:
         dt = QDateTime(getLTDay(dt));
     case NormalDate:
-        switch (Settings::general.dateformat)
-        {
-        case GeneralSettings::DayMonthYear:
-            return dt.toString(tr("dd.MM.yyyy"));
-        case GeneralSettings::MonthDayYear:
-            return dt.toString(tr("MM.dd.yyyy"));
-        case GeneralSettings::YearMonthDay:
-            return dt.toString(tr("yyyy.MM.dd"));
-        }
+        dt.toString(formatString());
     }
 
     return QString();
@@ -1442,17 +1448,7 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
 
 QString DateTimeFunctions::formatDay(QDate dt)
 {
-    switch (Settings::general.dateformat)
-    {
-    case GeneralSettings::DayMonthYear:
-        return dt.toString(tr("dd.MM.yyyy"));
-    case GeneralSettings::MonthDayYear:
-        return dt.toString(tr("MM.dd.yyyy"));
-    case GeneralSettings::YearMonthDay:
-        return dt.toString(tr("yyyy.MM.dd"));
-    default:
-        return QString();
-    }
+    return dt.toString(formatString());
 }
 
 QString DateTimeFunctions::formatPast(QDateTime dt)

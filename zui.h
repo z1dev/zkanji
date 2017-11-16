@@ -343,6 +343,9 @@ public:
 
     };
 
+    // Returns the format string for a full date corresponding to the current settings.
+    static QString formatString();
+
     // Formats a string for the passed date time in the passed format. Set utc to true if the
     // date should be shown in UTC time instead of local.
     static QString format(QDateTime dt, FormatTypes type, bool utc = false);

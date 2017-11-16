@@ -1994,6 +1994,16 @@ int WordDeck::queueUniqueSize() const
     return uniques.size();
 }
 
+void WordDeck::dueItems(std::vector<int> &items) const
+{
+    items.clear();
+    items.reserve(duelist.size() + failedlist.size());
+    for (int ix = 0, siz = failedlist.size(); ix != siz; ++ix)
+        items.push_back(failedlist[ix]);
+    for (int ix = 0, siz = duelist.size(); ix != siz; ++ix)
+        items.push_back(duelist[ix]);
+}
+
 int WordDeck::studySize() const
 {
     return lockitems.size();
