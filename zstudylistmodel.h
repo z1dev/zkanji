@@ -56,7 +56,7 @@ enum class DeckRowRoles
     ItemHint,
 };
 
-enum class DeckViewModes : int { Queued, Studied, Tested };
+enum class DeckItemViewModes : int { Queued, Studied, Tested };
 
 class StudyListModel : public DictionaryItemModel
 {
@@ -64,10 +64,10 @@ class StudyListModel : public DictionaryItemModel
 
 public:
     // Fills the passed list with the default column sizes in the requested mode.
-    static void defaultColumnWidths(DeckViewModes mode, std::vector<int> &result);
+    static void defaultColumnWidths(DeckItemViewModes mode, std::vector<int> &result);
     // Returns the default column width of a column at columnindex. Returns -1 on invalid
     // index.
-    static int defaultColumnWidth(DeckViewModes mode, int columnindex);
+    static int defaultColumnWidth(DeckItemViewModes mode, int columnindex);
 
     StudyListModel() = delete;
     StudyListModel(WordDeck *deck, QObject *parent = nullptr);
@@ -76,8 +76,8 @@ public:
     // Repopulates the model.
     void reset();
 
-    void setViewMode(DeckViewModes newmode);
-    DeckViewModes viewMode() const;
+    void setViewMode(DeckItemViewModes newmode);
+    DeckItemViewModes viewMode() const;
 
     //int deckColumnCount() const;
     //int testColumnCount() const;
@@ -122,7 +122,7 @@ private:
     bool matchesFilter(WordPartBits part) const;
 
     WordDeck *deck;
-    DeckViewModes mode;
+    DeckItemViewModes mode;
 
     // Indexes into the deck's items sorted by value. Used when one or more parts of the item
     // have to be hidden.

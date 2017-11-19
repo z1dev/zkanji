@@ -84,12 +84,20 @@ public:
     FlagGuard& operator=(FlagGuard&&) = delete;
 
     FlagGuard(T *what, T closeval) : what(what), closeval(closeval) {}
+    FlagGuard(T *what, T startval, T closeval) : what(what), closeval(closeval)
+    {
+        if (what != nullptr)
+            *what = startval;
+    }
     ~FlagGuard() {
         if (what != nullptr)
             *what = closeval;
     }
 
-    void release() { what = nullptr; }
+    void release(bool updateval = false) {
+        if (updateval && what != nullptr)
+            *what = closeval;
+        what = nullptr; }
 };
 
 // Class with the role of creating different Qt objects and be their global parent.

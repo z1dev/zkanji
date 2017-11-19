@@ -68,9 +68,9 @@ const int testedcolcount = testeddata.size();
 //-------------------------------------------------------------
 
 
-void StudyListModel::defaultColumnWidths(DeckViewModes mode, std::vector<int> &result)
+void StudyListModel::defaultColumnWidths(DeckItemViewModes mode, std::vector<int> &result)
 {
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
     {
         result.resize(queuedata.size() - 1);
         int ix = 0;
@@ -81,7 +81,7 @@ void StudyListModel::defaultColumnWidths(DeckViewModes mode, std::vector<int> &r
             result[ix++] = dat.width;
         }
     }
-    else if (mode == DeckViewModes::Studied)
+    else if (mode == DeckItemViewModes::Studied)
     {
         result.resize(studieddata.size() - 1);
         int ix = 0;
@@ -92,7 +92,7 @@ void StudyListModel::defaultColumnWidths(DeckViewModes mode, std::vector<int> &r
             result[ix++] = dat.width;
         }
     }
-    else if (mode == DeckViewModes::Tested)
+    else if (mode == DeckItemViewModes::Tested)
     {
         result.resize(testeddata.size() - 1);
         int ix = 0;
@@ -105,21 +105,21 @@ void StudyListModel::defaultColumnWidths(DeckViewModes mode, std::vector<int> &r
     }
 }
 
-int StudyListModel::defaultColumnWidth(DeckViewModes mode, int columnindex)
+int StudyListModel::defaultColumnWidth(DeckItemViewModes mode, int columnindex)
 {
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
     {
         if (columnindex < 0 || columnindex >= queuedata.size())
             return -1;
         return (queuedata.begin() + columnindex)->width;
     }
-    else if (mode == DeckViewModes::Studied)
+    else if (mode == DeckItemViewModes::Studied)
     {
         if (columnindex < 0 || columnindex >= studieddata.size())
             return -1;
         return (studieddata.begin() + columnindex)->width;
     }
-    else if (mode == DeckViewModes::Tested)
+    else if (mode == DeckItemViewModes::Tested)
     {
         if (columnindex < 0 || columnindex >= testeddata.size())
             return -1;
@@ -129,9 +129,9 @@ int StudyListModel::defaultColumnWidth(DeckViewModes mode, int columnindex)
     return -1;
 }
 
-StudyListModel::StudyListModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), mode(DeckViewModes::Studied), kanjion(true), kanaon(true), defon(true)
+StudyListModel::StudyListModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), mode(DeckItemViewModes::Studied), kanjion(true), kanaon(true), defon(true)
 {
-    setViewMode(DeckViewModes::Queued);
+    setViewMode(DeckItemViewModes::Queued);
     connect();
 
     connect(deck, &WordDeck::itemsQueued, this, &StudyListModel::itemsQueued);
@@ -147,17 +147,17 @@ StudyListModel::~StudyListModel()
 void StudyListModel::reset()
 {
     beginResetModel();
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
         setColumns(queuedata);
-    else if (mode == DeckViewModes::Studied)
+    else if (mode == DeckItemViewModes::Studied)
         setColumns(studieddata);
-    else if (mode == DeckViewModes::Tested)
+    else if (mode == DeckItemViewModes::Tested)
         setColumns(testeddata);
     fillList(list);
     endResetModel();
 }
 
-void StudyListModel::setViewMode(DeckViewModes newmode)
+void StudyListModel::setViewMode(DeckItemViewModes newmode)
 {
     if (mode == newmode)
         return;
@@ -165,18 +165,18 @@ void StudyListModel::setViewMode(DeckViewModes newmode)
     beginResetModel();
 
     mode = newmode;
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
         setColumns(queuedata);
-    else if (mode == DeckViewModes::Studied)
+    else if (mode == DeckItemViewModes::Studied)
         setColumns(studieddata);
-    else if (mode == DeckViewModes::Tested)
+    else if (mode == DeckItemViewModes::Tested)
         setColumns(testeddata);
     fillList(list);
 
     endResetModel();
 }
 
-DeckViewModes StudyListModel::viewMode() const
+DeckItemViewModes StudyListModel::viewMode() const
 {
     return mode;
 }
@@ -188,7 +188,7 @@ bool StudyListModel::sortOrder(int column, int rowa, int rowb)
     rowa = list[rowa];
     rowb = list[rowb];
 
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
     {
         FreeWordDeckItem *itema = deck->queuedItems(rowa);
         FreeWordDeckItem *itemb = deck->queuedItems(rowb);
@@ -234,7 +234,7 @@ bool StudyListModel::sortOrder(int column, int rowa, int rowb)
             return rowa < rowb;
         }
     }
-    else if (mode == DeckViewModes::Studied)
+    else if (mode == DeckItemViewModes::Studied)
     {
         LockedWordDeckItem *itema = deck->studiedItems(rowa);
         LockedWordDeckItem *itemb = deck->studiedItems(rowb);
@@ -331,7 +331,7 @@ bool StudyListModel::sortOrder(int column, int rowa, int rowb)
             return rowa < rowb;
         }
     }
-    else if (mode == DeckViewModes::Tested)
+    else if (mode == DeckItemViewModes::Tested)
     {
         LockedWordDeckItem *itema = deck->studiedItems(rowa);
         LockedWordDeckItem *itemb = deck->studiedItems(rowb);
@@ -460,12 +460,12 @@ void StudyListModel::setShownParts(bool showkanji, bool showkana, bool showdefin
     {
         smartvector<Range> removed;
 
-        WordPartBits question = mode == DeckViewModes::Queued ? deck->queuedItems(list.back())->questiontype : deck->studiedItems(list.back())->questiontype;
+        WordPartBits question = mode == DeckItemViewModes::Queued ? deck->queuedItems(list.back())->questiontype : deck->studiedItems(list.back())->questiontype;
 
         bool lastmatch = !matchesFilter(question);
         for (int pos = list.size() - 1, prev = pos - 1; pos != -1; --prev)
         {
-            bool match = prev == -1 ? !lastmatch : !matchesFilter(mode == DeckViewModes::Queued ? deck->queuedItems(list[prev])->questiontype : deck->studiedItems(list[prev])->questiontype);
+            bool match = prev == -1 ? !lastmatch : !matchesFilter(mode == DeckItemViewModes::Queued ? deck->queuedItems(list[prev])->questiontype : deck->studiedItems(list[prev])->questiontype);
             if (prev != -1 && lastmatch == match)
                 continue;
 
@@ -487,16 +487,16 @@ void StudyListModel::setShownParts(bool showkanji, bool showkana, bool showdefin
         smartvector<Interval> inserted;
 
         // Current position in the deck.
-        int pos = (mode == DeckViewModes::Queued ? deck->queueSize() : mode == DeckViewModes::Studied ? deck->studySize() : deck->testedSize()) - 1;
+        int pos = (mode == DeckItemViewModes::Queued ? deck->queueSize() : mode == DeckItemViewModes::Studied ? deck->studySize() : deck->testedSize()) - 1;
         // Insert position in list.
         int inspos = list.size() - 1;
 
         while (pos != -1)
         {
-            while (pos != -1 && ((inspos != -1 && list[inspos] == (mode == DeckViewModes::Tested ? deck->testedIndex(pos) : pos)) ||
-                !matchesFilter(mode == DeckViewModes::Queued ? deck->queuedItems(pos)->questiontype : mode == DeckViewModes::Studied ? deck->studiedItems(pos)->questiontype : deck->testedItems(pos)->questiontype)))
+            while (pos != -1 && ((inspos != -1 && list[inspos] == (mode == DeckItemViewModes::Tested ? deck->testedIndex(pos) : pos)) ||
+                !matchesFilter(mode == DeckItemViewModes::Queued ? deck->queuedItems(pos)->questiontype : mode == DeckItemViewModes::Studied ? deck->studiedItems(pos)->questiontype : deck->testedItems(pos)->questiontype)))
             {
-                if (inspos != -1 && list[inspos] == (mode == DeckViewModes::Tested ? deck->testedIndex(pos) : pos))
+                if (inspos != -1 && list[inspos] == (mode == DeckItemViewModes::Tested ? deck->testedIndex(pos) : pos))
                     --inspos;
                 --pos;
             }
@@ -506,8 +506,8 @@ void StudyListModel::setShownParts(bool showkanji, bool showkana, bool showdefin
 
             int prev = pos - 1;
             
-            while (prev != -1 && (inspos == -1 || list[inspos] != (mode == DeckViewModes::Tested ? deck->testedIndex(prev) : prev)) &&
-                matchesFilter(mode == DeckViewModes::Queued ? deck->queuedItems(prev)->questiontype : mode == DeckViewModes::Studied ? deck->studiedItems(prev)->questiontype : deck->testedItems(prev)->questiontype))
+            while (prev != -1 && (inspos == -1 || list[inspos] != (mode == DeckItemViewModes::Tested ? deck->testedIndex(prev) : prev)) &&
+                matchesFilter(mode == DeckItemViewModes::Queued ? deck->queuedItems(prev)->questiontype : mode == DeckItemViewModes::Studied ? deck->studiedItems(prev)->questiontype : deck->testedItems(prev)->questiontype))
                 --prev;
 
             if (inserted.empty() || inserted.front()->index != inspos + 1)
@@ -518,7 +518,7 @@ void StudyListModel::setShownParts(bool showkanji, bool showkana, bool showdefin
             for (int ix = 0, siz = pos - prev; ix != siz; ++ix)
             {
                 int val = prev + 1 + ix;
-                list[inspos + 1 + ix] = (mode == DeckViewModes::Tested ? deck->testedIndex(val) : val);
+                list[inspos + 1 + ix] = (mode == DeckItemViewModes::Tested ? deck->testedIndex(val) : val);
             }
 
             pos = prev;
@@ -538,14 +538,14 @@ Dictionary* StudyListModel::dictionary() const
 int StudyListModel::indexes(int pos) const
 {
     pos = list[pos];
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
         return deck->queuedItems(pos)->data->index;
     return deck->studiedItems(pos)->data->index;
 }
 
 int StudyListModel::rowCount(const QModelIndex &parent) const
 {
-    //if (mode == DeckViewModes::Queued)
+    //if (mode == DeckItemViewModes::Queued)
     //    return deck->queueSize();
     //return deck->studySize();
     return list.size();
@@ -560,13 +560,13 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
     
     if (role == (int)DeckRowRoles::DeckIndex)
     {
-        //if (mode == DeckViewModes::Tested)
+        //if (mode == DeckItemViewModes::Tested)
         //    return deck->testedIndex(itemindex);
         return itemindex;
     }
     if (role == (int)DeckRowRoles::ItemQuestion || role == (int)DeckRowRoles::ItemHint)
     {
-        WordDeckItem *item = mode == DeckViewModes::Queued ? (WordDeckItem*)deck->queuedItems(itemindex) : (WordDeckItem*)deck->studiedItems(itemindex);
+        WordDeckItem *item = mode == DeckItemViewModes::Queued ? (WordDeckItem*)deck->queuedItems(itemindex) : (WordDeckItem*)deck->studiedItems(itemindex);
         if (role == (int)DeckRowRoles::ItemQuestion)
             return (int)item->questiontype;
         return (int)item->mainhint;
@@ -577,7 +577,7 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
 
     QVariant result;
 
-    if (mode == DeckViewModes::Queued)
+    if (mode == DeckItemViewModes::Queued)
     {
         FreeWordDeckItem *item = deck->queuedItems(itemindex);
         switch (headerData(index.column(), Qt::Horizontal, (int)DictColumnRoles::Type).toInt())
@@ -597,7 +597,7 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
         }
         return result;
     }
-    else if (mode == DeckViewModes::Studied)
+    else if (mode == DeckItemViewModes::Studied)
     {
         LockedWordDeckItem *item = deck->studiedItems(itemindex);
         StudyDeck *study = deck->getStudyDeck();
@@ -635,7 +635,7 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
         }
         return result;
     }
-    else // if (mode == DeckViewModes::Tested)
+    else // if (mode == DeckItemViewModes::Tested)
     {
         LockedWordDeckItem *item = deck->studiedItems(itemindex);
         StudyDeck *study = deck->getStudyDeck();
@@ -685,7 +685,7 @@ Qt::DropActions StudyListModel::supportedDragActions() const
 
 Qt::DropActions StudyListModel::supportedDropActions(bool samesource, const QMimeData *mime) const
 {
-    if (mode != DeckViewModes::Queued)
+    if (mode != DeckItemViewModes::Queued)
         return 0;
     if (mime->hasFormat("zkanji/words"))
         return Qt::CopyAction;
@@ -701,7 +701,7 @@ Qt::DropActions StudyListModel::supportedDropActions(bool samesource, const QMim
 
 bool StudyListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
-    return mode == DeckViewModes::Queued && row == -1 && column == -1 && !parent.isValid() && data->formats().contains(QStringLiteral("zkanji/words")) &&
+    return mode == DeckItemViewModes::Queued && row == -1 && column == -1 && !parent.isValid() && data->formats().contains(QStringLiteral("zkanji/words")) &&
             *(intptr_t*)data->data(QStringLiteral("zkanji/words")).constData() == (intptr_t)deck->dictionary();
 }
 
@@ -740,9 +740,9 @@ void StudyListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
     //for (int ix = 0, siz = list.size(); ix != siz; ++ix)
     //{
     //    int pos = list[ix];
-    //    if ((mode == DeckViewModes::Queued && deck->queuedItems(pos)->data->index == windex) ||
-    //        (/*mode == DeckViewModes::Studied &&*/ deck->studiedItems(pos)->data->index == windex) /*||
-    //        (mode == DeckViewModes::Tested && deck->testedItems(pos)->data->index == windex)*/)
+    //    if ((mode == DeckItemViewModes::Queued && deck->queuedItems(pos)->data->index == windex) ||
+    //        (/*mode == DeckItemViewModes::Studied &&*/ deck->studiedItems(pos)->data->index == windex) /*||
+    //        (mode == DeckItemViewModes::Tested && deck->testedItems(pos)->data->index == windex)*/)
     //    {
     //        changes.push_back(ix);
     //    }
@@ -775,13 +775,13 @@ void StudyListModel::entryChanged(int windex, bool studydef)
     for (int ix = 0, siz = list.size(); ix != siz; ++ix)
     {
         int pos = list[ix];
-        if ((mode == DeckViewModes::Queued && deck->queuedItems(pos)->data->index == windex) ||
-            (/*mode == DeckViewModes::Studied &&*/ deck->studiedItems(pos)->data->index == windex) /*||
-            (mode == DeckViewModes::Tested && deck->testedItems(pos)->data->index == windex)*/)
+        if ((mode == DeckItemViewModes::Queued && deck->queuedItems(pos)->data->index == windex) ||
+            (/*mode == DeckItemViewModes::Studied &&*/ deck->studiedItems(pos)->data->index == windex) /*||
+            (mode == DeckItemViewModes::Tested && deck->testedItems(pos)->data->index == windex)*/)
             emit dataChanged(index(ix, 0), index(ix, columnCount() - 1));
     }
 
-    //if (mode == DeckViewModes::Queued)
+    //if (mode == DeckItemViewModes::Queued)
     //{
     //    // Try to locate the word in the queue.
     //    for (int ix = 0; /*!entryremoving &&*/ ix != deck->queueSize(); ++ix)
@@ -804,7 +804,7 @@ void StudyListModel::entryAdded(int windex)
 
 void StudyListModel::itemsQueued(int count)
 {
-    if (mode != DeckViewModes::Queued || count == 0)
+    if (mode != DeckItemViewModes::Queued || count == 0)
         return;
 
     // Items added to the queue.
@@ -835,7 +835,7 @@ void StudyListModel::itemsQueued(int count)
 
 void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, bool decrement)
 {
-    if (queued != (mode == DeckViewModes::Queued))
+    if (queued != (mode == DeckItemViewModes::Queued))
         return;
 
     // Items is first filled with indexes in list to be removed. When showing items from the
@@ -845,7 +845,7 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
     std::vector<int> items;
     std::vector<int> order;
 
-    if (mode == DeckViewModes::Tested)
+    if (mode == DeckItemViewModes::Tested)
     {
         // Adding list indexes to items that are both in list and indexes.
 
@@ -885,7 +885,7 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
         {
             if (decrement)
             {
-                if (mode != DeckViewModes::Tested)
+                if (mode != DeckItemViewModes::Tested)
                 {
                     for (int ix = list.size() - 1, last = items[pos]; ix != last; --ix)
                         list[ix] -= (pos - prev);
@@ -926,10 +926,10 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
 
 void StudyListModel::itemDataChanged(const std::vector<int> &indexes, bool queue)
 {
-    if (queue != (mode == DeckViewModes::Queued) || indexes.empty())
+    if (queue != (mode == DeckItemViewModes::Queued) || indexes.empty())
         return;
 
-    if (mode == DeckViewModes::Tested && deck->getStudyDeck()->cardLevel(deck->studiedItems(indexes.front())->cardid) == 0)
+    if (mode == DeckItemViewModes::Tested && deck->getStudyDeck()->cardLevel(deck->studiedItems(indexes.front())->cardid) == 0)
     {
         // Only items that are reset will have a level of 0. These items are removed from the
         // test list, so instead of data changed, we have to process removal.
@@ -978,23 +978,23 @@ void StudyListModel::itemDataChanged(const std::vector<int> &indexes, bool queue
 void StudyListModel::fillList(std::vector<int> &dest)
 {
     dest.clear();
-    int cnt = mode == DeckViewModes::Queued ? deck->queueSize() : mode == DeckViewModes::Studied ? deck->studySize() : deck->testedSize();
+    int cnt = mode == DeckItemViewModes::Queued ? deck->queueSize() : mode == DeckItemViewModes::Studied ? deck->studySize() : deck->testedSize();
 
     if (kanjion && kanaon && defon)
     {
         dest.reserve(cnt);
         while (dest.size() != cnt)
-            dest.push_back(mode == DeckViewModes::Tested ? deck->testedIndex(dest.size()) : dest.size());
+            dest.push_back(mode == DeckItemViewModes::Tested ? deck->testedIndex(dest.size()) : dest.size());
     }
     else
     {
         for (int ix = 0; ix != cnt; ++ix)
         {
-            if ((mode == DeckViewModes::Queued && matchesFilter(deck->queuedItems(ix)->questiontype)) ||
-                (mode == DeckViewModes::Studied && matchesFilter(deck->studiedItems(ix)->questiontype)) ||
-                (mode == DeckViewModes::Tested && matchesFilter(deck->testedItems(ix)->questiontype)))
+            if ((mode == DeckItemViewModes::Queued && matchesFilter(deck->queuedItems(ix)->questiontype)) ||
+                (mode == DeckItemViewModes::Studied && matchesFilter(deck->studiedItems(ix)->questiontype)) ||
+                (mode == DeckItemViewModes::Tested && matchesFilter(deck->testedItems(ix)->questiontype)))
             {
-                dest.push_back(mode == DeckViewModes::Tested ? deck->testedIndex(ix) : ix);
+                dest.push_back(mode == DeckItemViewModes::Tested ? deck->testedIndex(ix) : ix);
             }
         }
     }

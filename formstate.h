@@ -135,17 +135,17 @@ struct KanjiInfoFormData
     KanjiInfoData data;
 };
 
-enum class DeckViewModes : int;
-struct WordStudyListFormData
-{
-    // Window dimensions.
-    QSize siz;
+enum class DeckItemViewModes : int;
+enum class DeckStatPages : int;
+enum class DeckStatIntervals : int;
 
+struct WordStudyListFormDataItems
+{
     bool showkanji = true;
     bool showkana = true;
     bool showdef = true;
 
-    DeckViewModes mode = (DeckViewModes)0;
+    DeckItemViewModes mode = (DeckItemViewModes)0;
 
     DictionaryWidgetData dict;
 
@@ -168,6 +168,21 @@ struct WordStudyListFormData
     std::vector<char> queuecols;
     std::vector<char> studycols;
     std::vector<char> testedcols;
+};
+
+struct WordStudyListFormDataStats
+{
+    DeckStatPages page = (DeckStatPages)0;
+    DeckStatIntervals itemsinterval = (DeckStatIntervals)0;
+    DeckStatIntervals forecastinterval = (DeckStatIntervals)1;
+};
+
+struct WordStudyListFormData
+{
+    // Window dimensions.
+    QSize siz;
+    WordStudyListFormDataItems items;
+    WordStudyListFormDataStats stats;
 };
 
 struct PopupDictData
@@ -212,6 +227,8 @@ namespace FormStates
     bool emptyState(const DictionaryWidgetData &data);
     bool emptyState(const ListStateData &data);
     bool emptyState(const KanjiInfoData &data);
+    bool emptyState(const WordStudyListFormDataItems &data);
+    bool emptyState(const WordStudyListFormDataStats &data);
     bool emptyState(const WordStudyListFormData &data);
     bool emptyState(const KanjiFilterData &data);
     bool emptyState(const PopupKanjiData &data);
@@ -234,6 +251,12 @@ namespace FormStates
 
     void saveXMLSettings(const KanjiInfoFormData &data, QXmlStreamWriter &writer);
     void loadXMLSettings(KanjiInfoFormData &data, QXmlStreamReader &reader);
+
+    void saveXMLSettings(const WordStudyListFormDataItems &data, QXmlStreamWriter &writer);
+    void loadXMLSettings(WordStudyListFormDataItems &data, QXmlStreamReader &reader);
+
+    void saveXMLSettings(const WordStudyListFormDataStats &data, QXmlStreamWriter &writer);
+    void loadXMLSettings(WordStudyListFormDataStats &data, QXmlStreamReader &reader);
 
     void saveXMLSettings(const WordStudyListFormData &data, QXmlStreamWriter &writer);
     void loadXMLSettings(WordStudyListFormData &data, QXmlStreamReader &reader);

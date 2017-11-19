@@ -18,6 +18,7 @@
 #include "kanji.h"
 #include "zstudylistmodel.h"
 #include "kanapracticesettingsform.h"
+#include "wordstudylistform.h"
 
 
 //-------------------------------------------------------------
@@ -63,11 +64,21 @@ namespace FormStates
             data.speed == 3 && data.toph == -1 && data.dicth == -1 && data.refdict == false && emptyState(data.dict);
     }
 
-    bool emptyState(const WordStudyListFormData &data)
+    bool emptyState(const WordStudyListFormDataItems &data)
     {
-        return !data.siz.isValid() && data.showkanji == true && data.showkana == true && data.showdef == true && data.mode == (DeckViewModes)0 &&
+        return data.showkanji == true && data.showkana == true && data.showdef == true && data.mode == (DeckItemViewModes)0 &&
             emptyState(data.dict) && data.queuesort.column == -1 && data.studysort.column == -1 && data.testedsort.column == -1 &&
             data.queuesizes.empty() && data.studysizes.empty() && data.testedsizes.empty() && data.queuecols.empty() && data.studycols.empty() && data.testedcols.empty();
+    }
+
+    bool emptyState(const WordStudyListFormDataStats &data)
+    {
+        return data.page == (DeckStatPages)0 && data.itemsinterval == (DeckStatIntervals)0 && data.forecastinterval == (DeckStatIntervals)1;
+    }
+
+    bool emptyState(const WordStudyListFormData &data)
+    {
+        return !data.siz.isValid() && emptyState(data.items) && emptyState(data.stats);
     }
 
     bool emptyState(const PopupDictData &data)
@@ -624,8 +635,7 @@ namespace FormStates
         loadXMLSettings(data.data, reader);
     }
 
-
-    void saveXMLSettings(const WordStudyListFormData &data, QXmlStreamWriter &writer)
+    void saveXMLSettings(const WordStudyListFormDataItems &data, QXmlStreamWriter &writer)
     {
         if (emptyState(data))
             return;
@@ -633,17 +643,11 @@ namespace FormStates
         const QString True = QStringLiteral("1");
         const QString False = QStringLiteral("0");
 
-        if (!data.siz.isEmpty())
-        {
-            writer.writeAttribute("width", QString::number(data.siz.width()));
-            writer.writeAttribute("height", QString::number(data.siz.height()));
-        }
-
         writer.writeAttribute("kanji", data.showkanji ? True : False);
         writer.writeAttribute("kana", data.showkana ? True : False);
         writer.writeAttribute("definition", data.showdef ? True : False);
 
-        writer.writeAttribute("mode", data.mode == DeckViewModes::Queued ? "queue" : data.mode == DeckViewModes::Studied ? "study" : "tested" );
+        writer.writeAttribute("mode", data.mode == DeckItemViewModes::Queued ? "queue" : data.mode == DeckItemViewModes::Studied ? "study" : "tested");
 
         writer.writeStartElement("Dictionary");
         saveXMLSettings(data.dict, writer);
@@ -713,7 +717,7 @@ namespace FormStates
         writer.writeEndElement(); /* Columns */
     }
 
-    void loadXMLSettings(WordStudyListFormData &data, QXmlStreamReader &reader)
+    void loadXMLSettings(WordStudyListFormDataItems &data, QXmlStreamReader &reader)
     {
         const QString True = QStringLiteral("1");
         const QString False = QStringLiteral("0");
@@ -721,31 +725,12 @@ namespace FormStates
         bool ok = false;
         int val;
 
-        if (reader.attributes().hasAttribute("width"))
-        {
-            val = reader.attributes().value("width").toInt(&ok);
-            if (val < 0 || val > 999999)
-                ok = false;
-            if (ok)
-                data.siz.setWidth(val);
-        }
-        if (ok && reader.attributes().hasAttribute("height"))
-        {
-            val = reader.attributes().value("height").toInt(&ok);
-            if (val < 0 || val > 999999)
-                ok = false;
-            if (ok)
-                data.siz.setHeight(val);
-        }
-        if (!ok)
-            data.siz = QSize();
-
         data.showkanji = reader.attributes().value("kanji") != False;
         data.showkana = reader.attributes().value("kana") != False;
         data.showdef = reader.attributes().value("definition") != False;
 
         QStringRef modestr = reader.attributes().value("mode");
-        data.mode = modestr == "study" ? DeckViewModes::Studied : modestr == "tested" ? DeckViewModes::Tested : DeckViewModes::Queued;
+        data.mode = modestr == "study" ? DeckItemViewModes::Studied : modestr == "tested" ? DeckItemViewModes::Tested : DeckItemViewModes::Queued;
 
         while (reader.readNextStartElement())
         {
@@ -758,7 +743,7 @@ namespace FormStates
                     QStringRef elemname = reader.name();
                     if (elemname == "Queue" || elemname == "Study" || elemname == "LastTest")
                     {
-                        WordStudyListFormData::SortData &sort = elemname == "Queue" ? data.queuesort : elemname == "Study" ? data.studysort : data.testedsort;
+                        WordStudyListFormDataItems::SortData &sort = elemname == "Queue" ? data.queuesort : elemname == "Study" ? data.studysort : data.testedsort;
                         val = reader.attributes().value("column").toInt(&ok);
                         if (ok)
                             sort.column = val;
@@ -813,6 +798,85 @@ namespace FormStates
         }
     }
 
+    void saveXMLSettings(const WordStudyListFormDataStats &data, QXmlStreamWriter &writer)
+    {
+        if (emptyState(data))
+            return;
+
+        writer.writeAttribute("page", data.page == DeckStatPages::Items ? "items" : data.page == DeckStatPages::Forecast ? "forecast" : data.page == DeckStatPages::Levels ? "levels" : "tests");
+        writer.writeAttribute("itemsinterval", data.itemsinterval == DeckStatIntervals::All ? "all" : data.itemsinterval == DeckStatIntervals::Year ? "year" : data.itemsinterval == DeckStatIntervals::HalfYear ? "halfyear" : "month");
+        writer.writeAttribute("forecastinterval", data.forecastinterval == DeckStatIntervals::All ? "all" : data.forecastinterval == DeckStatIntervals::Year ? "year" : data.forecastinterval == DeckStatIntervals::HalfYear ? "halfyear" : "month");
+    }
+
+    void loadXMLSettings(WordStudyListFormDataStats &data, QXmlStreamReader &reader)
+    {
+        QStringRef str = reader.attributes().value("page");
+        data.page = str == "items" ? DeckStatPages::Items : str == "forecast" ? DeckStatPages::Forecast : str == "levels" ? DeckStatPages::Levels : DeckStatPages::Tests;
+        str = reader.attributes().value("itemsinterval");
+        data.itemsinterval = str == "year" ? DeckStatIntervals::Year : str == "halfyear" ? DeckStatIntervals::HalfYear : str == "month" ? DeckStatIntervals::Month : DeckStatIntervals::All;
+        str = reader.attributes().value("forecastinterval");
+        data.forecastinterval = str == "all" ? DeckStatIntervals::All : str == "year" ? DeckStatIntervals::Year : str == "halfyear" ? DeckStatIntervals::HalfYear : DeckStatIntervals::Month;
+
+        reader.skipCurrentElement();
+    }
+
+    void saveXMLSettings(const WordStudyListFormData &data, QXmlStreamWriter &writer)
+    {
+        if (emptyState(data))
+            return;
+
+        if (!data.siz.isEmpty())
+        {
+            writer.writeAttribute("width", QString::number(data.siz.width()));
+            writer.writeAttribute("height", QString::number(data.siz.height()));
+        }
+
+        writer.writeStartElement("Items");
+        saveXMLSettings(data.items, writer);
+        writer.writeEndElement(); /* Items */
+
+        writer.writeStartElement("Stats");
+        saveXMLSettings(data.stats, writer);
+        writer.writeEndElement(); /* Stats */
+    }
+
+    void loadXMLSettings(WordStudyListFormData &data, QXmlStreamReader &reader)
+    {
+        const QString True = QStringLiteral("1");
+        const QString False = QStringLiteral("0");
+
+        bool ok = false;
+        int val;
+
+        if (reader.attributes().hasAttribute("width"))
+        {
+            val = reader.attributes().value("width").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.siz.setWidth(val);
+        }
+        if (ok && reader.attributes().hasAttribute("height"))
+        {
+            val = reader.attributes().value("height").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.siz.setHeight(val);
+        }
+        if (!ok)
+            data.siz = QSize();
+
+        while (reader.readNextStartElement())
+        {
+            if (reader.name() == "Items")
+                loadXMLSettings(data.items, reader);
+            else if (reader.name() == "Stats")
+                loadXMLSettings(data.stats, reader);
+            else
+                reader.skipCurrentElement();
+        }
+    }
 
     void saveXMLSettings(const PopupDictData &data, QXmlStreamWriter &writer)
     {

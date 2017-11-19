@@ -22,14 +22,15 @@ namespace Ui {
     class WordStudyListForm;
 }
 
-enum class DeckViewModes : int;
+enum class DeckItemViewModes : int;
 class WordDeck;
 class StudyListModel;
 class DictionaryItemModel;
 class Dictionary;
 class QMenu;
 struct WordStudyListFormData;
-
+struct WordStudyListFormDataItems;
+struct WordStudyListFormDataStats;
 
 class WordStudyTestsModel : public ZAbstractStatModel
 {
@@ -94,7 +95,8 @@ struct WordStudySorting {
 };
 
 enum class DeckStudyPages { Items, Stats, None };
-enum class DeckStatPages { Items, Forecast, Levels, Tests };
+enum class DeckStatPages : int { Items, Forecast, Levels, Tests };
+enum class DeckStatIntervals : int { All, Year, HalfYear, Month };
 
 class QMenu;
 class QAction;
@@ -114,7 +116,9 @@ public:
     virtual ~WordStudyListForm();
 
     void saveState(WordStudyListFormData &data) const;
-    void restoreItemsState(const WordStudyListFormData &data);
+    void restoreFormState(const WordStudyListFormData &data);
+    void restoreItemsState(const WordStudyListFormDataItems &data);
+    void restoreStatsState(const WordStudyListFormDataStats &data);
 
     // Changes the active page shown in the window.
     void showPage(DeckStudyPages newpage, bool forceinit = false);
@@ -192,6 +196,10 @@ private:
     bool itemsinited;
     bool statsinited;
 
+    DeckStatPages statpage;
+    DeckStatIntervals itemsint;
+    DeckStatIntervals forecastint;
+
     StudyListModel *model;
 
     // Saved sort column and order for the different tabs.
@@ -200,8 +208,8 @@ private:
     WordStudySorting testedsort;
 
     // Set during some operations when the sorting is changed programmatically, to ignore the
-    // signal sent by the header.
-    bool ignoresort;
+    // signal sent by the header, or while collecting statistics.
+    bool ignoreop;
 
     std::vector<int> queuesizes;
     std::vector<int> studiedsizes;
