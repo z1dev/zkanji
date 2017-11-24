@@ -23,6 +23,11 @@ ZStatView::~ZStatView()
 
 }
 
+ZAbstractStatModel* ZStatView::model() const
+{
+    return m;
+}
+
 void ZStatView::setModel(ZAbstractStatModel *model)
 {
     if (m == model)
@@ -75,9 +80,16 @@ void ZStatView::setTickSpacing(int val)
 
 void ZStatView::scrollTo(int column)
 {
+    if (column >= colpos.size())
+    {
+        horizontalScrollBar()->setValue(horizontalScrollBar()->maximum());
+        return;
+    }
+
     QRect r = statRect();
-    int mid = (colpos[column] - (column == 0 ? 0 : colpos[column - 1])) / 2;
-    horizontalScrollBar()->setValue(mid - r.width() - 2);
+    //int mid = (colpos[column] + (column == 0 ? 0 : colpos[column - 1])) / 2;
+    //horizontalScrollBar()->setValue(std::max(0, std::min(mid - r.width() - 2, horizontalScrollBar()->maximum())));
+    horizontalScrollBar()->setValue(column == 0 ? 0 : colpos[column - 1]);
 }
 
 void ZStatView::changeEvent(QEvent *e)

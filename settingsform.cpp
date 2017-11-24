@@ -332,7 +332,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     //QStyleOptionViewItem gridopt;
     //gridopt.initFrom(ui->sitesTable);
     //ui->colGridCBox->setDefaultColor(static_cast<QRgb>(qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &gridopt, ui->sitesTable)));
-    ui->colGridCBox->setDefaultColor(Settings::uiColor(ColorSettings::Grid));
+    ui->colGridCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Grid));
 
     ui->colBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
     ui->colTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Text));

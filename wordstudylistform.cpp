@@ -343,6 +343,12 @@ void WordStudyListForm::restoreStatsState(const WordStudyListFormDataStats &data
     itemsint = data.itemsinterval;
     forecastint = data.forecastinterval;
 
+    FlagGuard<bool> ignoreguard(&ignoreop, true, false);
+    ui->itemsButton->setChecked(data.page == DeckStatPages::Items);
+    ui->forecastButton->setChecked(data.page == DeckStatPages::Forecast);
+    ui->levelsButton->setChecked(data.page == DeckStatPages::Levels);
+    ui->testsButton->setChecked(data.page == DeckStatPages::Tests);
+    ignoreguard.release(true);
     showStat(data.page);
 }
 
@@ -477,7 +483,8 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
         ((QValueAxis*)ui->statChart->chart()->axisY())->applyNiceNumbers();
 
         if (ui->itemsButton->isChecked() || ui->forecastButton->isChecked())
-            ((QDateTimeAxis*)ui->statChart->chart()->axisX())->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
+            autoXAxisTicks();
+            //((QDateTimeAxis*)ui->statChart->chart()->axisX())->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
     }
 
     return base::eventFilter(o, e);
@@ -552,7 +559,6 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
 
         WordStudyTestsModel *m = new WordStudyTestsModel(deck, ui->statView);
         ui->statView->setModel(m);
-        ui->statView->scrollTo(m->count() - 1);
 
         restoreStatsState(FormStates::wordstudylist.stats);
     }
@@ -1255,43 +1261,46 @@ void WordStudyListForm::showStat(DeckStatPages page)
         
         xaxis->setTitleText(tr("Date"));
         xaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
+        xaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
 
         if (ui->int1Radio->isChecked())
             xaxis->setRange(QDateTime::fromMSecsSinceEpoch(l1->at(0).x()), now);
         else if (ui->int2Radio->isChecked())
-            xaxis->setRange(QDateTime::currentDateTime().addYears(-1), now);
+            xaxis->setRange(QDateTime::currentDateTime().addDays(-365), now);
         else if (ui->int3Radio->isChecked())
-            xaxis->setRange(QDateTime::currentDateTime().addMonths(-6), now);
+            xaxis->setRange(QDateTime::currentDateTime().addDays(-185), now);
         else if (ui->int4Radio->isChecked())
-            xaxis->setRange(QDateTime::currentDateTime().addMonths(-1), now);
+            xaxis->setRange(QDateTime::currentDateTime().addDays(-31), now);
 
         QValueAxis *yaxis = new QValueAxis(chart);
         yaxis->setLabelFormat("%i");
         yaxis->setTitleText(tr("Item count"));
         yaxis->setRange(0, hi + std::min<int>(100, hi * 0.05));
         yaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
+        yaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
 
         QAreaSeries *area1 = new QAreaSeries(chart);
         area1->setUpperSeries(l1);
         area1->setLowerSeries(l2);
         area1->setBrush(Settings::uiColor(ColorSettings::Stat1));
-        area1->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
+        area1->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
         chart->addSeries(area1);
 
         QAreaSeries *area2 = new QAreaSeries(chart);
         area2->setUpperSeries(l2);
         area2->setLowerSeries(l3);
         area2->setBrush(Settings::uiColor(ColorSettings::Stat2));
-        area2->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
+        area2->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
         chart->addSeries(area2);
 
         QAreaSeries *area3 = new QAreaSeries(chart);
         area3->setUpperSeries(l3);
         area3->setBrush(Settings::uiColor(ColorSettings::Stat3));
-        area3->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
+        area3->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
         chart->addSeries(area3);
 
-        xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
+        //xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
+
         yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
         yaxis->applyNiceNumbers();
 
@@ -1307,6 +1316,8 @@ void WordStudyListForm::showStat(DeckStatPages page)
         area2->attachAxis(yaxis);
         area3->attachAxis(xaxis);
         area3->attachAxis(yaxis);
+
+        normalizeXAxis(xaxis);
 
         ui->statStack->setCurrentIndex(0);
         break;
@@ -1386,7 +1397,7 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
         area->setUpperSeries(line);
         area->setBrush(Settings::uiColor(ColorSettings::Stat1));
-        area->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
+        area->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
 
         chart->setTitle(tr("Number of items to study on future dates"));
         chart->legend()->hide();
@@ -1397,19 +1408,14 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
         xaxis->setTitleText(tr("Date"));
         xaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-
-        //if (ui->int2Radio->isChecked())
-        //    xaxis->setRange(QDateTime::currentDateTime().addYears(-1), now);
-        //else if (ui->int3Radio->isChecked())
-        //    xaxis->setRange(QDateTime::currentDateTime().addMonths(-6), now);
-        //else if (ui->int4Radio->isChecked())
-        //    xaxis->setRange(QDateTime::currentDateTime().addMonths(-1), now);
+        xaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
 
         QValueAxis *yaxis = new QValueAxis(chart);
         yaxis->setLabelFormat("%i");
         yaxis->setTitleText(tr("Item count"));
         yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
         yaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
+        yaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
 
         chart->addSeries(area);
 
@@ -1419,12 +1425,15 @@ void WordStudyListForm::showStat(DeckStatPages page)
         area->attachAxis(xaxis);
         area->attachAxis(yaxis);
 
-        xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
+        //xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
         yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
         yaxis->applyNiceNumbers();
 
         ui->int1Radio->hide();
         ui->intervalWidget->show();
+
+        normalizeXAxis(xaxis);
+
         ui->statStack->setCurrentIndex(0);
         break;
     }
@@ -1460,6 +1469,8 @@ void WordStudyListForm::showStat(DeckStatPages page)
         chart->createDefaultAxes();
         ((QValueAxis*)chart->axisY())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
         ((QValueAxis*)chart->axisX())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
+        ((QValueAxis*)chart->axisY())->setLinePen(Settings::uiColor(ColorSettings::Grid));
+        ((QValueAxis*)chart->axisX())->setLinePen(Settings::uiColor(ColorSettings::Grid));
         ((QValueAxis*)chart->axisY())->setLabelFormat("%i");
         ((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
         ((QValueAxis*)chart->axisY())->applyNiceNumbers();
@@ -1471,8 +1482,8 @@ void WordStudyListForm::showStat(DeckStatPages page)
     case DeckStatPages::Tests:
     {
         ui->intervalWidget->hide();
+        ui->statView->scrollTo(ui->statView->model()->count());
         ui->statStack->setCurrentIndex(1);
-
         break;
     }
     }
@@ -1499,15 +1510,65 @@ void WordStudyListForm::updateStat()
         if (ui->int1Radio->isChecked())
             xaxis->setRange(QDateTime::fromMSecsSinceEpoch(l1->at(0).x()), now);
         else if (ui->int2Radio->isChecked())
-            xaxis->setRange(QDateTime::currentDateTime().addYears(-1), now);
+            xaxis->setRange(QDateTime::currentDateTime().addDays(-365), now);
         else if (ui->int3Radio->isChecked())
-            xaxis->setRange(QDateTime::currentDateTime().addMonths(-6), now);
+            xaxis->setRange(QDateTime::currentDateTime().addDays(-185), now);
         else if (ui->int4Radio->isChecked())
-            xaxis->setRange(QDateTime::currentDateTime().addMonths(-1), now);
+            xaxis->setRange(QDateTime::currentDateTime().addDays(-31), now);
+
+        normalizeXAxis(xaxis);
     }
     else if (ui->forecastButton->isChecked())
         showStat(DeckStatPages::Forecast);
 
+}
+
+void WordStudyListForm::normalizeXAxis(QDateTimeAxis *axis)
+{
+    if (axis == nullptr)
+        return;
+
+    QDateTime min = axis->min();
+    QDateTime max = axis->max();
+
+    int days = min.daysTo(max);
+
+    if (ui->int2Radio->isChecked())
+        axis->setMax(min.addDays(365));
+    else if (ui->int3Radio->isChecked())
+        axis->setMax(min.addDays(185));
+    else if (ui->int4Radio->isChecked())
+        axis->setMax(min.addDays(31));
+    else
+    {
+        // When the whole statistics must be displayed, to make sure the graph can show a good
+        // number of ticks, the displayed days range must be divisible by some good number.
+        // In this case the days will be a number of (6*N)+1.
+        int days = min.daysTo(max);
+        days = ((days - 2) / 6 + 1) * 6 + 1;
+        axis->setMax(min.addDays(days));
+    }
+
+    autoXAxisTicks();
+}
+
+void WordStudyListForm::autoXAxisTicks()
+{
+    QDateTimeAxis *axis = ((QDateTimeAxis*)ui->statChart->chart()->axisX());
+    if (axis == 0)
+        return;
+
+    // Number of days displayed on the X axis, excluding the last day start, which would be
+    // the last tick.
+    int days = axis->min().daysTo(axis->max()) - 1;
+
+    // Maximum tick count.
+    int mticks = std::max(1, ui->statChart->width() / TickSpacing);
+
+    while (mticks > 1 && (days % mticks) != 0)
+        --mticks;
+
+    axis->setTickCount(mticks + 1);
 }
 
 

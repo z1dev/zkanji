@@ -31,6 +31,9 @@ class QMenu;
 struct WordStudyListFormData;
 struct WordStudyListFormDataItems;
 struct WordStudyListFormDataStats;
+QT_CHARTS_BEGIN_NAMESPACE
+    class QDateTimeAxis;
+QT_CHARTS_END_NAMESPACE
 
 class WordStudyTestsModel : public ZAbstractStatModel
 {
@@ -181,6 +184,12 @@ private:
 
     void showStat(DeckStatPages page);
     void updateStat();
+
+    // When the X axis is a QDateTimeAxis, updates the axis' visible range.
+    void normalizeXAxis(QDateTimeAxis *axis);
+
+    // Changes the number of visible ticks on a QDateTimeAxis to make each tick fall on midnight.
+    void autoXAxisTicks();
 
     WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidget *parent = nullptr);
     WordStudyListForm() = delete;

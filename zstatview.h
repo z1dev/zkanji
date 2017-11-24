@@ -18,6 +18,7 @@ public:
     ZStatView(QWidget *parent = nullptr);
     virtual ~ZStatView();
 
+    ZAbstractStatModel* model() const;
     void setModel(ZAbstractStatModel *model);
     void setMargins(int leftmargin, int topmargin, int rightmargin, int bottommargin);
 
