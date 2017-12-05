@@ -30,11 +30,17 @@ public:
 
     // Scroll the statistics view to display the passed column at the center of the view.
     void scrollTo(int column);
+
+    // Returns the index of the column drawn at the passed x coordinate or -1 when it is not
+    // inside the drawn area or no column is found there.
+    int columnAt(int x) const;
 protected:
-    virtual void changeEvent(QEvent *event) override;
-    virtual bool viewportEvent(QEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *e) override;
+
+    virtual void changeEvent(QEvent *e) override;
+    virtual bool viewportEvent(QEvent *e) override;
     virtual void scrollContentsBy(int dx, int dy) override;
-    virtual void paintEvent(QPaintEvent *event) override;
+    virtual void paintEvent(QPaintEvent *e) override;
 private:
     void paintBar(QPainter &p, int col, QRect r);
 

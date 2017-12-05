@@ -35,7 +35,7 @@ static const int tooltip_hide_length = 200;
 ZToolTip *ZToolTip::instance = nullptr;
 
 
-ZToolTip::ZToolTip(const QPoint &screenpos, QWidget *content, QWidget *owner, const QRect &ownerrect, int mshideafter, QWidget *parent) :
+ZToolTip::ZToolTip(const QPoint &screenpos, QWidget *content, QWidget *owner, const QRect &ownerrect, int mshideafter, int msshowafter, QWidget *parent) :
         base(parent, Qt::ToolTip | Qt::BypassGraphicsProxyWidget| Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus /*| Qt::WindowStaysOnTopHint*/),
         owner(owner), ownerrect(ownerrect), showpos(screenpos), mshideafter(mshideafter), fadestart(-1), fadein(true)
 {
@@ -48,33 +48,28 @@ ZToolTip::ZToolTip(const QPoint &screenpos, QWidget *content, QWidget *owner, co
     
     content->setParent(this);
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
-    layout->setMargin(4 + qApp->style()->pixelMetric(QStyle::PM_ToolTipLabelFrameWidth, 0, this));
+    layout->setMargin(/*4 +*/ qApp->style()->pixelMetric(QStyle::PM_ToolTipLabelFrameWidth, 0, this));
     setLayout(layout);
     layout->addWidget(content);
 
     ensurePolished();
 
-    //setFrameStyle(QFrame::NoFrame);
-
-    //setAlignment(Qt::AlignLeft);
-    //setIndent(1);
     qApp->installEventFilter(this);
 
     animate = qApp->isEffectEnabled(Qt::UI_FadeTooltip) || qApp->isEffectEnabled(Qt::UI_AnimateTooltip);
 
-    if (animate)
+    if (animate && msshowafter != 0)
         setWindowOpacity(0);
-    //setWindowOpacity(style()->styleHint(QStyle::SH_ToolTipLabel_Opacity, 0, this) / 255.0);
-    //setMouseTracking(true);
-    //fadingOut = false;
 
     resize(sizeHint());
 
-    waittimer.start(200, this);
-    //startFade(true);
-
-    //setProperty("_q_stylesheet_parent", QVariant::fromValue(owner));
-    //setObjectName(QLatin1String("qtooltip_label"));
+    if (msshowafter == 0)
+    {
+        updatePosition();
+        base::show();
+    }
+    else
+        waittimer.start(msshowafter == -1 ? 200 : msshowafter, this);
 }
 
 ZToolTip::~ZToolTip()
@@ -82,25 +77,37 @@ ZToolTip::~ZToolTip()
 
 }
 
-/* static */ void ZToolTip::show(const QPoint &screenpos, QWidget *content, QWidget *displayer, const QRect &disprect, int mshideafter)
+/* static */ void ZToolTip::show(const QPoint &screenpos, QWidget *content, QWidget *displayer, const QRect &disprect, int mshideafter, int msshowafter)
 {
+    if (instance && msshowafter == 0 && isShown())
+    {
+        instance->update(screenpos, content, displayer, disprect, mshideafter);
+        return;
+    }
+
     if (instance)
         instance->hideNow();
 #ifdef Q_OS_WIN
-    instance = new ZToolTip(screenpos, content, displayer, disprect, mshideafter, qApp->desktop()->screen(qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(screenpos) : qApp->desktop()->screenNumber(displayer)));
+    instance = new ZToolTip(screenpos, content, displayer, disprect, mshideafter, msshowafter, qApp->desktop()->screen(qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(screenpos) : qApp->desktop()->screenNumber(displayer)));
 #else
-    instance = new ZToolTip(screenpos, content, displayer, disprect, mshideafter, displayer);
+    instance = new ZToolTip(screenpos, content, displayer, disprect, mshideafter, msshowafter, displayer);
 #endif
 }
 
-/* static */ void ZToolTip::show(QWidget *content, QWidget *displayer, const QRect &disprect, int mshideafter)
+/* static */ void ZToolTip::show(QWidget *content, QWidget *displayer, const QRect &disprect, int mshideafter, int msshowafter)
 {
+    if (instance && msshowafter == 0 && isShown())
+    {
+        instance->update(QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()), content, displayer, disprect, mshideafter);
+        return;
+    }
+
     if (instance)
         instance->hideNow();
 #ifdef Q_OS_WIN
-    instance = new ZToolTip(QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()), content, displayer, disprect, mshideafter);
+    instance = new ZToolTip(QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()), content, displayer, disprect, mshideafter, msshowafter);
 #else
-    instance = new ZToolTip(QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()), content, displayer, disprect, mshideafter, displayer);
+    instance = new ZToolTip(QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()), content, displayer, disprect, mshideafter, msshowafter, displayer);
 #endif
 }
 
@@ -256,29 +263,7 @@ void ZToolTip::timerEvent(QTimerEvent *e)
             startFade(false);
         else
         {
-            if (showpos == QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()))
-                showpos = QCursor::pos();
-
-#ifdef Q_OS_WIN
-            setParent(qApp->desktop()->screen(qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(showpos) : qApp->desktop()->screenNumber(owner)), windowFlags());
-#endif
-            QRect screen = qApp->desktop()->screenGeometry(qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(showpos) : qApp->desktop()->screenNumber(owner));
-
-            QPoint p = showpos + QPoint(2, 24);
-            if (p.x() + width() > screen.x() + screen.width())
-                p.rx() -= 4 + width();
-            if (p.y() + height() > screen.y() + screen.height())
-                p.ry() -= 24 + height();
-            if (p.y() < screen.y())
-                p.setY(screen.y());
-            if (p.x() + width() > screen.x() + screen.width())
-                p.setX(screen.x() + screen.width() - width());
-            if (p.x() < screen.x())
-                p.setX(screen.x());
-            if (p.y() + height() > screen.y() + screen.height())
-                p.setY(screen.y() + screen.height() - height());
-            move(p);
-
+            updatePosition();
 
             base::show();
             startFade(true);
@@ -287,6 +272,11 @@ void ZToolTip::timerEvent(QTimerEvent *e)
     }
 
     base::timerEvent(e);
+}
+
+/*static*/ bool ZToolTip::isShown()
+{
+    return instance != nullptr && instance->isVisible() && !instance->fadetimer.isActive() && instance->windowOpacity() == 1.0;
 }
 
 void ZToolTip::hideNow()
@@ -347,6 +337,56 @@ void ZToolTip::startFade(bool show)
 
     fadetimer.start(20, this);
     //setWindowOpacity();
+}
+
+void ZToolTip::updatePosition()
+{
+    if (showpos == QPoint(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()))
+        showpos = QCursor::pos();
+
+//#ifdef Q_OS_WIN
+//    QWidget *screen = qApp->desktop()->screen(qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(showpos) : qApp->desktop()->screenNumber(owner));
+//    setParent(screen, windowFlags());
+//#endif
+    QRect rect = qApp->desktop()->screenGeometry(qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(showpos) : qApp->desktop()->screenNumber(owner));
+
+    QPoint p = showpos + QPoint(2, 24);
+    if (p.x() + width() > rect.x() + rect.width())
+        p.rx() -= 4 + width();
+    if (p.y() + height() > rect.y() + rect.height())
+        p.ry() -= 24 + height();
+    if (p.y() < rect.y())
+        p.setY(rect.y());
+    if (p.x() + width() > rect.x() + rect.width())
+        p.setX(rect.x() + rect.width() - width());
+    if (p.x() < rect.x())
+        p.setX(rect.x());
+    if (p.y() + height() > rect.y() + rect.height())
+        p.setY(rect.y() + rect.height() - height());
+    move(p);
+}
+
+void ZToolTip::update(const QPoint &screenpos, QWidget *content, QWidget *displayer, const QRect &disprect, int mshideafter)
+{
+    waittimer.stop();
+    fadetimer.stop();
+
+    showpos = screenpos;
+    ownerrect = disprect;
+    this->mshideafter = mshideafter;
+    fadestart = -1;
+    fadein = false;
+
+    qApp->removeEventFilter(this);
+    ((QBoxLayout*)layout())->itemAt(0)->widget()->deleteLater();
+    content->setParent(this);
+    ((QBoxLayout*)layout())->addWidget(content);
+    ensurePolished();
+    qApp->installEventFilter(this);
+    resize(sizeHint());
+    updatePosition();
+
+    waittimer.start(mshideafter, this);
 }
 
 

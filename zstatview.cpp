@@ -7,6 +7,8 @@
 #include <QtEvents>
 #include <QScrollBar>
 #include <QPainter>
+#include <QLabel>
+#include "ztooltip.h"
 #include "fastarray.h"
 #include "zstatview.h"
 #include "zabstractstatmodel.h"
@@ -16,6 +18,8 @@ ZStatView::ZStatView(QWidget *parent) : base(parent), m(nullptr), lm(16), tm(lm)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    setMouseTracking(true);
 }
 
 ZStatView::~ZStatView()
@@ -92,6 +96,36 @@ void ZStatView::scrollTo(int column)
     horizontalScrollBar()->setValue(column == 0 ? 0 : colpos[column - 1]);
 }
 
+int ZStatView::columnAt(int x) const
+{
+    QRect r = statRect();
+    if (!r.contains(QPoint(x, r.top())))
+        return -1;
+
+    x += horizontalScrollBar()->value() - r.left();
+    return std::upper_bound(colpos.begin(), colpos.end(), x) - colpos.begin();
+}
+
+void ZStatView::mouseMoveEvent(QMouseEvent *e)
+{
+    base::mouseMoveEvent(e);
+
+    if (m == nullptr || (int)e->buttons() != 0)
+        return;
+    
+    int col = columnAt(e->pos().x());
+    if (col == -1)
+        return;
+
+    QString str = m->tooltip(col);
+    if (str.isEmpty())
+        return;
+
+    QLabel *contents = new QLabel();
+    contents->setText(str);
+    ZToolTip::show(e->globalPos(), contents, viewport(), viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+}
+
 void ZStatView::changeEvent(QEvent *e)
 {
     base::changeEvent(e);
@@ -157,7 +191,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     p.save();
     while (hpos < colpos.size() && prev - left < r.width())
     {
-        QRect r2 = QRect(r.left() + prev - left, r.top(), colpos[hpos] - prev, r.height());
+        QRect r2 = QRect(r.left() + prev - left, r.top(), colpos[hpos] - prev, r.height() - 1);
         prev = colpos[hpos];
 
         p.setClipRect(r.intersected(r2), Qt::ClipOperation::ReplaceClip);

@@ -38,6 +38,10 @@ public:
     // A value at the passed column, at the given value position. The value should refer to
     // the size of the individual bar parts.
     virtual int value(int col, int valpos) const = 0;
+
+    // Tooltip text to be shown for the passed column. If this is an empty string, no tooltip
+    // will be shown.
+    virtual QString tooltip(int col) const { return QString(); }
 private:
     typedef QObject base;
 };

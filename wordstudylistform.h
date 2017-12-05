@@ -50,6 +50,7 @@ public:
 
     virtual int valueCount() const override;
     virtual int value(int col, int valpos) const override;
+    virtual QString tooltip(int col) const override;
 private:
     WordDeck *deck;
 

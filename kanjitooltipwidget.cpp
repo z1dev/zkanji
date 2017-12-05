@@ -10,7 +10,6 @@
 #include <QPainter>
 
 #include "kanjitooltipwidget.h"
-#include "ui_kanjitooltipwidget.h"
 #include "fontsettings.h"
 #include "kanjisettings.h"
 #include "colorsettings.h"
@@ -29,33 +28,18 @@ namespace ZKanji
     extern QChar radsymbols[231];
 }
 
-KanjiToolTipWidget::KanjiToolTipWidget(QWidget *parent) : base(parent), ui(new Ui::KanjiToolTipWidget), hpad(4), vpad(3), penw(1), dict(nullptr), index(-1)
+KanjiToolTipWidget::KanjiToolTipWidget(QWidget *parent) : base(parent), hpad(4), vpad(3), penw(1), dict(nullptr), index(-1)
 {
-    ui->setupUi(this);
+    setObjectName(QStringLiteral("KanjiToolTipWidget"));
 
     setForegroundRole(QPalette::ToolTipText);
     setBackgroundRole(QPalette::ToolTipBase);
     setPalette(QToolTip::palette());
-
-    //QFont f = QApplication::font("QTipLabel");
-    //QList<QLabel*> labels = findChildren<QLabel*>();
-    //for (QLabel *label : labels)
-    //    label->setFont(f);
-    //QFont kfont = Settings::kanjiFont();
-    //kfont.setPointSize(f.pointSize() * 2.5);
-    //ui->kanjiLabel->setFont(kfont);
-   
-    //kfont = Settings::kanaFont();
-    //kfont.setPointSize(f.pointSize() * 0.9);
-    //ui->onLabel->setFont(kfont);
-    //ui->kunLabel->setFont(kfont);
-    //kfont.setPointSize(f.pointSize() * 2);
-    //ui->radicalLabel->setFont(kfont);
 }
 
 KanjiToolTipWidget::~KanjiToolTipWidget()
 {
-    delete ui;
+    ;
 }
 
 void KanjiToolTipWidget::setKanji(Dictionary *d, int kindex)

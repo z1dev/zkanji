@@ -18,6 +18,7 @@
 #include <QtCharts/QLineSeries> 
 #include <QtCharts/QValueAxis> 
 #include <QtCharts/QDateTimeAxis> 
+#include <QToolTip>
 #include <map>
 
 #include "wordstudylistform.h"
@@ -38,7 +39,7 @@
 #include "dialogs.h"
 #include "colorsettings.h"
 #include "generalsettings.h"
-
+#include "ztooltip.h"
 
 
 //-------------------------------------------------------------
@@ -134,6 +135,16 @@ int WordStudyTestsModel::value(int col, int valpos) const
     default:
         return 0;
     }
+}
+
+QString WordStudyTestsModel::tooltip(int col) const
+{
+    if (stats[col] == -1)
+        return QString();
+
+    StudyDeck *study = deck->getStudyDeck();
+    const DeckDayStat &day = study->dayStat(stats[col]);
+    return QString("Tested: %1\nLearned: %2\nWrong: %3\n%4").arg(day.testcount).arg(day.testlearned).arg(day.testwrong).arg(DateTimeFunctions::formatDay(day.day));
 }
 
 
@@ -487,6 +498,82 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
             //((QDateTimeAxis*)ui->statChart->chart()->axisX())->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
     }
 
+    if (o == ui->statChart->viewport() && e->type() == QEvent::MouseMove && ui->statChart->chart() != nullptr && ui->statChart->chart()->axisY() != nullptr)
+    {
+        QMouseEvent *me = (QMouseEvent*)e;
+        if ((int)me->buttons() != 0)
+            return base::eventFilter(o, e);
+
+        switch (statpage)
+        {
+        case DeckStatPages::Items:
+        {
+            QPointF pos = ui->statChart->chart()->mapToValue(me->pos());
+            QLineSeries *s1 = ((QAreaSeries*)ui->statChart->chart()->series().at(0))->upperSeries();
+            QLineSeries *s2 = ((QAreaSeries*)ui->statChart->chart()->series().at(1))->upperSeries();
+            QLineSeries *s3 = ((QAreaSeries*)ui->statChart->chart()->series().at(2))->upperSeries();
+
+            if (!s1->pointsVector().isEmpty() && s1->pointsVector().at(s1->pointsVector().size() - 1).x() >= pos.x())
+            {
+                // Find values in the line series at the date at pos.x().
+                auto it = std::upper_bound(s1->pointsVector().cbegin(), s1->pointsVector().cend(), pos, [](const QPointF &a, const QPointF &b) { return a.x() < b.x(); });
+                int ix = std::max((it - s1->pointsVector().cbegin()) - 1, 0);
+                int itemcount = s1->pointsVector().at(ix).y();
+                int learnedcount = s1->pointsVector().at(ix).y() - s2->pointsVector().at(ix).y();
+                int testcount = s3->pointsVector().at(ix).y();
+
+                QDateTime dt = QDateTime::fromMSecsSinceEpoch(s1->pointsVector().at(ix).x());
+
+                QPoint pt = me->globalPos();
+                //pt.ry() += 8;
+                QLabel *contents = new QLabel();
+                contents->setText(QString("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(dt.date())));
+                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+            }
+            break;
+        }
+        case DeckStatPages::Forecast:
+        {
+            QPointF pos = ui->statChart->chart()->mapToValue(me->pos());
+            QLineSeries *s = ((QAreaSeries*)ui->statChart->chart()->series().at(0))->upperSeries();
+
+            if (!s->pointsVector().isEmpty() && s->pointsVector().at(s->pointsVector().size() - 1).x() >= pos.x())
+            {
+                // Find values in the line series at the date at pos.x().
+                auto it = std::upper_bound(s->pointsVector().cbegin(), s->pointsVector().cend(), pos, [](const QPointF &a, const QPointF &b) { return a.x() < b.x(); });
+                int ix = std::max((it - s->pointsVector().cbegin()) - 1, 0);
+                int itemcount = s->pointsVector().at(ix).y();
+
+                QDateTime dt = QDateTime::fromMSecsSinceEpoch(s->pointsVector().at(ix).x());
+
+                QPoint pt = me->globalPos();
+                //pt.ry() += 8;
+                QLabel *contents = new QLabel();
+                contents->setText(QString("Item count: %1\n%2").arg(itemcount).arg(DateTimeFunctions::formatDay(dt.date())));
+                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+            }
+            break;
+        }
+        case DeckStatPages::Levels:
+        {
+            QRectF r = ui->statChart->chart()->plotArea();
+            int level = (me->pos().x() - (int)r.left()) / int(r.width() / 12) + 1;
+            QBarSet *s = ((QBarSeries*)ui->statChart->chart()->series().at(0))->barSets().at(0);
+            if (level >= 1 && level <= s->count())
+            {
+                int itemcount = s->at(level - 1);
+                QPoint pt = me->globalPos();
+                //pt.ry() += 8;
+                QLabel *contents = new QLabel();
+                contents->setText(QString("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
+                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+            }
+            break;
+        }
+        /* end switch */
+        }
+    }
+
     return base::eventFilter(o, e);
 }
 
@@ -553,9 +640,11 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
         ui->studyTimeAvgLabel->setText(DateTimeFunctions::formatLength((int)((deck->studyAverage() + 5) / 10)));
         ui->answerTimeAvgLabel->setText(DateTimeFunctions::formatLength((int)((deck->answerAverage() + 5) / 10)));
 
-        showStat(DeckStatPages::Items);
+        //showStat(DeckStatPages::Items);
 
         ui->statChart->installEventFilter(this);
+        ui->statChart->viewport()->installEventFilter(this);
+        ui->statChart->viewport()->setMouseTracking(true);
 
         WordStudyTestsModel *m = new WordStudyTestsModel(deck, ui->statView);
         ui->statView->setModel(m);
@@ -1234,12 +1323,21 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
         qreal hi = 0;
 
-        QDate last;
+        QDateTime last;
         for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
         {
             const DeckDayStat &stat = study->dayStat(ix);
-            last = stat.day;
-            qint64 timesince = QDateTime(stat.day, QTime()).toMSecsSinceEpoch();
+            for (int ix = 0, siz = (last.isValid() ? last.date().daysTo(stat.day) - 1 : 0); ix < siz; ++ix)
+            {
+                last = last.addDays(1);
+                qint64 lasttimesince = last.toMSecsSinceEpoch();
+                l1->append(lasttimesince, static_cast<const QVector<QPointF>>(l1->pointsVector()).constLast().y());
+                l2->append(lasttimesince, static_cast<const QVector<QPointF>>(l2->pointsVector()).constLast().y());
+                l3->append(lasttimesince, /*static_cast<const QVector<QPointF>>(l3->pointsVector()).constLast().y()*/ 0);
+            }
+
+            last = QDateTime(stat.day, QTime());
+            qint64 timesince = last.toMSecsSinceEpoch();
 
             hi = std::max(hi, (qreal)stat.itemcount);
             l1->append(timesince, stat.itemcount);
@@ -1247,12 +1345,13 @@ void WordStudyListForm::showStat(DeckStatPages page)
             l3->append(timesince, stat.testcount);
         }
         QDateTime now = QDateTime(ltDay(QDateTime::currentDateTime()), QTime());
-        if (last != now.date())
+        for (int ix = 0, siz = (last.isValid() ? last.date().daysTo(now.date()) : 0); ix < siz; ++ix)
         {
-            qint64 timesince = now.toMSecsSinceEpoch();
-            l1->append(timesince, static_cast<const QVector<QPointF>>(l1->pointsVector()).constLast().y());
-            l2->append(timesince, static_cast<const QVector<QPointF>>(l2->pointsVector()).constLast().y());
-            l3->append(timesince, static_cast<const QVector<QPointF>>(l3->pointsVector()).constLast().y());
+            last = last.addDays(1);
+            qint64 lasttimesince = last.toMSecsSinceEpoch();
+            l1->append(lasttimesince, static_cast<const QVector<QPointF>>(l1->pointsVector()).constLast().y());
+            l2->append(lasttimesince, static_cast<const QVector<QPointF>>(l2->pointsVector()).constLast().y());
+            l3->append(lasttimesince, /*static_cast<const QVector<QPointF>>(l3->pointsVector()).constLast().y()*/ 0);
         }
 
         QDateTimeAxis *xaxis = new QDateTimeAxis(chart);
@@ -1301,9 +1400,6 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
         //xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
 
-        yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
-        yaxis->applyNiceNumbers();
-
         chart->setTitle(tr("Number of items in the deck"));
         chart->legend()->hide();
 
@@ -1317,6 +1413,8 @@ void WordStudyListForm::showStat(DeckStatPages page)
         area3->attachAxis(xaxis);
         area3->attachAxis(yaxis);
 
+        yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
+        yaxis->applyNiceNumbers();
         normalizeXAxis(xaxis);
 
         ui->statStack->setCurrentIndex(0);
@@ -1443,7 +1541,8 @@ void WordStudyListForm::showStat(DeckStatPages page)
         QBarSeries *bars = new QBarSeries(chart);
         QBarSet *dataset = new QBarSet(tr("Levels"), chart);
         dataset->setBrush(Settings::uiColor(ColorSettings::Stat1));
-        dataset->setPen(Settings::textColor(hasFocus(), ColorSettings::Bg));
+        dataset->setPen(Settings::textColor(hasFocus(), ColorSettings::TextColorTypes::Bg));
+        dataset->setLabelColor(Settings::textColor(hasFocus(), ColorSettings::TextColorTypes::Text));
 
         std::vector<int> levels;
         for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)

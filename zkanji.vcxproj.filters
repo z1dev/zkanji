@@ -1279,9 +1279,6 @@
     <CustomBuild Include="ztooltip.h">
       <Filter>Code\ZObject\Widgets\Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="kanjitooltipwidget.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="kanjitooltipwidget.h">
       <Filter>Code\Files with .ui\Header Files</Filter>
     </CustomBuild>
@@ -1586,9 +1583,6 @@
     </ClInclude>
     <ClInclude Include="kanjisettings.h">
       <Filter>Code\Settings</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_kanjitooltipwidget.h">
-      <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="studysettings.h">
       <Filter>Code\Settings</Filter>

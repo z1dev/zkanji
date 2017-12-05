@@ -9,10 +9,6 @@
 
 #include <QWidget>
 
-namespace Ui {
-    class KanjiToolTipWidget;
-}
-
 class KanjiEntry;
 class Dictionary;
 class KanjiToolTipWidget : public QWidget
@@ -28,8 +24,6 @@ public:
     virtual void paintEvent(QPaintEvent *e) override;
 private:
     void recalculateSize();
-
-    Ui::KanjiToolTipWidget *ui;
 
     const int hpad;
     const int vpad;
