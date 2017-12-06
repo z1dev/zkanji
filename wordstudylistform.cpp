@@ -139,12 +139,15 @@ int WordStudyTestsModel::value(int col, int valpos) const
 
 QString WordStudyTestsModel::tooltip(int col) const
 {
-    if (stats[col] == -1)
+    if (col < 0 || col >= stats.size())
         return QString();
+
+    if (stats[col] == -1)
+        return tr("Not studied");
 
     StudyDeck *study = deck->getStudyDeck();
     const DeckDayStat &day = study->dayStat(stats[col]);
-    return QString("Tested: %1\nLearned: %2\nWrong: %3\n%4").arg(day.testcount).arg(day.testlearned).arg(day.testwrong).arg(DateTimeFunctions::formatDay(day.day));
+    return tr("Tested: %1\nLearned: %2\nWrong: %3\n%4").arg(day.testcount).arg(day.testlearned).arg(day.testwrong).arg(DateTimeFunctions::formatDay(day.day));
 }
 
 
@@ -513,7 +516,7 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
             QLineSeries *s2 = ((QAreaSeries*)ui->statChart->chart()->series().at(1))->upperSeries();
             QLineSeries *s3 = ((QAreaSeries*)ui->statChart->chart()->series().at(2))->upperSeries();
 
-            if (!s1->pointsVector().isEmpty() && s1->pointsVector().at(s1->pointsVector().size() - 1).x() >= pos.x())
+            if (ui->statChart->chart()->plotArea().contains(me->pos()) && !s1->pointsVector().isEmpty() && s1->pointsVector().at(s1->pointsVector().size() - 1).x() >= pos.x())
             {
                 // Find values in the line series at the date at pos.x().
                 auto it = std::upper_bound(s1->pointsVector().cbegin(), s1->pointsVector().cend(), pos, [](const QPointF &a, const QPointF &b) { return a.x() < b.x(); });
@@ -527,9 +530,11 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
                 QPoint pt = me->globalPos();
                 //pt.ry() += 8;
                 QLabel *contents = new QLabel();
-                contents->setText(QString("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(dt.date())));
+                contents->setText(tr("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(dt.date())));
                 ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
             }
+            else
+                ZToolTip::hideNow();
             break;
         }
         case DeckStatPages::Forecast:
@@ -537,7 +542,7 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
             QPointF pos = ui->statChart->chart()->mapToValue(me->pos());
             QLineSeries *s = ((QAreaSeries*)ui->statChart->chart()->series().at(0))->upperSeries();
 
-            if (!s->pointsVector().isEmpty() && s->pointsVector().at(s->pointsVector().size() - 1).x() >= pos.x())
+            if (ui->statChart->chart()->plotArea().contains(me->pos()) && !s->pointsVector().isEmpty() && s->pointsVector().at(s->pointsVector().size() - 1).x() >= pos.x())
             {
                 // Find values in the line series at the date at pos.x().
                 auto it = std::upper_bound(s->pointsVector().cbegin(), s->pointsVector().cend(), pos, [](const QPointF &a, const QPointF &b) { return a.x() < b.x(); });
@@ -549,9 +554,11 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
                 QPoint pt = me->globalPos();
                 //pt.ry() += 8;
                 QLabel *contents = new QLabel();
-                contents->setText(QString("Item count: %1\n%2").arg(itemcount).arg(DateTimeFunctions::formatDay(dt.date())));
+                contents->setText(tr("Item count: %1\n%2").arg(itemcount).arg(DateTimeFunctions::formatDay(dt.date())));
                 ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
             }
+            else
+                ZToolTip::hideNow();
             break;
         }
         case DeckStatPages::Levels:
@@ -559,15 +566,17 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
             QRectF r = ui->statChart->chart()->plotArea();
             int level = int((me->pos().x() - r.left()) / (r.width() / 12)) + 1;
             QBarSet *s = ((QBarSeries*)ui->statChart->chart()->series().at(0))->barSets().at(0);
-            if (level >= 1 && level <= s->count())
+            if (r.contains(me->pos()) && level >= 1 && level <= s->count())
             {
                 int itemcount = s->at(level - 1);
                 QPoint pt = me->globalPos();
                 //pt.ry() += 8;
                 QLabel *contents = new QLabel();
-                contents->setText(QString("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
+                contents->setText(tr("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
                 ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
             }
+            else
+                ZToolTip::hideNow();
             break;
         }
         /* end switch */

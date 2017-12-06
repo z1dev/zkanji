@@ -9,6 +9,7 @@
 #include <QStylePainter>
 #include <QtEvents>
 #include <QAbstractItemView>
+#include <QLabel>
 #include "zkanjimain.h"
 #include "zradicalgrid.h"
 #include "kanji.h"
@@ -18,6 +19,8 @@
 #include "fontsettings.h"
 #include "kanjisettings.h"
 #include "globalui.h"
+#include "ztooltip.h"
+#include "qcharstring.h"
 
 //-------------------------------------------------------------
 
@@ -203,6 +206,7 @@ void ZRadicalGrid::setActiveFilter(const RadicalFilter &rad)
     }
 
     mode = rad.mode;
+    setMouseTracking(mode == RadicalFilterModes::NamedRadicals);
     group = rad.grouped;
     if (isVisible())
         viewport()->update();
@@ -223,6 +227,7 @@ void ZRadicalGrid::setDisplayMode(RadicalFilterModes newmode)
 
     clearSelection();
     mode = newmode;
+    setMouseTracking(mode == RadicalFilterModes::NamedRadicals);
     filterIncluded();
     filter();
 
@@ -528,6 +533,27 @@ void ZRadicalGrid::mouseDoubleClickEvent(QMouseEvent *e)
     e->accept();
 
     // Needed empty handler to avoid event propagation.
+}
+
+void ZRadicalGrid::mouseMoveEvent(QMouseEvent *e)
+{
+    base::mouseMoveEvent(e);
+
+    if (mode != RadicalFilterModes::NamedRadicals || (int)e->buttons() != 0 || names)
+    {
+        ZToolTip::hideNow();
+        return;
+    }
+
+    int index = indexAt(e->pos());
+    if (index == -1)
+    {
+        ZToolTip::hideNow();
+        return;
+    }
+    QLabel *content = new QLabel();
+    content->setText(ZKanji::radlist[list[index]]->names.join(", "));
+    ZToolTip::show(e->globalPos(), content, this, itemRect(indexOf(list[index])), INT_MAX, 0);
 }
 
 void ZRadicalGrid::keyPressEvent(QKeyEvent *event)

@@ -133,12 +133,13 @@ signals:
     // included in a selection separately.
     void groupingChanged(bool grouping);
 protected:
-    virtual void paintEvent(QPaintEvent *event) override;
-    virtual void resizeEvent(QResizeEvent *event) override;
-    virtual void mousePressEvent(QMouseEvent *event) override;
-    virtual void mouseReleaseEvent(QMouseEvent *event) override;
-    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
-    virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void paintEvent(QPaintEvent *e) override;
+    virtual void resizeEvent(QResizeEvent *e) override;
+    virtual void mousePressEvent(QMouseEvent *e) override;
+    virtual void mouseReleaseEvent(QMouseEvent *e) override;
+    virtual void mouseDoubleClickEvent(QMouseEvent *e) override;
+    virtual void mouseMoveEvent(QMouseEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
 private:
     // Computes the correct font sizes used for displaying the radicals, and
     // the radical indexes.
@@ -171,19 +172,18 @@ private:
     // itself holds indexes to filtered radicals.
     bool blockStarter(int index);
 
-    // The width of an item in the grid. The index is for the list, that
-    // itself holds indexes to filtered radicals.
+    // The width of an item in the grid. The index is for the list, that itself holds indexes
+    // to filtered radicals.
     int itemWidth(int index);
 
     // Drawing of a single item. The index given is from the list.
     void paintItem(int index, QStylePainter &p, const ZRect &r);
 
-    // Returns the index of the item at the given coordinate in the list.
-    // If there is no item at index, or the item is for stroke count, the
-    // result is -1.
+    // Returns the index of the item at the given coordinate in the list. If there is no item
+    // at index, or the item is for stroke count, the result is -1.
     int indexAt(int x, int y);
-    // Returns the index of the item at the given coordinate in the list.
-    // If there is no item at index, or the item is for stroke count, the
+    // Returns the index of the item at the given coordinate in the list. If there is no item
+    // at index, or the item is for stroke count, the
     // result is -1.
     int indexAt(const QPoint &pt);
     // Returns the index of the given value in the list.
@@ -195,8 +195,7 @@ private:
     // Whether the item in list at index is selected.
     bool selected(int index);
 
-    // Returns a textual representation of the current selection
-    // and active filters.
+    // Returns a textual representation of the current selection and active filters.
     QString generateFiltersText();
 
     // The character representing the radical at index.
@@ -208,9 +207,8 @@ private:
     RadicalFilterModes mode;
 
     // The indexes of radicals shown in the view. Holds indexes in radindexes,
-    // ZKanji::radklist or ZKanji::radlist, depending on the mode.
-    // When a number converted to short is negative, it represents a stroke count
-    // number instead.
+    // ZKanji::radklist or ZKanji::radlist, depending on the mode. When a number converted to
+    // short is negative, it represents a stroke count number instead.
     std::vector<ushort> list;
 
     // The properties of each item in NamedRadicals mode.
@@ -227,16 +225,16 @@ private:
     };
     smartvector<ItemData> items;
 
-    // Item placement information. Holds the index of the item
-    // after the last of each row. (Indexes of last + 1)
+    // Item placement information. Holds the index of the item after the last of each row.
+    // (Indexes of last + 1)
     std::vector<ushort> rows;
 
-    // Radical or index of selected items in list. Holds indexes in partindexes,
-    // radindexes or ZKanji::radlist, depending on the mode.
+    // Radical or index of selected items in list. Holds indexes in partindexes, radindexes
+    // or ZKanji::radlist, depending on the mode.
     std::set<ushort> selection;
 
-    // Finalized selections. Holds radical numbers for Parts and Radicals mode,
-    // and indexes in ZKanji::radlist in NamedRadicals mode.
+    // Finalized selections. Holds radical numbers for Parts and Radicals mode, and indexes in
+    // ZKanji::radlist in NamedRadicals mode.
     std::vector<std::vector<ushort>> filters;
 
     // Filters:
@@ -255,12 +253,10 @@ private:
     int namefontsize;
     int notesfontsize;
 
-    // Indexes of kanji to the main kanji list. Radicals can only be included
-    // in the grid if they appear in at least one kanji in the list and they
-    // are not already in a filter.
+    // Indexes of kanji to the main kanji list. Radicals can only be included in the grid if
+    // they appear in at least one kanji in the list and they are not already in a filter.
     std::vector<ushort> kanjilist;
     // Radicals found in the current kanji list that can be shown.
-    //std::unordered_set<ushort> included;
     QSet<ushort> included;
 
     typedef QAbstractScrollArea base;

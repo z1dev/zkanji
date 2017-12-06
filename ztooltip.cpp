@@ -281,13 +281,15 @@ void ZToolTip::timerEvent(QTimerEvent *e)
 
 void ZToolTip::hideNow()
 {
-    fadetimer.stop();
-    waittimer.stop();
-    time.invalidate();
-    fadestart = -1;
+    if (instance == nullptr)
+        return;
+    instance->fadetimer.stop();
+    instance->waittimer.stop();
+    instance->time.invalidate();
+    instance->fadestart = -1;
 
-    hide();
-    deleteLater();
+    instance->hide();
+    instance->deleteLater();
     instance = nullptr;
 }
 

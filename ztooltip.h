@@ -55,7 +55,7 @@ public:
     // Whether a tooltip instance is visible on screan.
     static bool isShown();
 
-    void hideNow();
+    static void hideNow();
 protected:
     virtual void paintEvent(QPaintEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;

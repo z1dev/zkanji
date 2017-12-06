@@ -111,15 +111,24 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
     base::mouseMoveEvent(e);
 
     if (m == nullptr || (int)e->buttons() != 0)
+    {
+        ZToolTip::hideNow();
         return;
-    
+    }
+
     int col = columnAt(e->pos().x());
     if (col == -1)
+    {
+        ZToolTip::hideNow();
         return;
+    }
 
     QString str = m->tooltip(col);
     if (str.isEmpty())
+    {
+        ZToolTip::hideNow();
         return;
+    }
 
     QLabel *contents = new QLabel();
     contents->setText(str);
