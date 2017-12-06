@@ -436,7 +436,7 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
 
     QColor gridColor = Settings::uiColor(ColorSettings::Grid);
 
-    ZRect r(0, y, -1, y + heights - 1);
+    ZRect r(0, y, -1, heights - 1);
     int lastwidth = std::numeric_limits<int>::max();
     while (top != rows.size() && r.top() <= size.height())
     {
@@ -472,7 +472,7 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
         p.setBrush(opts.palette.color(QPalette::Normal, QPalette::Base));
         p.fillRect(ZRect(QPoint(lastwidth, r.top()), QPoint(size.width(), r.bottom() + 1)), p.brush());
 
-        r = ZRect(0, r.bottom() + 1, -1, r.bottom() + heights);
+        r = ZRect(0, r.bottom() + 1, -1, heights - 1);
     }
     if (top == rows.size())
     {
@@ -1216,7 +1216,7 @@ ZRect ZRadicalGrid::itemRect(int index)
     while (pos != index)
         x += itemWidth(pos++);
 
-    return ZRectS(x, y, itemWidth(index), heights);
+    return ZRect(x, y, itemWidth(index), heights);
 }
 
 bool ZRadicalGrid::selected(int index)

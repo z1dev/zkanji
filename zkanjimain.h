@@ -484,7 +484,7 @@ class ZRect
 {
 public:
     ZRect();
-    ZRect(int x1, int y1, int x2, int y2);
+    ZRect(int x1, int y1, int w, int h);
     ZRect(const QPoint &topLeft, const QPoint &bottomRight);
     ZRect(const QRect &src);
     ZRect(const ZRect &src);
@@ -511,6 +511,9 @@ public:
     void setWidth(int width);
     void setHeight(int height);
 
+    // Returns the intersected rectangle of this and r.
+    ZRect intersected(const ZRect &r);
+
     operator QRect() const;
 
     // Direct access to the inner rectangle.
@@ -520,7 +523,7 @@ private:
 };
 
 // Constructs a ZRect with the given values.
-ZRect ZRectS(int left, int top, int width, int height);
+//ZRect ZRectS(int left, int top, int width, int height);
 
 
 // Min and max functions for a varied number of numbers.

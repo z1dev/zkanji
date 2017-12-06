@@ -9,6 +9,7 @@
 
 #include <QAbstractScrollArea>
 #include <vector>
+#include "zkanjimain.h"
 
 class ZAbstractStatModel;
 class ZStatView : public QAbstractScrollArea
@@ -42,7 +43,7 @@ protected:
     virtual void scrollContentsBy(int dx, int dy) override;
     virtual void paintEvent(QPaintEvent *e) override;
 private:
-    void paintBar(QPainter &p, int col, QRect r);
+    void paintBar(QPainter &p, int col, ZRect r);
 
     // Rectangle used for displaying the statistics bars.
     QRect statRect() const;

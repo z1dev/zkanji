@@ -99,8 +99,8 @@ int WordStudyTestsModel::maxValue() const
 QString WordStudyTestsModel::axisLabel(Qt::Orientation ori) const
 {
     if (ori == Qt::Vertical)
-        return tr("Items");
-    return tr("Date");
+        return tr("Tested items");
+    return tr("Date of test");
 }
 
 QString WordStudyTestsModel::barLabel(int ix) const
@@ -528,7 +528,7 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
                 //pt.ry() += 8;
                 QLabel *contents = new QLabel();
                 contents->setText(QString("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(dt.date())));
-                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
             }
             break;
         }
@@ -550,14 +550,14 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
                 //pt.ry() += 8;
                 QLabel *contents = new QLabel();
                 contents->setText(QString("Item count: %1\n%2").arg(itemcount).arg(DateTimeFunctions::formatDay(dt.date())));
-                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
             }
             break;
         }
         case DeckStatPages::Levels:
         {
             QRectF r = ui->statChart->chart()->plotArea();
-            int level = (me->pos().x() - (int)r.left()) / int(r.width() / 12) + 1;
+            int level = int((me->pos().x() - r.left()) / (r.width() / 12)) + 1;
             QBarSet *s = ((QBarSeries*)ui->statChart->chart()->series().at(0))->barSets().at(0);
             if (level >= 1 && level <= s->count())
             {
@@ -566,7 +566,7 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
                 //pt.ry() += 8;
                 QLabel *contents = new QLabel();
                 contents->setText(QString("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
-                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
             }
             break;
         }

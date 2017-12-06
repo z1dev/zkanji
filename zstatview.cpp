@@ -90,7 +90,7 @@ void ZStatView::scrollTo(int column)
         return;
     }
 
-    QRect r = statRect();
+    //QRect r = statRect();
     //int mid = (colpos[column] + (column == 0 ? 0 : colpos[column - 1])) / 2;
     //horizontalScrollBar()->setValue(std::max(0, std::min(mid - r.width() - 2, horizontalScrollBar()->maximum())));
     horizontalScrollBar()->setValue(column == 0 ? 0 : colpos[column - 1]);
@@ -123,7 +123,7 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
 
     QLabel *contents = new QLabel();
     contents->setText(str);
-    ZToolTip::show(e->globalPos(), contents, viewport(), viewport()->rect(), INT_MAX, ZToolTip::isShown() ? 0 : -1);
+    ZToolTip::show(e->globalPos(), contents, viewport(), viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
 }
 
 void ZStatView::changeEvent(QEvent *e)
@@ -155,7 +155,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     QFontMetrics fm = fontMetrics();
     int fmh = fm.height();
 
-    QRect r = statRect();
+    ZRect r = statRect();
     p.setPen(Settings::uiColor(ColorSettings::Grid));
     p.drawLine(r.left() - 1, r.top(), r.left() - 1, r.bottom());
     
@@ -191,7 +191,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     p.save();
     while (hpos < colpos.size() && prev - left < r.width())
     {
-        QRect r2 = QRect(r.left() + prev - left, r.top(), colpos[hpos] - prev, r.height() - 1);
+        ZRect r2 = ZRect(r.left() + prev - left, r.top(), colpos[hpos] - prev, r.height());
         prev = colpos[hpos];
 
         p.setClipRect(r.intersected(r2), Qt::ClipOperation::ReplaceClip);
@@ -224,7 +224,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     }
 }
 
-void ZStatView::paintBar(QPainter &p, int col, QRect r)
+void ZStatView::paintBar(QPainter &p, int col, ZRect r)
 {
     QFontMetrics fm = fontMetrics();
     int fmh = fm.height();
@@ -249,13 +249,20 @@ void ZStatView::paintBar(QPainter &p, int col, QRect r)
     // Drawing the bar rectangles.
     QRect br;
 
+
     // Start bar drawing below grid top.
     r.setTop(std::min<int>(r.bottom(), r.top() + fmh));
 
     for (int ix = 0; ix != cnt; ++ix)
     {
         if (br.isNull())
+        {
             br = QRect(r.left() + r.width() * 0.2, r.bottom() - (r.height() * ((double)sum / maxval)), r.width() * 0.6, 0);
+
+            // Draw text above the bar
+            p.setPen(Settings::textColor(ColorSettings::Text));
+            p.drawText(QRect(br.left(), br.top() - fmh - 2, br.width(), fmh + 2), Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, QString::number(sum));
+        }
         br.setBottom(r.bottom() - (r.height() * (sum - stats[ix]) / maxval));
         sum -= stats[ix];
         p.fillRect(br, Settings::uiColor((ColorSettings::UIColorTypes)((int)ColorSettings::Stat1 + ix)));
@@ -278,7 +285,7 @@ void ZStatView::updateView()
     hwidth = 0;
 
     // Calculate the vertical tick positions.
-    QRect r = statRect();
+    ZRect r = statRect();
     QFontMetrics fm = fontMetrics();
     //p->setFont(parentWidget()->font());
     int fmh = fm.height();
@@ -311,13 +318,9 @@ void ZStatView::updateView()
             steps = (int((steps - 1) / (zeroes / 2)) + 1) * (zeroes / 2);
         v = 0;
         int pos = r.bottom();
-        // Drawing horizontal tick lines and values.
+        // Saving horizontal tick lines and values.
         while (v <= gridmaxval)
         {
-            //p->setPen(Settings::uiColor(ColorSettings::Grid));
-            //p->drawLine(r.right() - 4, pos, r.right(), pos);
-            //p->setPen(Settings::textColor(ColorSettings::Text));
-            //p->drawText(QRectF(r.left(), pos - fmh / 2, r.width() - 6, fmh), QString::number(v), Qt::AlignRight | Qt::AlignVCenter);
             ticks.push_back(std::make_pair(v, pos - r.top()));
 
             v += steps;

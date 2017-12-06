@@ -652,7 +652,7 @@ ZRect::ZRect()
     ;
 }
 
-ZRect::ZRect(int x1, int y1, int x2, int y2) : r(x1, y1, x2 - x1, y2 - y1)
+ZRect::ZRect(int x1, int y1, int w, int h) : r(x1, y1, w, h)
 {
     ;
 }
@@ -758,6 +758,11 @@ void ZRect::setHeight(int height)
     r.setHeight(height);
 }
 
+ZRect ZRect::intersected(const ZRect &other)
+{
+    return r.intersected(other.r);
+}
+
 ZRect::operator QRect() const
 {
     return r;
@@ -769,10 +774,10 @@ QRect& ZRect::rect()
     return r;
 }
 
-ZRect ZRectS(int left, int top, int width, int height)
-{
-    return ZRect(left, top, left + width, top + height);
-}
+//ZRect ZRectS(int left, int top, int width, int height)
+//{
+//    return ZRect(left, top, left + width, top + height);
+//}
 
 
 //-------------------------------------------------------------
