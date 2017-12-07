@@ -174,7 +174,11 @@ void ZStatView::paintEvent(QPaintEvent *event)
         int num = ticks[ix].first;
         int pos = ticks[ix].second;
         p.setPen(Settings::uiColor(ColorSettings::Grid));
-        p.drawLine(r.left() - 5, r.top() + pos, r.right(), r.top() + pos);
+        if (ix != siz - 1 || ix == 0 || ticks[ix - 1].second != 0)
+            p.drawLine(r.left() - 5, r.top() + pos, r.right(), r.top() + pos);
+
+        if (ix == siz - 1 && ix != 0 && ticks[ix - 1].second - fmh * 1.5 < 0)
+            break;
 
         p.setPen(Settings::textColor(ColorSettings::Text));
         p.drawText(QRectF(0, r.top() + pos - fmh / 2, r.left() - 7, fmh), QString::number(num), Qt::AlignRight | Qt::AlignVCenter);
@@ -270,7 +274,11 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
 
             // Draw text above the bar
             p.setPen(Settings::textColor(ColorSettings::Text));
-            p.drawText(QRect(br.left(), br.top() - fmh - 2, br.width(), fmh + 2), Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, QString::number(sum));
+            QRect tr = QRect(br.left(), br.top() - fmh - 2, br.width(), fmh + 2);
+            QString str = QString::number(sum);
+            QRect br = p.boundingRect(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
+            p.fillRect(br.adjusted(-1, 0, 1, 0), Settings::textColor(ColorSettings::Bg));
+            p.drawText(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
         }
         br.setBottom(r.bottom() - (r.height() * (sum - stats[ix]) / maxval));
         sum -= stats[ix];
@@ -294,20 +302,16 @@ void ZStatView::updateView()
     hwidth = 0;
 
     // Calculate the vertical tick positions.
+
     ZRect r = statRect();
     QFontMetrics fm = fontMetrics();
-    //p->setFont(parentWidget()->font());
     int fmh = fm.height();
-    //r.setTop(std::min<int>(r.bottom(), r.top() + fmh));
+    int maxval = m == nullptr ? 0 : m->maxValue();
 
-    //p->setPen(Settings::uiColor(ColorSettings::Grid));
-    //p->drawLine(r.topRight(), r.bottomRight());
-
-    //QAbstractItemModel *m = model();
-    int maxval = m == nullptr ? 0 : m->maxValue(); //m->index(0, 0).data((int)StatRoles::MaxRole).toInt();
     // When drawing the bar, fmh height will be excluded from top to draw the bar
     // texts, but the grid should be drawn above it. To compensate, another max val is used.
     int gridmaxval = maxval + maxval * (double)fmh / r.height();
+
     if (gridmaxval != 0 && r.height() != 0)
     {
 
@@ -335,10 +339,12 @@ void ZStatView::updateView()
             v += steps;
             pos = r.bottom() - (r.height() * ((double)v / gridmaxval));
         }
+
+        if (ticks.back().second != 0)
+            ticks.push_back(std::make_pair(gridmaxval, 0));
     }
     if (!ticks.empty())
         hwidth = fm.width(QString::number(ticks.back().first));
-
 
     r = statRect();
     horizontalScrollBar()->setRange(0, colpos.size() == 0 ? 0 : std::max(0, colpos.back() - r.width()));
