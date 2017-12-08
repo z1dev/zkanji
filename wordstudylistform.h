@@ -65,33 +65,33 @@ private:
     typedef ZAbstractStatModel  base;
 };
 
-//class WordStudyTestsModel : public QAbstractTableModel
-//{
-//    Q_OBJECT
-//public:
-//    WordStudyTestsModel(WordDeck *deck, QObject *parent = nullptr);
-//    virtual ~WordStudyTestsModel();
-//
-//    virtual int rowCount(const QModelIndex &parent) const override;
-//    virtual int columnCount(const QModelIndex &parent) const override;
-//    //virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-//    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-//
-//    // Returns whether a column holds no test statistics.
-//    bool emptyColumn(int col) const;
-//private:
-//    WordDeck *deck;
-//
-//    // For each displayed column, links to the given index in the study deck's day statistics.
-//    // If a value is -1, it marks a break between tests when the user didn't study. Other
-//    // values are indexes to study->dayStat().
-//    std::vector<int> stats;
-//
-//    // The value at the top of the scale.
-//    int maxval;
-//
-//    typedef QAbstractTableModel base;
-//};
+class WordStudyLevelsModel : public ZAbstractStatModel
+{
+    Q_OBJECT
+public:
+    WordStudyLevelsModel(WordDeck *deck, QObject *parent = nullptr);
+    virtual ~WordStudyLevelsModel();
+
+    virtual ZStatType type() const override;
+
+    virtual int count() const override;
+    virtual int maxValue() const override;
+    virtual QString axisLabel(Qt::Orientation ori) const override;
+    virtual QString barLabel(int ix) const override;
+
+    virtual int valueCount() const override;
+    virtual int value(int col, int valpos) const override;
+private:
+    WordDeck *deck;
+
+    // Number of items in each level from deck.
+    std::vector<int> list;
+
+    // The value at the top of the scale.
+    int maxval;
+
+    typedef ZAbstractStatModel  base;
+};
 
 struct WordStudySorting {
     int column;

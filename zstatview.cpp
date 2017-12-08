@@ -14,7 +14,7 @@
 #include "zabstractstatmodel.h"
 #include "colorsettings.h"
 
-ZStatView::ZStatView(QWidget *parent) : base(parent), m(nullptr), lm(16), tm(lm), rm(lm), bm(lm), tickspacing(50), hwidth(16)
+ZStatView::ZStatView(QWidget *parent) : base(parent), m(nullptr), lm(16), tm(lm), rm(lm), bm(lm), tickspacing(60), hwidth(16)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -39,21 +39,29 @@ void ZStatView::setModel(ZAbstractStatModel *model)
 
     m = model;
     colpos.clear();
-    int p = 0;
     hlabel = QString();
     vlabel = QString();
     if (m != nullptr)
     {
-        for (int ix = 0, siz = m->count(); ix != siz; ++ix)
+        if (m->type() == ZStatType::BarScroll)
         {
-            p += m->barWidth(this, ix);
-            colpos.push_back(p);
+            int p = 0;
+            for (int ix = 0, siz = m->count(); ix != siz; ++ix)
+            {
+                p += m->barWidth(this, ix);
+                colpos.push_back(p);
+            }
         }
+
         hlabel = m->axisLabel(Qt::Horizontal);
         vlabel = m->axisLabel(Qt::Vertical);
     }
 
     updateView();
+    if (m != nullptr && m->type() == ZStatType::BarScroll)
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    else
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 void ZStatView::setMargins(int leftmargin, int topmargin, int rightmargin, int bottommargin)
@@ -177,6 +185,8 @@ void ZStatView::paintEvent(QPaintEvent *event)
         if (ix != siz - 1 || ix == 0 || ticks[ix - 1].second != 0)
             p.drawLine(r.left() - 5, r.top() + pos, r.right(), r.top() + pos);
 
+        // Draw tick text left to the grid lines.
+
         if (ix == siz - 1 && ix != 0 && ticks[ix - 1].second - fmh * 1.5 < 0)
             break;
 
@@ -197,20 +207,30 @@ void ZStatView::paintEvent(QPaintEvent *event)
     }
 
     // Draw bars and horizontal axis.
-    int left = horizontalScrollBar()->value();
-    // Find the first bar to draw with binary search.
-    int hpos = std::upper_bound(colpos.begin(), colpos.end(), left) - colpos.begin();
-    int prev = (hpos == 0 ? 0 : colpos[hpos - 1]);
+    int left = m->type() == ZStatType::BarScroll ? horizontalScrollBar()->value() : 0;
+    // Find the first bar to draw.
+    int pos = m->type() == ZStatType::BarScroll ? std::upper_bound(colpos.begin(), colpos.end(), left) - colpos.begin() : 0;
+    int prev = (pos == 0 ? 0 : colpos[pos - 1]);
     p.save();
-    while (hpos < colpos.size() && prev - left < r.width())
+    while ((m->type() == ZStatType::BarScroll && pos < colpos.size() && prev - left < r.width()) || (m->type() == ZStatType::BarStretch && pos < m->count()))
     {
-        ZRect r2 = ZRect(r.left() + prev - left, r.top(), colpos[hpos] - prev, r.height());
-        prev = colpos[hpos];
+        ZRect r2;
+        if (m->type() == ZStatType::BarScroll)
+        {
+            r2 = ZRect(r.left() + prev - left, r.top(), colpos[pos] - prev, r.height());
+            prev = colpos[pos];
+        }
+        else
+        {
+            int next = (r.width() - prev) / (m->count() - pos);
+            r2 = ZRect(r.left() + prev, r.top(), next, r.height());
+            prev += next;
+        }
 
         p.setClipRect(r.intersected(r2), Qt::ClipOperation::ReplaceClip);
         p.setPen(Settings::uiColor(ColorSettings::Grid));
         p.drawLine(r2.right() - 1, r.top(), r2.right() - 1, r.bottom());
-        paintBar(p, hpos, r2);
+        paintBar(p, pos, r2);
 
         r2.setTop(r2.bottom() + 6);
         r2.setBottom(height());
@@ -218,10 +238,10 @@ void ZStatView::paintEvent(QPaintEvent *event)
         if (m != nullptr)
         {
             p.setPen(Settings::textColor(ColorSettings::Text));
-            p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, m->barLabel(hpos));
+            p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, m->barLabel(pos));
         }
 
-        ++hpos;
+        ++pos;
     }
     p.restore();
 
@@ -263,8 +283,9 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
     QRect br;
 
 
-    // Start bar drawing below grid top.
-    r.setTop(std::min<int>(r.bottom(), r.top() + fmh));
+    // Start bar drawing below grid top, leaving out enough space for text above bar.
+    if (r.height() > 0)
+        maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
 
     for (int ix = 0; ix != cnt; ++ix)
     {
@@ -276,11 +297,11 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
             p.setPen(Settings::textColor(ColorSettings::Text));
             QRect tr = QRect(br.left(), br.top() - fmh - 2, br.width(), fmh + 2);
             QString str = QString::number(sum);
-            QRect br = p.boundingRect(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
-            p.fillRect(br.adjusted(-1, 0, 1, 0), Settings::textColor(ColorSettings::Bg));
+            QRect br2 = p.boundingRect(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
+            p.fillRect(br2.adjusted(-1, 0, 1, 0), Settings::textColor(ColorSettings::Bg));
             p.drawText(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
         }
-        br.setBottom(r.bottom() - (r.height() * (sum - stats[ix]) / maxval));
+        br.setBottom(r.bottom() - (r.height() * double(sum - stats[ix]) / maxval));
         sum -= stats[ix];
         p.fillRect(br, Settings::uiColor((ColorSettings::UIColorTypes)((int)ColorSettings::Stat1 + ix)));
         br.setTop(br.bottom());
@@ -292,7 +313,9 @@ QRect ZStatView::statRect() const
     int fmh = fontMetrics().height();
 
     QRect r = viewport() != nullptr ? viewport()->rect() : rect();
-    r.adjust(lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh), tm, std::max( -(r.width() - (lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh))), -rm), std::max(-(r.height() - tm), -bm - fmh - (hlabel.isEmpty() ? 0 : fmh)));
+    r.adjust(lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh), tm + fmh * 1.5, std::max( -(r.width() - (lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh))), -rm), std::max<int>(-(r.height() - tm), -bm - fmh * 1.5 - fmh - (hlabel.isEmpty() ? 0 : fmh)));
+    if (r.height() < 0)
+        r.setHeight(0);
     return r;
 }
 
@@ -308,15 +331,16 @@ void ZStatView::updateView()
     int fmh = fm.height();
     int maxval = m == nullptr ? 0 : m->maxValue();
 
-    // When drawing the bar, fmh height will be excluded from top to draw the bar
-    // texts, but the grid should be drawn above it. To compensate, another max val is used.
-    int gridmaxval = maxval + maxval * (double)fmh / r.height();
+    // When drawing the bar, fmh * 1.5 height will be excluded from top to draw the bar texts,
+    // but the grid should be drawn above it. To compensate, another max val is used.
+    if (r.height() > 0)
+        maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
 
-    if (gridmaxval != 0 && r.height() != 0)
+    if (maxval != 0 && r.height() != 0)
     {
 
         // Calculating the tick steps.
-        int steps = std::max<int>(gridmaxval / ((double)r.height() / tickspacing) + 0.9, 1);
+        int steps = std::max<int>(maxval / ((double)r.height() / tickspacing) + 0.9, 1);
 
         int v = steps;
         int zeroes = 0;
@@ -330,27 +354,29 @@ void ZStatView::updateView()
         if (zeroes > 2)
             steps = (int((steps - 1) / (zeroes / 2)) + 1) * (zeroes / 2);
         v = 0;
-        int pos = r.bottom();
+        int pos = r.height();
         // Saving horizontal tick lines and values.
-        while (v <= gridmaxval)
+        while (v <= maxval)
         {
-            ticks.push_back(std::make_pair(v, pos - r.top()));
+            ticks.push_back(std::make_pair(v, pos));
 
             v += steps;
-            pos = r.bottom() - (r.height() * ((double)v / gridmaxval));
+            pos = r.height() * ((double)(maxval - v) / maxval);
         }
 
-        if (ticks.back().second != 0)
-            ticks.push_back(std::make_pair(gridmaxval, 0));
+        if (!ticks.empty() && ticks.back().second != 0)
+            ticks.push_back(std::make_pair(maxval, 0));
     }
     if (!ticks.empty())
         hwidth = fm.width(QString::number(ticks.back().first));
 
-    r = statRect();
-    horizontalScrollBar()->setRange(0, colpos.size() == 0 ? 0 : std::max(0, colpos.back() - r.width()));
-    horizontalScrollBar()->setEnabled(colpos.back() > r.width());
-    horizontalScrollBar()->setPageStep(std::max(1, r.width() - 24));
-    horizontalScrollBar()->setSingleStep(std::max(1, std::min(r.width(), 24)));
+    if (m != nullptr && m->type() == ZStatType::BarScroll)
+    {
+        horizontalScrollBar()->setRange(0, colpos.size() == 0 ? 0 : std::max(0, colpos.back() - r.width()));
+        horizontalScrollBar()->setEnabled(colpos.back() > r.width());
+        horizontalScrollBar()->setPageStep(std::max(1, r.width() - 24));
+        horizontalScrollBar()->setSingleStep(std::max(1, std::min(r.width(), 24)));
+    }
     viewport()->update();
 }
 

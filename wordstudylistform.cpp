@@ -154,6 +154,68 @@ QString WordStudyTestsModel::tooltip(int col) const
 //-------------------------------------------------------------
 
 
+WordStudyLevelsModel::WordStudyLevelsModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), maxval(0)
+{
+    list.resize(12);
+    for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)
+    {
+        int lv = deck->studyLevel(ix);
+        if (list.size() <= lv)
+            list.resize(lv + 1);
+        ++list[lv];
+    }
+
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        maxval = std::max(maxval, list[ix]);
+}
+
+WordStudyLevelsModel::~WordStudyLevelsModel()
+{
+
+}
+
+ZStatType WordStudyLevelsModel::type() const
+{
+    return ZStatType::BarStretch;
+}
+
+int WordStudyLevelsModel::count() const
+{
+    return list.size();
+}
+
+int WordStudyLevelsModel::maxValue() const
+{
+    return maxval;
+}
+
+QString WordStudyLevelsModel::axisLabel(Qt::Orientation ori) const
+{
+    if (ori == Qt::Horizontal)
+        return tr("Level");
+    else
+        return tr("Item count");
+}
+
+QString WordStudyLevelsModel::barLabel(int ix) const
+{
+    return QString::number(ix + 1);
+}
+
+int WordStudyLevelsModel::valueCount() const
+{
+    return 1;
+}
+
+int WordStudyLevelsModel::value(int col, int valpos) const
+{
+    return list[col];
+}
+
+
+//-------------------------------------------------------------
+
+
 // TODO: column sizes not saved in list form.
 
 
@@ -561,24 +623,25 @@ bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
                 ZToolTip::hideNow();
             break;
         }
-        case DeckStatPages::Levels:
-        {
-            QRectF r = ui->statChart->chart()->plotArea();
-            int level = int((me->pos().x() - r.left()) / (r.width() / 12)) + 1;
-            QBarSet *s = ((QBarSeries*)ui->statChart->chart()->series().at(0))->barSets().at(0);
-            if (r.contains(me->pos()) && level >= 1 && level <= s->count())
-            {
-                int itemcount = s->at(level - 1);
-                QPoint pt = me->globalPos();
-                //pt.ry() += 8;
-                QLabel *contents = new QLabel();
-                contents->setText(tr("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
-                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
-            }
-            else
-                ZToolTip::hideNow();
-            break;
-        }
+        //case DeckStatPages::Levels:
+        //{
+        //    QRectF r = ui->statChart->chart()->plotArea();
+        //    int level = int((me->pos().x() - r.left()) / (r.width() / 12)) + 1;
+        //    QBarSet *s = ((QBarSeries*)ui->statChart->chart()->series().at(0))->barSets().at(0);
+        //    if (r.contains(me->pos()) && level >= 1 && level <= s->count())
+        //    {
+        //        int itemcount = s->at(level - 1);
+        //        QPoint pt = me->globalPos();
+        //        //pt.ry() += 8;
+        //        QLabel *contents = new QLabel();
+        //        contents->setText(tr("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
+        //        ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
+        //    }
+        //    else
+        //        ZToolTip::hideNow();
+        //    break;
+        //}
+
         /* end switch */
         }
     }
@@ -654,9 +717,6 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
         ui->statChart->installEventFilter(this);
         ui->statChart->viewport()->installEventFilter(this);
         ui->statChart->viewport()->setMouseTracking(true);
-
-        WordStudyTestsModel *m = new WordStudyTestsModel(deck, ui->statView);
-        ui->statView->setModel(m);
 
         restoreStatsState(FormStates::wordstudylist.stats);
     }
@@ -1276,14 +1336,21 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
     FlagGuard<bool> ignoreguard(&ignoreop, true, false);
 
-    if (ui->statChart->chart() != nullptr && (page == DeckStatPages::Levels || page == DeckStatPages::Items))
-        ui->statChart->chart()->deleteLater();
-    QChart *chart = new QChart();
-    chart->setBackgroundBrush(Settings::textColor(hasFocus(), ColorSettings::Bg));
-    chart->layout()->setContentsMargins(0, 0, 0, 0);
-    chart->setBackgroundRoundness(0);
+    if (ui->statView->model() != nullptr)
+        ui->statView->model()->deleteLater();
+    ui->statView->setModel(nullptr);
+
     int fmh = fontMetrics().height();
-    chart->setMargins(QMargins(fmh / 2, fmh / 2, fmh / 2, fmh / 2));
+
+    QChart *chart = nullptr;
+    if (page == DeckStatPages::Forecast || page == DeckStatPages::Items)
+    {
+        chart = new QChart();
+        chart->setBackgroundBrush(Settings::textColor(hasFocus(), ColorSettings::Bg));
+        chart->layout()->setContentsMargins(0, 0, 0, 0);
+        chart->setBackgroundRoundness(0);
+        chart->setMargins(QMargins(fmh / 2, fmh / 2, fmh / 2, fmh / 2));
+    }
 
     if (statpage == DeckStatPages::Items)
     {
@@ -1312,6 +1379,9 @@ void WordStudyListForm::showStat(DeckStatPages page)
     {
     case DeckStatPages::Items:
     {
+        ui->statChart->chart()->deleteLater();
+        ui->statChart->setChart(chart);
+
         ui->int1Radio->show();
         ui->intervalWidget->show();
 
@@ -1431,6 +1501,9 @@ void WordStudyListForm::showStat(DeckStatPages page)
     }
     case DeckStatPages::Forecast:
     {
+        ui->statChart->chart()->deleteLater();
+        ui->statChart->setChart(chart);
+
         if (forecastint == DeckStatIntervals::Year)
             ui->int2Radio->setChecked(true);
         else if (forecastint == DeckStatIntervals::HalfYear)
@@ -1546,49 +1619,57 @@ void WordStudyListForm::showStat(DeckStatPages page)
     }
     case DeckStatPages::Levels:
     {
+        WordStudyLevelsModel *m = new WordStudyLevelsModel(deck, ui->statView);
+        ui->statView->setModel(m);
+
         ui->intervalWidget->hide();
-        QBarSeries *bars = new QBarSeries(chart);
-        QBarSet *dataset = new QBarSet(tr("Levels"), chart);
-        dataset->setBrush(Settings::uiColor(ColorSettings::Stat1));
-        dataset->setPen(Settings::textColor(hasFocus(), ColorSettings::TextColorTypes::Bg));
-        dataset->setLabelColor(Settings::textColor(hasFocus(), ColorSettings::TextColorTypes::Text));
+        ui->statStack->setCurrentIndex(1);
 
-        std::vector<int> levels;
-        for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)
-        {
-            int lv = deck->studyLevel(ix);
-            if (levels.size() <= lv)
-                levels.resize(lv + 1);
-            ++levels[lv];
-        }
-        for (int ix = 0, siz = levels.size(); ix != siz; ++ix)
-            (*dataset) << levels[ix];
+        //QBarSeries *bars = new QBarSeries(chart);
+        //QBarSet *dataset = new QBarSet(tr("Levels"), chart);
+        //dataset->setBrush(Settings::uiColor(ColorSettings::Stat1));
+        //dataset->setPen(Settings::textColor(hasFocus(), ColorSettings::TextColorTypes::Bg));
+        //dataset->setLabelColor(Settings::textColor(hasFocus(), ColorSettings::TextColorTypes::Text));
 
-        for (int ix = levels.size(), siz = 12; ix < siz; ++ix)
-            (*dataset) << 0;
+        //std::vector<int> levels;
+        //for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)
+        //{
+        //    int lv = deck->studyLevel(ix);
+        //    if (levels.size() <= lv)
+        //        levels.resize(lv + 1);
+        //    ++levels[lv];
+        //}
+        //for (int ix = 0, siz = levels.size(); ix != siz; ++ix)
+        //    (*dataset) << levels[ix];
+
+        //for (int ix = levels.size(), siz = 12; ix < siz; ++ix)
+        //    (*dataset) << 0;
 
 
-        bars->append(dataset);
-        bars->setLabelsVisible(true);
-        bars->setLabelsPosition(QBarSeries::LabelsOutsideEnd);
-        chart->addSeries(bars);
-        chart->setTitle(tr("Number of items at each level"));
-        chart->legend()->hide();
-        chart->createDefaultAxes();
-        ((QValueAxis*)chart->axisY())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-        ((QValueAxis*)chart->axisX())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-        ((QValueAxis*)chart->axisY())->setLinePen(Settings::uiColor(ColorSettings::Grid));
-        ((QValueAxis*)chart->axisX())->setLinePen(Settings::uiColor(ColorSettings::Grid));
-        ((QValueAxis*)chart->axisY())->setLabelFormat("%i");
-        ((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
-        ((QValueAxis*)chart->axisY())->applyNiceNumbers();
-        ((QValueAxis*)chart->axisX())->setTitleText(tr("Level"));
-        ((QValueAxis*)chart->axisY())->setTitleText(tr("Item count"));
-        ui->statStack->setCurrentIndex(0);
+        //bars->append(dataset);
+        //bars->setLabelsVisible(true);
+        //bars->setLabelsPosition(QBarSeries::LabelsOutsideEnd);
+        //chart->addSeries(bars);
+        //chart->setTitle(tr("Number of items at each level"));
+        //chart->legend()->hide();
+        //chart->createDefaultAxes();
+        //((QValueAxis*)chart->axisY())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
+        //((QValueAxis*)chart->axisX())->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
+        //((QValueAxis*)chart->axisY())->setLinePen(Settings::uiColor(ColorSettings::Grid));
+        //((QValueAxis*)chart->axisX())->setLinePen(Settings::uiColor(ColorSettings::Grid));
+        //((QValueAxis*)chart->axisY())->setLabelFormat("%i");
+        //((QValueAxis*)chart->axisY())->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
+        //((QValueAxis*)chart->axisY())->applyNiceNumbers();
+        //((QValueAxis*)chart->axisX())->setTitleText(tr("Level"));
+        //((QValueAxis*)chart->axisY())->setTitleText(tr("Item count"));
+        //ui->statStack->setCurrentIndex(0);
         break;
     }
     case DeckStatPages::Tests:
     {
+        WordStudyTestsModel *m = new WordStudyTestsModel(deck, ui->statView);
+        ui->statView->setModel(m);
+
         ui->intervalWidget->hide();
         ui->statView->scrollTo(ui->statView->model()->count());
         ui->statStack->setCurrentIndex(1);
@@ -1596,7 +1677,9 @@ void WordStudyListForm::showStat(DeckStatPages page)
     }
     }
 
-    ui->statChart->setChart(chart);
+    //if (page == DeckStatPages::Forecast || page == DeckStatPages::Items)
+
+
     //ui->statChart->setRubberBand(QChartView::HorizontalRubberBand);
     //ui->statChart->setFrameShape(QFrame::StyledPanel);
     //ui->statChart->setFrameShadow(QFrame::Sunken);
