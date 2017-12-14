@@ -13,8 +13,9 @@
 #include "zstatview.h"
 #include "zabstractstatmodel.h"
 #include "colorsettings.h"
+#include "zui.h"
 
-ZStatView::ZStatView(QWidget *parent) : base(parent), m(nullptr), lm(16), tm(lm), rm(lm), bm(lm), tickspacing(60), hwidth(16)
+ZStatView::ZStatView(QWidget *parent) : base(parent), m(nullptr), lm(32), tm(12), rm(lm), bm(tm), tickspacing(60), hwidth(16)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -41,24 +42,31 @@ void ZStatView::setModel(ZAbstractStatModel *model)
     colpos.clear();
     hlabel = QString();
     vlabel = QString();
+
+    stretched = true;
     if (m != nullptr)
     {
-        if (m->type() == ZStatType::BarScroll)
+        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
+        if (bm != nullptr)
         {
-            int p = 0;
-            for (int ix = 0, siz = m->count(); ix != siz; ++ix)
+            if (bm->barWidth(this, 0) >= 0)
             {
-                p += m->barWidth(this, ix);
-                colpos.push_back(p);
+                stretched = false;
+                int p = 0;
+                for (int ix = 0, siz = bm->count(); ix != siz; ++ix)
+                {
+                    p += bm->barWidth(this, ix);
+                    colpos.push_back(p);
+                }
             }
-        }
 
-        hlabel = m->axisLabel(Qt::Horizontal);
-        vlabel = m->axisLabel(Qt::Vertical);
+            hlabel = bm->axisLabel(Qt::Horizontal);
+            vlabel = bm->axisLabel(Qt::Vertical);
+        }
     }
 
     updateView();
-    if (m != nullptr && m->type() == ZStatType::BarScroll)
+    if (m != nullptr && !stretched)
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     else
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -124,23 +132,75 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
         return;
     }
 
-    int col = columnAt(e->pos().x());
-    if (col == -1)
+    if (m != nullptr && m->type() == ZStatType::Bar)
     {
-        ZToolTip::hideNow();
-        return;
+        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
+
+        int col = columnAt(e->pos().x());
+        if (col == -1)
+        {
+            ZToolTip::hideNow();
+            return;
+        }
+
+        QString str = bm->tooltip(col);
+        if (str.isEmpty())
+        {
+            ZToolTip::hideNow();
+            return;
+        }
+
+        QLabel *contents = new QLabel();
+        contents->setText(str);
+        ZToolTip::show(e->globalPos(), contents, viewport(), viewport()->rect(), INT_MAX, 0);
+    }
+    else if (m != nullptr && m->type() == ZStatType::Area)
+    {
+        ZAbstractAreaStatModel *am = dynamic_cast<ZAbstractAreaStatModel*>(m);
+        
+        ZRect r = statRect();
+        if (!r.contains(e->pos()))
+            return;
+
+        qint64 from = am->firstDate();
+        qint64 to = am->lastDate();
+
+        qint64 ldatepos = from + (to - from) * ((double)(e->pos().x() - r.left() + 1) / r.width());
+        int col = -1;
+        if (ldatepos > to)
+            col = am->count();
+        else if (ldatepos >= from)
+        {
+            int l = 0;
+            int r = am->count();
+            int mid;
+            qint64 middatepos;
+            qint64 mindatepos = from;
+            qint64 maxdatepos = to;
+            while (l < r)
+            {
+                mid = (l + r) / 2;
+                middatepos = am->valueDate(mid);
+                if (middatepos <= ldatepos)
+                    l = mid + 1, mindatepos = am->valueDate(mid + 1);
+                else
+                    r = mid, maxdatepos = am->valueDate(mid);
+            }
+            col = l - 1;
+        }
+
+        QString str = am->tooltip(col);
+        if (str.isEmpty())
+        {
+            ZToolTip::hideNow();
+            return;
+        }
+
+        QLabel *contents = new QLabel();
+        contents->setText(str);
+        ZToolTip::show(e->globalPos(), contents, viewport(), viewport()->rect(), INT_MAX, 0);
     }
 
-    QString str = m->tooltip(col);
-    if (str.isEmpty())
-    {
-        ZToolTip::hideNow();
-        return;
-    }
-
-    QLabel *contents = new QLabel();
-    contents->setText(str);
-    ZToolTip::show(e->globalPos(), contents, viewport(), viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
 }
 
 void ZStatView::changeEvent(QEvent *e)
@@ -174,8 +234,12 @@ void ZStatView::paintEvent(QPaintEvent *event)
 
     ZRect r = statRect();
     p.setPen(Settings::uiColor(ColorSettings::Grid));
-    p.drawLine(r.left() - 1, r.top(), r.left() - 1, r.bottom());
-    
+    p.drawLine(r.left() - 1, r.top(), r.left() - 1, r.bottom() + 5);
+
+    int maxval = m == nullptr ? 0 : m->maxValue();
+    if (r.height() > 0)
+        maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
+
     // Draw vertical axis ticks.
     for (int ix = 0, siz = ticks.size(); ix != siz; ++ix)
     {
@@ -183,7 +247,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
         int pos = ticks[ix].second;
         p.setPen(Settings::uiColor(ColorSettings::Grid));
         if (ix != siz - 1 || ix == 0 || ticks[ix - 1].second != 0)
-            p.drawLine(r.left() - 5, r.top() + pos, r.right(), r.top() + pos);
+            p.drawLine(r.left() - 5, r.top() + pos, r.right() - 1, r.top() + pos);
 
         // Draw tick text left to the grid lines.
 
@@ -205,45 +269,256 @@ void ZStatView::paintEvent(QPaintEvent *event)
         p.drawText(QRect(-r.top() - r.height(), 0, r.height(), r.left() - 6 - hwidth), Qt::AlignVCenter | Qt::AlignHCenter, vlabel);
         p.restore();
     }
-
-    // Draw bars and horizontal axis.
-    int left = m->type() == ZStatType::BarScroll ? horizontalScrollBar()->value() : 0;
-    // Find the first bar to draw.
-    int pos = m->type() == ZStatType::BarScroll ? std::upper_bound(colpos.begin(), colpos.end(), left) - colpos.begin() : 0;
-    int prev = (pos == 0 ? 0 : colpos[pos - 1]);
     p.save();
-    while ((m->type() == ZStatType::BarScroll && pos < colpos.size() && prev - left < r.width()) || (m->type() == ZStatType::BarStretch && pos < m->count()))
+
+    int lastlinepos = -1;
+
+    if (m != nullptr && m->type() == ZStatType::Bar)
     {
-        ZRect r2;
-        if (m->type() == ZStatType::BarScroll)
-        {
-            r2 = ZRect(r.left() + prev - left, r.top(), colpos[pos] - prev, r.height());
-            prev = colpos[pos];
-        }
-        else
-        {
-            int next = (r.width() - prev) / (m->count() - pos);
-            r2 = ZRect(r.left() + prev, r.top(), next, r.height());
-            prev += next;
-        }
+        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
 
-        p.setClipRect(r.intersected(r2), Qt::ClipOperation::ReplaceClip);
-        p.setPen(Settings::uiColor(ColorSettings::Grid));
-        p.drawLine(r2.right() - 1, r.top(), r2.right() - 1, r.bottom());
-        paintBar(p, pos, r2);
+        // Draw bars and horizontal axis.
+        int left = !stretched ? horizontalScrollBar()->value() : 0;
+        // Find the first bar to draw.
+        int pos = !stretched ? std::upper_bound(colpos.begin(), colpos.end(), left) - colpos.begin() : 0;
+        int prev = (pos == 0 ? 0 : colpos[pos - 1]);
 
-        r2.setTop(r2.bottom() + 6);
-        r2.setBottom(height());
-        p.setClipRect(QRect(QPoint(std::max(r2.left(), r.left()), r2.top()), QPoint(std::min(r2.right(), r.right()), r2.bottom())), Qt::ReplaceClip);
-        if (m != nullptr)
+        while ((!stretched && pos < colpos.size() && prev - left < r.width()) || (stretched && pos < bm->count()))
         {
+            ZRect r2;
+            if (!stretched)
+            {
+                r2 = ZRect(r.left() + prev - left, r.top(), colpos[pos] - prev, r.height());
+                prev = colpos[pos];
+            }
+            else
+            {
+                int next = (r.width() - prev) / (bm->count() - pos);
+                r2 = ZRect(r.left() + prev, r.top(), next, r.height());
+                prev += next;
+            }
+
+            p.setPen(Settings::uiColor(ColorSettings::Grid));
+            lastlinepos = r2.right() - 1;
+            p.setClipRect(r.intersected(r2).adjusted(0, 0, 0, 5), Qt::ClipOperation::ReplaceClip);
+            p.drawLine(r2.right() - 1, r.top(), r2.right() - 1, r.bottom() + 5);
+            paintBar(p, pos, r2);
+
+            r2.setTop(r2.bottom() + 7);
+            r2.setBottom(height());
+            p.setClipRect(QRect(QPoint(std::max(r2.left(), r.left()), r2.top()), QPoint(std::min(r2.right(), r.right()), r2.bottom())), Qt::ReplaceClip);
+
             p.setPen(Settings::textColor(ColorSettings::Text));
-            p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, m->barLabel(pos));
+            p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, bm->barLabel(pos));
+
+            ++pos;
+        }
+    }
+    else if (m != nullptr && m->type() == ZStatType::Area)
+    {
+        ZAbstractAreaStatModel *am = dynamic_cast<ZAbstractAreaStatModel*>(m);
+
+        qint64 from = am->firstDate();
+        qint64 to = am->lastDate();
+
+        // Draw x-axis grid lines at equal distances but only for exact date positions. They
+        // all should show the same time of the day as the first one.
+        p.setPen(Settings::textColor(ColorSettings::Text));
+
+        int barw = fm.width(QStringLiteral("9999:99:99")) + 16;
+        // Pixel position in stat drawing rectangle.
+        int left = 0;
+
+        QDateTime date = QDateTime::fromMSecsSinceEpoch(from);
+        QTime time = date.time();
+        QString str;
+        QRect dater;
+
+        while (left < r.width())
+        {
+            str = DateTimeFunctions::formatDay(date.date());
+            // Rectangle of string adjusted with a random margin to make it fit for sure.
+            dater = fm.boundingRect(str).adjusted(-5, 0, 5, 5);
+            dater.moveTo(left + r.left() - dater.width() / 2, r.bottom() + 7);
+
+            p.setPen(Settings::textColor(ColorSettings::Text));
+            p.drawText(dater, Qt::AlignHCenter | Qt::AlignTop, str);
+
+            if (left != 0)
+            {
+                p.setPen(Settings::uiColor(ColorSettings::Grid));
+                p.drawLine(left + r.left(), r.top(), left + r.left(), r.bottom() + 5);
+            }
+
+            // Adjust leftition for next bar and label.
+
+            if (to == from || r.width() == 0)
+                break;
+
+            left += barw;
+            qint64 datenum = from + (to - from) * ((double)left / r.width());
+            QDateTime date2 = QDateTime::fromMSecsSinceEpoch(datenum);
+            if (date2.time() > time)
+                date = QDateTime(date2.date().addDays(1), time);
+            else
+                date = QDateTime(date2.date(), time);
+
+            datenum = date.toMSecsSinceEpoch();
+            left = ((long double)(datenum - from) / (to - from)) * r.width();
+            //date = QDateTime::fromMSecsSinceEpoch(datenum);
         }
 
-        ++pos;
+        // Draw the graph on top of the grid lines.
+
+        left = 0;
+
+        int pos = 0;
+        int siz = am->count();
+
+        // Date at the current pixel position.
+        qint64 fdatepos = from;
+        // Date at the next pixel position.
+        qint64 ldatepos = from + (to - from) * ((double)(left + 1) / r.width());
+
+        // Position in the model's values in front of the current pixel.
+        int fpos = -1;
+        // Last position in the model's values in the current pixel, or a position after that
+        // if no position is within the pixel.
+        int lpos = siz;
+        qint64 fdate;
+        qint64 ldate;
+
+        while (pos < siz)
+        {
+            qint64 datenum = am->valueDate(pos);
+            if (datenum < fdatepos)
+            {
+                fpos = pos;
+                fdate = datenum;
+            }
+            else if (lpos == siz || datenum < ldatepos)
+            {
+                lpos = pos;
+                ldate = datenum;
+            }
+            
+            if (datenum >= ldatepos)
+                break;
+            ++pos;
+        }
+
+        if (fpos == -1 && siz != 0)
+            fdate = QDateTime(QDateTime::fromMSecsSinceEpoch(am->valueDate(0)).addDays(-1).date(), time).toMSecsSinceEpoch();
+        if (lpos == siz && siz != 0)
+            ldate = QDateTime(QDateTime::fromMSecsSinceEpoch(am->valueDate(siz - 1)).addDays(1).date(), time).toMSecsSinceEpoch();
+
+        while (maxval != 0 && left < r.width())
+        {
+            if (fdatepos > ldate)
+                break;
+
+            // Draw the next column.
+            if (fdatepos > fdate)
+            {
+                double v0 = 0;
+                double v1 = 0;
+                double v2 = 0;
+                if (ldatepos <= ldate)
+                {
+                    // Current pixel is between two values. Draw an average of the two sides.
+
+                    double mid = ((long double)(fdatepos + ldatepos) / 2 - fdate) / (ldate - fdate);
+
+                    int fv0 = fpos == -1 ? 0 : am->value(fpos, 0);
+                    int fv1 = fpos == -1 ? 0 : am->value(fpos, 1);
+                    int fv2 = fpos == -1 ? 0 : am->value(fpos, 2);
+
+                    int lv0 = lpos == siz ? 0 : am->value(lpos, 0);
+                    int lv1 = lpos == siz ? 0 : am->value(lpos, 1);
+                    int lv2 = lpos == siz ? 0 : am->value(lpos, 2);
+
+                    v0 = fv0 + double(lv0 - fv0) * mid;
+                    v1 = fv1 + double(lv1 - fv1) * mid;
+                    v2 = fv2 + double(lv2 - fv2) * mid;
+                }
+                else
+                {
+                    pos = fpos;
+
+                    while (++pos <= std::min(lpos, siz - 1))
+                    {
+                        int fv0 = am->value(pos, 0);
+                        int fv1 = am->value(pos, 1);
+                        int fv2 = am->value(pos, 2);
+                        if (fv0 + fv1 + fv2 > v0 + v1 + v2)
+                        {
+                            v0 = fv0;
+                            v1 = fv1;
+                            v2 = fv2;
+                        }
+                    }
+                }
+
+
+                if (v0 != 0)
+                {
+                    p.setPen(Settings::uiColor(ColorSettings::Stat1));
+                    p.drawLine(left + r.left(), r.bottom() - double(v0 + v1 + v2) / maxval * r.height(), left + r.left(), r.bottom() - double(v1 + v2) / maxval * r.height());
+                }
+                if (v1 != 0)
+                {
+                    p.setPen(Settings::uiColor(ColorSettings::Stat2));
+                    p.drawLine(left + r.left(), r.bottom() - double(v1 + v2) / maxval * r.height(), left + r.left(), r.bottom() - double(v2) / maxval * r.height());
+                }
+
+                if (v2 != 0)
+                {
+                    p.setPen(Settings::uiColor(ColorSettings::Stat3));
+                    p.drawLine(left + r.left(), r.bottom() - double(v2) / maxval * r.height(), left + r.left(), r.bottom());
+                }
+            }
+
+            ++left;
+            fdatepos = ldatepos;
+            ldatepos = from + (to - from) * ((double)(left + 1) / r.width());
+
+            if (fdatepos > ldate)
+            {
+                fpos = lpos;
+                fdate = ldate;
+
+                pos = lpos;
+                while (++pos < siz)
+                {
+                    qint64 datenum = am->valueDate(pos);
+                    if (datenum < ldatepos || ldate < fdatepos)
+                    {
+                        lpos = pos;
+                        ldate = datenum;
+                    }
+                    if (datenum >= ldatepos)
+                        break;
+                }
+
+                if (pos >= siz)
+                {
+                    lpos = siz;
+                    ldate = QDateTime(QDateTime::fromMSecsSinceEpoch(am->valueDate(siz - 1)).addDays(1).date(), time).toMSecsSinceEpoch();
+                }
+            }
+        }
+
+
     }
+
     p.restore();
+
+    if (lastlinepos != r.right() - 1)
+    {
+        p.setPen(Settings::uiColor(ColorSettings::Grid));
+        p.drawLine(r.right() - 1, r.top(), r.right() - 1, r.bottom());
+    }
+
 
     if (!hlabel.isEmpty())
     {
@@ -252,26 +527,30 @@ void ZStatView::paintEvent(QPaintEvent *event)
         QFont f = font();
         f.setBold(true);
         p.setFont(f);
-        p.drawText(QRect(r.left(), r.bottom() + 6 + fmh + 4, r.width(), fmh), Qt::AlignTop | Qt::AlignHCenter, hlabel);
+        p.drawText(QRect(r.left(), r.bottom() + fmh + 12, r.width(), fmh), Qt::AlignTop | Qt::AlignHCenter, hlabel);
         p.restore();
     }
 }
 
 void ZStatView::paintBar(QPainter &p, int col, ZRect r)
 {
+    ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
+    if (bm == nullptr)
+        return;
+
     QFontMetrics fm = fontMetrics();
     int fmh = fm.height();
     int maxval = m->maxValue();
     if (maxval == 0)
         return;
 
-    int cnt = m->valueCount();
+    int cnt = bm->valueCount();
     int sum = 0;
 
     fastarray<int> stats(cnt);
     for (int ix = 0; ix != cnt; ++ix)
     {
-        int v = m->value(col, ix);
+        int v = bm->value(col, ix);
         stats[ix] = v;
         sum += v;
     }
@@ -281,7 +560,6 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
 
     // Drawing the bar rectangles.
     QRect br;
-
 
     // Start bar drawing below grid top, leaving out enough space for text above bar.
     if (r.height() > 0)
@@ -313,9 +591,11 @@ QRect ZStatView::statRect() const
     int fmh = fontMetrics().height();
 
     QRect r = viewport() != nullptr ? viewport()->rect() : rect();
-    r.adjust(lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh), tm + fmh * 1.5, std::max( -(r.width() - (lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh))), -rm), std::max<int>(-(r.height() - tm), -bm - fmh * 1.5 - fmh - (hlabel.isEmpty() ? 0 : fmh)));
+    r.adjust(lm + hwidth + 6 + (vlabel.isEmpty() ? 0 : fmh), tm + fmh * 1.5, -rm, -bm - fmh - 12 - (hlabel.isEmpty() ? 0 : fmh));
     if (r.height() < 0)
         r.setHeight(0);
+    if (r.width() < 0)
+        r.setWidth(0);
     return r;
 }
 
@@ -368,9 +648,12 @@ void ZStatView::updateView()
             ticks.push_back(std::make_pair(maxval, 0));
     }
     if (!ticks.empty())
+    {
         hwidth = fm.width(QString::number(ticks.back().first));
+        r.setLeft(r.left() + hwidth);
+    }
 
-    if (m != nullptr && m->type() == ZStatType::BarScroll)
+    if (m != nullptr && !stretched)
     {
         horizontalScrollBar()->setRange(0, colpos.size() == 0 ? 0 : std::max(0, colpos.back() - r.width()));
         horizontalScrollBar()->setEnabled(colpos.back() > r.width());

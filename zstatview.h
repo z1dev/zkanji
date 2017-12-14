@@ -52,6 +52,9 @@ private:
 
     ZAbstractStatModel *m;
 
+    // Draw the model stretched out to the full width of the view without scrollbars.
+    bool stretched;
+
     // Left, top, right and bottom margins left unpainted.
     int lm, tm, rm, bm;
 

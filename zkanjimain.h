@@ -512,7 +512,12 @@ public:
     void setHeight(int height);
 
     // Returns the intersected rectangle of this and r.
-    ZRect intersected(const ZRect &r);
+    ZRect intersected(const ZRect &r) const;
+    // Returns whether p is inside this rect.
+    bool contains(const QPoint &p) const;
+    // Returns a rectangle whose left, top, right and bottom coordinates were adjusted by the
+    // passed values.
+    ZRect adjusted(int x0, int y0, int x1, int y1) const;
 
     operator QRect() const;
 

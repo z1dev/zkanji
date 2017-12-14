@@ -35,7 +35,23 @@ QT_CHARTS_BEGIN_NAMESPACE
     class QDateTimeAxis;
 QT_CHARTS_END_NAMESPACE
 
-class WordStudyTestsModel : public ZAbstractStatModel
+struct WordStudySorting {
+    int column;
+    Qt::SortOrder order;
+};
+
+enum class DeckStudyPages { Items, Stats, None };
+enum class DeckStatPages : int { Items, Forecast, Levels, Tests };
+enum class DeckStatIntervals : int { All, Year, HalfYear, Month };
+enum class DeckStatAreaType : int { Items, Forecast };
+
+class QMenu;
+class QAction;
+enum class DictColumnTypes;
+enum class WordParts : uchar;
+
+
+class WordStudyTestsModel : public ZAbstractBarStatModel
 {
     Q_OBJECT
 public:
@@ -62,17 +78,15 @@ private:
     // The value at the top of the scale.
     int maxval;
 
-    typedef ZAbstractStatModel  base;
+    typedef ZAbstractBarStatModel  base;
 };
 
-class WordStudyLevelsModel : public ZAbstractStatModel
+class WordStudyLevelsModel : public ZAbstractBarStatModel
 {
     Q_OBJECT
 public:
     WordStudyLevelsModel(WordDeck *deck, QObject *parent = nullptr);
     virtual ~WordStudyLevelsModel();
-
-    virtual ZStatType type() const override;
 
     virtual int count() const override;
     virtual int maxValue() const override;
@@ -90,22 +104,44 @@ private:
     // The value at the top of the scale.
     int maxval;
 
-    typedef ZAbstractStatModel  base;
+    typedef ZAbstractBarStatModel  base;
 };
 
-struct WordStudySorting {
-    int column;
-    Qt::SortOrder order;
+class WordStudyAreaModel : public ZAbstractAreaStatModel
+{
+    Q_OBJECT
+public:
+    WordStudyAreaModel(WordDeck *deck, DeckStatAreaType type, DeckStatIntervals interval, QObject *parent = nullptr);
+    virtual ~WordStudyAreaModel();
+
+    void setInterval(DeckStatIntervals newinterval);
+
+    virtual int count() const override;
+    virtual int maxValue() const override;
+    virtual int valueCount() const override;
+    virtual int value(int col, int valpos) const override;
+    virtual QString axisLabel(Qt::Orientation ori) const override;
+    virtual qint64 firstDate() const override;
+    virtual qint64 lastDate() const override;
+    virtual qint64 valueDate(int col) const override;
+    virtual QString tooltip(int col) const override;
+private:
+    // Fills list with data.
+    void update();
+
+    WordDeck *deck;
+    DeckStatAreaType type;
+    DeckStatIntervals interval;
+
+    // [Date millisecs from epoch, [val0, val1, val2]]
+    std::vector<std::pair<qint64, std::tuple<int, int, int>>> list;
+    // Maximum of val0+val1+val2 in list. Recalculated when set to -1, but shouldn't change
+    // unless changing the deck data.
+    mutable int maxval;
+
+    typedef ZAbstractAreaStatModel  base;
 };
 
-enum class DeckStudyPages { Items, Stats, None };
-enum class DeckStatPages : int { Items, Forecast, Levels, Tests };
-enum class DeckStatIntervals : int { All, Year, HalfYear, Month };
-
-class QMenu;
-class QAction;
-enum class DictColumnTypes;
-enum class WordParts : uchar;
 class WordStudyListForm : public DialogWindow
 {
     Q_OBJECT
@@ -152,7 +188,7 @@ public:
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
-    virtual bool eventFilter(QObject *o, QEvent *e) override;
+    //virtual bool eventFilter(QObject *o, QEvent *e) override;
 protected slots:
     void on_tabWidget_currentChanged(int index);
     void headerSortChanged(int index, Qt::SortOrder order);
@@ -184,13 +220,13 @@ private:
     void restoreColumns();
 
     void showStat(DeckStatPages page);
-    void updateStat();
+    //void updateStat();
 
     // When the X axis is a QDateTimeAxis, updates the axis' visible range.
-    void normalizeXAxis(QDateTimeAxis *axis);
+    //void normalizeXAxis(QDateTimeAxis *axis);
 
     // Changes the number of visible ticks on a QDateTimeAxis to make each tick fall on midnight.
-    void autoXAxisTicks();
+    //void autoXAxisTicks();
 
     WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidget *parent = nullptr);
     WordStudyListForm() = delete;

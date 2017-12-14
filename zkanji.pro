@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets svg printsupport
 greaterThan(QT_MAJOR_VERSION, 4): unix:QT += x11extras
@@ -142,7 +142,8 @@ SOURCES += \
     kanareadingpracticeform.cpp \
     kanawritingpracticeform.cpp \
     stayontop_x11.cpp \
-	worddeckstatsform.cpp
+    worddeckstatsform.cpp \
+    zstatview.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -268,7 +269,9 @@ HEADERS += \
     kanareadingpracticeform.h \
     kanawritingpracticeform.h \
     stayontop_x11.h \
-	worddeckstatsform.h
+    worddeckstatsform.h \
+    zabstractstatmodel.h \
+    zstatview.h
 
 FORMS += \
     collectwordsform.ui \
@@ -319,7 +322,7 @@ FORMS += \
     kanareadingpracticeform.ui \
     kanawritingpracticeform.ui \
     kanapracticesettingsform.ui \
-	worddeckstatsform.ui
+    worddeckstatsform.ui
 
 DISTFILES +=
 

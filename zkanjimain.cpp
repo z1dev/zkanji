@@ -758,9 +758,19 @@ void ZRect::setHeight(int height)
     r.setHeight(height);
 }
 
-ZRect ZRect::intersected(const ZRect &other)
+ZRect ZRect::intersected(const ZRect &other) const
 {
     return r.intersected(other.r);
+}
+
+bool ZRect::contains(const QPoint &p) const
+{
+    return r.contains(p);
+}
+
+ZRect ZRect::adjusted(int x0, int y0, int x1, int y1) const
+{
+    return ZRect(r.adjusted(x0, y0, x1, y1));
 }
 
 ZRect::operator QRect() const
@@ -768,7 +778,6 @@ ZRect::operator QRect() const
     return r;
 }
 
-// Direct access to the inner rectangle.
 QRect& ZRect::rect()
 {
     return r;
