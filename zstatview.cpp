@@ -385,19 +385,24 @@ void ZStatView::paintEvent(QPaintEvent *event)
         // Last position in the model's values in the current pixel, or a position after that
         // if no position is within the pixel.
         int lpos = siz;
-        qint64 fdate;
-        qint64 ldate;
+        qint64 fdate = 0;
+        qint64 ldate = fdatepos;
 
+        // Find the data positions to be drawn for the current pixel column.
         while (pos < siz)
         {
             qint64 datenum = am->valueDate(pos);
             if (datenum < fdatepos)
             {
+                // Fpos should always refer to data before current pixel column.
+
                 fpos = pos;
                 fdate = datenum;
             }
             else if (lpos == siz || datenum < ldatepos)
             {
+                // Lpos should always refer to data within current pixel column, or after only
+                // when no suitable data position is within this column.
                 lpos = pos;
                 ldate = datenum;
             }
@@ -407,10 +412,13 @@ void ZStatView::paintEvent(QPaintEvent *event)
             ++pos;
         }
 
-        if (fpos == -1 && siz != 0)
-            fdate = QDateTime(QDateTime::fromMSecsSinceEpoch(am->valueDate(0)).addDays(-1).date(), time).toMSecsSinceEpoch();
-        if (lpos == siz && siz != 0)
-            ldate = QDateTime(QDateTime::fromMSecsSinceEpoch(am->valueDate(siz - 1)).addDays(1).date(), time).toMSecsSinceEpoch();
+        if (lpos == siz)
+        {
+            // There is no data position in or after the current pixel column. Setting it to a
+            // lower value will make sure no drawing is done.
+            lpos = fpos;
+            ldate = fdate;
+        }
 
         while (maxval != 0 && left < r.width())
         {
@@ -418,7 +426,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
                 break;
 
             // Draw the next column.
-            if (fdatepos > fdate)
+            if (fdatepos > fdate && (fpos != -1 || ldate < ldatepos))
             {
                 double v0 = 0;
                 double v1 = 0;

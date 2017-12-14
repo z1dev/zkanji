@@ -10,14 +10,6 @@
 #include <QGraphicsLayout>
 #include <QMenu>
 #include <QtEvents>
-#include <QtCharts/QBarSeries> 
-#include <QtCharts/QStackedBarSeries> 
-#include <QtCharts/QBarSet> 
-#include <QtCharts/QBarCategoryAxis> 
-#include <QtCharts/QAreaSeries> 
-#include <QtCharts/QLineSeries> 
-#include <QtCharts/QValueAxis> 
-#include <QtCharts/QDateTimeAxis> 
 #include <QToolTip>
 #include <map>
 
@@ -365,7 +357,26 @@ void WordStudyAreaModel::update()
             // When no data between stats, item counts stay the same, but test count should be
             // 0. Add two zeroes in the middle.
             int lastdays = (last.isValid() ? last.date().daysTo(stat.day) : 0);
-            if (lastdays > 1)
+
+            //if (lastdays > 1)
+            //{
+            //    last = last.addDays(1);
+            //    qint64 lasttimesince = last.toMSecsSinceEpoch();
+            //    std::pair<qint64, std::tuple<int, int, int>> data;
+            //    data.first = lasttimesince;
+            //    data.second = std::make_tuple(lastcount - lastlearned, lastlearned, 0);
+            //    list.push_back(data);
+            //
+            //    if (lastdays > 2)
+            //    {
+            //        last = QDateTime(stat.day.addDays(-1), QTime());
+            //        lasttimesince = last.toMSecsSinceEpoch();
+            //        data.first = lasttimesince;
+            //        list.push_back(data);
+            //    }
+            //}
+
+            while (lastdays > 1)
             {
                 last = last.addDays(1);
                 qint64 lasttimesince = last.toMSecsSinceEpoch();
@@ -373,14 +384,7 @@ void WordStudyAreaModel::update()
                 data.first = lasttimesince;
                 data.second = std::make_tuple(lastcount - lastlearned, lastlearned, 0);
                 list.push_back(data);
-
-                if (lastdays > 2)
-                {
-                    last = QDateTime(stat.day.addDays(-1), QTime());
-                    lasttimesince = last.toMSecsSinceEpoch();
-                    data.first = lasttimesince;
-                    list.push_back(data);
-                }
+                --lastdays;
             }
 
             last = QDateTime(stat.day, QTime());
@@ -394,7 +398,25 @@ void WordStudyAreaModel::update()
 
         QDate now = ltDay(QDateTime::currentDateTime());
         int nowdays = (last.isValid() ? last.date().daysTo(now) : 0);
-        if (nowdays > 0)
+        //if (nowdays > 0)
+        //{
+        //    last = last.addDays(1);
+        //    qint64 lasttimesince = last.toMSecsSinceEpoch();
+        //    auto data = list.back();
+        //    data.first = lasttimesince;
+        //    std::get<0>(data.second) += std::get<2>(data.second);
+        //    std::get<2>(data.second) = 0;
+        //    list.push_back(data);
+
+        //    if (nowdays > 1)
+        //    {
+        //        last = QDateTime(now, QTime());
+        //        lasttimesince = last.toMSecsSinceEpoch();
+        //        data.first = lasttimesince;
+        //        list.push_back(data);
+        //    }
+        //}
+        while (nowdays > 0)
         {
             last = last.addDays(1);
             qint64 lasttimesince = last.toMSecsSinceEpoch();
@@ -403,14 +425,7 @@ void WordStudyAreaModel::update()
             std::get<0>(data.second) += std::get<2>(data.second);
             std::get<2>(data.second) = 0;
             list.push_back(data);
-
-            if (nowdays > 1)
-            {
-                last = QDateTime(now, QTime());
-                lasttimesince = last.toMSecsSinceEpoch();
-                data.first = lasttimesince;
-                list.push_back(data);
-            }
+            --nowdays;
         }
 
         return;
@@ -1612,15 +1627,15 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
     int fmh = fontMetrics().height();
 
-    QChart *chart = nullptr;
-    if (page == DeckStatPages::Forecast || page == DeckStatPages::Items)
-    {
-        chart = new QChart();
-        chart->setBackgroundBrush(Settings::textColor(hasFocus(), ColorSettings::Bg));
-        chart->layout()->setContentsMargins(0, 0, 0, 0);
-        chart->setBackgroundRoundness(0);
-        chart->setMargins(QMargins(fmh / 2, fmh / 2, fmh / 2, fmh / 2));
-    }
+    //QChart *chart = nullptr;
+    //if (page == DeckStatPages::Forecast || page == DeckStatPages::Items)
+    //{
+    //    chart = new QChart();
+    //    chart->setBackgroundBrush(Settings::textColor(hasFocus(), ColorSettings::Bg));
+    //    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    //    chart->setBackgroundRoundness(0);
+    //    chart->setMargins(QMargins(fmh / 2, fmh / 2, fmh / 2, fmh / 2));
+    //}
 
     if (statpage == DeckStatPages::Items)
     {

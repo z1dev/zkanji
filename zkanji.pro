@@ -142,7 +142,6 @@ SOURCES += \
     kanareadingpracticeform.cpp \
     kanawritingpracticeform.cpp \
     stayontop_x11.cpp \
-    worddeckstatsform.cpp \
     zstatview.cpp
 
 HEADERS += \
@@ -269,7 +268,6 @@ HEADERS += \
     kanareadingpracticeform.h \
     kanawritingpracticeform.h \
     stayontop_x11.h \
-    worddeckstatsform.h \
     zabstractstatmodel.h \
     zstatview.h
 
@@ -298,7 +296,6 @@ FORMS += \
     kanjireadingpracticeform.ui \
     kanjisearchwidget.ui \
     kanjitogroupform.ui \
-    kanjitooltipwidget.ui \
     popupdict.ui \
     popupkanjisearch.ui \
     printpreviewform.ui \
@@ -321,8 +318,7 @@ FORMS += \
     zkanjiwidget.ui \
     kanareadingpracticeform.ui \
     kanawritingpracticeform.ui \
-    kanapracticesettingsform.ui \
-    worddeckstatsform.ui
+    kanapracticesettingsform.ui
 
 DISTFILES +=
 
