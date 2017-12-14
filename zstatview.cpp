@@ -214,7 +214,11 @@ void ZStatView::paintEvent(QPaintEvent *event)
 
     int maxval = m == nullptr ? 0 : m->maxValue();
     if (r.height() > 0)
+    {
+        if (m && m->type() == ZStatType::Bar && maxval * (double)fmh * 1.5 / r.height() < 1)
+            ++maxval;
         maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
+    }
 
     // Draw vertical axis ticks.
     for (int ix = 0, siz = ticks.size(); ix != siz; ++ix)
@@ -602,7 +606,11 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
 
     // Start bar drawing below grid top, leaving out enough space for text above bar.
     if (r.height() > 0)
+    {
+        if (m && m->type() == ZStatType::Bar && maxval * (double)fmh * 1.5 / r.height() < 1)
+            ++maxval;
         maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
+    }
 
     for (int ix = 0; ix != cnt; ++ix)
     {
@@ -643,7 +651,7 @@ void ZStatView::updateView()
     ticks.clear();
     hwidth = 0;
 
-    // Calculate the vertical tick positions.
+    // Calculate the vertical tick and grid positions.
 
     ZRect r = statRect();
     QFontMetrics fm = fontMetrics();
@@ -653,7 +661,12 @@ void ZStatView::updateView()
     // When drawing the bar, fmh * 1.5 height will be excluded from top to draw the bar texts,
     // but the grid should be drawn above it. To compensate, another max val is used.
     if (r.height() > 0)
+    {
+        if (m && m->type() == ZStatType::Bar && maxval * (double)fmh * 1.5 / r.height() < 1)
+            ++maxval;
         maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
+
+    }
 
     if (maxval != 0 && r.height() != 0)
     {
