@@ -42,6 +42,8 @@ protected:
     virtual bool viewportEvent(QEvent *e) override;
     virtual void scrollContentsBy(int dx, int dy) override;
     virtual void paintEvent(QPaintEvent *e) override;
+private slots:
+    void onModelChanged();
 private:
     void paintBar(QPainter &p, int col, ZRect r);
 

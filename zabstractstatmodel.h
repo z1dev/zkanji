@@ -19,6 +19,8 @@ enum class ZStatType { Bar, Area };
 class ZAbstractStatModel : public QObject
 {
     Q_OBJECT
+signals:
+    void modelChanged();
 public:
     ZAbstractStatModel(QObject *parent = nullptr) : base(parent) { ; }
     virtual ~ZAbstractStatModel() {}
@@ -42,6 +44,7 @@ public:
     // Tooltip text to be shown for the passed column. If this is an empty string, no tooltip
     // will be shown.
     virtual QString tooltip(int col) const { return QString(); }
+  
 protected:
     // Type of stats this model represents.
     virtual ZStatType type() const = 0;

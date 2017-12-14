@@ -38,38 +38,14 @@ void ZStatView::setModel(ZAbstractStatModel *model)
     if (m == model)
         return;
 
-    m = model;
-    colpos.clear();
-    hlabel = QString();
-    vlabel = QString();
-
-    stretched = true;
     if (m != nullptr)
-    {
-        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
-        if (bm != nullptr)
-        {
-            if (bm->barWidth(this, 0) >= 0)
-            {
-                stretched = false;
-                int p = 0;
-                for (int ix = 0, siz = bm->count(); ix != siz; ++ix)
-                {
-                    p += bm->barWidth(this, ix);
-                    colpos.push_back(p);
-                }
-            }
+        disconnect(m, &ZAbstractStatModel::modelChanged, this, &ZStatView::onModelChanged);
+    m = model;
 
-            hlabel = bm->axisLabel(Qt::Horizontal);
-            vlabel = bm->axisLabel(Qt::Vertical);
-        }
-    }
+    onModelChanged();
 
-    updateView();
-    if (m != nullptr && !stretched)
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    else
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    if (m != nullptr)
+        connect(m, &ZAbstractStatModel::modelChanged, this, &ZStatView::onModelChanged);
 }
 
 void ZStatView::setMargins(int leftmargin, int topmargin, int rightmargin, int bottommargin)
@@ -458,13 +434,33 @@ void ZStatView::paintEvent(QPaintEvent *event)
                         int fv0 = am->value(pos, 0);
                         int fv1 = am->value(pos, 1);
                         int fv2 = am->value(pos, 2);
-                        if (fv0 + fv1 + fv2 > v0 + v1 + v2)
-                        {
+
+                        fv0 += fv1 + fv2;
+                        fv1 += fv2;
+
+                        if (v0 < fv0)
                             v0 = fv0;
+                        if (v1 < fv1)
                             v1 = fv1;
+                        if (v2 < fv2)
                             v2 = fv2;
-                        }
+
+                        //if (fv0 + fv1 + fv2 > v0 + v1 + v2)
+                        //{
+                        //    v0 = fv0;
+                        //    v1 = fv1;
+                        //    v2 = fv2;
+                        //}
                     }
+                    if (v0 < std::max(v1, v2))
+                        v0 = 0;
+                    else
+                        v0 -= std::max(v1, v2);
+                    if (v1 < v2)
+                        v1 = 0;
+                    else
+                        v1 -= v2;
+
                 }
 
 
@@ -538,6 +534,41 @@ void ZStatView::paintEvent(QPaintEvent *event)
         p.drawText(QRect(r.left(), r.bottom() + fmh + 12, r.width(), fmh), Qt::AlignTop | Qt::AlignHCenter, hlabel);
         p.restore();
     }
+}
+
+void ZStatView::onModelChanged()
+{
+    colpos.clear();
+    hlabel = QString();
+    vlabel = QString();
+
+    stretched = true;
+    if (m != nullptr)
+    {
+        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
+        if (bm != nullptr)
+        {
+            if (bm->barWidth(this, 0) >= 0)
+            {
+                stretched = false;
+                int p = 0;
+                for (int ix = 0, siz = bm->count(); ix != siz; ++ix)
+                {
+                    p += bm->barWidth(this, ix);
+                    colpos.push_back(p);
+                }
+            }
+
+            hlabel = bm->axisLabel(Qt::Horizontal);
+            vlabel = bm->axisLabel(Qt::Vertical);
+        }
+    }
+
+    updateView();
+    if (m != nullptr && !stretched)
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    else
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 void ZStatView::paintBar(QPainter &p, int col, ZRect r)

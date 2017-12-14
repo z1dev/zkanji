@@ -222,6 +222,8 @@ void WordStudyAreaModel::setInterval(DeckStatIntervals newinterval)
     //list.clear();
     maxval = -1;
     //update();
+
+    emit modelChanged();
 }
 
 int WordStudyAreaModel::count() const
@@ -1310,32 +1312,46 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
     menu->insertSeparator(insertpos);
 }
 
-void WordStudyListForm::on_int1Radio_toggled(bool checked)
+void WordStudyListForm::on_items1Radio_toggled(bool checked)
 {
-    if (checked && (statpage == DeckStatPages::Items || statpage == DeckStatPages::Forecast) && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+    if (checked && statpage == DeckStatPages::Items && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
         ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::All);
-        //updateStat();
 }
 
-void WordStudyListForm::on_int2Radio_toggled(bool checked)
+void WordStudyListForm::on_items2Radio_toggled(bool checked)
 {
-    if (checked && (statpage == DeckStatPages::Items || statpage == DeckStatPages::Forecast) && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+    if (checked && statpage == DeckStatPages::Items && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
         ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::Year);
-        //updateStat();
 }
 
-void WordStudyListForm::on_int3Radio_toggled(bool checked)
+void WordStudyListForm::on_items3Radio_toggled(bool checked)
 {
-    if (checked && (statpage == DeckStatPages::Items || statpage == DeckStatPages::Forecast) && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+    if (checked && statpage == DeckStatPages::Items && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
         ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::HalfYear);
-        //updateStat();
 }
 
-void WordStudyListForm::on_int4Radio_toggled(bool checked)
+void WordStudyListForm::on_items4Radio_toggled(bool checked)
 {
-    if (checked && (statpage == DeckStatPages::Items || statpage == DeckStatPages::Forecast) && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+    if (checked && statpage == DeckStatPages::Items && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
         ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::Month);
-        //updateStat();
+}
+
+void WordStudyListForm::on_fore1Radio_toggled(bool checked)
+{
+    if (checked && statpage == DeckStatPages::Forecast && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+        ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::Year);
+}
+
+void WordStudyListForm::on_fore2Radio_toggled(bool checked)
+{
+    if (checked && statpage == DeckStatPages::Forecast && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+        ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::HalfYear);
+}
+
+void WordStudyListForm::on_fore3Radio_toggled(bool checked)
+{
+    if (checked && statpage == DeckStatPages::Forecast && dynamic_cast<WordStudyAreaModel*>(ui->statView->model()) != nullptr)
+        ((WordStudyAreaModel*)ui->statView->model())->setInterval(DeckStatIntervals::Month);
 }
 
 void WordStudyListForm::on_itemsButton_clicked()
@@ -1627,32 +1643,22 @@ void WordStudyListForm::showStat(DeckStatPages page)
 
     int fmh = fontMetrics().height();
 
-    //QChart *chart = nullptr;
-    //if (page == DeckStatPages::Forecast || page == DeckStatPages::Items)
-    //{
-    //    chart = new QChart();
-    //    chart->setBackgroundBrush(Settings::textColor(hasFocus(), ColorSettings::Bg));
-    //    chart->layout()->setContentsMargins(0, 0, 0, 0);
-    //    chart->setBackgroundRoundness(0);
-    //    chart->setMargins(QMargins(fmh / 2, fmh / 2, fmh / 2, fmh / 2));
-    //}
-
     if (statpage == DeckStatPages::Items)
     {
-        if (ui->int1Radio->isChecked())
+        if (ui->items1Radio->isChecked())
             itemsint = DeckStatIntervals::All;
-        else if (ui->int2Radio->isChecked())
+        else if (ui->items2Radio->isChecked())
             itemsint = DeckStatIntervals::Year;
-        else if (ui->int3Radio->isChecked())
+        else if (ui->items3Radio->isChecked())
             itemsint = DeckStatIntervals::HalfYear;
         else
             itemsint = DeckStatIntervals::Month;
     }
     else if (statpage == DeckStatPages::Forecast)
     {
-        if (ui->int2Radio->isChecked())
+        if (ui->fore1Radio->isChecked())
             forecastint = DeckStatIntervals::Year;
-        else if (ui->int3Radio->isChecked())
+        else if (ui->fore2Radio->isChecked())
             forecastint = DeckStatIntervals::HalfYear;
         else
             forecastint = DeckStatIntervals::Month;
@@ -1665,337 +1671,50 @@ void WordStudyListForm::showStat(DeckStatPages page)
     case DeckStatPages::Items:
     {
         if (itemsint == DeckStatIntervals::All)
-            ui->int1Radio->setChecked(true);
+            ui->items1Radio->setChecked(true);
         else if (itemsint == DeckStatIntervals::Year)
-            ui->int2Radio->setChecked(true);
+            ui->items2Radio->setChecked(true);
         else if (itemsint == DeckStatIntervals::HalfYear)
-            ui->int3Radio->setChecked(true);
+            ui->items3Radio->setChecked(true);
         else
-            ui->int4Radio->setChecked(true);
+            ui->items4Radio->setChecked(true);
 
         WordStudyAreaModel *m = new WordStudyAreaModel(deck, DeckStatAreaType::Items, itemsint, ui->statView);
         ui->statView->setModel(m);
 
-        ui->int1Radio->show();
-        ui->intervalWidget->show();
-
-        //QLineSeries *l1 = new QLineSeries(chart);
-        //QLineSeries *l2 = new QLineSeries(chart);
-        //QLineSeries *l3 = new QLineSeries(chart);
-
-        //const StudyDeck *study = deck->getStudyDeck();
-
-        //qreal hi = 0;
-
-        //QDateTime last;
-        //for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
-        //{
-        //    const DeckDayStat &stat = study->dayStat(ix);
-        //    for (int ix = 0, siz = (last.isValid() ? last.date().daysTo(stat.day) - 1 : 0); ix < siz; ++ix)
-        //    {
-        //        last = last.addDays(1);
-        //        qint64 lasttimesince = last.toMSecsSinceEpoch();
-        //        l1->append(lasttimesince, static_cast<const QVector<QPointF>>(l1->pointsVector()).constLast().y());
-        //        l2->append(lasttimesince, static_cast<const QVector<QPointF>>(l2->pointsVector()).constLast().y());
-        //        l3->append(lasttimesince, /*static_cast<const QVector<QPointF>>(l3->pointsVector()).constLast().y()*/ 0);
-        //    }
-
-        //    last = QDateTime(stat.day, QTime());
-        //    qint64 timesince = last.toMSecsSinceEpoch();
-
-        //    hi = std::max(hi, (qreal)stat.itemcount);
-        //    l1->append(timesince, stat.itemcount);
-        //    l2->append(timesince, stat.itemcount - stat.itemlearned);
-        //    l3->append(timesince, stat.testcount);
-        //}
-        //QDateTime now = QDateTime(ltDay(QDateTime::currentDateTime()), QTime());
-        //for (int ix = 0, siz = (last.isValid() ? last.date().daysTo(now.date()) : 0); ix < siz; ++ix)
-        //{
-        //    last = last.addDays(1);
-        //    qint64 lasttimesince = last.toMSecsSinceEpoch();
-        //    l1->append(lasttimesince, static_cast<const QVector<QPointF>>(l1->pointsVector()).constLast().y());
-        //    l2->append(lasttimesince, static_cast<const QVector<QPointF>>(l2->pointsVector()).constLast().y());
-        //    l3->append(lasttimesince, /*static_cast<const QVector<QPointF>>(l3->pointsVector()).constLast().y()*/ 0);
-        //}
-
-        //QDateTimeAxis *xaxis = new QDateTimeAxis(chart);
-        //xaxis->setTickCount(10);
-        //xaxis->setFormat(DateTimeFunctions::formatString() /*Settings::general.dateformat == GeneralSettings::DayMonthYear || Settings::general.dateformat == GeneralSettings::MonthDayYear ? QStringLiteral("MMM yyyy") : QStringLiteral("yyyy MMM")*/);
-        //
-        //xaxis->setTitleText(tr("Date"));
-        //xaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-        //xaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
-
-        //if (ui->int1Radio->isChecked())
-        //    xaxis->setRange(QDateTime::fromMSecsSinceEpoch(l1->at(0).x()), now);
-        //else if (ui->int2Radio->isChecked())
-        //    xaxis->setRange(QDateTime::currentDateTime().addDays(-365), now);
-        //else if (ui->int3Radio->isChecked())
-        //    xaxis->setRange(QDateTime::currentDateTime().addDays(-185), now);
-        //else if (ui->int4Radio->isChecked())
-        //    xaxis->setRange(QDateTime::currentDateTime().addDays(-31), now);
-
-        //QValueAxis *yaxis = new QValueAxis(chart);
-        //yaxis->setLabelFormat("%i");
-        //yaxis->setTitleText(tr("Item count"));
-        //yaxis->setRange(0, hi + std::min<int>(100, hi * 0.05));
-        //yaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-        //yaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
-
-        //QAreaSeries *area1 = new QAreaSeries(chart);
-        //area1->setUpperSeries(l1);
-        //area1->setLowerSeries(l2);
-        //area1->setBrush(Settings::uiColor(ColorSettings::Stat1));
-        //area1->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
-        //chart->addSeries(area1);
-
-        //QAreaSeries *area2 = new QAreaSeries(chart);
-        //area2->setUpperSeries(l2);
-        //area2->setLowerSeries(l3);
-        //area2->setBrush(Settings::uiColor(ColorSettings::Stat2));
-        //area2->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
-        //chart->addSeries(area2);
-
-        //QAreaSeries *area3 = new QAreaSeries(chart);
-        //area3->setUpperSeries(l3);
-        //area3->setBrush(Settings::uiColor(ColorSettings::Stat3));
-        //area3->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
-        //chart->addSeries(area3);
-
-        ////xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
-
-        //chart->setTitle(tr("Number of items in the deck"));
-        //chart->legend()->hide();
-
-        //chart->setAxisX(xaxis);
-        //chart->setAxisY(yaxis);
-
-        //area1->attachAxis(xaxis);
-        //area1->attachAxis(yaxis);
-        //area2->attachAxis(xaxis);
-        //area2->attachAxis(yaxis);
-        //area3->attachAxis(xaxis);
-        //area3->attachAxis(yaxis);
-
-        //yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
-        //yaxis->applyNiceNumbers();
-        //normalizeXAxis(xaxis);
-
-        //ui->statStack->setCurrentIndex(0);
         break;
     }
     case DeckStatPages::Forecast:
     {
         if (forecastint == DeckStatIntervals::Year)
-            ui->int2Radio->setChecked(true);
+            ui->fore1Radio->setChecked(true);
         else if (forecastint == DeckStatIntervals::HalfYear)
-            ui->int3Radio->setChecked(true);
+            ui->fore2Radio->setChecked(true);
         else
-            ui->int4Radio->setChecked(true);
+            ui->fore3Radio->setChecked(true);
 
         WordStudyAreaModel *m = new WordStudyAreaModel(deck, DeckStatAreaType::Forecast, forecastint, ui->statView);
         ui->statView->setModel(m);
-
-        //const StudyDeck *study = deck->getStudyDeck();
-
-        //QAreaSeries *area = new QAreaSeries(chart);
-        //QLineSeries *line = new QLineSeries(chart);
-
-        //std::vector<int> items;
-        //deck->dueItems(items);
-
-        //std::vector<int> days;
-        //days.resize(ui->int1Radio->isChecked() || ui->int2Radio->isChecked() ? 365 : ui->int3Radio->isChecked() ? 182 : 31);
-
-        //QDateTime now = QDateTime::currentDateTimeUtc();
-        //QDate nowday = ltDay(now);
-
-        //// [which date to test next, next spacing, multiplier]
-        //std::vector<std::tuple<QDateTime, int, double>> data;
-        //for (int ix = 0, siz = items.size(); ix != siz; ++ix)
-        //{
-        //    const LockedWordDeckItem *i = deck->studiedItems(items[ix]);
-        //    quint32 ispace = study->cardSpacing(i->cardid);
-        //    QDateTime idate = study->cardItemDate(i->cardid).addSecs(ispace);
-        //    QDate iday = ltDay(idate);
-        //    if (iday.daysTo(nowday) > 0)
-        //    {
-        //        idate = now;
-        //        iday = nowday;
-        //    }
-        //    int pos = nowday.daysTo(iday);
-        //    if (pos >= days.size())
-        //        continue;
-        //    data.push_back(std::make_tuple(idate, ispace * study->cardMultiplier(i->cardid), study->cardMultiplier(i->cardid)));
-        //    ++days[pos];
-        //}
-
-        //while (!data.empty())
-        //{
-        //    std::vector<std::tuple<QDateTime, int, double>> tmp;
-        //    std::swap(tmp, data);
-        //    for (int ix = 0, siz = tmp.size(); ix != siz; ++ix)
-        //    {
-        //        quint32 ispace = std::get<1>(tmp[ix]);
-        //        QDateTime idate = std::get<0>(tmp[ix]).addSecs(ispace);
-        //        QDate iday = ltDay(idate);
-        //        if (iday.daysTo(nowday) >= 0)
-        //        {
-        //            idate = now.addDays(1);
-        //            iday = nowday.addDays(1);
-        //        }
-        //        int pos = nowday.daysTo(iday);
-        //        if (pos >= days.size())
-        //            continue;
-        //        double multi = std::get<2>(tmp[ix]);
-        //        data.push_back(std::make_tuple(idate, ispace * multi, multi));
-        //        ++days[pos];
-        //    }
-        //}
-
-        //qint64 timesince = QDateTime(now.date(), QTime()).toMSecsSinceEpoch();
-        //for (int val : days)
-        //{
-        //    line->append(timesince, val);
-        //    timesince += 1000 * 60 * 60 * 24;
-        //}
-
-        //area->setUpperSeries(line);
-        //area->setBrush(Settings::uiColor(ColorSettings::Stat1));
-        //area->setPen(QPen(Qt::transparent)); // Settings::textColor(hasFocus(), ColorSettings::Bg));
-
-        //chart->setTitle(tr("Number of items to study on future dates"));
-        //chart->legend()->hide();
-
-        //QDateTimeAxis *xaxis = new QDateTimeAxis(chart);
-        //xaxis->setTickCount(10);
-        //xaxis->setFormat(DateTimeFunctions::formatString());
-
-        //xaxis->setTitleText(tr("Date"));
-        //xaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-        //xaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
-
-        //QValueAxis *yaxis = new QValueAxis(chart);
-        //yaxis->setLabelFormat("%i");
-        //yaxis->setTitleText(tr("Item count"));
-        //yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
-        //yaxis->setGridLineColor(Settings::uiColor(ColorSettings::Grid));
-        //yaxis->setLinePen(Settings::uiColor(ColorSettings::Grid));
-
-        //chart->addSeries(area);
-
-        //chart->setAxisX(xaxis);
-        //chart->setAxisY(yaxis);
-
-        //area->attachAxis(xaxis);
-        //area->attachAxis(yaxis);
-
-        ////xaxis->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
-        //yaxis->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
-        //yaxis->applyNiceNumbers();
-
-        //ui->int1Radio->hide();
-        //ui->intervalWidget->show();
-
-        //normalizeXAxis(xaxis);
-
-        //ui->statStack->setCurrentIndex(0);
         break;
     }
     case DeckStatPages::Levels:
     {
         WordStudyLevelsModel *m = new WordStudyLevelsModel(deck, ui->statView);
         ui->statView->setModel(m);
-        ui->intervalWidget->hide();
         break;
     }
     case DeckStatPages::Tests:
     {
         WordStudyTestsModel *m = new WordStudyTestsModel(deck, ui->statView);
         ui->statView->setModel(m);
-        ui->intervalWidget->hide();
         ui->statView->scrollTo(ui->statView->model()->count());
         break;
     }
     }
+
+    ui->itemsIntervalWidget->setVisible(page == DeckStatPages::Items);
+    ui->forecastIntervalWidget->setVisible(page == DeckStatPages::Forecast);
 }
-
-//void WordStudyListForm::updateStat()
-//{
-//    QChart *chart = ui->statChart->chart();
-//    if (chart == nullptr || ignoreop)
-//        return;
-//
-//    if (ui->itemsButton->isChecked())
-//    {
-//        QDateTimeAxis *xaxis = (QDateTimeAxis*)chart->axisX();
-//        QLineSeries *l1 = ((QAreaSeries*)chart->series().at(0))->upperSeries();
-//
-//        QDateTime now = QDateTime(ltDay(QDateTime::currentDateTime()), QTime());
-//
-//        if (ui->int1Radio->isChecked())
-//            xaxis->setRange(QDateTime::fromMSecsSinceEpoch(l1->at(0).x()), now);
-//        else if (ui->int2Radio->isChecked())
-//            xaxis->setRange(QDateTime::currentDateTime().addDays(-365), now);
-//        else if (ui->int3Radio->isChecked())
-//            xaxis->setRange(QDateTime::currentDateTime().addDays(-185), now);
-//        else if (ui->int4Radio->isChecked())
-//            xaxis->setRange(QDateTime::currentDateTime().addDays(-31), now);
-//
-//        normalizeXAxis(xaxis);
-//    }
-//    else if (ui->forecastButton->isChecked())
-//        showStat(DeckStatPages::Forecast);
-//
-//}
-
-//void WordStudyListForm::normalizeXAxis(QDateTimeAxis *axis)
-//{
-//    if (axis == nullptr)
-//        return;
-//
-//    QDateTime min = axis->min();
-//    QDateTime max = axis->max();
-//
-//    int days = min.daysTo(max);
-//
-//    if (ui->int2Radio->isChecked())
-//        axis->setMax(min.addDays(365));
-//    else if (ui->int3Radio->isChecked())
-//        axis->setMax(min.addDays(185));
-//    else if (ui->int4Radio->isChecked())
-//        axis->setMax(min.addDays(31));
-//    else
-//    {
-//        // When the whole statistics must be displayed, to make sure the graph can show a good
-//        // number of ticks, the displayed days range must be divisible by some good number.
-//        // In this case the days will be a number of (6*N)+1.
-//        int days = min.daysTo(max);
-//        days = ((days - 2) / 6 + 1) * 6 + 1;
-//        axis->setMax(min.addDays(days));
-//    }
-//
-//    autoXAxisTicks();
-//}
-
-//void WordStudyListForm::autoXAxisTicks()
-//{
-//    QDateTimeAxis *axis = ((QDateTimeAxis*)ui->statChart->chart()->axisX());
-//    if (axis == 0)
-//        return;
-//
-//    // Number of days displayed on the X axis, excluding the last day start, which would be
-//    // the last tick.
-//    int days = axis->min().daysTo(axis->max()) - 1;
-//
-//    // Maximum tick count.
-//    int mticks = std::max(1, ui->statChart->width() / TickSpacing);
-//
-//    while (mticks > 1 && (days % mticks) != 0)
-//        --mticks;
-//
-//    axis->setTickCount(mticks + 1);
-//}
 
 
 //-------------------------------------------------------------

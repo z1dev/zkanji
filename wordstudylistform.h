@@ -11,9 +11,6 @@
 #include <QStyledItemDelegate>
 #include <QHeaderView>
 
-#include <QtCharts/QChart>
-QT_CHARTS_USE_NAMESPACE
-
 #include <map>
 #include "dialogwindow.h"
 #include "zabstractstatmodel.h"
@@ -31,9 +28,6 @@ class QMenu;
 struct WordStudyListFormData;
 struct WordStudyListFormDataItems;
 struct WordStudyListFormDataStats;
-QT_CHARTS_BEGIN_NAMESPACE
-    class QDateTimeAxis;
-QT_CHARTS_END_NAMESPACE
 
 struct WordStudySorting {
     int column;
@@ -201,10 +195,14 @@ protected slots:
     void showColumnContextMenu(const QPoint &p);
     void showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes);
 
-    void on_int1Radio_toggled(bool checked);
-    void on_int2Radio_toggled(bool checked);
-    void on_int3Radio_toggled(bool checked);
-    void on_int4Radio_toggled(bool checked);
+    void on_items1Radio_toggled(bool checked);
+    void on_items2Radio_toggled(bool checked);
+    void on_items3Radio_toggled(bool checked);
+    void on_items4Radio_toggled(bool checked);
+
+    void on_fore1Radio_toggled(bool checked);
+    void on_fore2Radio_toggled(bool checked);
+    void on_fore3Radio_toggled(bool checked);
 
     void on_itemsButton_clicked();
     void on_forecastButton_clicked();
