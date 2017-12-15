@@ -235,6 +235,9 @@ void ZStatView::paintEvent(QPaintEvent *event)
     {
         p.setPen(Settings::uiColor(ColorSettings::Grid));
         p.drawLine(r.left() - 5, r.top(), r.right() - 1, r.top());
+
+        if (ticks.empty())
+            p.drawLine(r.left() - 5, r.bottom(), r.right() - 1, r.bottom());
     }
 
     if (!vlabel.isEmpty())
@@ -551,7 +554,7 @@ void ZStatView::onModelChanged()
         ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
         if (bm != nullptr)
         {
-            if (bm->barWidth(this, 0) >= 0)
+            if (bm->count() != 0 && bm->barWidth(this, 0) >= 0)
             {
                 stretched = false;
                 int p = 0;
