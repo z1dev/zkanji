@@ -213,12 +213,6 @@ void ZStatView::paintEvent(QPaintEvent *event)
     p.drawLine(r.left() - 1, r.top(), r.left() - 1, r.bottom() + 5);
 
     int maxval = m == nullptr ? 0 : m->maxValue();
-    if (r.height() > 0)
-    {
-        if (m && m->type() == ZStatType::Bar && maxval * (double)fmh * 1.5 / r.height() < 1)
-            ++maxval;
-        maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
-    }
 
     // Draw vertical axis ticks.
     for (int ix = 0, siz = ticks.size(); ix != siz; ++ix)
@@ -236,6 +230,11 @@ void ZStatView::paintEvent(QPaintEvent *event)
 
         p.setPen(Settings::textColor(ColorSettings::Text));
         p.drawText(QRectF(0, r.top() + pos - fmh / 2, r.left() - 7, fmh), QString::number(num), Qt::AlignRight | Qt::AlignVCenter);
+    }
+    if (ticks.empty() || ticks.back().second != 0)
+    {
+        p.setPen(Settings::uiColor(ColorSettings::Grid));
+        p.drawLine(r.left() - 5, r.top(), r.right() - 1, r.top());
     }
 
     if (!vlabel.isEmpty())
@@ -604,19 +603,15 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
     // Drawing the bar rectangles.
     QRect br;
 
-    // Start bar drawing below grid top, leaving out enough space for text above bar.
-    if (r.height() > 0)
-    {
-        if (m && m->type() == ZStatType::Bar && maxval * (double)fmh * 1.5 / r.height() < 1)
-            ++maxval;
-        maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
-    }
+    // When drawing the bar, fmh * 1.5 height will be excluded from top to draw the bar texts,
+    // but the grid should be drawn above it.
+    int gap = std::min<int>(r.height() / 2, fmh * 1.5);
 
     for (int ix = 0; ix != cnt; ++ix)
     {
         if (br.isNull())
         {
-            br = QRect(r.left() + r.width() * 0.2, r.bottom() - (r.height() * ((double)sum / maxval)), r.width() * 0.6, 0);
+            br = QRect(r.left() + r.width() * 0.2, r.bottom() - ((r.height() - gap) * ((double)sum / maxval)), r.width() * 0.6, 0);
 
             // Draw text above the bar
             p.setPen(Settings::textColor(ColorSettings::Text));
@@ -626,7 +621,7 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
             p.fillRect(br2.adjusted(-1, 0, 1, 0), Settings::textColor(ColorSettings::Bg));
             p.drawText(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
         }
-        br.setBottom(r.bottom() - (r.height() * double(sum - stats[ix]) / maxval));
+        br.setBottom(r.bottom() - ((r.height() - gap) * double(sum - stats[ix]) / maxval));
         sum -= stats[ix];
         p.fillRect(br, Settings::uiColor((ColorSettings::UIColorTypes)((int)ColorSettings::Stat1 + ix)));
         br.setTop(br.bottom());
@@ -659,20 +654,17 @@ void ZStatView::updateView()
     int maxval = m == nullptr ? 0 : m->maxValue();
 
     // When drawing the bar, fmh * 1.5 height will be excluded from top to draw the bar texts,
-    // but the grid should be drawn above it. To compensate, another max val is used.
-    if (r.height() > 0)
-    {
-        if (m && m->type() == ZStatType::Bar && maxval * (double)fmh * 1.5 / r.height() < 1)
-            ++maxval;
-        maxval = maxval + maxval * (double)fmh * 1.5 / r.height();
-
-    }
+    // but the grid should be drawn above it.
+    int gap = m == nullptr || m->type() != ZStatType::Bar ? 0 : std::min<int>(r.height() / 2, fmh * 1.5);
 
     if (maxval != 0 && r.height() != 0)
     {
-
         // Calculating the tick steps.
-        int steps = std::max<int>(maxval / ((double)r.height() / tickspacing) + 0.9, 1);
+
+        // Number of values between ticks.
+        int steps = std::max<int>(maxval / ((double)(r.height() - gap) / tickspacing) + 0.9, 1);
+        // Maximum value that could be shown in the grids.
+        int gapmaxval = gap == 0 || r.height() - gap == 0 ? maxval : maxval + gap * (maxval / (double)(r.height() - gap));
 
         int v = steps;
         int zeroes = 0;
@@ -688,16 +680,16 @@ void ZStatView::updateView()
         v = 0;
         int pos = r.height();
         // Saving horizontal tick lines and values.
-        while (v <= maxval)
+        while (v <= gapmaxval)
         {
             ticks.push_back(std::make_pair(v, pos));
 
             v += steps;
-            pos = r.height() * ((double)(maxval - v) / maxval);
+            pos = (r.height() - gap) * ((double)(maxval - v) / maxval) + gap;
         }
 
-        if (!ticks.empty() && ticks.back().second != 0)
-            ticks.push_back(std::make_pair(maxval, 0));
+        if (!ticks.empty() && ticks.back().second != 0 && gapmaxval != maxval)
+            ticks.push_back(std::make_pair(gapmaxval, 0));
     }
     if (!ticks.empty())
     {
