@@ -564,10 +564,10 @@ void ZStatView::onModelChanged()
                     colpos.push_back(p);
                 }
             }
-
-            hlabel = bm->axisLabel(Qt::Horizontal);
-            vlabel = bm->axisLabel(Qt::Vertical);
         }
+
+        hlabel = m->axisLabel(Qt::Horizontal);
+        vlabel = m->axisLabel(Qt::Vertical);
     }
 
     updateView();
