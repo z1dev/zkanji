@@ -283,7 +283,7 @@ QString WordStudyAreaModel::axisLabel(Qt::Orientation ori) const
 qint64 WordStudyAreaModel::firstDate() const
 {
     if (list.empty())
-        return 0;
+        return QDateTime::currentMSecsSinceEpoch();
 
     if (interval == DeckStatIntervals::All || type == DeckStatAreaType::Forecast)
         return list.front().first;
@@ -304,7 +304,8 @@ qint64 WordStudyAreaModel::firstDate() const
 qint64 WordStudyAreaModel::lastDate() const
 {
     if (list.empty())
-        return 0;
+        return QDateTime::currentDateTime().addDays(7).toMSecsSinceEpoch();
+
     if (interval == DeckStatIntervals::All || type == DeckStatAreaType::Items)
         return list.back().first;
     else

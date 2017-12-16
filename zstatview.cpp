@@ -305,6 +305,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
 
         // Draw x-axis grid lines at equal distances but only for exact date positions. They
         // all should show the same time of the day as the first one.
+
         p.setPen(Settings::textColor(ColorSettings::Text));
 
         int barw = fm.width(QStringLiteral("9999:99:99")) + 16;
