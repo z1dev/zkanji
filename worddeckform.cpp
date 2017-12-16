@@ -434,8 +434,10 @@ void WordDeckForm::on_dictCBox_currentIndexChanged(int index)
 
 void WordDeckForm::editorClosed()
 {
-    if (model != nullptr && model->hasTempItem())
-        qApp->postEvent(this, new EditorClosedEvent);
+    if (model == nullptr)
+        return;
+
+    qApp->postEvent(this, new EditorClosedEvent);
 }
 
 bool WordDeckForm::event(QEvent *e)
@@ -460,6 +462,8 @@ bool WordDeckForm::event(QEvent *e)
             model->removeTempItem();
             ui->deckTable->setCurrentRow(cacherow);
         }
+        else
+            on_deckTable_rowSelectionChanged();
         return true;
     }
 
