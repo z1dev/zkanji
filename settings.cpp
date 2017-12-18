@@ -140,6 +140,7 @@ namespace Settings
         ini.setValue("savetoolstates", general.savetoolstates);
         ini.setValue("startstate", (int)general.startstate);
         ini.setValue("minimizetotray", general.minimizetotray);
+        ini.setValue("scaling", clamp(general.savedscale, 100, 400));
 
         // Font settings
 
@@ -667,6 +668,37 @@ namespace Settings
             defjp = qApp->font().family();
 
         return defjp;
+    }
+    
+    void loadScaleSettingFromFile()
+    {
+        QSettings ini(ZKanji::userFolder() + "/zkanji.ini", QSettings::IniFormat);
+        QString tmp;
+        bool ok;
+        int val;
+
+        /*
+        ini.setValue("scaling", general.savedscale);
+        */
+        tmp = ini.value("scaling", "100").toString();
+        val = tmp.toInt(&ok);
+        if (!ok)
+        {
+            Settings::general.scale = 100;
+            Settings::general.savedscale = 100;
+        }
+        else
+        {
+            // Make sure value is valid. Can be a number between 100 and 400, divisible by 25.
+            val = clamp(val, 100, 400);
+            val = (val / 25) * 25;
+            Settings::general.scale = val;
+            Settings::general.savedscale = val;
+
+            QFont f = qApp->font();
+            f.setPointSizeF(f.pointSizeF() * Settings::general.scale / 100.0);
+            qApp->setFont(f);
+        }
     }
 
     void loadIniFile()
@@ -1553,6 +1585,21 @@ namespace Settings
         newpal.setColor(QPalette::Inactive, QPalette::Highlight, textColor(false, ColorSettings::SelBg));
         newpal.setColor(QPalette::Inactive, QPalette::HighlightedText, textColor(false, ColorSettings::SelText));
         w->setPalette(newpal);
+    }
+
+    double scaling()
+    {
+        return general.scale / 100.0;
+    }
+
+    int scaled(int siz)
+    {
+        return siz * general.scale / 100.0;
+    }
+
+    int scaled(double siz)
+    {
+        return siz * general.scale / 100.0;
     }
 }
 

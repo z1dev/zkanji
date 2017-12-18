@@ -23,11 +23,20 @@ struct GeneralSettings
     StartState startstate = SaveState;
 
     bool minimizetotray = false;
+
+    // Interface scaling saved from the settings window, but not applied. Values 100-400.
+    int savedscale = 100;
+    // Current applied scaling. Loaded at the start of the program and not changed.
+    int scale = 100;
 };
 
 namespace Settings
 {
     extern GeneralSettings general;
+
+    double scaling();
+    int scaled(int siz);
+    int scaled(double siz);
 }
 
 

@@ -237,6 +237,9 @@ public slots:
     void dictImportAction();
     void saveUserData();
     void showSettingsWindow();
+    // Called at the start of the program to load the scaling value from the ini file. All
+    // other values are loaded in loadSettings().
+    void loadScalingSetting();
     void saveSettings();
     void loadSettings();
 

@@ -767,6 +767,8 @@ int main(int argc, char *argv[])
 
         initDirectories();
 
+        gUI->loadScalingSetting();
+
         if (ZKanji::noData())
             showAndQuit(qApp->translate(0, "Error starting zkanji"), qApp->translate(0, "The file containing the dictionary and other data is not found at the program's location. Quitting... (1)"));
 

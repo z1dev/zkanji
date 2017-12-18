@@ -1220,6 +1220,11 @@ void GlobalUI::showSettingsWindow()
     f->showModal();
 }
 
+void GlobalUI::loadScalingSetting()
+{
+    Settings::loadScaleSettingFromFile();
+}
+
 void GlobalUI::saveSettings()
 {
     Settings::saveSettingsToFile();

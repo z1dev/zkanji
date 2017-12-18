@@ -561,6 +561,8 @@ void SettingsForm::reset()
     ((SitesListModel*)ui->sitesTable->model())->reset();
     ui->sitesTable->setCurrentRow(0);
 
+    ui->scaleSlider->setValue((Settings::general.savedscale - 100) / 25);
+
     ui->dictKanaFontCBox->setCurrentIndex(ui->dictKanaFontCBox->findText(Settings::fonts.kana));
     ui->mainFontCBox->setCurrentIndex(ui->mainFontCBox->findText(Settings::fonts.main));
     ui->dictInfoFontCBox->setCurrentIndex(ui->dictInfoFontCBox->findText(Settings::fonts.info));
@@ -813,6 +815,9 @@ void SettingsForm::applyClicked()
         Settings::data.location.clear();
 
     ((SitesListModel*)ui->sitesTable->model())->apply();
+
+    val = ui->scaleSlider->value();
+    Settings::general.savedscale = val * 25 + 100;
 
     if (ui->dictKanaFontCBox->currentIndex() == -1)
         ui->dictKanaFontCBox->setCurrentIndex(ui->dictKanaFontCBox->findText(Settings::fonts.kana));

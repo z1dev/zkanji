@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>9</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -2486,19 +2486,28 @@
                 </property>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                  <property name="leftMargin">
+                   <number>12</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>12</number>
+                  </property>
                   <item>
-                   <widget class="QSlider" name="horizontalSlider_2">
+                   <widget class="QSlider" name="scaleSlider">
                     <property name="minimum">
-                     <number>100</number>
+                     <number>0</number>
                     </property>
                     <property name="maximum">
-                     <number>400</number>
+                     <number>12</number>
                     </property>
                     <property name="singleStep">
-                     <number>25</number>
+                     <number>1</number>
                     </property>
                     <property name="pageStep">
-                     <number>100</number>
+                     <number>4</number>
+                    </property>
+                    <property name="value">
+                     <number>0</number>
                     </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -2507,14 +2516,14 @@
                      <enum>QSlider::TicksBelow</enum>
                     </property>
                     <property name="tickInterval">
-                     <number>25</number>
+                     <number>1</number>
                     </property>
                    </widget>
                   </item>
                  </layout>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1,0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1,0,1,0">
                   <item>
                    <widget class="QLabel" name="label_44">
                     <property name="sizePolicy">
@@ -2542,7 +2551,7 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_45">
+                   <widget class="QLabel" name="label_140">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -2551,6 +2560,32 @@
                     </property>
                     <property name="text">
                      <string>200%</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_9">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_45">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>300%</string>
                     </property>
                    </widget>
                   </item>
@@ -2587,9 +2622,8 @@
               <item>
                <widget class="QLabel" name="label_47">
                 <property name="text">
-                 <string>&lt;p&gt;*The program must be restarted for this setting to take effect.
-
-Scales everything in the program, including icons and text. The main menu, popup menus and tooltips are unaffected. Any other size setting is applied before this scaling.&lt;/p&gt;</string>
+                 <string>&lt;p&gt;Scales everything in the program, including icons and text. The main menu, popup menus and tooltips are unaffected. Any other size setting is applied before this scaling.&lt;br/&gt;
+&lt;br/&gt;&lt;b&gt;The program must be restarted for this setting to take effect.&lt;/b&gt;&lt;/p&gt;</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -5352,7 +5386,7 @@ Scales everything in the program, including icons and text. The main menu, popup
   <tabstop>siteLockButton</tabstop>
   <tabstop>siteDelButton</tabstop>
   <tabstop>sitesTable</tabstop>
-  <tabstop>horizontalSlider_2</tabstop>
+  <tabstop>scaleSlider</tabstop>
   <tabstop>dictKanaFontCBox</tabstop>
   <tabstop>mainFontCBox</tabstop>
   <tabstop>dictInfoFontCBox</tabstop>
@@ -5444,8 +5478,8 @@ Scales everything in the program, including icons and text. The main menu, popup
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

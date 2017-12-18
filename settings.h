@@ -13,6 +13,8 @@ namespace Settings
     void saveIniFile();
     void saveStatesFile();
 
+    void loadScaleSettingFromFile();
+
     void saveSettingsToFile();
     void loadSettingsFromFile();
 }
