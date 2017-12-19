@@ -7,13 +7,13 @@
 #include "wordtodictionaryform.h"
 #include "ui_wordtodictionaryform.h"
 #include "dialogs.h"
-#include "zdictionariesmodel.h"
 #include "zdictionarymodel.h"
 #include "words.h"
 #include "wordeditorform.h"
 #include "formstate.h"
 #include "globalui.h"
 #include "zdictionariesmodel.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -25,6 +25,8 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
 
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose);
+
+    scaleWidget(this);
 
     ui->wordsTable->setSelectionType(ListSelectionType::Toggle);
     ui->meaningsTable->setSelectionType(ListSelectionType::None);

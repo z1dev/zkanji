@@ -18,6 +18,8 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_DontShowOnScreen);
 
+    scaleWidget(this);
+
     setDisplayMode(RadicalFilterModes::Parts);
     ui->searchEdit->setValidator(&kanaValidator());
     ui->strokeEdit->setValidator(new IntRangeValidator(1, 17, true, this));

@@ -14,6 +14,8 @@
 #include "wordstudyform.h"
 #include "globalui.h"
 #include "groups.h"
+#include "generalsettings.h"
+
 
 //-------------------------------------------------------------
 
@@ -22,7 +24,7 @@ WordStudyItemModel::WordStudyItemModel(WordStudy *study, QObject *parent) : base
 {
     setColumn(0, { (int)DictColumnTypes::Default, Qt::AlignHCenter, ColumnAutoSize::NoAuto, false, -1, QString() });
     if (study->studySettings().method == WordStudyMethod::Single)
-        insertColumn(1, { (int)WordStudyColumnTypes::Score, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, 40, tr("Score") });
+        insertColumn(1, { (int)WordStudyColumnTypes::Score, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(40), tr("Score") });
 }
 
 WordStudyItemModel::~WordStudyItemModel()
@@ -129,6 +131,8 @@ WordTestResultsForm::WordTestResultsForm(QWidget *parent) : base(parent), ui(new
 {
     ui->setupUi(this);
     ui->wordsTable->setStudyDefinitionUsed(true);
+
+    scaleWidget(this);
 }
 
 WordTestResultsForm::~WordTestResultsForm()

@@ -19,6 +19,7 @@
 #include "zkanjimain.h"
 #include "romajizer.h"
 #include "colorsettings.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -27,6 +28,8 @@
 KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent), ui(new Ui::KanaWritingPracticeForm), t(nullptr)
 {
     ui->setupUi(this);
+
+    scaleWidget(this);
 
     QFont f = ui->kanaLabel->font();
     f.setFamily(Settings::fonts.main);
@@ -79,8 +82,9 @@ KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent)
 
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
-    ui->drawArea->setFixedSize(QSize(220, 220));
-    ui->kanjiView->setFixedSize(QSize(220, 220));
+    int siz = Settings::scaled(220);
+    ui->drawArea->setFixedSize(QSize(siz, siz));
+    ui->kanjiView->setFixedSize(QSize(siz, siz));
     fixWrapLabelsHeight(this, -1);
     adjustSize();
     setFixedSize(size());

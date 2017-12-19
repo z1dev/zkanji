@@ -14,6 +14,8 @@
 #include "formstate.h"
 #include "zlistview.h"
 #include "globalui.h"
+#include "zui.h"
+
 
 //-------------------------------------------------------------
 
@@ -22,6 +24,8 @@ WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::Wor
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+
+    scaleWidget(this);
 
     ui->wordsTable->setSelectionType(ListSelectionType::None);
     ui->groupWidget->setMultiSelect(true);

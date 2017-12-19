@@ -27,6 +27,7 @@
 #include "colorsettings.h"
 #include "globalui.h"
 #include "formstate.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
@@ -43,9 +44,9 @@ selpivot(-1), autosize(true), sizebase(ListSizeBase::Custom), firstrow(-1), last
     setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     setWordWrap(false);
     horizontalHeader()->setHighlightSections(false);
-    horizontalHeader()->setMinimumSectionSize(12);
+    horizontalHeader()->setMinimumSectionSize(Settings::scaled(12));
     verticalHeader()->setVisible(false);
-    verticalHeader()->setDefaultSectionSize(20);
+    verticalHeader()->setDefaultSectionSize(Settings::scaled(20));
 
     connect(gUI, &GlobalUI::settingsChanged, this, &ZListView::settingsChanged);
     Settings::updatePalette(this);
@@ -798,7 +799,7 @@ void ZListView::setSizeBase(ListSizeBase newbase)
         return;
 
     FontSettings::LineSize siz = sizebase == ListSizeBase::Main ? Settings::fonts.mainsize : Settings::fonts.popsize;
-    verticalHeader()->setDefaultSectionSize(siz == FontSettings::Medium ? 19 : siz == FontSettings::Small ? 17 : 24);
+    verticalHeader()->setDefaultSectionSize(Settings::scaled(siz == FontSettings::Medium ? 19 : siz == FontSettings::Small ? 17 : 24));
 }
 
 int ZListView::checkBoxColumn() const

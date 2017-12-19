@@ -28,6 +28,7 @@ class JapaneseValidator;
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class QPainter;
+class QMainWindow;
 
 // Called at program initialization after the user data has loaded,
 // to create the models for each data view.
@@ -119,6 +120,10 @@ int fixedLabelWidth(QLabel *label);
 // QLayout::SetMinimumSize which ensures that word wrapping labels fit and get resized
 // correctly.
 void fixWrapLabelsHeight(QWidget *form, int labelwidth);
+
+// Scales dimensions of child widgets and of the widget itself depending on current scaling.
+// The font sizes are unchanged, as this is done globally for the whole application.
+void scaleWidget(QWidget *w);
 
 void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1);
 

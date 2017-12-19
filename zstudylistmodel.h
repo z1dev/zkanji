@@ -15,10 +15,6 @@ class WordDeckItem;
 
 enum class WordPartBits : uchar;
 
-//enum class DeckColumnRoles {
-//    ColumnType = (int)RowRoles::Last,
-//};
-
 enum class DeckColumnTypes
 {
     // General columns
@@ -69,6 +65,11 @@ public:
     // index.
     static int defaultColumnWidth(DeckItemViewModes mode, int columnindex);
 
+    static int queueColCount();
+    static int studiedColCount();
+    static int testedColCount();
+
+
     StudyListModel() = delete;
     StudyListModel(WordDeck *deck, QObject *parent = nullptr);
     virtual ~StudyListModel();
@@ -78,12 +79,6 @@ public:
 
     void setViewMode(DeckItemViewModes newmode);
     DeckItemViewModes viewMode() const;
-
-    //int deckColumnCount() const;
-    //int testColumnCount() const;
-    //int queueColumnCount() const;
-    //int deckColumnCount() const;
-    //int testColumnCount() const;
 
     // Returns whether "row a" is in front of "row b" when sorting by the passed column and
     // with the given sort order.
@@ -107,7 +102,6 @@ public:
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 protected slots:;
-    //virtual void entryAboutToBeRemoved(int windex) override;
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
     virtual void entryChanged(int windex, bool studydef) override;
     virtual void entryAdded(int windex) override;
@@ -120,6 +114,18 @@ private:
     void fillList(std::vector<int> &dest);
 
     bool matchesFilter(WordPartBits part) const;
+
+    static const std::vector<DictColumnData>& queueData();
+    static const std::vector<DictColumnData>& studiedData();
+    static const std::vector<DictColumnData>& testedData();
+
+    static void updateColData();
+
+    static int scale;
+    static std::vector<DictColumnData> queuedata;
+    static std::vector<DictColumnData> studieddata;
+    static std::vector<DictColumnData> testeddata;
+
 
     WordDeck *deck;
     DeckItemViewModes mode;
@@ -142,24 +148,8 @@ private:
     // returns the user defined value if it exists.
     QString definitionString(int index) const;
 
-    // Temporary value set to true in entryAboutToBeRemoved() only if that entry is displayed
-    // by this model.
-    //bool entryremoving;
-
     typedef DictionaryItemModel base;
 };
-
-// QVariant initialization.
-//Q_DECLARE_METATYPE(DeckColumnTypes);
-
-//bool operator==(int, DeckColumnRoles);
-//bool operator==(DeckColumnRoles, int);
-//bool operator!=(int, DeckColumnRoles);
-//bool operator!=(DeckColumnRoles, int);
-
-extern const int queuecolcount;
-extern const int studiedcolcount;
-extern const int testedcolcount;
 
 
 #endif // ZWORDDECKMODEL_H

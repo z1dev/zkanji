@@ -73,7 +73,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="dictCBox"/>
+       <widget class="ZDictionaryComboBox" name="dictCBox"/>
       </item>
       <item>
        <spacer name="horizontalSpacer">
@@ -235,6 +235,11 @@
    <extends>QWidget</extends>
    <header>zkanjidiagram.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

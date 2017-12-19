@@ -21,6 +21,7 @@
 #include "globalui.h"
 #include "ztooltip.h"
 #include "qcharstring.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
@@ -158,7 +159,7 @@ bool operator==(const RadicalFilter &a, const RadicalFilter &b)
 
 //-------------------------------------------------------------
 
-ZRadicalGrid::ZRadicalGrid(QWidget *parent) : base(parent), heights(34), mode(RadicalFilterModes::Parts),
+ZRadicalGrid::ZRadicalGrid(QWidget *parent) : base(parent), heights(Settings::scaled(34)), mode(RadicalFilterModes::Parts),
         smin(0), smax(0), group(false), names(false), exact(false)
 {
     init();

@@ -11,7 +11,9 @@
 #include "words.h"
 #include "groups.h"
 #include "zabstracttreemodel.h"
-#include "zdictionariesmodel.h"
+
+
+//-------------------------------------------------------------
 
 
 /* static */
@@ -27,6 +29,7 @@ GroupBase* GroupPickerForm::select(GroupWidget::Modes mode, const QString &instr
     connect(f, &GroupPickerForm::groupSelected, [&result](Dictionary *dict, GroupBase *group) {
         result = group;
     });
+
     f->showModal();
 
     return result;
@@ -37,9 +40,9 @@ GroupPickerForm::GroupPickerForm(bool onlycategories, QWidget *parent) : base(pa
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    ui->instructionLabel->hide();
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
+    scaleWidget(this);
 
+    ui->instructionLabel->hide();
     ui->groupWidget->setDictionary(ZKanji::dictionary(0));
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(0));
     ui->groupWidget->setMode(GroupWidget::Words);
@@ -58,9 +61,9 @@ GroupPickerForm::GroupPickerForm(GroupWidget::Modes mode, bool onlycategories, Q
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    ui->instructionLabel->hide();
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
+    scaleWidget(this);
 
+    ui->instructionLabel->hide();
     ui->groupWidget->setDictionary(ZKanji::dictionary(0));
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(0));
     ui->groupWidget->setMode(mode);
@@ -125,3 +128,5 @@ void GroupPickerForm::on_dictCBox_currentIndexChanged(int index)
     ui->groupWidget->setDictionary(ZKanji::dictionary(ZKanji::dictionaryPosition(index)));
 }
 
+
+//-------------------------------------------------------------

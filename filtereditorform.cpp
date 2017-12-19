@@ -8,7 +8,7 @@
 #include "filtereditorform.h"
 #include "ui_filtereditorform.h"
 #include "words.h"
-
+#include "zui.h"
 
 
 //static std::map<int, FilterEditorForm*> filterforms;
@@ -21,6 +21,8 @@ FilterEditorForm::FilterEditorForm(int filterindex, QWidget *parent) : base(pare
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    scaleWidget(this);
 
     //// Making sure only one connection is added.
     //if (filterforms.find(-1) == filterforms.end())

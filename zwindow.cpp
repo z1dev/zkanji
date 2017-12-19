@@ -12,6 +12,8 @@
 #include <QtEvents>
 #include <QLayout>
 
+#include "generalsettings.h"
+
 #ifdef Q_OS_WIN
 #define min min
 #define max max
@@ -208,7 +210,7 @@ QRect ZWindow::resizing(int side, QRect r)
 QAbstractButton* ZWindow::addCloseButton(QBoxLayout *layout)
 {
     QToolButton *closebtn = new QToolButton(this);
-    closebtn->setIconSize(QSize(18, 18));
+    closebtn->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
     closebtn->setIcon(QIcon(":/closex.svg"));
     closebtn->setAutoRaise(true);
     connect(closebtn, &QAbstractButton::clicked, this, &ZWindow::close);

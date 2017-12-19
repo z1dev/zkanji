@@ -79,10 +79,10 @@ QSize fontPreviewWidget::sizeHint() const
     int linesiz = 24 + 1;
 
     QFont kf = QApplication::font();
-    kf.setPixelSize(linesiz * kanjiRowSize);
+    kf.setPixelSize(Settings::scaled(linesiz * kanjiRowSize));
     QFontMetrics kfm(kf);
     QFont mf = QApplication::font();
-    mf.setPixelSize(linesiz * defRowSize);
+    mf.setPixelSize(Settings::scaled(linesiz * defRowSize));
     QFontMetrics mfm(mf);
 
     sizeheight = kfm.height() + mfm.height();
@@ -114,11 +114,11 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
     int rowsiz = r.height() * (kanjiRowSize / (kanjiRowSize + defRowSize));
 
     QFont kf{ kanafont, 9 };
-    kf.setPixelSize(linesiz * kanjiRowSize);
+    kf.setPixelSize(Settings::scaled(linesiz * kanjiRowSize));
     QFont mf{ deffont, 9 };
-    mf.setPixelSize(linesiz * defRowSize);
+    mf.setPixelSize(Settings::scaled(linesiz * defRowSize));
     QFont nf{ notesfont, 7, notestyle == FontSettings::Bold || notestyle == FontSettings::BoldItalic ? QFont::Bold : -1, notestyle == FontSettings::Italic || notestyle == FontSettings::BoldItalic };
-    nf.setPixelSize(linesiz * notesRowSize);
+    nf.setPixelSize(Settings::scaled(linesiz * notesRowSize));
     QFontMetrics nfm(nf);
 
     p.setFont(kf);
@@ -302,6 +302,8 @@ QMimeData* KanjiRefListModel::mimeData(const QModelIndexList &indexes) const
 SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsForm), ignoresitechange(false), sitesele(-1), sitesels(-1)
 {
     ui->setupUi(this);
+
+    scaleWidget(this);
 
     if (!QSystemTrayIcon::isSystemTrayAvailable())
         ui->trayBox->setEnabled(false);
@@ -1211,6 +1213,7 @@ void SettingsForm::on_kanjiSizeCBox_currentIndexChanged(int index)
     else
         fontsize = ui->kanjiSizeCBox->currentText().toInt();
 
+    fontsize = Settings::scaled(fontsize);
     int cellsize = std::ceil(fontsize / 0.7);
     int mleft, mtop, mright, mbottom;
     ui->kanjiPreview->getContentsMargins(&mleft, &mtop, &mright, &mbottom);
@@ -1266,7 +1269,7 @@ bool SettingsForm::eventFilter(QObject *o, QEvent *e)
 
         p.fillRect(r, Settings::textColor(ui->kanjiPreview->hasFocus(), ColorSettings::TextColorTypes::Bg));
 
-        QFont kfont = { ui->kanjiFontCBox->currentText(), ui->kanjiSizeCBox->currentText().toInt() };
+        QFont kfont = { ui->kanjiFontCBox->currentText(), Settings::scaled(ui->kanjiSizeCBox->currentText().toInt()) };
         if (ui->kanjiAliasBox->isChecked())
         {
             QFont::StyleStrategy ss = kfont.styleStrategy();

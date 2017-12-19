@@ -51,13 +51,6 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     conditions->examples = Inclusion::Ignore;
     conditions->groups = Inclusion::Ignore;
 
-    if (dict != nullptr)
-    {
-        ui->jpButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), dict->name(), Flags::FromJapanese)));
-        ui->enButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), dict->name(), Flags::ToJapanese)));
-        ui->browseButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), QString(), Flags::Browse)));
-    }
-
     ui->filterButton->setContextMenuPolicy(Qt::CustomContextMenu);
 
     ui->wordsTable->setShowGrid(false);
@@ -1053,6 +1046,14 @@ bool DictionaryWidget::event(QEvent *e)
     if (e->type() == StartEvent::Type())
     {
         installCommands();
+
+        if (dict != nullptr)
+        {
+            ui->jpButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), dict->name(), Flags::FromJapanese)));
+            ui->enButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), dict->name(), Flags::ToJapanese)));
+            ui->browseButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), QString(), Flags::Browse)));
+        }
+
         return true;
     }
     return base::event(e);

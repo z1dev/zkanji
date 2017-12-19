@@ -1267,7 +1267,7 @@ namespace Settings
 
     QFont kanjiFont()
     {
-        QFont f = { fonts.kanji, fonts.kanjifontsize };
+        QFont f = { fonts.kanji, Settings::scaled(fonts.kanjifontsize) };
         if (Settings::fonts.nokanjialias)
         {
             QFont::StyleStrategy ss = f.styleStrategy();
@@ -1279,27 +1279,27 @@ namespace Settings
 
     QFont radicalFont()
     {
-        return QFont{ radicalFontName(), fonts.kanjifontsize };
+        return QFont{ radicalFontName(), Settings::scaled(fonts.kanjifontsize) };
     }
 
     QFont kanaFont()
     {
-        return QFont{ Settings::fonts.kana, 9 };
+        return QFont{ Settings::fonts.kana, Settings::scaled(9) };
     }
 
     QFont mainFont()
     {
-        return QFont{ Settings::fonts.main, 9 };
+        return QFont{ Settings::fonts.main, Settings::scaled(9) };
     }
 
     QFont notesFont()
     {
-        return QFont{ Settings::fonts.info, 7, Settings::fonts.infostyle == FontSettings::Bold || Settings::fonts.infostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::fonts.infostyle == FontSettings::Italic || Settings::fonts.infostyle == FontSettings::BoldItalic };
+        return QFont{ Settings::fonts.info, Settings::scaled(7), Settings::fonts.infostyle == FontSettings::Bold || Settings::fonts.infostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::fonts.infostyle == FontSettings::Italic || Settings::fonts.infostyle == FontSettings::BoldItalic };
     }
 
     QFont extraFont()
     {
-        return QFont{ Settings::fonts.main, 9, QFont::Bold };
+        return QFont{ Settings::fonts.main, Settings::scaled(9), QFont::Bold };
     }
 
     QFont printKanaFont()
@@ -1601,6 +1601,17 @@ namespace Settings
     {
         return siz * general.scale / 100.0;
     }
+
+    QSize scaled(QSize siz)
+    {
+        return QSize(scaled(siz.width()), scaled(siz.height()));
+    }
+
+    QSizeF scaled(QSizeF siz)
+    {
+        return QSizeF(scaled(siz.width()), scaled(siz.height()));
+    }
+
 }
 
 

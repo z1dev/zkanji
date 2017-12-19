@@ -15,6 +15,7 @@
 #include "kanjistrokes.h"
 #include "kanji.h"
 #include "zkanjimain.h"
+#include "generalsettings.h"
 
 namespace ZKanji
 {
@@ -1931,7 +1932,7 @@ void KanjiElementList::strokeData(int element, int variant, int stroke, const QR
 
 double KanjiElementList::basePenWidth(int minsize) const
 {
-    return std::max(1.0, minsize / 25.0);
+    return Settings::scaled(std::max(1.0, minsize / 25.0));
 }
 
 void KanjiElementList::drawStroke(QPainter &painter, int element, int variant, int stroke, const QRectF &rect, double partlen, QColor startcolor, QColor endcolor)

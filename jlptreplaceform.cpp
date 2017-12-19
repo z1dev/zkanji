@@ -21,6 +21,8 @@ JLPTReplaceForm::JLPTReplaceForm(QWidget *parent) : base(parent), ui(new Ui::JLP
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    scaleWidget(this);
+
     connect(ui->abortButton, &QPushButton::clicked, this, &JLPTReplaceForm::close);
     connect(ui->skipButton, &QPushButton::clicked, this, &JLPTReplaceForm::skip);
     connect(ui->useButton, &QPushButton::clicked, this, &JLPTReplaceForm::replace);

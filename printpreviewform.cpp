@@ -660,6 +660,8 @@ PrintPreviewForm::PrintPreviewForm(QWidget *parent) : base(parent), ui(new Ui::P
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
+    scaleWidget(this);
+
     // Because of a usual bad design decision in Qt, there's no way to get the internal
     // printer from a QPrintPreviewWidget, and the designer does not allow setting custom
     // arguments in a promoted widget's constructor. Replace the print preview widget

@@ -15,13 +15,13 @@
 #include "ui_dictionarystatsform.h"
 
 #include "globalui.h"
-#include "zdictionariesmodel.h"
 #include "words.h"
 #include "kanji.h"
 #include "zui.h"
 #include "sentences.h"
 #include "groups.h"
 #include "zkanjimain.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -232,7 +232,8 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *parent) : base(pare
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
+    scaleWidget(this);
+
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(index));
     ui->dictInfoText->viewport()->installEventFilter(this);
     ui->dictInfoText->setMouseTracking(true);

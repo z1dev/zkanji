@@ -10,6 +10,7 @@
 #include "words.h"
 #include "globalui.h"
 #include "zui.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
@@ -18,6 +19,8 @@ DictionaryTextForm::DictionaryTextForm(QWidget *parent) : base(parent), ui(new U
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+
+    scaleWidget(this);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &DictionaryTextForm::accept);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DictionaryTextForm::close);
@@ -32,7 +35,7 @@ DictionaryTextForm::~DictionaryTextForm()
 void DictionaryTextForm::exec(Dictionary *d)
 {
     dict = d;
-    ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(18, 18), dict->name(), Flags::Flag));
+    ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), dict->name(), Flags::Flag));
     ui->dictLabel->setText(dict->name());
     ui->infoText->setPlainText(dict->infoText());
 

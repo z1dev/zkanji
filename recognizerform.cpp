@@ -478,6 +478,7 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent), ui(new Ui::Recog
     setAttribute(Qt::WA_ShowWithoutActivating);
     setAttribute(Qt::WA_QuitOnClose, false);
 
+    scaleWidget(this);
 
     connect(ui->closeButton, &QAbstractButton::clicked, this, &RecognizerForm::close);
 
@@ -497,6 +498,10 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent), ui(new Ui::Recog
     show();
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    ui->prevButton->setEnabled(!ui->drawArea->empty());
+    ui->nextButton->setEnabled(!ui->drawArea->hasNext());
+    ui->clearButton->setEnabled(!ui->drawArea->empty());
 }
 
 RecognizerForm::~RecognizerForm()

@@ -9,11 +9,11 @@
 #include <QSet>
 #include "dictionaryexportform.h"
 #include "ui_dictionaryexportform.h"
-#include "zdictionariesmodel.h"
 #include "zgrouptreemodel.h"
 #include "words.h"
 #include "groups.h"
 #include "globalui.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -25,6 +25,8 @@ DictionaryExportForm::DictionaryExportForm(QWidget *parent) : base(parent), ui(n
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    scaleWidget(this);
+
     exportbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     exportbutton->setText(tr("Export"));
     exportbutton->setEnabled(false);
@@ -34,7 +36,6 @@ DictionaryExportForm::DictionaryExportForm(QWidget *parent) : base(parent), ui(n
 
 bool DictionaryExportForm::exec(Dictionary *dict)
 {
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(dict)));
     if (kanjimodel == nullptr)
         on_dictCBox_currentIndexChanged(ui->dictCBox->currentIndex());

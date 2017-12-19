@@ -17,6 +17,7 @@
 #include "zui.h"
 #include "zkanjigridmodel.h"
 #include "ranges.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -34,7 +35,7 @@ KanjiGroupWidget::KanjiGroupWidget(QWidget *parent) : base(parent), ui(new Ui::K
 
     connect(ui->kanjiGrid, &ZKanjiGridView::selectionChanged, this, &KanjiGroupWidget::kanjiSelectionChanged);
 
-    ui->splitter->setSizes({ 150, 250 });
+    ui->splitter->setSizes({ Settings::scaled(150), Settings::scaled(250) });
 }
 
 KanjiGroupWidget::~KanjiGroupWidget()

@@ -213,9 +213,9 @@ void GroupWidget::on_groupsTree_currentItemChanged(const TreeItem *tcurr, const 
 
 void GroupWidget::on_groupsTree_itemSelectionChanged()
 {
-    ui->btnDelGroup->setEnabled((!onlycateg || !ui->groupsTree->isSelected(ui->groupsTree->model()->items(0)) ) && ui->groupsTree->currentCompleted(true) && ui->groupsTree->selectionModel()->hasSelection());
-    ui->btnAddGroup->setEnabled(!onlycateg && ui->groupsTree->currentCompleted(false) && ui->filterEdit->text().trimmed().isEmpty());
-    ui->btnAddCateg->setEnabled((!onlycateg || (ui->groupsTree->currentItem() != nullptr && ui->groupsTree->currentItem() != ui->groupsTree->model()->items(0))) && ui->groupsTree->currentCompleted(false) && ui->filterEdit->text().trimmed().isEmpty());
+    ui->btnDelGroup->setEnabled(ui->groupsTree->model() != nullptr && (!onlycateg || !ui->groupsTree->isSelected(ui->groupsTree->model()->items(0)) ) && ui->groupsTree->currentCompleted(true) && ui->groupsTree->selectionModel()->hasSelection());
+    ui->btnAddGroup->setEnabled(ui->groupsTree->model() != nullptr && !onlycateg && ui->groupsTree->currentCompleted(false) && ui->filterEdit->text().trimmed().isEmpty());
+    ui->btnAddCateg->setEnabled(ui->groupsTree->model() != nullptr && (!onlycateg || (ui->groupsTree->currentItem() != nullptr && ui->groupsTree->currentItem() != ui->groupsTree->model()->items(0))) && ui->groupsTree->currentCompleted(false) && ui->filterEdit->text().trimmed().isEmpty());
 
     emit selectionChanged();
 }

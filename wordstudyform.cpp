@@ -291,6 +291,8 @@ WordStudyForm::WordStudyForm(QWidget *parent) :
 
     setAttribute(Qt::WA_QuitOnClose, false);
 
+    scaleWidget(this);
+
     ui->statusLabel->hide();
     ui->optionsButton->hide();
     optionmenu = new QMenu(this);

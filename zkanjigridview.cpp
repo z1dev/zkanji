@@ -34,12 +34,13 @@
 #include "kanjisettings.h"
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
 
 ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullptr), connected(false), dict(ZKanji::dictionary(0)), 
-        state(State::None), cellsize(std::ceil(Settings::fonts.kanjifontsize / 0.7)), autoscrollmargin(24), cols(0), rows(0), mousedown(false),
+        state(State::None), cellsize(Settings::scaled(std::ceil(Settings::fonts.kanjifontsize / 0.7))), autoscrollmargin(24), cols(0), rows(0), mousedown(false),
         current(-1), selpivot(-1), selection(new RangeSelection), kanjitipcell(-1), kanjitipkanji(-1), dragind(-1)
 {
     setAcceptDrops(true);
@@ -210,7 +211,7 @@ void ZKanjiGridView::settingsChanged()
 {
     Settings::updatePalette(this);
 
-    cellsize = std::ceil(Settings::fonts.kanjifontsize / 0.7);
+    cellsize = Settings::scaled(std::ceil(Settings::fonts.kanjifontsize / 0.7));
     recompute(viewport()->size());
     recompute(viewport()->size());
     recomputeScrollbar(viewport()->size());

@@ -16,7 +16,6 @@
 #include "words.h"
 #include "wordstudylistform.h"
 #include "wordstudyform.h"
-#include "zdictionariesmodel.h"
 #include "wordtodeckform.h"
 #include "globalui.h"
 #include "ranges.h"
@@ -339,6 +338,7 @@ WordDeckForm::WordDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordDeckF
     ui->setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
+    scaleWidget(this);
 
     connect(ui->deckTable, &WordDeckListView::editorClosed, this, &WordDeckForm::editorClosed);
     ui->deckTable->setEditColumn(0);
@@ -352,8 +352,6 @@ WordDeckForm::WordDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordDeckF
     connect(ui->deckTable, &ZListView::rowDoubleClicked, this, &WordDeckForm::deckDoubleClicked);
 
     fillDeckList();
-
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
 
     QHeaderView *h = ui->deckTable->horizontalHeader();
     h->setSectionResizeMode(QHeaderView::Fixed);

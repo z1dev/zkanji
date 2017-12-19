@@ -769,7 +769,7 @@ namespace FormStates
 
                         QVector<QStringRef> refs = reader.attributes().value("sizes").split(',');
                         sizes.clear();
-                        sizes.resize((elemname == "Queue" ? queuecolcount : elemname == "Study" ? studiedcolcount : testedcolcount) - 1, -1);
+                        sizes.resize((elemname == "Queue" ? StudyListModel::queueColCount() : elemname == "Study" ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
                         for (int ix = 0, siz = std::min<int>(refs.size(), sizes.size()); ix != siz; ++ix)
                         {
                             val = refs.at(ix).toInt(&ok);
@@ -779,7 +779,7 @@ namespace FormStates
 
                         refs = reader.attributes().value("shown").split(',');
                         cols.clear();
-                        cols.resize((elemname == "Queue" ? queuecolcount : elemname == "Study" ? studiedcolcount : testedcolcount) - 3, 1);
+                        cols.resize((elemname == "Queue" ? StudyListModel::queueColCount() : elemname == "Study" ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 3, 1);
                         for (int ix = 0, siz = std::min<int>(refs.size(), cols.size()); ix != siz; ++ix)
                         {
                             val = refs.at(ix).toInt(&ok);

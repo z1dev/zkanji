@@ -23,6 +23,7 @@
 #include "dictionarysettings.h"
 #include "globalui.h"
 #include "colorsettings.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -35,9 +36,9 @@ DictionaryItemModel::DictionaryItemModel(QObject *parent) : base(parent), connec
 #if SHOWDEBUGCOLUMN
         { (int)ColumnTypes::DEBUGIndex, Qt::AlignLeft, false, true, 61, QString() },
 #endif
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, 50, tr("Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, 70, tr("Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, 6400, tr("Definition") }
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), tr("Written") },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(70), tr("Kana") },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), tr("Definition") }
     });
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &DictionaryItemModel::dictionaryToBeRemoved);
@@ -78,6 +79,14 @@ void DictionaryItemModel::setColumn(int index, const DictColumnData &column)
 }
 
 void DictionaryItemModel::setColumns(const std::initializer_list<DictColumnData> &columns)
+{
+    cols.resize(columns.size());
+    int ix = 0;
+    for (auto c : columns)
+        cols[ix++] = c;
+}
+
+void DictionaryItemModel::setColumns(const std::vector<DictColumnData> &columns)
 {
     cols.resize(columns.size());
     int ix = 0;

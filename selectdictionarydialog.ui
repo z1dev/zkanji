@@ -56,7 +56,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="dictCBox"/>
+     <widget class="ZDictionaryComboBox" name="dictCBox"/>
     </item>
     <item row="1" column="0" colspan="2">
      <widget class="QDialogButtonBox" name="buttonBox">
@@ -71,6 +71,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

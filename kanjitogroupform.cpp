@@ -11,8 +11,10 @@
 #include "zkanjigridmodel.h"
 #include "words.h"
 #include "globalui.h"
-#include "zdictionariesmodel.h"
 #include "formstate.h"
+#include "zui.h"
+#include "zdictionarycombobox.h"
+
 
 //-------------------------------------------------------------
 
@@ -21,6 +23,8 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+
+    scaleWidget(this);
 
     ui->groupWidget->setMultiSelect(true);
     connect(ui->groupWidget, &GroupWidget::selectionChanged, this, &KanjiToGroupForm::selChanged);
@@ -33,10 +37,9 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     connect(acceptButton, &QPushButton::clicked, this, &KanjiToGroupForm::accept);
 
     //ui->groupWidget->addControlWidget(new QLabel(tr("Destination:"), this));
-    dictCBox = new QComboBox(this);
+    dictCBox = new ZDictionaryComboBox(this);
     ui->groupWidget->addControlWidget(dictCBox);
 
-    dictCBox->setModel(ZKanji::dictionariesModel());
     connect(dictCBox, (void(QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &KanjiToGroupForm::setDictionary);
 }
 

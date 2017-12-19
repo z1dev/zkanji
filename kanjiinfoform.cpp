@@ -24,6 +24,7 @@
 #include "colorsettings.h"
 #include "zui.h"
 #include "formstate.h"
+#include "generalsettings.h"
 
 // Event posted when deferring the resize of controls in the info form.
 ZEVENT(InfoResizeEvent);
@@ -37,6 +38,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
 {
     ui->setupUi(this);
     windowInit();
+
+    scaleWidget(this);
 
     if (parent != nullptr && !parent->windowFlags().testFlag(Qt::WindowStaysOnTopHint))
         setStayOnTop(false);
@@ -365,11 +368,9 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
 
     ui->kanjiView->setKanjiIndex(kindex);
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: 10pt; }"));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; }").arg(Settings::scaled(10)));
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(d, kindex));
-    //ui->infoText->appendHtml(ZKanji::kanjiInfoText(d, kindex));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
-    //ui->infoText->setStyleSheet(QString("QPlainTextEdit { font-size: 10pt;  }"));
 
     ui->similarScroller->setDictionary(dict);
     ui->partsScroller->setDictionary(dict);
@@ -638,14 +639,6 @@ void KanjiInfoForm::on_endButton_clicked()
 void KanjiInfoForm::on_sodButton_clicked(bool checked)
 {
     ui->kanjiView->setDiagram(checked);
-
-    //ui->playButton->setEnabled(checked);
-    //ui->pauseButton->setEnabled(checked);
-    //ui->stopButton->setEnabled(checked);
-    //ui->rewindButton->setEnabled(checked);
-    //ui->backButton->setEnabled(checked);
-    //ui->foreButton->setEnabled(checked);
-    //ui->endButton->setEnabled(checked);
 
     ignoreresize = true;
     int h = ui->sodWidget->height() + ui->sodWidget->parentWidget()->layout()->spacing();
@@ -980,7 +973,7 @@ void KanjiInfoForm::scrollerClicked(int index)
 void KanjiInfoForm::settingsChanged()
 {
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: 10pt; }"));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; }").arg(Settings::scaled(10)));
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
 

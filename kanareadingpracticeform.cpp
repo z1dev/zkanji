@@ -29,6 +29,8 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
 {
     ui->setupUi(this);
 
+    scaleWidget(this);
+
     QFont f = ui->mainLabel->font();
     f.setFamily(Settings::fonts.kana);
     ui->mainLabel->setFont(f);

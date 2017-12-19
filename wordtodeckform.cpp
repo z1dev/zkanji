@@ -17,6 +17,8 @@
 #include "worddeck.h"
 #include "wordstudylistform.h"
 #include "globalui.h"
+#include "generalsettings.h"
+
 
 //-------------------------------------------------------------
 
@@ -24,9 +26,9 @@
 WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, const std::vector<int> &list, QObject *parent) : base(parent), dict(dict), deck(deck)
 {
     setColumns({
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, 80, tr("Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, 100, tr("Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, 6400, tr("Definition") }
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), tr("Written") },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), tr("Kana") },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), tr("Definition") }
     });
 
     std::vector<int> indexes = list;
@@ -622,6 +624,8 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
     ui->setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
+
+    scaleWidget(this);
 
     ui->wordsTable->setSelectionType(ListSelectionType::Extended);
     ui->wordsTable->setStudyDefinitionUsed(true);

@@ -18,6 +18,7 @@ namespace Ui {
 class GroupBase;
 class Dictionary;
 class KanjiListModel;
+class ZDictionaryComboBox;
 class KanjiToGroupForm : public DialogWindow
 {
     Q_OBJECT
@@ -44,7 +45,7 @@ private:
     Dictionary *dict;
     KanjiListModel *model;
 
-    QComboBox *dictCBox;
+    ZDictionaryComboBox *dictCBox;
     QPushButton *acceptButton;
 
     typedef DialogWindow    base;

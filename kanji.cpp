@@ -17,6 +17,7 @@
 #include "kanjisettings.h"
 #include "colorsettings.h"
 #include "fontsettings.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
@@ -359,7 +360,7 @@ namespace ZKanji
 
         result += QString("<html><body>");
 
-        result += QString("<p><b>%1:</b><br><span style=\"font-size:11pt\">%2</span></p>").arg(qApp->translate("KanjiInfoForm", "Meanings").toHtmlEscaped()).arg(kanjiMeanings(d, index).toHtmlEscaped());
+        result += QString("<p><b>%1:</b><br><span style=\"font-size:%2pt\">%3</span></p>").arg(qApp->translate("KanjiInfoForm", "Meanings").toHtmlEscaped()).arg(Settings::scaled(11)).arg(kanjiMeanings(d, index).toHtmlEscaped());
         result += QString("<p><b>%1:</b><br>%2<br>").arg(qApp->translate("KanjiInfoForm", "ON readings").toHtmlEscaped()).arg(on) %
             QString("<b>%1:</b><br>%2</p>").arg(qApp->translate("KanjiInfoForm", "Kun readings").toHtmlEscaped()).arg(kun);
 

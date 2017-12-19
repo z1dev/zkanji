@@ -20,6 +20,7 @@
 #include "formstate.h"
 #include "fontsettings.h"
 #include "globalui.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
@@ -233,6 +234,8 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    scaleWidget(this);
 
     resetBtn = ui->buttonBox->button(QDialogButtonBox::Reset);
     okBtn = ui->buttonBox->button(QDialogButtonBox::Ok);
@@ -834,7 +837,7 @@ bool WordEditorForm::canReset() const
 
 void WordEditorForm::updateDictionaryLabels()
 {
-    ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(18, 18), dict->name(), Flags::Flag));
+    ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), dict->name(), Flags::Flag));
     ui->dictLabel->setText(dict->name());
 }
 

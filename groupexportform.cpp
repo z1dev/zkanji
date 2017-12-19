@@ -11,7 +11,7 @@
 #include "zgrouptreemodel.h"
 #include "words.h"
 #include "groups.h"
-#include "zdictionariesmodel.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -20,6 +20,8 @@
 GroupExportForm::GroupExportForm(QWidget *parent) : base(parent), ui(new Ui::GroupExportForm),  kanjimodel(nullptr), wordsmodel(nullptr)
 {
     ui->setupUi(this);
+
+    scaleWidget(this);
 
     exportbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     exportbutton->setText(tr("Export"));
@@ -35,7 +37,6 @@ GroupExportForm::~GroupExportForm()
 
 bool GroupExportForm::exec(Dictionary *dict)
 {
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(dict)));
     if (kanjimodel == nullptr)
         on_dictCBox_currentIndexChanged(ui->dictCBox->currentIndex());

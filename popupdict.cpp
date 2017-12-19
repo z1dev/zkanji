@@ -23,6 +23,8 @@
 #include "zdictionarylistview.h"
 #include "words.h"
 #include "dialogs.h"
+#include "zui.h"
+
 
 PopupDictionary *PopupDictionary::instance = nullptr;
 
@@ -38,6 +40,8 @@ PopupDictionary::PopupDictionary(QWidget *parent) : base(parent), ui(new Ui::Pop
 {
     ui->setupUi(this);
     windowInit();
+
+    scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_ShowWithoutActivating, false);

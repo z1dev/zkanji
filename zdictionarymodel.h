@@ -121,6 +121,7 @@ public:
     void insertColumn(int index, const DictColumnData &column);
     void setColumn(int index, const DictColumnData & column);
     void setColumns(const std::initializer_list<DictColumnData> &columns);
+    void setColumns(const std::vector<DictColumnData> &columns);
     void addColumn(const DictColumnData &column);
     void removeColumn(int index);
     // Returns the index of the Nth column with the passed type.

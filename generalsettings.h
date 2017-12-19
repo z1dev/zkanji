@@ -37,6 +37,8 @@ namespace Settings
     double scaling();
     int scaled(int siz);
     int scaled(double siz);
+    QSize scaled(QSize siz);
+    QSizeF scaled(QSizeF siz);
 }
 
 

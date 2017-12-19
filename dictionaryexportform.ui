@@ -43,7 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="dictCBox"/>
+       <widget class="ZDictionaryComboBox" name="dictCBox"/>
       </item>
       <item>
        <spacer name="horizontalSpacer">
@@ -162,6 +162,11 @@
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
+  </customwidget>
   <customwidget>
    <class>GroupTreeView</class>
    <extends>QTreeView</extends>

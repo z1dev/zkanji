@@ -199,7 +199,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="dictCBox"/>
+             <widget class="ZDictionaryComboBox" name="dictCBox"/>
             </item>
            </layout>
           </item>
@@ -361,6 +361,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>DictionaryWidget</class>
+   <extends>QWidget</extends>
+   <header>dictionarywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZListBox</class>
    <extends>QTableView</extends>
    <header>zlistbox.h</header>
@@ -377,10 +383,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DictionaryWidget</class>
-   <extends>QWidget</extends>
-   <header>dictionarywidget.h</header>
-   <container>1</container>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -8,9 +8,9 @@
 #include "kanjidefform.h"
 #include "ui_kanjidefform.h"
 #include "globalui.h"
-#include "zdictionariesmodel.h"
 #include "zdictionarymodel.h"
 #include "words.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -21,13 +21,13 @@ KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
+    scaleWidget(this);
+
     int h = ui->origText->fontMetrics().height() * 10;
     ui->origText->setFixedHeight(h);
     ui->defText->setFixedHeight(h);
     ui->diagramFrame->setFixedSize(QSize(h, h));
     //ui->kanjiDiagram->setRadical(false);
-
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
 
     ui->dictWidget->setExamplesVisible(false);
 

@@ -8,8 +8,8 @@
 #include "ui_groupimportform.h"
 #include "words.h"
 #include "groups.h"
-#include "zdictionariesmodel.h"
 #include "zgrouptreemodel.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -18,6 +18,8 @@
 GroupImportForm::GroupImportForm(QWidget *parent) : base(parent), ui(new Ui::GroupImportForm), importbutton(nullptr)
 {
     ui->setupUi(this);
+
+    scaleWidget(this);
 
     importbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     importbutton->setText(tr("Import"));
@@ -41,7 +43,6 @@ GroupImportForm::~GroupImportForm()
 
 bool GroupImportForm::exec(Dictionary *dict)
 {
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(dict)));
     on_dictCBox_currentIndexChanged(ui->dictCBox->currentIndex());
 

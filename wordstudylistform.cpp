@@ -546,6 +546,8 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidge
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    scaleWidget(this);
+
     ui->dictWidget->setSaveColumnData(false);
 
     QPushButton *startButton = ui->buttonBox->addButton(tr("Start the test"), QDialogButtonBox::AcceptRole);
@@ -1593,7 +1595,7 @@ void WordStudyListForm::dictRemoved(int index, int orderindex, void *oldaddress)
 void WordStudyListForm::saveColumns()
 {
     std::vector<int> &oldvec = model->viewMode() == DeckItemViewModes::Queued ? queuesizes : model->viewMode() == DeckItemViewModes::Studied ? studiedsizes : testedsizes;
-    oldvec.resize((model->viewMode() == DeckItemViewModes::Queued ? queuecolcount : model->viewMode() == DeckItemViewModes::Studied ? studiedcolcount : testedcolcount) - 1, -1);
+    oldvec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
     for (int ix = 0, siz = oldvec.size(); ix != siz; ++ix)
     {
         bool hid = ui->dictWidget->view()->isColumnHidden(ix);
@@ -1604,7 +1606,7 @@ void WordStudyListForm::saveColumns()
     }
 
     std::vector<char> &oldcolvec = model->viewMode() == DeckItemViewModes::Queued ? queuecols : model->viewMode() == DeckItemViewModes::Studied ? studiedcols : testedcols;
-    oldcolvec.resize((model->viewMode() == DeckItemViewModes::Queued ? queuecolcount : model->viewMode() == DeckItemViewModes::Studied ? studiedcolcount : testedcolcount) - 3, 1);
+    oldcolvec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 3, 1);
     for (int ix = 0, siz = oldcolvec.size(); ix != siz; ++ix)
         oldcolvec[ix] = !ui->dictWidget->view()->isColumnHidden(ix);
 }
@@ -1612,12 +1614,12 @@ void WordStudyListForm::saveColumns()
 void WordStudyListForm::restoreColumns()
 {
     std::vector<char> &colvec = model->viewMode() == DeckItemViewModes::Queued ? queuecols : model->viewMode() == DeckItemViewModes::Studied ? studiedcols : testedcols;
-    colvec.resize((model->viewMode() == DeckItemViewModes::Queued ? queuecolcount : model->viewMode() == DeckItemViewModes::Studied ? studiedcolcount : testedcolcount) - 3, 1);
+    colvec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 3, 1);
     for (int ix = 0, siz = colvec.size(); ix != siz; ++ix)
         ui->dictWidget->view()->setColumnHidden(ix, !colvec[ix]);
 
     std::vector<int> &vec = model->viewMode() == DeckItemViewModes::Queued ? queuesizes : model->viewMode() == DeckItemViewModes::Studied ? studiedsizes : testedsizes;
-    vec.resize((model->viewMode() == DeckItemViewModes::Queued ? queuecolcount : model->viewMode() == DeckItemViewModes::Studied ? studiedcolcount : testedcolcount) - 1, -1);
+    vec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
     for (int ix = 0, siz = vec.size(); ix != siz; ++ix)
     {
         bool hid = ui->dictWidget->view()->isColumnHidden(ix);

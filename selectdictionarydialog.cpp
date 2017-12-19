@@ -7,9 +7,9 @@
 #include <QPushButton>
 #include "selectdictionarydialog.h"
 #include "ui_selectdictionarydialog.h"
-#include "zdictionariesmodel.h"
 #include "globalui.h"
 #include "words.h"
+#include "zui.h"
 
 
 //-------------------------------------------------------------
@@ -18,6 +18,7 @@
 SelectDictionaryDialog::SelectDictionaryDialog(QWidget *parent) : base(parent), ui(new Ui::SelectDictionaryDialog)
 {
     ui->setupUi(this);
+    scaleWidget(this);
 }
 
 SelectDictionaryDialog::~SelectDictionaryDialog()
@@ -34,7 +35,6 @@ int SelectDictionaryDialog::exec(QString labelstring, int firstselected, QString
         firstselected = 0;
     else
         firstselected = ZKanji::dictionaryOrder(firstselected);
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
     ui->dictCBox->setCurrentIndex(firstselected);
 
     setAttribute(Qt::WA_DontShowOnScreen);

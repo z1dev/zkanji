@@ -21,11 +21,13 @@
 #include "grammar_enums.h"
 #include "romajizer.h"
 #include "zkanjimain.h"
-//#include "zui.h"
+#include "zui.h"
 #include "zevents.h"
 #include "zstrings.h"
 #include "groups.h"
 #include "jlptreplaceform.h"
+#include "generalsettings.h"
+
 
 extern char ZKANJI_PROGRAM_VERSION[];
 static char ZKANJI_EXAMPLES_FILE_VERSION[] = "001";
@@ -277,9 +279,14 @@ DictImport::DictImport(QWidget *parent) : base(parent), ui(new Ui::DictImport), 
         /*entryr(0), entrys(0),*/ counter(0)
 {
     ui->setupUi(this);
+    QString s1 = tr("Importing dictionary. This can take several minutes, please wait...");
+    QString s2 = tr("You can stop the import if you close this window. No data will be lost or updated.");
+    ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
 
     ui->finishButton->setEnabled(false);
     connect(ui->finishButton, &QPushButton::clicked, this, &DictImport::closeAfterImport);
+
+    scaleWidget(this);
 }
 
 DictImport::~DictImport()
@@ -361,7 +368,7 @@ bool DictImport::importFromExportPartial(QString p, Dictionary *dest, WordGroup 
 void DictImport::setMainText(const QString &str)
 {
     QString secondary = !modified ? tr("You can stop the import if you close this window. No data will be lost or updated.") : tr("You can stop the import if you close this window. Some data has already been updated, and will remain.");
-    ui->progressLabel->setText("<html><head/><body><p><span style=\"font-size:12pt;\">" + QString(str) + "</span></p><p><span style=\"font-size:9pt;\">" + secondary + "</span></p></body></html>");
+    ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(str).arg(Settings::scaled(9)).arg(secondary));
 }
 
 void DictImport::setModifiedText(const QString &str)
@@ -486,7 +493,9 @@ bool DictImport::event(QEvent *e)
             {
                 ZKanji::setNoData(false);
 
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\" font-size:12pt;\">Import finished.</span></p><p><span style=\" font-size:9pt;\">Press \"%1\" to close the importer and continue starting the program.</span></p></body></html>").arg(tr("Finish")));
+                QString s1 = tr("Import finished.");
+                QString s2 = tr("Press \"%1\" to close the importer and continue starting the program.").arg(tr("Finish"));
+                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Dictionary import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -505,7 +514,9 @@ bool DictImport::event(QEvent *e)
             }
             else
             {
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\" font-size:12pt;\">Import finished.</span></p><p><span style=\" font-size:9pt;\">Press \"%1\" to close the importer.</span></p></body></html>").arg(tr("Finish")));
+                QString s1 = tr("Import finished.");
+                QString s2 = tr("Press \"%1\" to close the importer.").arg(tr("Finish"));
+                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Dictionary import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -524,7 +535,9 @@ bool DictImport::event(QEvent *e)
             }
             else
             {
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\" font-size:12pt;\">Import finished.</span></p><p><span style=\" font-size:9pt;\">Press \"%1\" to close the importer.</span></p></body></html>").arg(tr("Finish")));
+                QString s1 = tr("Import finished.");
+                QString s2 = tr("Press \"%1\" to close the importer.").arg(tr("Finish"));
+                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Dictionary import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -542,7 +555,9 @@ bool DictImport::event(QEvent *e)
             }
             else
             {
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\" font-size:12pt;\">Import finished.</span></p><p><span style=\" font-size:9pt;\">Press \"%1\" to close the importer and continue starting the program.</span></p></body></html>").arg(tr("Finish")));
+                QString s1 = tr("Import finished.");
+                QString s2 = tr("Press \"%1\" to close the importer and continue starting the program.").arg(tr("Finish"));
+                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Example database import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -561,7 +576,9 @@ bool DictImport::event(QEvent *e)
             }
             else
             {
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\" font-size:12pt;\">Import finished.</span></p><p><span style=\" font-size:9pt;\">Press \"%1\" to close the importer.</span></p></body></html>").arg(tr("Finish")));
+                QString s1 = tr("Import finished.");
+                QString s2 = tr("Press \"%1\" to close the importer.").arg(tr("Finish"));
+                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("User data import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -3406,7 +3423,9 @@ bool DictImport::setInfoText(const QString &str)
 
 void DictImport::setErrorText(const QString &str)
 {
-    ui->progressLabel->setText("<html><head/><body><p><span style=\"font-size:12pt;\">" % tr("An error occured during import") % "</span></p><p><span style=\"font-size:9pt;\">" % tr("The operation will be aborted.") % "</span></p></body></html>");
+    QString s1 = tr("An error occured during import.");
+    QString s2 = tr("The operation will be aborted.");
+    ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
     if (file.isOpen())
     {
         QString fname = QFileInfo(file.fileName()).fileName();

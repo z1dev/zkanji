@@ -21,7 +21,7 @@
 #include "furigana.h"
 #include "formstate.h"
 #include "zdictionarylistview.h"
-#include "zdictionariesmodel.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -130,9 +130,9 @@ CollectedWordListModel::CollectedWordListModel(QObject *parent) : base(parent), 
     setColumns({
         { (int)CollectedColumnTypes::Checked, Qt::AlignHCenter, ColumnAutoSize::NoAuto, false, checkBoxSize().width() + 8, QString() },
         { (int)DictColumnTypes::Frequency, Qt::AlignHCenter, ColumnAutoSize::NoAuto, false, -1, QString() },
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, 50, tr("Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, 50, tr("Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, 6400, tr("Definition") }
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), tr("Written") },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), tr("Kana") },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), tr("Definition") }
     });
 }
 
@@ -224,6 +224,8 @@ CollectWordsForm::CollectWordsForm(QWidget *parent) : base(parent), ui(new Ui::C
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
+    scaleWidget(this);
+
     ui->readingsView->setFontSizeHint(26, 12);
     ui->readingsView->setSelectionType(ListSelectionType::Extended);
     ui->readingsView->setCheckBoxColumn(0);
@@ -249,8 +251,6 @@ CollectWordsForm::CollectWordsForm(QWidget *parent) : base(parent), ui(new Ui::C
     ui->dictWidget->setSelectionType(ListSelectionType::Extended);
     ui->dictWidget->setCheckBoxColumn(0);
     ui->dictWidget->view()->setGroupDisplay(true);
-
-    ui->dictCBox->setModel(ZKanji::dictionariesModel());
 
     //ui->groupLabel->setStyleSheet("QLabel { color: gray }");
 

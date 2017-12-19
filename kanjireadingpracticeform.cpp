@@ -111,6 +111,8 @@ KanjiReadingPracticeForm::KanjiReadingPracticeForm(WordDeck *deck, QWidget *pare
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
+    scaleWidget(this);
+
     model = new KanjiReadingPracticeListModel(this);
     ui->wordsTable->setModel(model);
     ui->wordsTable->setItemDelegate(new KanjiReadingPracticeListDelegate(ui->wordsTable));

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
+    <width>417</width>
     <height>307</height>
    </rect>
   </property>
@@ -67,7 +67,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="dictCBox">
+          <widget class="ZDictionaryComboBox" name="dictCBox">
            <property name="minimumSize">
             <size>
              <width>100</width>
@@ -313,6 +313,11 @@
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
+  </customwidget>
   <customwidget>
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>

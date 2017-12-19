@@ -57,11 +57,6 @@
          </item>
          <item>
           <widget class="QToolButton" name="hiraButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Hiragana</string>
            </property>
@@ -78,11 +73,6 @@
          </item>
          <item>
           <widget class="QToolButton" name="kataButton">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Katakana</string>
            </property>

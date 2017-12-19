@@ -16,6 +16,7 @@
 #include "zui.h"
 #include "colorsettings.h"
 #include "romajizer.h"
+#include "generalsettings.h"
 
 //-------------------------------------------------------------
 
@@ -23,8 +24,8 @@
 TestWordsItemModel::TestWordsItemModel(WordGroup *group, QObject *parent) : base(parent), group(group), display(TestWordsDisplay::All), showexcluded(true)
 {
     connect();
-    insertColumn(0, { (int)TestWordsColumnTypes::Order, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, 30, tr("#") });
-    setColumn(1, { (int)TestWordsColumnTypes::Score, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, 50, tr("Score") });
+    insertColumn(0, { (int)TestWordsColumnTypes::Order, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(30), tr("#") });
+    setColumn(1, { (int)TestWordsColumnTypes::Score, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(50), tr("Score") });
 
     items = group->studyData().indexes();
     if (items.empty())
@@ -864,6 +865,8 @@ WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
     scolumn(0), sorder(Qt::AscendingOrder)
 {
     ui->setupUi(this);
+
+    scaleWidget(this);
 
     setAttribute(Qt::WA_DontShowOnScreen);
     show();

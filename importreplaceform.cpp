@@ -25,6 +25,8 @@ LabelDialog::LabelDialog(QWidget *parent) : base(parent)
     lb->setText(tr("Looking for differences in the dictionaries. Please wait..."));
     ly->addWidget(lb);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    scaleWidget(this);
 }
 
 LabelDialog::~LabelDialog()
@@ -39,6 +41,8 @@ LabelDialog::~LabelDialog()
 ImportReplaceForm::ImportReplaceForm(Dictionary *olddir, Dictionary *newdir, QWidget *parent) : base(parent), ui(new Ui::ImportReplaceForm), model(nullptr), olddir(olddir), owndir(newdir == nullptr), newdir(newdir)
 {
     ui->setupUi(this);
+
+    scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
 

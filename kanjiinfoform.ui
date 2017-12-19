@@ -466,8 +466,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="checkable">
@@ -492,8 +492,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="checkable">
@@ -518,8 +518,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="checkable">
@@ -567,8 +567,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="autoRaise">
@@ -587,8 +587,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="autoRepeat">
@@ -631,8 +631,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="autoRepeat">
@@ -654,8 +654,8 @@
                </property>
                <property name="iconSize">
                 <size>
-                 <width>12</width>
-                 <height>12</height>
+                 <width>13</width>
+                 <height>13</height>
                 </size>
                </property>
                <property name="autoRaise">
@@ -776,6 +776,12 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
              </property>
              <property name="minimum">
               <number>1</number>
@@ -1025,6 +1031,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>DictionaryWidget</class>
+   <extends>QWidget</extends>
+   <header>dictionarywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZKanjiDiagram</class>
    <extends>QWidget</extends>
    <header>zkanjidiagram.h</header>
@@ -1034,12 +1046,6 @@
    <class>ZItemScroller</class>
    <extends>QWidget</extends>
    <header>zitemscroller.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>DictionaryWidget</class>
-   <extends>QWidget</extends>
-   <header>dictionarywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

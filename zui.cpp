@@ -375,7 +375,7 @@ void drawTextBaseline(QPainter *p, QPointF pos, bool hcenter, QRectF clip, QStri
 
 void adjustFontSize(QFont &f, int height/*, QString str*/)
 {
-    f.setPixelSize(100);
+    f.setPixelSize(Settings::scaled(100));
     QFontMetrics fm(f);
     //QRect br = fm.boundingRect(str);
     double h = fm.overlinePos() + fm.underlinePos() /*br.height()*/;
@@ -456,6 +456,82 @@ void fixWrapLabelsHeight(QWidget *form, int labelwidth)
         sp.setVerticalPolicy(QSizePolicy::Fixed);
         ch->setSizePolicy(sp);
     }
+}
+
+namespace {
+    // Helpers for scaleWidget
+
+    void _scaleLayout(QLayout *l);
+
+    void _scaleWidget(QWidget *w)
+    {
+        int minw = w->minimumWidth();
+        int maxw = w->maximumWidth();
+        if (minw != 0)
+            w->setMinimumWidth(Settings::scaled(minw));
+        if (maxw != QWIDGETSIZE_MAX && maxw < Settings::scaled(maxw))
+            w->setMaximumWidth(Settings::scaled(maxw));
+        int minh = w->minimumHeight();
+        int maxh = w->maximumHeight();
+        if (minh != 0)
+            w->setMinimumHeight(Settings::scaled(minh));
+        if (maxh != QWIDGETSIZE_MAX && maxh < Settings::scaled(maxh))
+            w->setMaximumHeight(Settings::scaled(maxh));
+
+        if (w->font() != qApp->font())
+        {
+            QFont f = w->font();
+            f.setPointSizeF(Settings::scaled(f.pointSizeF()));
+            w->setFont(f);
+        }
+
+        QAbstractButton *btn = dynamic_cast<QAbstractButton*>(w);
+        if (btn != nullptr)
+        {
+            QSize siz = btn->iconSize();
+            btn->setIconSize(QSize(Settings::scaled(siz.width()), Settings::scaled(siz.height())));
+
+        }
+
+        _scaleLayout(w->layout());
+    }
+
+    void _scaleSpacerItem(QSpacerItem *s)
+    {
+        QSizePolicy sp = s->sizePolicy();
+        QSize sh = s->sizeHint();
+        s->changeSize(Settings::scaled(sh.width()), Settings::scaled(sh.height()), sp.horizontalPolicy(), sp.verticalPolicy());
+    }
+
+    void _scaleLayout(QLayout *l)
+    {
+        if (l == nullptr)
+            return;
+
+        for (int ix = 0, siz = l->count(); ix != siz; ++ix)
+        {
+            QLayoutItem *la = l->itemAt(ix);
+            if (la->isEmpty())
+                continue;
+            QSpacerItem *si = la->spacerItem();
+            if (si != nullptr)
+                _scaleSpacerItem(si);
+            QLayout *ll = la->layout();
+            if (ll != nullptr)
+                _scaleLayout(ll);
+        }
+    }
+}
+
+void scaleWidget(QWidget *w)
+{
+    if (w == nullptr)
+        return;
+
+    _scaleWidget(w);
+    QList<QWidget*> wlist = w->findChildren<QWidget*>();
+    for (int ix = 0, siz = wlist.size(); ix != siz; ++ix)
+        _scaleWidget(wlist.at(ix));
 }
 
 void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1)
@@ -858,7 +934,8 @@ namespace ZKanji
 
     QPixmap dictionaryMenuFlag(const QString &dictname)
     {
-        return dictionaryFlag(QSize(16, 16), dictname, Flags::Flag);
+        int siz = qApp->style()->pixelMetric(QStyle::PM_SmallIconSize);
+        return dictionaryFlag(QSize(siz, siz), dictname, Flags::Flag);
     }
 
     void eraseDictionaryFlag(const QString &dictname)

@@ -17,6 +17,7 @@
 #include "ztooltip.h"
 #include "kanjisettings.h"
 #include "globalui.h"
+#include "generalsettings.h"
 
 // Bad solution for detecting button down repeats by hardcoding the delay in
 // a define, but this is how Qt does it for QAbstractButton with these same
@@ -136,7 +137,7 @@ QColor CandidateKanjiScrollerModel::bgColor(int index) const
 //-------------------------------------------------------------
 
 
-ZItemScroller::ZItemScroller(QWidget *parent) : base(parent), dict(nullptr), m(nullptr), cellsize(Settings::fonts.kanjifontsize), mouseitem(-1), kanjitipkanji(-1)
+ZItemScroller::ZItemScroller(QWidget *parent) : base(parent), dict(nullptr), m(nullptr), cellsize(Settings::scaled(Settings::fonts.kanjifontsize)), mouseitem(-1), kanjitipkanji(-1)
 {
     //setBackgroundRole(QPalette::Base);
     setAutoFillBackground(false);

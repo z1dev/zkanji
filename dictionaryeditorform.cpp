@@ -166,6 +166,8 @@ DictionaryEditorForm::DictionaryEditorForm(QWidget *parent) : base(parent), ui(n
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
+    scaleWidget(this);
+
     model = new DictionaryEditorModel(ui->dictView, this);
     ui->dictView->setModel(model);
     ui->dictView->setAcceptDrops(true);

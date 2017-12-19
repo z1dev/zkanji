@@ -16,6 +16,7 @@
 #include "kanjisettings.h"
 #include "zevents.h"
 #include "globalui.h"
+#include "zui.h"
 
 
 PopupKanjiSearch *PopupKanjiSearch::instance = nullptr;
@@ -116,6 +117,8 @@ PopupKanjiSearch::PopupKanjiSearch(QWidget *parent) : base(parent), ui(new Ui::P
 {
     ui->setupUi(this);
     windowInit();
+
+    scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_ShowWithoutActivating, false);

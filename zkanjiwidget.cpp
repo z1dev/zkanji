@@ -26,11 +26,8 @@
 #include "zkanjiform.h"
 #include "zkanjigridview.h"
 #include "zdictionarylistview.h"
+#include "generalsettings.h"
 
-// Mode button icon image width.
-//static const int _iconW = 16;
-// Mode button icon image height.
-//static const int _iconH = 16;
 // Mode button triangle image size.
 static const int _triS = 4;
 // Mode button spacing between icon and triangle horizontally.
@@ -97,9 +94,11 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
 {
     ui->setupUi(this);
 
+    scaleWidget(this);
+
     modemenu.setButton(ui->modeButton);
 
-    int _iconW = qApp->style()->pixelMetric(QStyle::PM_SmallIconSize);
+    int _iconW = Settings::scaled(qApp->style()->pixelMetric(QStyle::PM_SmallIconSize));
     int _iconH = _iconW;
     QSize icosize = QSize(_iconW, _iconH);
 

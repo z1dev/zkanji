@@ -968,6 +968,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_zstatview.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="zdictionarycombobox.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zdictionarycombobox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zdictionarycombobox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1377,6 +1386,9 @@
     </CustomBuild>
     <CustomBuild Include="zabstractstatmodel.h">
       <Filter>Code\ZObject\Models\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zdictionarycombobox.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
