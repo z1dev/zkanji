@@ -11,6 +11,7 @@
 #include <QFontDatabase>
 #include <QDir>
 #include <QByteArray>
+#include <QStringBuilder>
 #include "settings.h"
 #include "fontsettings.h"
 #include "generalsettings.h"
@@ -698,6 +699,8 @@ namespace Settings
             QFont f = qApp->font();
             f.setPointSizeF(f.pointSizeF() * Settings::general.scale / 100.0);
             qApp->setFont(f);
+
+            gUI->applyStyleSheet();
         }
     }
 

@@ -26,7 +26,8 @@ protected:
     enum class BorderStyle { Resizable, Docked };
 
     // Call at the end of the constructor of the derived class that returns a valid value for
-    // centralWidget().
+    // centralWidget(). Calls to scaleWidget() must be used after this, because it sets border
+    // sizes.
     virtual void windowInit();
 
     bool beingResized() const;

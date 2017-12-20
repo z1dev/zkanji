@@ -485,6 +485,16 @@ namespace {
             w->setFont(f);
         }
 
+        int l, t, r, b;
+        w->getContentsMargins(&l, &t, &r, &b);
+        w->setContentsMargins(Settings::scaled(l), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
+
+        if (dynamic_cast<QSplitter*>(w) != nullptr)
+        {
+            QSplitter *spl = (QSplitter*)w;
+            spl->setHandleWidth(Settings::scaled(spl->handleWidth()));
+        }
+
         QAbstractButton *btn = dynamic_cast<QAbstractButton*>(w);
         if (btn != nullptr)
         {
@@ -492,6 +502,14 @@ namespace {
             btn->setIconSize(QSize(Settings::scaled(siz.width()), Settings::scaled(siz.height())));
 
         }
+
+        // Some attributes can only be set recursively because they use what was inherited by
+        // the parent, and would increase spacing/padding etc. too much in nested widgets. Use
+        // direct-children-only to avoid this.
+
+        QList<QWidget*> wlist = w->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
+        for (int ix = 0, siz = wlist.size(); ix != siz; ++ix)
+            _scaleWidget(wlist.at(ix));
 
         _scaleLayout(w->layout());
     }
@@ -508,6 +526,10 @@ namespace {
         if (l == nullptr)
             return;
 
+        int ll, t, r, b;
+        l->getContentsMargins(&ll, &t, &r, &b);
+        l->setContentsMargins(Settings::scaled(ll), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
+
         for (int ix = 0, siz = l->count(); ix != siz; ++ix)
         {
             QLayoutItem *la = l->itemAt(ix);
@@ -520,6 +542,21 @@ namespace {
             if (ll != nullptr)
                 _scaleLayout(ll);
         }
+
+        // Spacing can be inherited so we set it only after the rest is done.
+
+        if (dynamic_cast<QBoxLayout*>(l) != nullptr)
+            l->setSpacing(Settings::scaled(l->spacing()));
+        else if (dynamic_cast<QFormLayout*>(l) != nullptr)
+        {
+            ((QFormLayout*)l)->setHorizontalSpacing(Settings::scaled(((QFormLayout*)l)->horizontalSpacing()));
+            ((QFormLayout*)l)->setVerticalSpacing(Settings::scaled(((QFormLayout*)l)->verticalSpacing()));
+        }
+        else if (dynamic_cast<QGridLayout*>(l) != nullptr)
+        {
+            ((QGridLayout*)l)->setHorizontalSpacing(Settings::scaled(((QGridLayout*)l)->horizontalSpacing()));
+            ((QGridLayout*)l)->setVerticalSpacing(Settings::scaled(((QGridLayout*)l)->verticalSpacing()));
+        }
     }
 }
 
@@ -529,9 +566,8 @@ void scaleWidget(QWidget *w)
         return;
 
     _scaleWidget(w);
-    QList<QWidget*> wlist = w->findChildren<QWidget*>();
-    for (int ix = 0, siz = wlist.size(); ix != siz; ++ix)
-        _scaleWidget(wlist.at(ix));
+
+    // Recursion of child widgets is done in _scaleWidget()
 }
 
 void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1)

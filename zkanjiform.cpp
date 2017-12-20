@@ -426,7 +426,7 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             if (splitter == nullptr)
                 delete cw->findChild<ZKanjiWidget*>();
 
-            QSplitter *s = new QSplitter();
+            QSplitter *s = new QSplitter;
             if (splitter == nullptr)
                 cw->layout()->addWidget(s);
 
@@ -440,7 +440,9 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
                 sizestack.back() << siz;
             sizestack.push_back(QList<int>());
 
-            s->setHandleWidth(1);
+            //s->setHandleWidth(1);
+            s->setHandleWidth(Settings::scaled(s->handleWidth() * 0.8));
+
             s->setChildrenCollapsible(false);
             if (vert)
                 s->setOrientation(Qt::Vertical);
@@ -1714,7 +1716,9 @@ void ZKanjiForm::dockAt(QPoint lpos, ZKanjiForm *what)
 
             int wix = splitter->indexOf(w);
             QSplitter *s = new QSplitter;
-            s->setHandleWidth(1);
+            //s->setHandleWidth(1);
+            s->setHandleWidth(Settings::scaled(s->handleWidth() * 0.8));
+
             s->setChildrenCollapsible(false);
             if (horz)
                 s->setOrientation(Qt::Vertical);
@@ -1774,7 +1778,9 @@ void ZKanjiForm::dockAt(QPoint lpos, ZKanjiForm *what)
 
             QHBoxLayout *l = (QHBoxLayout*)cw->layout();
             splitter = new QSplitter(cw);
-            splitter->setHandleWidth(1);
+            //splitter->setHandleWidth(1);
+            splitter->setHandleWidth(Settings::scaled(splitter->handleWidth() * 0.8));
+
             splitter->setChildrenCollapsible(false);
             QSizePolicy pol = splitter->sizePolicy();
             pol.setHorizontalStretch(1);

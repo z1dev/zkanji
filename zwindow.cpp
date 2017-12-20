@@ -190,12 +190,12 @@ void ZWindow::setBorderStyle(BorderStyle style)
     switch (border)
     {
     case BorderStyle::Resizable:
-        centralWidget()->layout()->setContentsMargins(POPUP_RESIZE_BORDER_SIZE, POPUP_RESIZE_BORDER_SIZE, POPUP_RESIZE_BORDER_SIZE, POPUP_RESIZE_BORDER_SIZE);
+        centralWidget()->layout()->setContentsMargins(Settings::scaled(POPUP_RESIZE_BORDER_SIZE), Settings::scaled(POPUP_RESIZE_BORDER_SIZE), Settings::scaled(POPUP_RESIZE_BORDER_SIZE), Settings::scaled(POPUP_RESIZE_BORDER_SIZE));
         if (captionWidget() != nullptr)
             captionWidget()->show();
         break;
     case BorderStyle::Docked:
-        centralWidget()->layout()->setContentsMargins(POPUP_RESIZE_BORDER_SIZE, POPUP_RESIZE_BORDER_SIZE, 2, 2);
+        centralWidget()->layout()->setContentsMargins(Settings::scaled(POPUP_RESIZE_BORDER_SIZE), Settings::scaled(POPUP_RESIZE_BORDER_SIZE), 2, 2);
         if (captionWidget() != nullptr)
             captionWidget()->hide();
         break;
@@ -265,18 +265,18 @@ void ZWindow::mousePressEvent(QMouseEvent *e)
         return;
 
     QRect r = rect();
-    if (e->pos().x() >= POPUP_RESIZE_BORDER_SIZE && e->pos().y() >= POPUP_RESIZE_BORDER_SIZE &&
-        (border == BorderStyle::Docked || (e->pos().x() <= r.width() - POPUP_RESIZE_BORDER_SIZE && e->pos().y() <= r.height() - POPUP_RESIZE_BORDER_SIZE)))
+    if (e->pos().x() >= Settings::scaled(POPUP_RESIZE_BORDER_SIZE) && e->pos().y() >= Settings::scaled(POPUP_RESIZE_BORDER_SIZE) &&
+        (border == BorderStyle::Docked || (e->pos().x() <= r.width() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) && e->pos().y() <= r.height() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE))))
         return;
 
     int grabbed = 0;
-    if (e->pos().x() < POPUP_RESIZE_BORDER_SIZE * 1.5)
+    if (e->pos().x() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5)
         grabbed |= (int)GrabSide::Left;
-    if (e->pos().y() < POPUP_RESIZE_BORDER_SIZE * 1.5)
+    if (e->pos().y() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5)
         grabbed |= (int)GrabSide::Top;
-    if (border != BorderStyle::Docked && e->pos().x() > r.width() - POPUP_RESIZE_BORDER_SIZE * 1.5)
+    if (border != BorderStyle::Docked && e->pos().x() > r.width() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5)
         grabbed |= (int)GrabSide::Right;
-    if (border != BorderStyle::Docked && e->pos().y() > r.height() - POPUP_RESIZE_BORDER_SIZE * 1.5)
+    if (border != BorderStyle::Docked && e->pos().y() > r.height() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5)
         grabbed |= (int)GrabSide::Bottom;
 
     grabside = grabbed;
@@ -306,8 +306,8 @@ void ZWindow::mouseMoveEvent(QMouseEvent *e)
 
     if (!grabbing && grabside == (int)GrabSide::None)
     {
-        if ((e->pos().x() < POPUP_RESIZE_BORDER_SIZE * 1.5 && e->pos().y() < POPUP_RESIZE_BORDER_SIZE * 1.5) ||
-            (floating && e->pos().x() > r.width() - POPUP_RESIZE_BORDER_SIZE * 1.5 && e->pos().y() > r.height() - POPUP_RESIZE_BORDER_SIZE * 1.5))
+        if ((e->pos().x() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5 && e->pos().y() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5) ||
+            (floating && e->pos().x() > r.width() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5 && e->pos().y() > r.height() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5))
 
         {
             setCursor(Qt::SizeFDiagCursor);
@@ -317,8 +317,8 @@ void ZWindow::mouseMoveEvent(QMouseEvent *e)
             qApp->removeEventFilter(this);
             qApp->installEventFilter(this);
         }
-        else if (floating && ((e->pos().x() < POPUP_RESIZE_BORDER_SIZE * 1.5 && e->pos().y() > r.height() - POPUP_RESIZE_BORDER_SIZE * 1.5) ||
-            (e->pos().x() > r.width() - POPUP_RESIZE_BORDER_SIZE * 1.5 && e->pos().y() < POPUP_RESIZE_BORDER_SIZE * 1.5)))
+        else if (floating && ((e->pos().x() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5 && e->pos().y() > r.height() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5) ||
+            (e->pos().x() > r.width() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5 && e->pos().y() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) * 1.5)))
 
         {
             setCursor(Qt::SizeBDiagCursor);
@@ -328,7 +328,7 @@ void ZWindow::mouseMoveEvent(QMouseEvent *e)
             qApp->removeEventFilter(this);
             qApp->installEventFilter(this);
         }
-        else if (e->pos().x() < POPUP_RESIZE_BORDER_SIZE || (floating && e->pos().x() > r.width() - POPUP_RESIZE_BORDER_SIZE))
+        else if (e->pos().x() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) || (floating && e->pos().x() > r.width() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE)))
         {
             setCursor(Qt::SizeHorCursor);
 
@@ -337,7 +337,7 @@ void ZWindow::mouseMoveEvent(QMouseEvent *e)
             qApp->removeEventFilter(this);
             qApp->installEventFilter(this);
         }
-        else if (e->pos().y() < POPUP_RESIZE_BORDER_SIZE || (floating && e->pos().y() > r.height() - POPUP_RESIZE_BORDER_SIZE))
+        else if (e->pos().y() < Settings::scaled(POPUP_RESIZE_BORDER_SIZE) || (floating && e->pos().y() > r.height() - Settings::scaled(POPUP_RESIZE_BORDER_SIZE)))
         {
             setCursor(Qt::SizeVerCursor);
 

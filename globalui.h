@@ -190,6 +190,9 @@ public:
     // behavior.
     void applySettings();
 
+    // Sets the application stylesheet to have some stretch sizes and colors.
+    void applyStyleSheet();
+
     // Copies str to clipboard as plain text, overwriting its contents.
     void clipCopy(const QString &str) const;
     // Appends str to the plain text found in the clipboard. If no plain text is stored there,

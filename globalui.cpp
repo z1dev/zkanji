@@ -501,7 +501,18 @@ int GlobalUI::activeDictionaryIndex() const
 void GlobalUI::applySettings()
 {
     checkColorTheme();
+    applyStyleSheet();
     emit settingsChanged();
+}
+
+void GlobalUI::applyStyleSheet()
+{
+    int scrollw = qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
+    int scrollbtnw = scrollw;
+    qApp->setStyleSheet(QString("QScrollBar:vertical { width: %1px; } QScrollBar:horizontal { height: %1px; } ").arg(Settings::scaled(scrollw)) %
+        QString("QScrollBar::add-line:vertical { height: %1px; } QScrollBar::sub-line:vertical { height: %1px; } QScrollBar::add-line:horizontal { width: %1px; } QScrollBar::sub-line:horizontal { width: %1px; } ").arg(Settings::scaled(scrollbtnw)) %
+        QString("QSplitter::handle { background-color: %1; } ").arg(Settings::colors.lighttheme ? qApp->palette().color(QPalette::Active, QPalette::Base).darker(115).name() : qApp->palette().color(QPalette::Active, QPalette::Base).lighter(115).name()));
+
 }
 
 void GlobalUI::clipCopy(const QString &str) const
