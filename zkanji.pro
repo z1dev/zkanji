@@ -142,7 +142,8 @@ SOURCES += \
     kanareadingpracticeform.cpp \
     kanawritingpracticeform.cpp \
     stayontop_x11.cpp \
-    zstatview.cpp
+    zstatview.cpp \
+	zdictionarycombobox.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -269,7 +270,8 @@ HEADERS += \
     kanawritingpracticeform.h \
     stayontop_x11.h \
     zabstractstatmodel.h \
-    zstatview.h
+    zstatview.h \
+	zdictionarycombobox.h
 
 FORMS += \
     collectwordsform.ui \
