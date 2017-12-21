@@ -126,6 +126,8 @@ void PopupDictionary::doPopup(bool translatefrom)
         break;
     }
 
+    ui->pinButton->setIcon(QIcon(!Settings::popup.autohide ? ":/closex.svg" : ":/pin.svg"));
+
     show();
     if (Settings::popup.widescreen)
         resizeToFullWidth();
@@ -270,6 +272,7 @@ void PopupDictionary::appStateChange(Qt::ApplicationState state)
 void PopupDictionary::settingsChanged()
 {
     ui->pinButton->setCheckable(Settings::popup.autohide);
+    ui->pinButton->setIcon(QIcon(!Settings::popup.autohide ? ":/closex.svg" : ":/pin.svg"));
     setWindowOpacity((10.0 - Settings::popup.transparency / 2.0) / 10.0);
 
     if (FormStates::popupdict.floating || !Settings::popup.widescreen || !isVisible())
@@ -335,6 +338,8 @@ void PopupDictionary::floatWindow(bool dofloat)
         setGeometry(QRect(r.right() - s.width() - 4, r.bottom() - s.height() - 4, s.width(), s.height()));
         resizeToFullWidth();
 
+        ui->floatButton->setIcon(QIcon(":/floatwnd.svg"));
+
         if (wasvisible)
         {
             show();
@@ -377,6 +382,8 @@ void PopupDictionary::floatWindow(bool dofloat)
         //fr.adjust(g.left() - fg.left(), g.top() - fg.top(), g.right() - fg.right(), g.bottom() - fg.bottom());
 
         setGeometry(fr);
+
+        ui->floatButton->setIcon(QIcon(":/dockwnd.svg"));
 
         if (wasvisible)
         {

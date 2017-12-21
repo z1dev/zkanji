@@ -177,6 +177,8 @@ void PopupKanjiSearch::doPopup()
     if (Settings::kanji.resetpopupfilters)
         ui->kanjiSearch->reset();
 
+    ui->pinButton->setIcon(QIcon(!Settings::popup.kanjiautohide ? ":/closex.svg" : ":/pin.svg"));
+
     show();
     raise();
     activateWindow();
@@ -291,6 +293,8 @@ void PopupKanjiSearch::on_pinButton_clicked(bool checked)
 void PopupKanjiSearch::settingsChanged()
 {
     ui->pinButton->setCheckable(Settings::popup.kanjiautohide);
+    ui->pinButton->setIcon(QIcon(!Settings::popup.kanjiautohide ? ":/closex.svg" : ":/pin.svg"));
+
     setWindowOpacity((10.0 - Settings::popup.transparency / 2.0) / 10.0);
 }
 

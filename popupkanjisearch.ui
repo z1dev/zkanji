@@ -70,11 +70,28 @@
           </widget>
          </item>
          <item>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolButton" name="pinButton">
-           <property name="text">
-            <string>p</string>
+           <property name="icon">
+            <iconset resource="Resources/resources.qrc">
+             <normaloff>:/closex.svg</normaloff>:/closex.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>18</width>
+             <height>18</height>
+            </size>
            </property>
            <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
@@ -99,18 +116,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KanjiSearchWidget</class>
-   <extends>QWidget</extends>
-   <header>kanjisearchwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZWindow</class>
    <extends>QMainWindow</extends>
    <header>zwindow.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>KanjiSearchWidget</class>
+   <extends>QWidget</extends>
+   <header>kanjisearchwidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

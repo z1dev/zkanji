@@ -92,6 +92,13 @@
         </widget>
        </item>
        <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -249,15 +256,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZItemScroller</class>
-   <extends>QWidget</extends>
-   <header>zitemscroller.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZWindow</class>
    <extends>QMainWindow</extends>
    <header>zwindow.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZItemScroller</class>
+   <extends>QWidget</extends>
+   <header>zitemscroller.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

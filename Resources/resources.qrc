@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
+        <file>floatwnd.svg</file>
+        <file>dockwnd.svg</file>
         <file>stats.svg</file>
         <file>checkall.svg</file>
         <file>pagesetup.svg</file>
@@ -74,5 +76,6 @@
         <file>box.svg</file>
         <file>testsettings.svg</file>
         <file>dockwindows.svg</file>
+        <file>pin.svg</file>
     </qresource>
 </RCC>
