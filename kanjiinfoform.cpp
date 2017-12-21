@@ -324,7 +324,7 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
         move(data.pos);
 
     ignoreresize = false;
-    _resized();
+    _resized(true);
 }
 
 void KanjiInfoForm::saveState(KanjiInfoFormData &data) const

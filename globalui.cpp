@@ -199,7 +199,6 @@ void GlobalUI::loadXMLKanjiInfo(QXmlStreamReader &reader)
         if (reader.name() == "KanjiInfo")
         {
             KanjiInfoForm *f = new KanjiInfoForm((QWidget*)mainForm());
-            //f->setKanji(d, index);
             if (f->loadXMLSettings(reader))
             {
                 if (!f->locked())
@@ -208,8 +207,8 @@ void GlobalUI::loadXMLKanjiInfo(QXmlStreamReader &reader)
                     connect(kanjiinfo, &KanjiInfoForm::destroyed, this, &GlobalUI::kanjiInfoDestroyed);
                     connect(kanjiinfo, &KanjiInfoForm::formLock, this, &GlobalUI::kanjiInfoLock);
                 }
-                if (infoblock == 0)
-                    f->show();
+                //if (infoblock == 0)
+                //    f->show();
             }
             else
                 delete f;
@@ -1323,8 +1322,8 @@ void GlobalUI::kanjiInfoLock(bool locked)
     }
     else
     {
-        connect(kanjiinfo, &KanjiInfoForm::destroyed, this, &GlobalUI::kanjiInfoDestroyed);
         kanjiinfo = (KanjiInfoForm*)sender();
+        connect(kanjiinfo, &KanjiInfoForm::destroyed, this, &GlobalUI::kanjiInfoDestroyed);
     }
 }
 
@@ -1405,8 +1404,12 @@ void GlobalUI::mainStateChanged(bool minimized)
         const QWidgetList wlist = qApp->topLevelWidgets();
         for (QWidget *w : wlist)
         {
-            if (w->parentWidget() == mainForm() && dynamic_cast<KanjiInfoForm*>(w) != nullptr && !((KanjiInfoForm*)w)->locked())
-                kanjiinfo = (KanjiInfoForm*)w;
+            if (w->parentWidget() == mainForm() && dynamic_cast<KanjiInfoForm*>(w) != nullptr)
+            {
+                if (!((KanjiInfoForm*)w)->locked())
+                    kanjiinfo = (KanjiInfoForm*)w;
+                w->show();
+            }
         }
     }
 }

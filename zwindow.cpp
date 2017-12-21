@@ -261,7 +261,7 @@ void ZWindow::paintEvent(QPaintEvent *e)
     opt.initFrom(this);
     opt.rect = rect();
 
-    p.drawPrimitive(QStyle::PE_Frame, opt);
+    //p.drawPrimitive(QStyle::PE_Frame, opt);
 }
 
 void ZWindow::mousePressEvent(QMouseEvent *e)

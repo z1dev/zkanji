@@ -204,8 +204,8 @@ public:
     // dictionary.
     void setInfoKanji(Dictionary *d, int index);
 
-    // Shows or hides the kanji information windows, and allows or prevents new ones to open.
-    // Set toggleon to true to show and enable, and false and disallow the kanji info windows.
+    // Shows or hides the kanji information windows and allows or prevents new ones to open.
+    // Set toggleon to true to show and enable, or to false to disallow kanji info windows.
     void toggleKanjiInfo(bool toggleon = true);
 
     // Adds a shortcut to the passed menu via the mapper. The passed UICommand will be
