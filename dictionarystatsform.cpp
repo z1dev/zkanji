@@ -8,6 +8,7 @@
 #include <QDesktopServices>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QDesktopWidget>
 #include <chrono>
 #include <thread>
 #include <list>
@@ -226,7 +227,7 @@ bool StatsThread::calculateKanji()
 //-------------------------------------------------------------
 
 
-DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *parent) : base(parent), ui(new Ui::DictionaryStatsForm)
+DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *prnt) : base(prnt), ui(new Ui::DictionaryStatsForm)
 {
     ui->setupUi(this);
 
@@ -271,6 +272,19 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *parent) : base(pare
     restrictWidgetSize(ui->wordGrpNumLabel, 8);
 
     updateData();
+
+    // Center the window on parent to make it work on X11.
+
+    QRect gr = frameGeometry();
+    QRect fr = frameGeometry();
+    QRect dif = QRect(QPoint(gr.left() - fr.left(), gr.top() - fr.top()), QPoint(fr.right() - gr.right(), fr.bottom() - gr.bottom()));
+
+    QRect r = parent() != nullptr ? ((QWidget*)parent())->frameGeometry() : qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+
+    int left = r.left() + (r.width() - fr.width()) / 2 + (dif.left() + dif.right()) / 2;
+    int top = r.top() + (r.height() - fr.height()) / 2 + (dif.top() + dif.bottom()) / 2;
+
+    setGeometry(QRect(left, top, gr.width(), gr.height()));
 }
 
 DictionaryStatsForm::~DictionaryStatsForm()
