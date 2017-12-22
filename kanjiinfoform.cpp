@@ -140,9 +140,13 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->partsScroller->setFrameShape(QFrame::NoFrame);
     ui->partofScroller->setFrameShape(QFrame::NoFrame);
 
-    ui->similarWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::SimilarBg)).name()));
-    ui->partsWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartsBg)).name()));
-    ui->partofWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartOfBg)).name()));
+    ui->similarScroller->model()->setBgColor(Settings::uiColor(ColorSettings::SimilarBg));
+    ui->partsScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartsBg));
+    ui->partofScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartOfBg));
+
+    //ui->similarWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::SimilarBg)).name()));
+    //ui->partsWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartsBg)).name()));
+    //ui->partofWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartOfBg)).name()));
 
     ui->infoText->setCursorWidth(0);
 
@@ -977,9 +981,13 @@ void KanjiInfoForm::settingsChanged()
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
 
-    ui->similarWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::SimilarBg)).name()));
-    ui->partsWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartsBg)).name()));
-    ui->partofWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartOfBg)).name()));
+    //ui->similarWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::SimilarBg)).name()));
+    //ui->partsWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartsBg)).name()));
+    //ui->partofWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartOfBg)).name()));
+
+    ui->similarScroller->model()->setBgColor(Settings::uiColor(ColorSettings::SimilarBg));
+    ui->partsScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartsBg));
+    ui->partofScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartOfBg));
 
     std::vector<int> l;
     int kindex = ui->kanjiView->kanjiIndex();

@@ -253,6 +253,8 @@ QColor mixColors(const QColor &a, const QColor &b, double a_part = (double)0.5);
 // Given a 'base' color (for unselected items) and a 'curr' current paint color for 'base'
 // (either same as 'base' if the item to paint is unselected, or a highlight color), returns
 // a new paint color for the item, if 'col' is to be used as its new base color.
+// For example base is normal background color, curr is background color when something is
+// selected. Returns what curr will become, if base is replaced by col.
 QColor colorFromBase(const QColor &base, const QColor &curr, const QColor &col);
 
 // Deletes a cached image created from an SVG at the passed svgpath. Pass a version number

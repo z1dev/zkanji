@@ -12,22 +12,6 @@
 //#include <QBasicTimer>
 #include "zscrollarea.h"
 
-// Base class for models used in ZItemScroller objects.
-//class ZItemScrollerModel : public QObject
-//{
-//    Q_OBJECT
-//public:
-//    ZItemScrollerModel(QObject *parent = nullptr);
-//    virtual ~ZItemScrollerModel();
-//
-//    // Number of items that can be displayed in the scroller the model belongs
-//    // to.
-//    virtual int size() const = 0;
-//private:
-//
-//    typedef QObject base;
-//};
-
 // Displays kanji elements and kanji drawn with the element painter or kanji font.
 // Pass a list to setItems() to set the items shown in the scroller. Negative values are
 // indexes to a kanji element obtained with the following formula:
@@ -47,12 +31,20 @@ public:
     int items(int index) const;
     void setItems(const std::vector<int> &items);
 
+    // Sets a background color for the scroller that is only used when derived classes don't
+    // provide their own version of bgColor().
+    void setBgColor(QColor col);
+
+    // Background color for each item. When called with -1, should return background color for
+    // the rest of the item scroller.
     virtual QColor bgColor(int index) const;
     virtual QColor textColor(int index) const;
 
     int size() const;
 private:
     std::vector<int> list;
+
+    QColor bgcolor;
 
     typedef QObject  base;
 };

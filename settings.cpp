@@ -69,9 +69,9 @@ namespace Settings
     const QColor hirabgldef = QColor(157, 243, 149);
 
     const QColor similartextldef = QColor(0, 145, 245);
-    const QColor similarbgldef = QColor(214, 226, 228);
-    const QColor partsbgldef = QColor(214, 228, 214);
-    const QColor partofbgldef = QColor(227, 220, 214);
+    const QColor similarbgldef = QColor(241, 247, 247);
+    const QColor partsbgldef = QColor(231, 247, 231);
+    const QColor partofbgldef = QColor(247, 239, 231);
 
     const QColor stat1ldef = QColor(0, 162, 212);
     const QColor stat2ldef = QColor(120, 212, 40);
@@ -107,9 +107,9 @@ namespace Settings
     const QColor hirabgddef = QColor(157, 243, 149);
 
     const QColor similartextddef = QColor(0, 145, 245);
-    const QColor similarbgddef = QColor(214, 226, 228);
-    const QColor partsbgddef = QColor(214, 228, 214);
-    const QColor partofbgddef = QColor(227, 220, 214);
+    const QColor similarbgddef = QColor(241, 247, 247);
+    const QColor partsbgddef = QColor(231, 247, 231);
+    const QColor partofbgddef = QColor(247, 239, 231);
 
     const QColor stat1ddef = QColor(0, 162, 212);
     const QColor stat2ddef = QColor(120, 212, 40);

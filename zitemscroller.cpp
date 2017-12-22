@@ -63,9 +63,14 @@ void KanjiScrollerModel::setItems(const std::vector<int> &items)
     emit changed();
 }
 
+void KanjiScrollerModel::setBgColor(QColor col)
+{
+    bgcolor = col;
+}
+
 QColor KanjiScrollerModel::bgColor(int index) const
 {
-    return QColor();
+    return bgcolor;
 }
 
 QColor KanjiScrollerModel::textColor(int index) const
@@ -253,17 +258,6 @@ void ZItemScroller::paintEvent(QPaintEvent *e)
 
     p.setClipRect(cr);
 
-    //QColor gridcolor;
-    //if (Settings::colors.grid.isValid())
-    //    gridcolor = Settings::colors.grid;
-    //else
-    //{
-    //    QStyleOptionViewItem opts;
-    //    opts.initFrom(this);
-    //    opts.showDecorationSelected = true;
-    //    int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-    //    gridcolor = static_cast<QRgb>(gridHint);
-    //}
     QColor gridcolor = Settings::uiColor(ColorSettings::Grid);
 
     // Get position of leftmost visible item.
@@ -288,7 +282,8 @@ void ZItemScroller::paintEvent(QPaintEvent *e)
         left += cellsize;
     }
 
-    p.fillRect(QRect(left, r.top(), r.width() - (left - r.left()) + 1, r.height()), Settings::textColor(hasFocus(), ColorSettings::Bg));
+    QColor bg = m->bgColor(-1);
+    p.fillRect(QRect(left, r.top(), r.width() - (left - r.left()) + 1, r.height()), bg.isValid() ? bg : Settings::textColor(hasFocus(), ColorSettings::Bg));
 }
 
 //void ZItemScroller::resizeEvent(QResizeEvent *e)

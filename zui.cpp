@@ -994,6 +994,12 @@ QColor mixColors(const QColor &a, const QColor &b, double a_part)
 
 int colorComponentFromBase(int base, int curr, int col)
 {
+    if (curr == base)
+        return col;
+
+    return std::min<int>(255, std::max<int>(0, col + col * (double(curr - base) / 255)));
+
+    /*
     int lighter = 255 - base;
     int darker = 255 - lighter;
 
@@ -1012,6 +1018,7 @@ int colorComponentFromBase(int base, int curr, int col)
     int csum = currpart + colpart;
 
     return csum == 0 ? base : std::min<int>(255, std::max<int>(0, (curr * (currpart * 100 / csum) + col * (colpart * 100 / csum))) / 100);
+    */
 }
 
 QColor colorFromBase(const QColor &base, const QColor &curr, const QColor &col)
