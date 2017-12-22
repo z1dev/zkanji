@@ -207,8 +207,6 @@ void GlobalUI::loadXMLKanjiInfo(QXmlStreamReader &reader)
                     connect(kanjiinfo, &KanjiInfoForm::destroyed, this, &GlobalUI::kanjiInfoDestroyed);
                     connect(kanjiinfo, &KanjiInfoForm::formLock, this, &GlobalUI::kanjiInfoLock);
                 }
-                //if (infoblock == 0)
-                //    f->show();
             }
             else
                 delete f;
@@ -329,23 +327,16 @@ void GlobalUI::createWindow(bool ismain)
     qApp->postEvent(f, new StartEvent());
 }
 
-//void GlobalUI::createKanjiWindow(bool useexisting)
-//{
-//    if (useexisting && !kanjiforms.empty())
-//    {
-//        kanjiforms.back()->raise();
-//        kanjiforms.back()->activateWindow();
-//        return;
-//    }
-//
-//    KanjiForm *w = new KanjiForm;
-//    kanjiforms.push_back(w);
-//    i->connect(w, &QMainWindow::destroyed, i, &GlobalUI::formDestroyed);
-//    i->connect(w, &KanjiForm::activated, i, &GlobalUI::formActivated);
-//
-//    gUI->addActionsToWidget(w);
-//    w->show();
-//}
+void GlobalUI::addCreatedWindow(ZKanjiForm *f)
+{
+    mainforms.push_back(f);
+    i->connect(f, &QMainWindow::destroyed, i, &GlobalUI::formDestroyed);
+    i->connect(f, &ZKanjiForm::activated, i, &GlobalUI::formActivated);
+
+    // Notifying window that it should update its saved geometry, so it won't be moved to
+    // the top left corner of the screen on next startup.
+    qApp->postEvent(f, new StartEvent());
+}
 
 ZKanjiForm* GlobalUI::mainForm() const
 {
@@ -1408,7 +1399,8 @@ void GlobalUI::mainStateChanged(bool minimized)
             {
                 if (!((KanjiInfoForm*)w)->locked())
                     kanjiinfo = (KanjiInfoForm*)w;
-                w->show();
+                if (infoblock == 0)
+                    w->show();
             }
         }
     }
@@ -1482,23 +1474,6 @@ void GlobalUI::formDestroyed(QObject *form)
         mainforms.erase(it);
         return;
     }
-    //auto it2 = std::find(kanjiforms.begin(), kanjiforms.end(), (KanjiForm*)form);
-    //if (it2 != kanjiforms.end())
-    //{
-    //    kanjiforms.erase(it2);
-    //    return;
-    //}
-    //auto it3 = std::find(worddeckforms.begin(), worddeckforms.end(), (WordDeckForm*)form);
-    //if (it3 != worddeckforms.end())
-    //{
-    //    worddeckforms.erase(it3);
-    //    return;
-    //}
-    //if (form == worddeckform)
-    //{
-    //    worddeckform = nullptr;
-    //    return;
-    //}
 }
 
 void GlobalUI::formActivated(ZKanjiForm *form, bool active)
@@ -1513,12 +1488,6 @@ void GlobalUI::formActivated(ZKanjiForm *form, bool active)
         mainforms.push_back((ZKanjiForm*)form);
         return;
     }
-    //auto it2 = std::find(kanjiforms.begin(), kanjiforms.end(), (KanjiForm*)form);
-    //if (it2 != kanjiforms.end())
-    //{
-    //    kanjiforms.erase(it2);
-    //    kanjiforms.push_back((KanjiForm*)form);
-    //}
 }
 
 void GlobalUI::hideAppWindows()

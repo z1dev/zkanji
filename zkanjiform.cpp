@@ -83,13 +83,8 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
 
     w->setMode(ViewModes::WordSearch);
 
-    //// The context menu of the form must be shown over the widget too.
-    //((ZKanjiWidget*)centralWidget()->layout()->itemAt(0)->widget())->setContextMenuPolicy(Qt::NoContextMenu);
-
     if (mainform)
         connect(qApp, &QApplication::focusChanged, this, &ZKanjiForm::appFocusChanged);
-    //else
-    //    installCommands();
 
     connect(gUI, &GlobalUI::dictionaryAdded, this, &ZKanjiForm::dictionaryAdded);
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &ZKanjiForm::dictionaryRemoved);
@@ -111,9 +106,10 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
     setAttribute(Qt::WA_DontShowOnScreen, false);
 }
 
-ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent) : base(parent, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
-ui(new Ui::ZKanjiForm), mainform(false), activewidget(nullptr), //activepage(-1), activedict(nullptr),
-docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
+ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent)
+    : base(parent, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+    ui(new Ui::ZKanjiForm), mainform(false), activewidget(nullptr), //activepage(-1), activedict(nullptr),
+    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
     setMouseTracking(true);
@@ -125,20 +121,11 @@ docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(fals
     w->setParent(cw);
 
     QHBoxLayout *l = new QHBoxLayout(cw);
-    l->setContentsMargins(2, 2, 2, 2);
+    l->setContentsMargins(Settings::scaled(2), Settings::scaled(2), Settings::scaled(2), Settings::scaled(2));
     l->addWidget(w);
 
     activewidget = w;
     fillMainMenu();
-
-    //// The context menu of the form must be shown over the widget too.
-    //w->setContextMenuPolicy(Qt::NoContextMenu);
-
-    //QAction *a = dockmenu.addAction("Allow docking");
-    //a->setCheckable(true);
-    //a->setChecked(true);
-
-    //installCommands();
 
     connect(gUI, &GlobalUI::dictionaryAdded, this, &ZKanjiForm::dictionaryAdded);
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &ZKanjiForm::dictionaryRemoved);
@@ -503,7 +490,9 @@ void ZKanjiForm::floatWidget(ZKanjiWidget* w)
     QSplitter *splitter = (QSplitter*)w->parent();
 
     // This creates a new floating window with the widget.
-    (new ZKanjiForm(w, this))->show();
+    ZKanjiForm *f = new ZKanjiForm(w, this);
+    gUI->addCreatedWindow(f);
+    f->show();
 
     if (splitter->count() == 1)
     {

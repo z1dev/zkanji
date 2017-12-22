@@ -147,6 +147,10 @@ public:
     // If ismain is true and a main window already exists, the function returns immediately.
     void createWindow(bool ismain = false);
 
+    // Includes the zkanji window in the top level windows list and connects it to slots. Only
+    // call for previously created windows that were not created through createWindow.
+    void addCreatedWindow(ZKanjiForm *f);
+
     // Shows a kanji list window. Set useexisting to true if the last opened
     // window should be shown instead if one exists.
     //void createKanjiWindow(bool useexisting = false);
