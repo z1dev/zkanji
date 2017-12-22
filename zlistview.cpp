@@ -743,7 +743,7 @@ void ZListView::setModel(ZAbstractTableModel *newmodel)
         //if (newmodel != nullptr)
         //    resetColumnData();
 
-    if (selectionModel() != oldselmodel)
+    if (oldselmodel != nullptr && selectionModel() != oldselmodel)
     {
         oldselmodel->deleteLater();
 
