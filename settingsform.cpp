@@ -356,6 +356,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->colFieldCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Fields));
     ui->colDialectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Dialects));
     ui->colKanaCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanaOnly));
+    ui->colSentenceWordCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SentenceWord));
     ui->colKanjiExCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiExBg));
     ui->colKanjiTestPosCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiTestPos));
 
@@ -603,6 +604,7 @@ void SettingsForm::reset()
     ui->colFieldCBox->setCurrentColor(Settings::colors.fields);
     ui->colDialectCBox->setCurrentColor(Settings::colors.dialect);
     ui->colKanaCBox->setCurrentColor(Settings::colors.kanaonly);
+    ui->colSentenceWordCBox->setCurrentColor(Settings::colors.sentenceword);
     ui->colKanjiExCBox->setCurrentColor(Settings::colors.kanjiexbg);
     ui->colKanjiTestPosCBox->setCurrentColor(Settings::colors.kanjitestpos);
 
@@ -877,6 +879,7 @@ void SettingsForm::applyClicked()
     Settings::colors.fields = ui->colFieldCBox->currentColor();
     Settings::colors.dialect = ui->colDialectCBox->currentColor();
     Settings::colors.kanaonly = ui->colKanaCBox->currentColor();
+    Settings::colors.sentenceword = ui->colSentenceWordCBox->currentColor();
     Settings::colors.kanjiexbg = ui->colKanjiExCBox->currentColor();
     Settings::colors.kanjitestpos = ui->colKanjiTestPosCBox->currentColor();
 

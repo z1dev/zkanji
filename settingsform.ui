@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>10</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -3354,23 +3354,6 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="label_42">
-                <property name="text">
-                 <string>Example for kanji bg.:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <widget class="ZColorComboBox" name="colKanjiExCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
               <item row="9" column="1">
                <spacer name="verticalSpacer_31">
                 <property name="orientation">
@@ -3494,6 +3477,23 @@
               </item>
               <item row="14" column="1">
                <widget class="ZColorComboBox" name="colN1CBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_141">
+                <property name="text">
+                 <string>Current word in sentence:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="ZColorComboBox" name="colSentenceWordCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -3742,6 +3742,23 @@
               </item>
               <item row="15" column="1">
                <widget class="ZColorComboBox" name="bgPartOfCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="0">
+               <widget class="QLabel" name="label_42">
+                <property name="text">
+                 <string>Example word bg.:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="1">
+               <widget class="ZColorComboBox" name="colKanjiExCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -5404,6 +5421,7 @@
   <tabstop>coliSelBgCBox</tabstop>
   <tabstop>colSelTextCBox</tabstop>
   <tabstop>coliSelTextCBox</tabstop>
+  <tabstop>colGridCBox</tabstop>
   <tabstop>colInfCBox</tabstop>
   <tabstop>colAttribCBox</tabstop>
   <tabstop>colTypeCBox</tabstop>
@@ -5411,7 +5429,7 @@
   <tabstop>colFieldCBox</tabstop>
   <tabstop>colDialectCBox</tabstop>
   <tabstop>colKanaCBox</tabstop>
-  <tabstop>colKanjiExCBox</tabstop>
+  <tabstop>colSentenceWordCBox</tabstop>
   <tabstop>colN5CBox</tabstop>
   <tabstop>colN4CBox</tabstop>
   <tabstop>colN3CBox</tabstop>
@@ -5427,6 +5445,14 @@
   <tabstop>bgSimilarCBox</tabstop>
   <tabstop>bgPartsCBox</tabstop>
   <tabstop>bgPartOfCBox</tabstop>
+  <tabstop>colKanjiExCBox</tabstop>
+  <tabstop>colStudyCorrectCBox</tabstop>
+  <tabstop>colStudyWrongCBox</tabstop>
+  <tabstop>colStudyNewCBox</tabstop>
+  <tabstop>colKanjiTestPosCBox</tabstop>
+  <tabstop>colStat1CBox</tabstop>
+  <tabstop>colStat2CBox</tabstop>
+  <tabstop>colStat3CBox</tabstop>
   <tabstop>studyStartEdit</tabstop>
   <tabstop>studyReviewBox</tabstop>
   <tabstop>studyIncludeCBox</tabstop>
@@ -5478,8 +5504,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

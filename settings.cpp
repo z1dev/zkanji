@@ -51,6 +51,7 @@ namespace Settings
     const QColor fieldsldef = QColor(48, 64, 128);
     const QColor dialectldef = QColor(128, 48, 64);
     const QColor kanaonlyldef = QColor(144, 176, 160);
+    const QColor sentencewordldef = QColor(255, 0, 0);
     const QColor kanjiexbgldef = QColor(210, 255, 210);
     const QColor kanjitestposldef = QColor(255, 0, 0);
 
@@ -88,6 +89,7 @@ namespace Settings
     const QColor notesddef = QColor(144, 64, 32);
     const QColor fieldsddef = QColor(48, 64, 128);
     const QColor dialectddef = QColor(128, 48, 64);
+    const QColor sentencewordddef = QColor(255, 0, 0);
     const QColor kanaonlyddef = QColor(144, 176, 160);
     const QColor kanjiexbgddef = QColor(210, 255, 210);
     const QColor kanjitestposddef = QColor(255, 0, 0);
@@ -236,6 +238,7 @@ namespace Settings
         ini.setValue("colors/fields", colors.fields);
         ini.setValue("colors/dialect", colors.dialect);
         ini.setValue("colors/kanaonly", colors.kanaonly);
+        ini.setValue("colors/sentenceword", colors.sentenceword);
         ini.setValue("colors/kanjiexamplebg", colors.kanjiexbg);
         ini.setValue("colors/kanjitestpos", colors.kanjitestpos);
         ini.setValue("colors/n5", colors.n5);
@@ -864,6 +867,7 @@ namespace Settings
         colors.fields = ini.value("colors/fields").value<QColor>();
         colors.dialect = ini.value("colors/dialect").value<QColor>();
         colors.kanaonly = ini.value("colors/kanaonly").value<QColor>();
+        colors.sentenceword = ini.value("colors/sentenceword").value<QColor>();
         colors.kanjiexbg = ini.value("colors/kanjiexamplebg").value<QColor>();
         colors.kanjitestpos = ini.value("colors/kanjitestpos").value<QColor>();
 
@@ -1415,6 +1419,10 @@ namespace Settings
             if (colors.kanaonly.isValid())
                 return colors.kanaonly;
             break;
+        case ColorSettings::SentenceWord:
+            if (colors.sentenceword.isValid())
+                return colors.sentenceword;
+            break;
         case ColorSettings::KanjiExBg:
             if (colors.kanjiexbg.isValid())
                 return colors.kanjiexbg;
@@ -1533,6 +1541,8 @@ namespace Settings
             return colors.lighttheme ? dialectldef : dialectddef;
         case ColorSettings::KanaOnly:
             return colors.lighttheme ? kanaonlyldef : kanaonlyddef;
+        case ColorSettings::SentenceWord:
+            return colors.lighttheme ? sentencewordldef : sentencewordddef;
         case ColorSettings::KanjiExBg:
             return colors.lighttheme ? kanjiexbgldef : kanjiexbgddef;
         case ColorSettings::KanjiTestPos:

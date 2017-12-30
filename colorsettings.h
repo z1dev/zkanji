@@ -26,11 +26,11 @@ struct ColorSettings
     enum UIColorTypes {
         Grid, StudyCorrect, StudyWrong, StudyNew,
         Inf, Attrib, Types, Notes,
-        Fields, Dialects, KanaOnly, KanjiExBg, KanjiTestPos,
+        Fields, Dialects, KanaOnly, SentenceWord, KanjiTestPos,
         Oku, N5, N4, N3, N2, N1, KanjiNoWords,
         KanjiUnsorted, KataBg, HiraBg,
         SimilarText, SimilarBg, PartsBg,
-        PartOfBg, Stat1, Stat2, Stat3
+        PartOfBg, KanjiExBg, Stat1, Stat2, Stat3
     };
 
     QColor grid;
@@ -46,7 +46,7 @@ struct ColorSettings
     QColor fields;
     QColor dialect;
     QColor kanaonly;
-    QColor kanjiexbg;
+    QColor sentenceword;
     QColor kanjitestpos;
 
     QColor n5;
@@ -64,6 +64,7 @@ struct ColorSettings
     QColor similartext;
     QColor similarbg;
     QColor partsbg;
+    QColor kanjiexbg;
     QColor partofbg;
 
     QColor stat1;
