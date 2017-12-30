@@ -226,19 +226,19 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
 
     int kindex = ui->kanjiView->kanjiIndex();
 
-    ui->sodButton->setChecked(data.sod);
-    ui->sodButton->setEnabled(kindex >= 0);
+    ui->sodButton->setChecked(ZKanji::elements()->size() != 0 && data.sod);
+    ui->sodButton->setEnabled(ZKanji::elements()->size() != 0 && kindex >= 0);
     ui->gridButton->setChecked(data.grid);
     ui->shadowButton->setChecked(data.shadow);
     ui->numberButton->setChecked(data.numbers);
     ui->dirButton->setChecked(data.dir);
     ui->speedSlider->setValue(data.speed);
     ui->simButton->setChecked(data.similar);
-    ui->partsButton->setChecked(data.parts);
-    ui->partofButton->setChecked(data.partof);
+    ui->partsButton->setChecked(ZKanji::elements()->size() != 0 && data.parts);
+    ui->partofButton->setChecked(ZKanji::elements()->size() != 0 && data.partof);
     ui->simButton->setEnabled(kindex < 0 || !data.words);
-    ui->partsButton->setEnabled(kindex < 0 || !data.words);
-    ui->partofButton->setEnabled(kindex < 0 || !data.words);
+    ui->partsButton->setEnabled(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words));
+    ui->partofButton->setEnabled(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words));
     ui->wordsButton->setChecked(data.words);
     ui->wordsButton->setEnabled(kindex >= 0);
     readingFilterButton->setChecked(data.refdict);
@@ -251,8 +251,8 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     ui->kanjiView->setDirection(data.dir);
     ui->sodWidget->setVisible(kindex < 0 || data.sod);
     ui->similarWidget->setVisible((kindex < 0 || !data.words) && data.similar);
-    ui->partsWidget->setVisible((kindex < 0 || !data.words) && data.parts);
-    ui->partofWidget->setVisible((kindex < 0 || !data.words) && data.partof);
+    ui->partsWidget->setVisible(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words) && data.parts);
+    ui->partofWidget->setVisible(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words) && data.partof);
     ui->dictWidget->setVisible(kindex >= 0 && data.words);
 
     ui->kanjiView->setSpeed(data.speed);
@@ -380,7 +380,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
     ui->partsScroller->setDictionary(dict);
     ui->partofScroller->setDictionary(dict);
 
-    ui->countLabel->setText(QStringLiteral("%1").arg(ZKanji::elements()->strokeCount(kindex < 0 ? (-1 - kindex) : k->element, 0), 2, 10, QChar('0')));
+    ui->countLabel->setText(QStringLiteral("%1").arg(ZKanji::elements()->size() != 0 ? ZKanji::elements()->strokeCount(kindex < 0 ? (-1 - kindex) : k->element, 0) : k->strokes, 2, 10, QChar('0')));
 
     std::vector<int> l;
     if (k != nullptr)
@@ -462,18 +462,24 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
         if (ui->wordsButton->isChecked())
             on_wordsButton_clicked(false);
         ui->wordsButton->setEnabled(false);
-        if (!ui->sodButton->isChecked())
-            on_sodButton_clicked(true);
-        ui->sodButton->setEnabled(false);
+        if (ZKanji::elements()->size() != 0)
+        {
+            if (!ui->sodButton->isChecked())
+                on_sodButton_clicked(true);
+            ui->sodButton->setEnabled(false);
+        }
     }
     else if (!ui->wordsButton->isEnabled())
     {
         ui->wordsButton->setEnabled(true);
         if (ui->wordsButton->isChecked())
             on_wordsButton_clicked(true);
-        ui->sodButton->setEnabled(true);
-        if (!ui->sodButton->isChecked())
-            on_sodButton_clicked(false);
+        if (ZKanji::elements()->size() != 0)
+        {
+            ui->sodButton->setEnabled(true);
+            if (!ui->sodButton->isChecked())
+                on_sodButton_clicked(false);
+        }
     }
 
     if (dict != nullptr)
@@ -642,6 +648,9 @@ void KanjiInfoForm::on_endButton_clicked()
 
 void KanjiInfoForm::on_sodButton_clicked(bool checked)
 {
+    if (ZKanji::elements()->size() == 0)
+        return;
+
     ui->kanjiView->setDiagram(checked);
 
     ignoreresize = true;
@@ -825,8 +834,8 @@ void KanjiInfoForm::on_wordsButton_clicked(bool checked)
     ignoreresize = true;
 
     ui->simButton->setEnabled(!checked);
-    ui->partsButton->setEnabled(!checked);
-    ui->partofButton->setEnabled(!checked);
+    ui->partsButton->setEnabled(ZKanji::elements()->size() != 0 && !checked);
+    ui->partofButton->setEnabled(ZKanji::elements()->size() != 0 && !checked);
 
     int h = (!checked && ui->simButton->isChecked()) || ui->similarWidget->isVisible() ? (ui->similarWidget->height() + ui->similarWidget->parentWidget()->layout()->spacing()) : 0;
     h += (!checked && ui->partsButton->isChecked()) || ui->partsWidget->isVisible() ? (ui->partsWidget->height() + ui->partsWidget->parentWidget()->layout()->spacing()) : 0;
@@ -847,8 +856,8 @@ void KanjiInfoForm::on_wordsButton_clicked(bool checked)
         ui->dictWidget->setVisible(false);
 
         ui->similarWidget->setVisible(ui->simButton->isChecked());
-        ui->partsWidget->setVisible(ui->partsButton->isChecked());
-        ui->partofWidget->setVisible(ui->partofButton->isChecked());
+        ui->partsWidget->setVisible(ui->partsButton->isEnabled() && ui->partsButton->isChecked());
+        ui->partofWidget->setVisible(ui->partofButton->isEnabled() && ui->partofButton->isChecked());
 
         ui->splitter->refresh();
         ui->centralwidget->layout()->activate();

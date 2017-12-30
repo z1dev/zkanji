@@ -55,9 +55,10 @@ void ZKanjiDiagram::setKanjiIndex(int newindex)
     partpos = 0;
     partcnt = 0;
     delaycnt = 0;
+    strokepos = 0;
 
     image.reset();
-    if (kindex != INT_MIN)
+    if (kindex != INT_MIN && ZKanji::elements()->size() != 0)
         strokepos = ZKanji::elements()->strokeCount(newindex < 0 ? (-1 - newindex) : ZKanji::kanjis[kindex]->element, 0);
 
     update();
@@ -75,7 +76,7 @@ bool ZKanjiDiagram::strokes() const
 
 void ZKanjiDiagram::setStrokes(bool setshow)
 {
-    if (showstrokes == setshow)
+    if (ZKanji::elements()->size() == 0 || showstrokes == setshow)
         return;
 
     showstrokes = true;
@@ -243,7 +244,7 @@ void ZKanjiDiagram::pause()
 
 void ZKanjiDiagram::stop()
 {
-    if (kindex == INT_MIN)
+    if (kindex == INT_MIN || ZKanji::elements()->size() == 0)
         return;
 
     timer.stop();
