@@ -600,6 +600,10 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidge
     ui->statFrame->setBackgroundRole(QPalette::Base);
     ui->statFrame->setAutoFillBackground(true);
 
+    Settings::updatePalette(ui->statFrame);
+    Settings::updatePalette(ui->itemsIntervalWidget);
+    Settings::updatePalette(ui->forecastIntervalWidget);
+
     if (page == DeckStudyPages::None)
         page = DeckStudyPages::Items;
     showPage(page, true);

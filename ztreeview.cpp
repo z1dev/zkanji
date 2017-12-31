@@ -31,6 +31,8 @@ ZTreeView::ZTreeView(QWidget *parent) : base(parent), alldeselect(false)
     connect(this, &base::collapsed, this, &ZTreeView::indexCollapsed);
     connect(this, &base::expanded, this, &ZTreeView::indexExpanded);
     connect(gUI, &GlobalUI::settingsChanged, this, &ZTreeView::settingsChanged);
+
+    Settings::updatePalette(this);
 }
 
 ZTreeView::~ZTreeView()
