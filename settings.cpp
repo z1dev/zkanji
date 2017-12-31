@@ -1597,6 +1597,14 @@ namespace Settings
         newpal.setColor(QPalette::Inactive, QPalette::Text, textColor(false, ColorSettings::Text));
         newpal.setColor(QPalette::Inactive, QPalette::Highlight, textColor(false, ColorSettings::SelBg));
         newpal.setColor(QPalette::Inactive, QPalette::HighlightedText, textColor(false, ColorSettings::SelText));
+        newpal.setBrush(QPalette::Active, QPalette::Base, textColor(true, ColorSettings::Bg));
+        newpal.setBrush(QPalette::Active, QPalette::Text, textColor(true, ColorSettings::Text));
+        newpal.setBrush(QPalette::Active, QPalette::Highlight, textColor(true, ColorSettings::SelBg));
+        newpal.setBrush(QPalette::Active, QPalette::HighlightedText, textColor(true, ColorSettings::SelText));
+        newpal.setBrush(QPalette::Inactive, QPalette::Base, textColor(false, ColorSettings::Bg));
+        newpal.setBrush(QPalette::Inactive, QPalette::Text, textColor(false, ColorSettings::Text));
+        newpal.setBrush(QPalette::Inactive, QPalette::Highlight, textColor(false, ColorSettings::SelBg));
+        newpal.setBrush(QPalette::Inactive, QPalette::HighlightedText, textColor(false, ColorSettings::SelText));
         w->setPalette(newpal);
     }
 

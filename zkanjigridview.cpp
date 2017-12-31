@@ -982,7 +982,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     QBrush oldbrush = p.brush();
 
     //QPalette::ColorGroup colorgrp = (hasFocus() ? QPalette::Active : QPalette::Inactive);
-    bool focused = hasFocus();
+    bool focused = window()->isActiveWindow();
 
     if (itemmodel == nullptr || itemmodel->empty())
     {
