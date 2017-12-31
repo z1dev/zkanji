@@ -24,7 +24,7 @@ public:
     fontPreviewWidget(QWidget *parent = nullptr);
 
     enum FontStyle { Normal, Bold, Italic, BoldItalic };
-    enum LineSize { Small, Medium, Large };
+    enum LineSize { Small, Medium, Large, VeryLarge };
 
     // Changes the fonts displayed in the preview.
     void setFonts(const QString &kf, const QString &df, const QString &nf, FontStyle nfs, LineSize siz);

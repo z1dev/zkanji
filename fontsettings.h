@@ -12,7 +12,7 @@
 struct FontSettings
 {
     enum FontStyle { Normal, Bold, Italic, BoldItalic };
-    enum LineSize { Small, Medium, Large };
+    enum LineSize { Small, Medium, Large, VeryLarge };
 
     // Kanji in a kanji grid.
     QString kanji;

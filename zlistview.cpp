@@ -799,7 +799,7 @@ void ZListView::setSizeBase(ListSizeBase newbase)
         return;
 
     FontSettings::LineSize siz = sizebase == ListSizeBase::Main ? Settings::fonts.mainsize : Settings::fonts.popsize;
-    verticalHeader()->setDefaultSectionSize(Settings::scaled(siz == FontSettings::Medium ? 19 : siz == FontSettings::Small ? 17 : 24));
+    verticalHeader()->setDefaultSectionSize(Settings::scaled(siz == FontSettings::Medium ? 19 : siz == FontSettings::Small ? 17 : siz == FontSettings::Large ? 24 : 28));
 }
 
 int ZListView::checkBoxColumn() const

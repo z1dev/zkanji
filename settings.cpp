@@ -764,10 +764,10 @@ namespace Settings
         fonts.printinfostyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
 
         val = ini.value("fonts/mainsize", 1).toInt(&ok);
-        if (ok && val >= 0 && val <= 2)
+        if (ok && val >= 0 && val <= 3)
             fonts.mainsize = (FontSettings::LineSize)val;
         val = ini.value("fonts/popsize", 1).toInt(&ok);
-        if (ok && val >= 0 && val <= 2)
+        if (ok && val >= 0 && val <= 3)
             fonts.popsize = (FontSettings::LineSize)val;
 
         // Group settings

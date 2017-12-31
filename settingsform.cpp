@@ -76,7 +76,7 @@ QSize fontPreviewWidget::sizeHint() const
 
     // When measuring the size hint, the size is always the maximum so the widget doesn't grow
     // or shrink when the line size changes.
-    int linesiz = 24 + 1;
+    int linesiz = 28 + 1;
 
     QFont kf = QApplication::font();
     kf.setPixelSize(Settings::scaled(linesiz * kanjiRowSize));
@@ -109,7 +109,7 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
     QString str = toKana(QString("hiraganaKATAKANA"), true) + QChar(0x611f) + QChar(0x3058) + QChar(0x5e79) + QChar(0x4e8b) + QChar(0x6f22) + QChar(0x5b57) + QChar(0x76e3) + QChar(0x4e8b) + QChar(0x5b8c) + QChar(0x6cbb);
 
     // Size the text would take up in a dictionary listing.
-    int linesiz = (sizes == FontSettings::Medium ? 19 : sizes == FontSettings::Small ? 17 : 24) - 1;
+    int linesiz = (sizes == FontSettings::Medium ? 19 : sizes == FontSettings::Small ? 17 : sizes == FontSettings::Large ? 24 : 28) - 1;
     // Available space for the kanji line.
     int rowsiz = r.height() * (kanjiRowSize / (kanjiRowSize + defRowSize));
 
