@@ -85,6 +85,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     //ui->kanjiView->setMinimumHeight(ui->playbackLayout->sizeHint().width());
     ui->kanjiView->setMinimumHeight(restrictedWidgetSize(ui->infoText, 32));
 
+    Settings::updatePalette(ui->infoText);
+
 
     QFont radf = Settings::radicalFont();
     radf.setPointSize(10);

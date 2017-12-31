@@ -10,6 +10,7 @@
 #include <QPalette>
 #include <QStyle>
 #include <QStyleOptionViewItem>
+#include <QWindow>
 
 #include <cmath>
 
@@ -31,10 +32,11 @@ const double partcountdiv = 75.0;
 ZKanjiDiagram::ZKanjiDiagram(QWidget *parent) : base(parent), kindex(INT_MIN), showstrokes(false), showradical(false), showdiagram(true), showgrid(false),
         showshadow(false), shownumbers(false), showdir(false), drawspeed(3), strokepos(0), partcnt(0), partpos(0), delaycnt(0), drawnpos(0)
 {
-    setAttribute(Qt::WA_OpaquePaintEvent);
     setAutoFillBackground(false);
-    //setBackgroundRole(QPalette::Base);
+    setAttribute(Qt::WA_OpaquePaintEvent);
 
+    //connect(qApp, &QGuiApplication::applicationStateChanged, this, &ZKanjiDiagram::appStateChanged);
+    connect(qApp, &QGuiApplication::focusWindowChanged, this, &ZKanjiDiagram::appStateChanged);
     connect(gUI, &GlobalUI::settingsChanged, this, &ZKanjiDiagram::settingsChanged);
 }
 
@@ -1004,6 +1006,17 @@ void ZKanjiDiagram::drawNumberRect(QPainter &p, int strokeix, bool numdraw)
 void ZKanjiDiagram::settingsChanged()
 {
     numrects.clear();
+    image.reset();
+    stroke.reset();
+
+    update();
+}
+
+void ZKanjiDiagram::appStateChanged()
+{
+    image.reset();
+    stroke.reset();
+
     update();
 }
 

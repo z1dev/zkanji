@@ -70,6 +70,9 @@ protected:
     virtual bool event(QEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;
     virtual void paintEvent(QPaintEvent *e) override;
+private slots:
+    void settingsChanged();
+    void appStateChanged();
 private:
     // Paints the missing strokes to image, creating or clearing it if
     // neccesary.
@@ -82,8 +85,6 @@ private:
     // Draws the filled rectangle of the stroke number indicator or the number itself. Set
     // numberdrawing to true to draw the number only and false to draw the rectangle only.
     void drawNumberRect(QPainter &p, int strokeix, bool numberdrawing);
-
-    void settingsChanged();
 
     // Index of the displayed kanji.
     int kindex;
