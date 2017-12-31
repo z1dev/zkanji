@@ -283,7 +283,7 @@ void ZItemScroller::paintEvent(QPaintEvent *e)
     }
 
     QColor bg = m->bgColor(-1);
-    p.fillRect(QRect(left, r.top(), r.width() - (left - r.left()) + 1, r.height()), bg.isValid() ? bg : Settings::textColor(hasFocus(), ColorSettings::Bg));
+    p.fillRect(QRect(left, r.top(), r.width() - (left - r.left()) + 1, r.height()), bg.isValid() ? bg : Settings::textColor(isActiveWindow(), ColorSettings::Bg));
 }
 
 //void ZItemScroller::resizeEvent(QResizeEvent *e)
@@ -615,22 +615,24 @@ void ZItemScroller::paintCell(QPainter &p, const QRect &rect, bool selected, int
     QColor bg = m->bgColor(index);
     QColor col = m->textColor(index);
 
+    bool drawactive = isActiveWindow();
+
     if (selected)
     {
-        QColor c = Settings::textColor(hasFocus(), ColorSettings::SelBg);
+        QColor c = Settings::textColor(drawactive, ColorSettings::SelBg);
 
-        p.setBrush(!bg.isValid() ? c : colorFromBase(Settings::textColor(hasFocus(), ColorSettings::Bg), c, bg));
-        c = Settings::textColor(hasFocus(), ColorSettings::SelText);
-        p.setPen(!col.isValid() ? c : colorFromBase(Settings::textColor(hasFocus(), ColorSettings::Text), c, col));
+        p.setBrush(!bg.isValid() ? c : colorFromBase(Settings::textColor(drawactive, ColorSettings::Bg), c, bg));
+        c = Settings::textColor(drawactive, ColorSettings::SelText);
+        p.setPen(!col.isValid() ? c : colorFromBase(Settings::textColor(drawactive, ColorSettings::Text), c, col));
     }
     else
     {
-        p.setBrush(bg.isValid() ? bg : Settings::textColor(hasFocus(), ColorSettings::Bg));
-        p.setPen(col.isValid() ? col : Settings::textColor(hasFocus(), ColorSettings::Text));
+        p.setBrush(bg.isValid() ? bg : Settings::textColor(drawactive, ColorSettings::Bg));
+        p.setPen(col.isValid() ? col : Settings::textColor(drawactive, ColorSettings::Text));
     }
 
     if (ch.unicode() == 0)
-        p.setBrush(colorFromBase(Settings::textColor(hasFocus(), ColorSettings::Bg), p.brush().color(), Settings::uiColor(ColorSettings::KanjiUnsorted)));
+        p.setBrush(colorFromBase(Settings::textColor(drawactive, ColorSettings::Bg), p.brush().color(), Settings::uiColor(ColorSettings::KanjiUnsorted)));
 
     p.fillRect(rect, p.brush());
 

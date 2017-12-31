@@ -11,6 +11,8 @@
 #include <QStyleOption>
 #include "zscrollarea.h"
 #include "zevents.h"
+#include "colorsettings.h"
+#include "zui.h"
 
 struct ScrollAreaScrolledEvent : public EventTBase<ScrollAreaScrolledEvent>
 {
@@ -30,6 +32,7 @@ ZScrollArea::ZScrollArea(QWidget *parent) : base(parent), widget(/*new QFrame(th
 {
     setAttribute(Qt::WA_NoMousePropagation);
     setAttribute(Qt::WA_MouseTracking);
+    setAttribute(Qt::WA_OpaquePaintEvent);
 
     setFrameShape(QFrame::StyledPanel);
     //widget->setFrameShape(QFrame::StyledPanel);
@@ -116,6 +119,7 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
 
     QRect r = rect();
     QPalette pal = qApp->palette();
+    bool wndactive = isActiveWindow();
 
     if (type == Buttons)
     {
@@ -129,10 +133,11 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
         opt.activeSubControls = QStyle::SC_None;
         opt.toolButtonStyle = Qt::ToolButtonIconOnly;
 
-        QPalette::ColorGroup grp = scrollpos != scrollMin() ? QPalette::Active : QPalette::Disabled;
+        QPalette::ColorGroup grp = scrollpos == scrollMin() ? QPalette::Disabled : isActiveWindow() ? QPalette::Active : QPalette::Inactive;
         QColor textcol = pal.color(grp, QPalette::Text);
         if (ori == Horizontal)
         {
+            painter.fillRect(QRect(r.left(), r.top(), scrollsize, r.height()), pal.color(isActiveWindow() ? QPalette::Active : QPalette::Inactive, QPalette::Window));
             if (grp != QPalette::Disabled && hovering && dragpos < scrollsize)
             {
                 opt.rect = QRect(r.left(), r.top(), scrollsize, r.height());
@@ -146,6 +151,7 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
             grp = scrollpos < scrollMax() - scrollPage() ? QPalette::Active : QPalette::Disabled;
             textcol = pal.color(grp, QPalette::Text);
 
+            painter.fillRect(QRect(r.left() + r.width() - scrollsize, r.top(), scrollsize, r.height()), pal.color(isActiveWindow() ? QPalette::Active : QPalette::Inactive, QPalette::Window));
             if (grp != QPalette::Disabled && hovering && dragpos >= scrollsize)
             {
                 opt.rect = QRect(r.left() + r.width() - scrollsize, r.top(), scrollsize, r.height());
@@ -158,6 +164,7 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
         }
         else
         {
+            painter.fillRect(QRect(r.left(), r.top(), r.width(), scrollsize), pal.color(isActiveWindow() ? QPalette::Active : QPalette::Inactive, QPalette::Window));
             if (grp != QPalette::Disabled && hovering && dragpos < scrollsize)
             {
                 opt.rect = QRect(r.left(), r.top(), r.width(), scrollsize);
@@ -171,6 +178,7 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
             grp = scrollpos < scrollMax() - scrollPage() ? QPalette::Active : QPalette::Disabled;
             textcol = pal.color(grp, QPalette::Text);
 
+            painter.fillRect(QRect(r.left(), r.top() + r.height() - scrollsize, r.width(), scrollsize), pal.color(isActiveWindow() ? QPalette::Active : QPalette::Inactive, QPalette::Window));
             if (grp != QPalette::Disabled && hovering && dragpos >= scrollsize)
             {
                 opt.rect = QRect(r.left(), r.top() + r.height() - scrollsize, r.width(), scrollsize);
@@ -189,17 +197,22 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
     r.adjust(mleft, mtop, -mright, -mbottom);
 
     std::pair<int, int> p = scrollPositions(r);
+    QColor bgcol = Settings::textColor(wndactive, ColorSettings::ScrollBg);
+    QColor sbcol = Settings::textColor(wndactive, ColorSettings::ScrollHandle);
+    if (!dragging && !hovering)
+        sbcol = mixColors(bgcol, sbcol, 0.4);
+
     if (ori == Horizontal)
     {
-        painter.fillRect(r.left(), r.top() + r.height() - scrollsize, p.first, scrollsize, pal.base());
-        painter.fillRect(r.left() + p.first, r.top() + r.height() - scrollsize, p.second - p.first, scrollsize, pal.brush(dragging | hovering ? QPalette::Shadow : QPalette::Mid));
-        painter.fillRect(r.left() + p.second, r.top() + r.height() - scrollsize, r.width() - p.second, scrollsize, pal.base());
+        painter.fillRect(r.left(), r.top() + r.height() - scrollsize, p.first, scrollsize, bgcol);
+        painter.fillRect(r.left() + p.first, r.top() + r.height() - scrollsize, p.second - p.first, scrollsize, sbcol);
+        painter.fillRect(r.left() + p.second, r.top() + r.height() - scrollsize, r.width() - p.second, scrollsize, bgcol);
     }
     else
     {
-        painter.fillRect(r.left() + r.width() - scrollsize, r.top(), scrollsize, p.first, pal.base());
-        painter.fillRect(r.left() + r.width() - scrollsize, r.top() + p.first, scrollsize, p.second - p.first, pal.brush(dragging | hovering ? QPalette::Shadow : QPalette::Mid));
-        painter.fillRect(r.left() + r.width() - scrollsize, r.top() + p.second, scrollsize, r.height() - p.second, pal.base());
+        painter.fillRect(r.left() + r.width() - scrollsize, r.top(), scrollsize, p.first, bgcol);
+        painter.fillRect(r.left() + r.width() - scrollsize, r.top() + p.first, scrollsize, p.second - p.first, sbcol);
+        painter.fillRect(r.left() + r.width() - scrollsize, r.top() + p.second, scrollsize, r.height() - p.second, bgcol);
     }
 }
 

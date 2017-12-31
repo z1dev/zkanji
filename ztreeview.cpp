@@ -19,6 +19,9 @@
 #include "zkanjigridview.h"
 #include "zkanjigridmodel.h"
 #include "zdictionarylistview.h"
+#include "globalui.h"
+#include "settings.h"
+#include "colorsettings.h"
 
 //-------------------------------------------------------------
 
@@ -27,6 +30,7 @@ ZTreeView::ZTreeView(QWidget *parent) : base(parent), alldeselect(false)
 {
     connect(this, &base::collapsed, this, &ZTreeView::indexCollapsed);
     connect(this, &base::expanded, this, &ZTreeView::indexExpanded);
+    connect(gUI, &GlobalUI::settingsChanged, this, &ZTreeView::settingsChanged);
 }
 
 ZTreeView::~ZTreeView()
@@ -136,6 +140,11 @@ void ZTreeView::edit(TreeItem *item)
 void ZTreeView::setCurrentItem(TreeItem *item)
 {
     setCurrentIndex(model()->index(item));
+}
+
+void ZTreeView::settingsChanged()
+{
+    Settings::updatePalette(this);
 }
 
 void ZTreeView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
@@ -694,7 +703,8 @@ void GroupTreeView::dragEnterEvent(QDragEnterEvent *e)
         e->accept();
 
         // Preventing hovered items to repaint with a default hover selection background.
-        setStyleSheet("QTreeView::item:!selected:hover { background: transparent; } QTreeView::item:selected { background: transparent; color: palette(text); }");
+        setStyleSheet(QString("QTreeView::item:!selected:hover { background: transparent; } QTreeView::item:active:selected { background: transparent; color: %1; } QTreeView::item:!active:selected { background: transparent; color: %2; }").arg(Settings::textColor(true, ColorSettings::Text).name()).arg(Settings::textColor(false, ColorSettings::Text).name()));
+        Settings::updatePalette(this);
     }
     else if (((format == Kanji && model()->groupType() == GroupTypes::Kanji) || (format == Words && model()->groupType() == GroupTypes::Words)) &&
         ((e->possibleActions() & Qt::MoveAction) == Qt::MoveAction || (e->possibleActions() & Qt::CopyAction) == Qt::CopyAction))
@@ -736,6 +746,7 @@ void GroupTreeView::dragLeaveEvent(QDragLeaveEvent *e)
 
     // Restoring style sheet to hover items again, that was disabled in dragEnterEvent.
     setStyleSheet("");
+    Settings::updatePalette(this);
 
     base::dragLeaveEvent(e);
 }
@@ -979,12 +990,16 @@ void GroupTreeView::dragMoveEvent(QDragMoveEvent *e)
             if (dragpos == DragPos::Inside)
             {
                 // Hovering over a category item which will be the destination of the drop action.
-                setStyleSheet("QTreeView::item:selected { background: transparent; color: palette(text); }");
+                setStyleSheet(QString("QTreeView::item:active:selected { background: transparent; color: %1; } QTreeView::item:!active:selected { background: transparent; color: %2; }").arg(Settings::textColor(true, ColorSettings::Text).name()).arg(Settings::textColor(false, ColorSettings::Text).name()));
+                //setStyleSheet("QTreeView::item:selected { background: transparent; color: palette(text); }");
+                Settings::updatePalette(this);
                 viewport()->update(visualRect(dragdest));
             }
             else if (olddragpos == DragPos::Inside)
             {
-                setStyleSheet("QTreeView::item:!selected:hover { background: transparent; } QTreeView::item:selected { background: transparent; color: palette(text); }");
+                setStyleSheet(QString("QTreeView::item:!selected:hover { background: transparent; } QTreeView::item:active:selected { background: transparent; color: %1; } QTreeView::item:!active:selected { background: transparent; color: %2; }").arg(Settings::textColor(true, ColorSettings::Text).name()).arg(Settings::textColor(false, ColorSettings::Text).name()));
+                //setStyleSheet("QTreeView::item:!selected:hover { background: transparent; } QTreeView::item:selected { background: transparent; color: palette(text); }");
+                Settings::updatePalette(this);
                 viewport()->update(visualRect(olddragdest));
             }
         }
@@ -1076,6 +1091,7 @@ void GroupTreeView::dropEvent(QDropEvent *e)
 
             // Restoring style sheet to hover items again, that was disabled in dragEnterEvent.
             setStyleSheet("");
+            Settings::updatePalette(this);
 
             int row = dragpos == DragPos::Inside ? -1 : dragpos == DragPos::Before ? dragdest->row() : dragdest->row() + 1;
 
@@ -1149,7 +1165,7 @@ void GroupTreeView::paintEvent(QPaintEvent *e)
 
     // Painting over the default implementation while dragging, to show the drop position.
     QPainter p(viewport());
-    QColor hicol = qApp->palette().color(QPalette::Highlight);
+    QColor hicol = Settings::textColor(ColorSettings::SelBg); //qApp->palette().color(QPalette::Highlight);
     p.fillRect(indrect, hicol);
 }
 

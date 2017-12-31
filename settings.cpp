@@ -227,6 +227,10 @@ namespace Settings
         ini.setValue("colors/texti", colors.texti);
         ini.setValue("colors/selbgi", colors.selbgi);
         ini.setValue("colors/seltexti", colors.seltexti);
+        ini.setValue("colors/scrollbg", colors.scrollbg);
+        ini.setValue("colors/scrollh", colors.scrollh);
+        ini.setValue("colors/scrollbgi", colors.scrollbgi);
+        ini.setValue("colors/scrollhi", colors.scrollhi);
         ini.setValue("colors/grid", colors.grid);
         ini.setValue("colors/studycorrect", colors.studycorrect);
         ini.setValue("colors/studywrong", colors.studywrong);
@@ -856,6 +860,12 @@ namespace Settings
         colors.texti = ini.value("colors/texti").value<QColor>();
         colors.selbgi = ini.value("colors/selbgi").value<QColor>();
         colors.seltexti = ini.value("colors/seltexti").value<QColor>();
+
+        colors.scrollbg = ini.value("colors/scrollbg").value<QColor>();
+        colors.scrollh = ini.value("colors/scrollh").value<QColor>();
+        colors.scrollbgi = ini.value("colors/scrollbgi").value<QColor>();
+        colors.scrollhi = ini.value("colors/scrollhi").value<QColor>();
+
         colors.grid = ini.value("colors/grid").value<QColor>();
         colors.studycorrect = ini.value("colors/studycorrect").value<QColor>();
         colors.studywrong = ini.value("colors/studywrong").value<QColor>();
@@ -1324,7 +1334,7 @@ namespace Settings
         return QFont{ !Settings::print.dictfonts ? Settings::fonts.printinfo : Settings::fonts.info, 120, Settings::print.dictfonts ? false : Settings::fonts.printinfostyle == FontSettings::Bold || Settings::fonts.printinfostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::print.dictfonts ? true : Settings::fonts.printinfostyle == FontSettings::Italic || Settings::fonts.printinfostyle == FontSettings::BoldItalic };
     }
 
-    QColor textColor(const QPalette &pal, bool active, ColorSettings::TextColorTypes type)
+    QColor textColor(const QPalette &pal, bool active, ColorSettings::SystemColorTypes type)
     {
         switch (type)
         {
@@ -1344,17 +1354,29 @@ namespace Settings
             if ((active && colors.seltext.isValid()) || (!active && colors.seltexti.isValid()))
                 return active ? colors.seltext : colors.seltexti;
             return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::HighlightedText);
+
+        // TODO: instead of using default background and text colors for the scrollbars, check
+        // the system defaults. This is currently not available in Qt.
+        case ColorSettings::ScrollBg:
+            if ((active && colors.scrollbg.isValid()) || (!active && colors.scrollbgi.isValid()))
+                return active ? colors.scrollbg : colors.scrollbgi;
+            return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::Base);
+        case ColorSettings::ScrollHandle:
+            if ((active && colors.scrollh.isValid()) || (!active && colors.scrollhi.isValid()))
+                return active ? colors.scrollh : colors.scrollhi;
+            return pal.color(active ? QPalette::Active : QPalette::Inactive, QPalette::Text);
+
         default:
             return QColor();
         }
     }
 
-    QColor textColor(bool active, ColorSettings::TextColorTypes type)
+    QColor textColor(bool active, ColorSettings::SystemColorTypes type)
     {
         return textColor(qApp->palette(), active, type);
     }
 
-    QColor textColor(ColorSettings::TextColorTypes type)
+    QColor textColor(ColorSettings::SystemColorTypes type)
     {
         return textColor(qApp->palette(), true, type);
     }
@@ -1606,6 +1628,13 @@ namespace Settings
         newpal.setBrush(QPalette::Inactive, QPalette::Highlight, textColor(false, ColorSettings::SelBg));
         newpal.setBrush(QPalette::Inactive, QPalette::HighlightedText, textColor(false, ColorSettings::SelText));
         w->setPalette(newpal);
+
+        QList<QWidget*> ws = w->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
+        for (QWidget *ww : ws)
+            updatePalette(ww);
+        //QAbstractScrollArea *sw = dynamic_cast<QAbstractScrollArea*>(w);
+        //if (sw != nullptr && sw->viewport() != nullptr)
+        //    updatePalette(sw->viewport());
     }
 
     double scaling()

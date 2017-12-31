@@ -56,6 +56,8 @@ public slots:
     void edit(TreeItem *item);
     // Selects the item and deselects everything else.
     void setCurrentItem(TreeItem *item);
+    // Called when system settings were changed by the user or on startup.
+    void settingsChanged();
 protected slots:
     //void currentChanged(const QModelIndex &current, const QModelIndex &previous);
     virtual void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;

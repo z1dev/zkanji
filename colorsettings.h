@@ -12,7 +12,7 @@
 
 struct ColorSettings
 {
-    enum TextColorTypes { Bg, Text, SelBg, SelText };
+    enum SystemColorTypes { Bg, Text, SelBg, SelText, ScrollBg, ScrollHandle };
 
     QColor bg;
     QColor text;
@@ -22,6 +22,10 @@ struct ColorSettings
     QColor texti;
     QColor selbgi;
     QColor seltexti;
+    QColor scrollbg;
+    QColor scrollbgi;
+    QColor scrollh;
+    QColor scrollhi;
 
     enum UIColorTypes {
         Grid, StudyCorrect, StudyWrong, StudyNew,
@@ -82,16 +86,17 @@ namespace Settings
 {
     extern ColorSettings colors;
 
-    // Returns the color selected in the settings for the text and backgrounds.
-    QColor textColor(const QPalette &pal, bool active, ColorSettings::TextColorTypes type);
+    // Returns the color selected in the settings for elements with active/inactive state,
+    // like the text and backgrounds.
+    QColor textColor(const QPalette &pal, bool active, ColorSettings::SystemColorTypes type);
 
-    // Returns the color selected in the settings for the text and backgrounds using the
-    // application palette.
-    QColor textColor(bool active, ColorSettings::TextColorTypes type);
+    // Returns the color selected in the settings for elements with active/inactive state,
+    // like the text and backgrounds, using the application palette.
+    QColor textColor(bool active, ColorSettings::SystemColorTypes type);
 
-    // Returns the color selected in the settings for the text and backgrounds using the
-    // application palette for active widgets.
-    QColor textColor(ColorSettings::TextColorTypes type);
+    // Returns the color selected in the settings for elements with active/inactive state,
+    // like the text and backgrounds, using the application palette for active widgets.
+    QColor textColor(ColorSettings::SystemColorTypes type);
 
     // Returns the color selected in the settings for a UI element. If the user did not set a
     // color for something, the default color matching the current color theme is returned.

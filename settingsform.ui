@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>10</number>
+             <number>9</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -3182,6 +3182,22 @@
                 </property>
                </widget>
               </item>
+              <item row="9" column="1">
+               <spacer name="verticalSpacer_33">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>13</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="10" column="0">
                <widget class="QLabel" name="label_60">
                 <property name="text">
@@ -3199,8 +3215,8 @@
                 </property>
                </widget>
               </item>
-              <item row="9" column="1">
-               <spacer name="verticalSpacer_33">
+              <item row="11" column="1">
+               <spacer name="verticalSpacer_34">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -3209,11 +3225,79 @@
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>20</width>
+                  <width>13</width>
                   <height>13</height>
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_143">
+                <property name="text">
+                 <string>Small scrollbar bg.:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="1">
+               <widget class="ZColorComboBox" name="colScrollBgCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="0">
+               <widget class="QLabel" name="label_145">
+                <property name="text">
+                 <string>Inactive small scrollbar bg.:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="1">
+               <widget class="ZColorComboBox" name="coliScrollBgCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="0">
+               <widget class="QLabel" name="label_144">
+                <property name="text">
+                 <string>Small scrollbar handle:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="1">
+               <widget class="ZColorComboBox" name="colScrollCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="0">
+               <widget class="QLabel" name="label_146">
+                <property name="text">
+                 <string>Inactive small scrollbar handle:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="1">
+               <widget class="ZColorComboBox" name="coliScrollCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -5421,7 +5505,6 @@
   <tabstop>coliSelBgCBox</tabstop>
   <tabstop>colSelTextCBox</tabstop>
   <tabstop>coliSelTextCBox</tabstop>
-  <tabstop>colGridCBox</tabstop>
   <tabstop>colInfCBox</tabstop>
   <tabstop>colAttribCBox</tabstop>
   <tabstop>colTypeCBox</tabstop>
@@ -5505,7 +5588,7 @@
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

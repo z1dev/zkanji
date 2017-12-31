@@ -336,14 +336,19 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     //ui->colGridCBox->setDefaultColor(static_cast<QRgb>(qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &gridopt, ui->sitesTable)));
     ui->colGridCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Grid));
 
-    ui->colBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
-    ui->colTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Text));
-    ui->colSelBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Highlight));
-    ui->colSelTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::HighlightedText));
-    ui->coliBgCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Base));
-    ui->coliTextCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
-    ui->coliSelBgCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Highlight));
-    ui->coliSelTextCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::HighlightedText));
+    ui->colBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base));
+    ui->colTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Text));
+    ui->colSelBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Highlight));
+    ui->colSelTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::HighlightedText));
+    ui->coliBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Base));
+    ui->coliTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Text));
+    ui->coliSelBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Highlight));
+    ui->coliSelTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::HighlightedText));
+
+    ui->colScrollBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base));
+    ui->colScrollCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Text));
+    ui->coliScrollBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base));
+    ui->coliScrollCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Text));
 
     ui->colStudyCorrectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyCorrect));
     ui->colStudyWrongCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyWrong));
@@ -583,7 +588,6 @@ void SettingsForm::reset()
     ui->kanjiSizeCBox->setCurrentText(QString::number(Settings::fonts.kanjifontsize));
     on_kanjiSizeCBox_currentIndexChanged(ui->kanjiSizeCBox->currentIndex());
 
-    ui->colGridCBox->setCurrentColor(Settings::colors.grid);
     ui->colBgCBox->setCurrentColor(Settings::colors.bg);
     ui->colTextCBox->setCurrentColor(Settings::colors.text);
     ui->colSelBgCBox->setCurrentColor(Settings::colors.selbg);
@@ -592,6 +596,13 @@ void SettingsForm::reset()
     ui->coliTextCBox->setCurrentColor(Settings::colors.texti);
     ui->coliSelBgCBox->setCurrentColor(Settings::colors.selbgi);
     ui->coliSelTextCBox->setCurrentColor(Settings::colors.seltexti);
+
+    ui->colGridCBox->setCurrentColor(Settings::colors.grid);
+
+    ui->colScrollBgCBox->setCurrentColor(Settings::colors.scrollbg);
+    ui->colScrollCBox->setCurrentColor(Settings::colors.scrollh);
+    ui->coliScrollBgCBox->setCurrentColor(Settings::colors.scrollbgi);
+    ui->coliScrollCBox->setCurrentColor(Settings::colors.scrollhi);
 
     ui->colStudyCorrectCBox->setCurrentColor(Settings::colors.studycorrect);
     ui->colStudyWrongCBox->setCurrentColor(Settings::colors.studywrong);
@@ -867,6 +878,11 @@ void SettingsForm::applyClicked()
     Settings::colors.texti = ui->coliTextCBox->currentColor();
     Settings::colors.selbgi = ui->coliSelBgCBox->currentColor();
     Settings::colors.seltexti = ui->coliSelTextCBox->currentColor();
+
+    Settings::colors.scrollbg = ui->colScrollBgCBox->currentColor();
+    Settings::colors.scrollh = ui->colScrollCBox->currentColor();
+    Settings::colors.scrollbgi = ui->coliScrollBgCBox->currentColor();
+    Settings::colors.scrollhi = ui->coliScrollCBox->currentColor();
 
     Settings::colors.studycorrect = ui->colStudyCorrectCBox->currentColor();
     Settings::colors.studywrong = ui->colStudyWrongCBox->currentColor();
@@ -1270,7 +1286,7 @@ bool SettingsForm::eventFilter(QObject *o, QEvent *e)
         r.adjust(mleft, mtop, -mright, -mbottom);
         QStylePainter p(ui->kanjiPreview);
 
-        p.fillRect(r, Settings::textColor(ui->kanjiPreview->hasFocus(), ColorSettings::TextColorTypes::Bg));
+        p.fillRect(r, Settings::textColor(ui->kanjiPreview->hasFocus(), ColorSettings::SystemColorTypes::Bg));
 
         QFont kfont = { ui->kanjiFontCBox->currentText(), Settings::scaled(ui->kanjiSizeCBox->currentText().toInt()) };
         if (ui->kanjiAliasBox->isChecked())
