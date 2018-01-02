@@ -126,15 +126,18 @@ CandidateKanjiScrollerModel::~CandidateKanjiScrollerModel()
 
 QColor CandidateKanjiScrollerModel::bgColor(int index) const
 {
-    int val = items(index);
+    if (index != -1)
+    {
+        int val = items(index);
 
-    QChar ch = val < 0 ? ZKanji::elements()->itemUnicode(-val - 1) : ZKanji::kanjis[val]->ch;
+        QChar ch = val < 0 ? ZKanji::elements()->itemUnicode(-val - 1) : ZKanji::kanjis[val]->ch;
 
-    if (HIRAGANA(ch.unicode()))
-        return Settings::uiColor(ColorSettings::HiraBg);
-    else if (!KANJI(ch.unicode()))
-        return Settings::uiColor(ColorSettings::KataBg);
-    
+        if (HIRAGANA(ch.unicode()))
+            return Settings::uiColor(ColorSettings::HiraBg);
+        else if (!KANJI(ch.unicode()))
+            return Settings::uiColor(ColorSettings::KataBg);
+    }
+
     return base::bgColor(index);
 }
 
