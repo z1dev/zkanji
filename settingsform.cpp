@@ -379,10 +379,10 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
 
     ui->bgKataCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KataBg));
     ui->bgHiraCBox->setDefaultColor(Settings::defUiColor(ColorSettings::HiraBg));
-    ui->bgSimilarCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SimilarBg));
     ui->textSimilarCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SimilarText));
-    ui->bgPartsCBox->setDefaultColor(Settings::defUiColor(ColorSettings::PartsBg));
-    ui->bgPartOfCBox->setDefaultColor(Settings::defUiColor(ColorSettings::PartOfBg));
+    //ui->bgSimilarCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::SimilarBg)*/);
+    //ui->bgPartsCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::PartsBg)*/);
+    //ui->bgPartOfCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::PartOfBg)*/);
 
     ui->colStat1CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat1));
     ui->colStat2CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat2));
@@ -543,10 +543,10 @@ void SettingsForm::reset()
 
     ui->bgKataCBox->setCurrentColor(Settings::colors.katabg);
     ui->bgHiraCBox->setCurrentColor(Settings::colors.hirabg);
-    ui->bgSimilarCBox->setCurrentColor(Settings::colors.similarbg);
     ui->textSimilarCBox->setCurrentColor(Settings::colors.similartext);
-    ui->bgPartsCBox->setCurrentColor(Settings::colors.partsbg);
-    ui->bgPartOfCBox->setCurrentColor(Settings::colors.partofbg);
+    //ui->bgSimilarCBox->setCurrentColor(Settings::colors.similarbg);
+    //ui->bgPartsCBox->setCurrentColor(Settings::colors.partsbg);
+    //ui->bgPartOfCBox->setCurrentColor(Settings::colors.partofbg);
 
     ui->colStat1CBox->setCurrentColor(Settings::colors.stat1);
     ui->colStat2CBox->setCurrentColor(Settings::colors.stat2);
@@ -794,10 +794,10 @@ void SettingsForm::applyClicked()
 
     Settings::colors.katabg = ui->bgKataCBox->currentColor();
     Settings::colors.hirabg = ui->bgHiraCBox->currentColor();
-    Settings::colors.similarbg = ui->bgSimilarCBox->currentColor();
     Settings::colors.similartext = ui->textSimilarCBox->currentColor();
-    Settings::colors.partsbg = ui->bgPartsCBox->currentColor();
-    Settings::colors.partofbg = ui->bgPartOfCBox->currentColor();
+    //Settings::colors.similarbg = ui->bgSimilarCBox->currentColor();
+    //Settings::colors.partsbg = ui->bgPartsCBox->currentColor();
+    //Settings::colors.partofbg = ui->bgPartOfCBox->currentColor();
 
     Settings::colors.stat1 = ui->colStat1CBox->currentColor();
     Settings::colors.stat2 = ui->colStat2CBox->currentColor();
@@ -1017,7 +1017,7 @@ void SettingsForm::on_jlptBox_toggled()
 
 void SettingsForm::on_okuColorBox_toggled()
 {
-    //ui->okuColorLabel->setEnabled(ui->okuColorBox->isChecked());
+    ui->okuColorLabel->setEnabled(ui->okuColorBox->isChecked());
     ui->colOkuCBox->setEnabled(ui->okuColorBox->isChecked());
 }
 

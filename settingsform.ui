@@ -3666,20 +3666,7 @@
                 </property>
                </spacer>
               </item>
-              <item row="4" column="0">
-               <widget class="QCheckBox" name="okuColorBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Use okurigana color:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
+              <item row="5" column="1">
                <widget class="ZColorComboBox" name="colOkuCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3689,7 +3676,7 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
+              <item row="6" column="1">
                <spacer name="verticalSpacer_26">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -3705,21 +3692,21 @@
                 </property>
                </spacer>
               </item>
-              <item row="6" column="0" colspan="2">
+              <item row="7" column="0" colspan="2">
                <widget class="QLabel" name="label_111">
                 <property name="text">
                  <string>Kanji writing recognizer results:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="0">
+              <item row="8" column="0">
                <widget class="QLabel" name="label_85">
                 <property name="text">
                  <string>Katakana background:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="8" column="1">
                <widget class="ZColorComboBox" name="bgKataCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3729,14 +3716,14 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
+              <item row="9" column="0">
                <widget class="QLabel" name="label_116">
                 <property name="text">
                  <string>Hiragana background:</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
+              <item row="9" column="1">
                <widget class="ZColorComboBox" name="bgHiraCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3746,7 +3733,7 @@
                 </property>
                </widget>
               </item>
-              <item row="9" column="1">
+              <item row="10" column="1">
                <spacer name="verticalSpacer_28">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -3762,21 +3749,21 @@
                 </property>
                </spacer>
               </item>
-              <item row="10" column="0" colspan="2">
+              <item row="11" column="0" colspan="2">
                <widget class="QLabel" name="label_124">
                 <property name="text">
                  <string>Kanji information:</string>
                 </property>
                </widget>
               </item>
-              <item row="11" column="0">
+              <item row="12" column="0">
                <widget class="QLabel" name="label_128">
                 <property name="text">
                  <string>Similar grapheme text:</string>
                 </property>
                </widget>
               </item>
-              <item row="11" column="1">
+              <item row="12" column="1">
                <widget class="ZColorComboBox" name="textSimilarCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3786,65 +3773,14 @@
                 </property>
                </widget>
               </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_125">
-                <property name="text">
-                 <string>Similar kanji bg.:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="1">
-               <widget class="ZColorComboBox" name="bgSimilarCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
               <item row="13" column="0">
-               <widget class="QLabel" name="label_126">
-                <property name="text">
-                 <string>Kanji parts bg.:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="1">
-               <widget class="ZColorComboBox" name="bgPartsCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="0">
-               <widget class="QLabel" name="label_127">
-                <property name="text">
-                 <string>Part of other kanji bg.:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="1">
-               <widget class="ZColorComboBox" name="bgPartOfCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="15" column="0">
                <widget class="QLabel" name="label_42">
                 <property name="text">
                  <string>Example word bg.:</string>
                 </property>
                </widget>
               </item>
-              <item row="15" column="1">
+              <item row="13" column="1">
                <widget class="ZColorComboBox" name="colKanjiExCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3854,20 +3790,40 @@
                 </property>
                </widget>
               </item>
-              <item row="16" column="0">
+              <item row="14" column="0">
                <widget class="QLabel" name="label_142">
                 <property name="text">
                  <string>Stroke starting dot:</string>
                 </property>
                </widget>
               </item>
-              <item row="16" column="1">
+              <item row="14" column="1">
                <widget class="ZColorComboBox" name="colStrokeDotCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0" colspan="2">
+               <widget class="QCheckBox" name="okuColorBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Color okurigana in kun readings</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="okuColorLabel">
+                <property name="text">
+                 <string>Okurigana text color:</string>
                 </property>
                </widget>
               </item>
@@ -5540,13 +5496,9 @@
   <tabstop>colN1CBox</tabstop>
   <tabstop>colNoWordsCBox</tabstop>
   <tabstop>colUnsortedCBox</tabstop>
-  <tabstop>okuColorBox</tabstop>
   <tabstop>bgKataCBox</tabstop>
   <tabstop>bgHiraCBox</tabstop>
   <tabstop>textSimilarCBox</tabstop>
-  <tabstop>bgSimilarCBox</tabstop>
-  <tabstop>bgPartsCBox</tabstop>
-  <tabstop>bgPartOfCBox</tabstop>
   <tabstop>colKanjiExCBox</tabstop>
   <tabstop>colStudyCorrectCBox</tabstop>
   <tabstop>colStudyWrongCBox</tabstop>

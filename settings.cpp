@@ -70,9 +70,9 @@ namespace Settings
     const QColor hirabgldef = QColor(157, 243, 149);
 
     const QColor similartextldef = QColor(0, 145, 245);
-    const QColor similarbgldef = QColor(241, 247, 247);
-    const QColor partsbgldef = QColor(231, 247, 231);
-    const QColor partofbgldef = QColor(247, 239, 231);
+    //const QColor similarbgldef = QColor(241, 247, 247);
+    //const QColor partsbgldef = QColor(231, 247, 231);
+    //const QColor partofbgldef = QColor(247, 239, 231);
     const QColor strokedotldef = QColor(255, 0, 0);
 
     const QColor stat1ldef = QColor(0, 162, 212);
@@ -110,9 +110,9 @@ namespace Settings
     const QColor hirabgddef = QColor(157, 243, 149);
 
     const QColor similartextddef = QColor(0, 145, 245);
-    const QColor similarbgddef = QColor(241, 247, 247);
-    const QColor partsbgddef = QColor(231, 247, 231);
-    const QColor partofbgddef = QColor(247, 239, 231);
+    //const QColor similarbgddef = QColor(241, 247, 247);
+    //const QColor partsbgddef = QColor(231, 247, 231);
+    //const QColor partofbgddef = QColor(247, 239, 231);
     const QColor strokedotddef = QColor(255, 0, 0);
 
     const QColor stat1ddef = QColor(0, 162, 212);
@@ -258,10 +258,10 @@ namespace Settings
         ini.setValue("colors/oku", colors.okucolor);
         ini.setValue("colors/katabg", colors.katabg);
         ini.setValue("colors/hirabg", colors.hirabg);
-        ini.setValue("colors/similarbg", colors.similarbg);
         ini.setValue("colors/similartext", colors.similartext);
-        ini.setValue("colors/partsbg", colors.partsbg);
-        ini.setValue("colors/partofbg", colors.partofbg);
+        //ini.setValue("colors/similarbg", colors.similarbg);
+        //ini.setValue("colors/partsbg", colors.partsbg);
+        //ini.setValue("colors/partofbg", colors.partofbg);
         ini.setValue("colors/strokedot", colors.strokedot);
         ini.setValue("colors/stat1", colors.stat1);
         ini.setValue("colors/stat2", colors.stat2);
@@ -900,10 +900,10 @@ namespace Settings
 
         colors.katabg = ini.value("colors/katabg").value<QColor>();
         colors.hirabg = ini.value("colors/hirabg").value<QColor>();
-        colors.similarbg = ini.value("colors/similarbg").value<QColor>();
         colors.similartext = ini.value("colors/similartext").value<QColor>();
-        colors.partsbg = ini.value("colors/partsbg").value<QColor>();
-        colors.partofbg = ini.value("colors/partofbg").value<QColor>();
+        //colors.similarbg = ini.value("colors/similarbg").value<QColor>();
+        //colors.partsbg = ini.value("colors/partsbg").value<QColor>();
+        //colors.partofbg = ini.value("colors/partofbg").value<QColor>();
         colors.strokedot = ini.value("colors/strokedot").value<QColor>();
         colors.stat1 = ini.value("colors/stat1").value<QColor>();
         colors.stat2 = ini.value("colors/stat2").value<QColor>();
@@ -1505,18 +1505,18 @@ namespace Settings
             if (colors.similartext.isValid())
                 return colors.similartext;
             break;
-        case ColorSettings::SimilarBg:
-            if (colors.similarbg.isValid())
-                return colors.similarbg;
-            break;
-        case ColorSettings::PartsBg:
-            if (colors.partsbg.isValid())
-                return colors.partsbg;
-            break;
-        case ColorSettings::PartOfBg:
-            if (colors.partofbg.isValid())
-                return colors.partofbg;
-            break;
+        //case ColorSettings::SimilarBg:
+        //    if (colors.similarbg.isValid())
+        //        return colors.similarbg;
+        //    break;
+        //case ColorSettings::PartsBg:
+        //    if (colors.partsbg.isValid())
+        //        return colors.partsbg;
+        //    break;
+        //case ColorSettings::PartOfBg:
+        //    if (colors.partofbg.isValid())
+        //        return colors.partofbg;
+        //    break;
         case ColorSettings::StrokeDot:
             if (colors.strokedot.isValid())
                 return colors.strokedot;
@@ -1603,12 +1603,12 @@ namespace Settings
             return colors.lighttheme ? hirabgldef : hirabgddef;
         case ColorSettings::SimilarText:
             return colors.lighttheme ? similartextldef : similartextddef;
-        case ColorSettings::SimilarBg:
-            return colors.lighttheme ? similarbgldef : similarbgddef;
-        case ColorSettings::PartsBg:
-            return colors.lighttheme ? partsbgldef : partsbgddef;
-        case ColorSettings::PartOfBg:
-            return colors.lighttheme ? partofbgldef : partofbgddef;
+        //case ColorSettings::SimilarBg:
+        //    return qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base); // colors.lighttheme ? similarbgldef : similarbgddef;
+        //case ColorSettings::PartsBg:
+        //    return qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base); // colors.lighttheme ? partsbgldef : partsbgddef;
+        //case ColorSettings::PartOfBg:
+        //    return qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base); // colors.lighttheme ? partofbgldef : partofbgddef;
         case ColorSettings::StrokeDot:
             return colors.lighttheme ? strokedotldef : strokedotddef;
         case ColorSettings::Stat1:
