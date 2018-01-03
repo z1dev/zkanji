@@ -3666,6 +3666,26 @@
                 </property>
                </spacer>
               </item>
+              <item row="4" column="0" colspan="2">
+               <widget class="QCheckBox" name="okuColorBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Color okurigana in kun readings</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="okuColorLabel">
+                <property name="text">
+                 <string>Okurigana text color:</string>
+                </property>
+               </widget>
+              </item>
               <item row="5" column="1">
                <widget class="ZColorComboBox" name="colOkuCBox">
                 <property name="sizePolicy">
@@ -3774,30 +3794,13 @@
                </widget>
               </item>
               <item row="13" column="0">
-               <widget class="QLabel" name="label_42">
-                <property name="text">
-                 <string>Example word bg.:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="1">
-               <widget class="ZColorComboBox" name="colKanjiExCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="14" column="0">
                <widget class="QLabel" name="label_142">
                 <property name="text">
                  <string>Stroke starting dot:</string>
                 </property>
                </widget>
               </item>
-              <item row="14" column="1">
+              <item row="13" column="1">
                <widget class="ZColorComboBox" name="colStrokeDotCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -3807,23 +3810,20 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="0" colspan="2">
-               <widget class="QCheckBox" name="okuColorBox">
+              <item row="14" column="0">
+               <widget class="QLabel" name="label_42">
+                <property name="text">
+                 <string>Example word bg.:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="1">
+               <widget class="ZColorComboBox" name="colKanjiExCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Color okurigana in kun readings</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="okuColorLabel">
-                <property name="text">
-                 <string>Okurigana text color:</string>
                 </property>
                </widget>
               </item>
@@ -5499,7 +5499,6 @@
   <tabstop>bgKataCBox</tabstop>
   <tabstop>bgHiraCBox</tabstop>
   <tabstop>textSimilarCBox</tabstop>
-  <tabstop>colKanjiExCBox</tabstop>
   <tabstop>colStudyCorrectCBox</tabstop>
   <tabstop>colStudyWrongCBox</tabstop>
   <tabstop>colStudyNewCBox</tabstop>

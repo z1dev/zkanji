@@ -54,27 +54,44 @@
           <number>4</number>
          </property>
          <item>
-          <widget class="QToolButton" name="lockButton">
-           <property name="enabled">
-            <bool>true</bool>
+          <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <property name="spacing">
+            <number>1</number>
            </property>
-           <property name="icon">
-            <iconset resource="Resources/resources.qrc">
-             <normaloff>:/lockopen.svg</normaloff>:/lockopen.svg</iconset>
+           <property name="leftMargin">
+            <number>0</number>
            </property>
-           <property name="iconSize">
-            <size>
-             <width>18</width>
-             <height>18</height>
-            </size>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
+           <item>
+            <widget class="QToolButton" name="lockButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/lockopen.svg</normaloff>:/lockopen.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_11">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QLabel" name="label">
@@ -85,7 +102,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Kanji Information - </string>
+            <string>Kanji Information -</string>
            </property>
           </widget>
          </item>

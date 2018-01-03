@@ -217,19 +217,23 @@ QAbstractButton* ZWindow::addCloseButton(QBoxLayout *layout)
     QBoxLayout *l = layout != nullptr ? layout : captionWidget() != nullptr ? dynamic_cast<QBoxLayout*>(captionWidget()->layout()) : nullptr;
     if (l != nullptr)
     {
+        QBoxLayout *bl = new QBoxLayout(QBoxLayout::Direction::LeftToRight);
         QFrame *line = new QFrame(this);
         line->setFrameShadow(QFrame::Sunken);
         line->setLineWidth(1);
         line->setFrameShape(QFrame::VLine);
 
-        l->setSpacing(0);
+        bl->setSpacing(0);
 #ifdef Q_OS_MAC
-        layout->insertWidget(0, line);
-        layout->insertWidget(0, closebtn);
+        bl->addWidget(closebtn);
+        bl->addWidget(line);
+        l->insertLayout(0, bl);
 #else
-        layout->addWidget(line);
-        layout->addWidget(closebtn);
+        bl->addWidget(line);
+        bl->addWidget(closebtn);
+        l->addLayout(bl);
 #endif
+        l->activate();
         layout->activate();
     }
 
