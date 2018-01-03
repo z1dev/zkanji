@@ -33,8 +33,8 @@ struct ColorSettings
         Fields, Dialects, KanaOnly, SentenceWord, KanjiTestPos,
         Oku, N5, N4, N3, N2, N1, KanjiNoWords,
         KanjiUnsorted, KataBg, HiraBg,
-        SimilarText, SimilarBg, PartsBg,
-        PartOfBg, KanjiExBg, Stat1, Stat2, Stat3
+        SimilarText, SimilarBg, PartsBg, PartOfBg,
+        StrokeDot, KanjiExBg, Stat1, Stat2, Stat3
     };
 
     QColor grid;
@@ -70,6 +70,8 @@ struct ColorSettings
     QColor partsbg;
     QColor kanjiexbg;
     QColor partofbg;
+
+    QColor strokedot;
 
     QColor stat1;
     QColor stat2;

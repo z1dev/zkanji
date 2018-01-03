@@ -363,6 +363,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->colKanaCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanaOnly));
     ui->colSentenceWordCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SentenceWord));
     ui->colKanjiExCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiExBg));
+    ui->colStrokeDotCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StrokeDot));
     ui->colKanjiTestPosCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiTestPos));
 
     ui->colN5CBox->setDefaultColor(Settings::defUiColor(ColorSettings::N5));
@@ -617,6 +618,7 @@ void SettingsForm::reset()
     ui->colKanaCBox->setCurrentColor(Settings::colors.kanaonly);
     ui->colSentenceWordCBox->setCurrentColor(Settings::colors.sentenceword);
     ui->colKanjiExCBox->setCurrentColor(Settings::colors.kanjiexbg);
+    ui->colStrokeDotCBox->setCurrentColor(Settings::colors.strokedot);
     ui->colKanjiTestPosCBox->setCurrentColor(Settings::colors.kanjitestpos);
 
     ui->colN5CBox->setCurrentColor(Settings::colors.n5);
@@ -897,6 +899,7 @@ void SettingsForm::applyClicked()
     Settings::colors.kanaonly = ui->colKanaCBox->currentColor();
     Settings::colors.sentenceword = ui->colSentenceWordCBox->currentColor();
     Settings::colors.kanjiexbg = ui->colKanjiExCBox->currentColor();
+    Settings::colors.strokedot = ui->colStrokeDotCBox->currentColor();
     Settings::colors.kanjitestpos = ui->colKanjiTestPosCBox->currentColor();
 
     Settings::colors.n5 = ui->colN5CBox->currentColor();
@@ -1014,7 +1017,7 @@ void SettingsForm::on_jlptBox_toggled()
 
 void SettingsForm::on_okuColorBox_toggled()
 {
-    ui->okuColorLabel->setEnabled(ui->okuColorBox->isChecked());
+    //ui->okuColorLabel->setEnabled(ui->okuColorBox->isChecked());
     ui->colOkuCBox->setEnabled(ui->okuColorBox->isChecked());
 }
 

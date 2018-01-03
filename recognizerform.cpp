@@ -9,6 +9,7 @@
 #include <QStylePainter>
 #include <qfont.h>
 #include <QDesktopWidget>
+#include <QWindow>
 
 #include <cmath>
 
@@ -63,8 +64,11 @@ ZEVENT(RecognizerHiddenEvent);
 
 RecognizerArea::RecognizerArea(QWidget *parent) : base(parent), grid(true), match(Kanji | Kana | Other), recalc(true), drawing(false), strokepos(0)
 {
-    setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
+    //setBackgroundRole(QPalette::Base);
+    setAutoFillBackground(false);
+    setAttribute(Qt::WA_OpaquePaintEvent);
+
+    //connect(qApp, &QGuiApplication::focusWindowChanged, this, static_cast<void(QWidget::*)(void)>(&QWidget::update));
 }
 
 RecognizerArea::~RecognizerArea()
@@ -145,6 +149,8 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     recalculate();
 
     QStylePainter p(this);
+
+    p.fillRect(rect(), Settings::textColor(isActiveWindow(), ColorSettings::Bg));
     p.setRenderHint(QPainter::Antialiasing, true);
     p.translate(area.left() + ((area.width() % 2) ? 0. : 0.5), area.top() + ((area.width() % 2) ? 0. : 0.5));
 
@@ -184,10 +190,10 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
         p.drawText(QRectF(hx * 3, hx * 3, area.width() - hx * 6, area.height() - hx * 6), Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, instructions());
     }
 
-    p.setPen(Qt::black);
+    p.setPen(Settings::textColor(ColorSettings::Text));
     // Paint the strokes already in drawn.
     for (int ix = 0, siz = std::min(strokes.size(), strokepos); ix != siz; ++ix)
-        paintStroke(ix, p, Qt::black, event->rect());
+        paintStroke(ix, p, Settings::textColor(ColorSettings::Text), event->rect());
 
     // Paint the currently drawn stroke.
     if (newstroke.size() > 1)

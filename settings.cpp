@@ -73,6 +73,7 @@ namespace Settings
     const QColor similarbgldef = QColor(241, 247, 247);
     const QColor partsbgldef = QColor(231, 247, 231);
     const QColor partofbgldef = QColor(247, 239, 231);
+    const QColor strokedotldef = QColor(255, 0, 0);
 
     const QColor stat1ldef = QColor(0, 162, 212);
     const QColor stat2ldef = QColor(120, 212, 40);
@@ -112,6 +113,7 @@ namespace Settings
     const QColor similarbgddef = QColor(241, 247, 247);
     const QColor partsbgddef = QColor(231, 247, 231);
     const QColor partofbgddef = QColor(247, 239, 231);
+    const QColor strokedotddef = QColor(255, 0, 0);
 
     const QColor stat1ddef = QColor(0, 162, 212);
     const QColor stat2ddef = QColor(120, 212, 40);
@@ -260,6 +262,7 @@ namespace Settings
         ini.setValue("colors/similartext", colors.similartext);
         ini.setValue("colors/partsbg", colors.partsbg);
         ini.setValue("colors/partofbg", colors.partofbg);
+        ini.setValue("colors/strokedot", colors.strokedot);
         ini.setValue("colors/stat1", colors.stat1);
         ini.setValue("colors/stat2", colors.stat2);
         ini.setValue("colors/stat3", colors.stat3);
@@ -897,6 +900,7 @@ namespace Settings
         colors.similartext = ini.value("colors/similartext").value<QColor>();
         colors.partsbg = ini.value("colors/partsbg").value<QColor>();
         colors.partofbg = ini.value("colors/partofbg").value<QColor>();
+        colors.strokedot = ini.value("colors/strokedot").value<QColor>();
         colors.stat1 = ini.value("colors/stat1").value<QColor>();
         colors.stat2 = ini.value("colors/stat2").value<QColor>();
         colors.stat3 = ini.value("colors/stat3").value<QColor>();
@@ -1509,6 +1513,10 @@ namespace Settings
             if (colors.partofbg.isValid())
                 return colors.partofbg;
             break;
+        case ColorSettings::StrokeDot:
+            if (colors.strokedot.isValid())
+                return colors.strokedot;
+            break;
         case ColorSettings::Stat1:
             if (colors.stat1.isValid())
                 return colors.stat1;
@@ -1597,6 +1605,8 @@ namespace Settings
             return colors.lighttheme ? partsbgldef : partsbgddef;
         case ColorSettings::PartOfBg:
             return colors.lighttheme ? partofbgldef : partofbgddef;
+        case ColorSettings::StrokeDot:
+            return colors.lighttheme ? strokedotldef : strokedotddef;
         case ColorSettings::Stat1:
             return colors.lighttheme ? stat1ldef : stat1ddef;
         case ColorSettings::Stat2:

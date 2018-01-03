@@ -395,13 +395,13 @@ bool ZKanjiDiagram::event(QEvent *e)
                 for (int ix = 0; ix != partpos - 1; ++ix)
                 {
                     if (showdir)
-                        ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Qt::red, qApp->palette().color(QPalette::Text));
+                        ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
                     else
                         ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix);
                 }
 
             if (showdir)
-                ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, partpos - 1, Qt::red, qApp->palette().color(QPalette::Text));
+                ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, partpos - 1, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
             else
                 ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, partpos - 1);
             p.end();
@@ -568,7 +568,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
             if (strokepos != ZKanji::elements()->strokeCount(elem, 0) && partpos != 0)
             {
                 if (showdir)
-                    ZKanji::elements()->drawStrokePart(p, true, elem, 0, strokepos, QRectF((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, stroke->width(), stroke->height()), parts, partpos - 1, Qt::red, qApp->palette().color(QPalette::Text));
+                    ZKanji::elements()->drawStrokePart(p, true, elem, 0, strokepos, QRectF((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, stroke->width(), stroke->height()), parts, partpos - 1, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
                 else
                     ZKanji::elements()->drawStrokePart(p, true, elem, 0, strokepos, QRectF((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, stroke->width(), stroke->height()), parts, partpos - 1);
             }
@@ -703,7 +703,7 @@ void ZKanjiDiagram::updateImage()
             for (int ix = 0; ix != partpos; ++ix)
             {
                 if (showdir)
-                    ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Qt::red, qApp->palette().color(QPalette::Text));
+                    ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
                 else
                     ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix);
             }
@@ -752,7 +752,7 @@ void ZKanjiDiagram::updateImage()
     while (drawnpos < strokepos)
     {
         if (showdir)
-            ZKanji::elements()->drawStroke(painter, elem, 0, drawnpos, QRectF(0, 0, siz, siz), siz / partcountdiv, Qt::red, qApp->palette().color(QPalette::Text));
+            ZKanji::elements()->drawStroke(painter, elem, 0, drawnpos, QRectF(0, 0, siz, siz), siz / partcountdiv, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
         else
             ZKanji::elements()->drawStroke(painter, elem, 0, drawnpos, QRectF(0, 0, siz, siz), siz / partcountdiv);
         ++drawnpos;
