@@ -557,7 +557,7 @@ namespace FormStates
         ok = false;
         if (reader.attributes().hasAttribute("speed"))
         {
-            val = reader.attributes().value("width").toInt(&ok);
+            val = reader.attributes().value("speed").toInt(&ok);
             if (val < 1 || val > 4)
                 ok = false;
             if (ok)
