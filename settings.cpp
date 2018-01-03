@@ -430,6 +430,8 @@ namespace Settings
 
         if (!FormStates::emptyState(FormStates::kanjiinfo))
         {
+            // Differs from saving currently shown kanji information windows' states. This
+            // setting will apply to newly opened kanji information windows.
             writer.writeStartElement("KanjiInformation");
             FormStates::saveXMLSettings(FormStates::kanjiinfo, writer);
             writer.writeEndElement();
@@ -477,6 +479,8 @@ namespace Settings
 
         if (Settings::general.savetoolstates)
         {
+            // Differs from saving last used values in a kanji information window. This saves
+            // the state of currently visible kanji information windows.
             writer.writeStartElement("KanjiInfoWindows");
             gUI->saveXMLKanjiInfo(writer);
             writer.writeEndElement(); /* KanjiInfoWindows */
