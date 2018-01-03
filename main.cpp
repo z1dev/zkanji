@@ -256,12 +256,12 @@ namespace {
 
                 if (result == 0)
                 {
-                    portable = true;
+                    appdata = true;
                     ZKanji::setUserFolder(appdatadir);
                 }
                 else
                 {
-                    appdata = true;
+                    portable = true;
                     ZKanji::setUserFolder(ZKanji::appFolder());
                 }
             }

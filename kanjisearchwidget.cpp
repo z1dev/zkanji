@@ -1093,15 +1093,15 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
     connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
     popmap.setMapping(a, 7);
 
-    a = popup.addAction("SKIP code filter");
-    a->setCheckable(true);
-    a->setChecked(ui->skip1Edit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 8);
-
     a = popup.addAction("Index filter");
     a->setCheckable(true);
     a->setChecked(ui->indexEdit->isVisible());
+    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
+    popmap.setMapping(a, 8);
+
+    a = popup.addAction("SKIP code filter");
+    a->setCheckable(true);
+    a->setChecked(ui->skip1Edit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
     popmap.setMapping(a, 9);
 
