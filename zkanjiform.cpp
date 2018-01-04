@@ -73,7 +73,7 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
     QWidget *cw = centralWidget();
 
     QHBoxLayout *l = new QHBoxLayout(cw);
-    l->setContentsMargins(2, 2, 2, 2);
+    l->setContentsMargins(Settings::scaled(2), Settings::scaled(2), Settings::scaled(2), Settings::scaled(2));
     ZKanjiWidget *w = new ZKanjiWidget(cw);
     l->addWidget(w);
 

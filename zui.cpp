@@ -485,9 +485,9 @@ namespace {
             w->setFont(f);
         }
 
-        int l, t, r, b;
-        w->getContentsMargins(&l, &t, &r, &b);
-        w->setContentsMargins(Settings::scaled(l), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
+        //int l, t, r, b;
+        //w->getContentsMargins(&l, &t, &r, &b);
+        //w->setContentsMargins(Settings::scaled(l), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
 
         if (dynamic_cast<QSplitter*>(w) != nullptr)
         {

@@ -13,6 +13,7 @@
 #include "zevents.h"
 #include "colorsettings.h"
 #include "zui.h"
+#include "generalsettings.h"
 
 struct ScrollAreaScrolledEvent : public EventTBase<ScrollAreaScrolledEvent>
 {
@@ -204,15 +205,15 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
 
     if (ori == Horizontal)
     {
-        painter.fillRect(r.left(), r.top() + r.height() - scrollsize, p.first, scrollsize, bgcol);
-        painter.fillRect(r.left() + p.first, r.top() + r.height() - scrollsize, p.second - p.first, scrollsize, sbcol);
-        painter.fillRect(r.left() + p.second, r.top() + r.height() - scrollsize, r.width() - p.second, scrollsize, bgcol);
+        painter.fillRect(r.left(), r.top() + r.height() - Settings::scaled(scrollsize), p.first, Settings::scaled(scrollsize), bgcol);
+        painter.fillRect(r.left() + p.first, r.top() + r.height() - Settings::scaled(scrollsize), p.second - p.first, Settings::scaled(scrollsize), sbcol);
+        painter.fillRect(r.left() + p.second, r.top() + r.height() - Settings::scaled(scrollsize), r.width() - p.second, Settings::scaled(scrollsize), bgcol);
     }
     else
     {
-        painter.fillRect(r.left() + r.width() - scrollsize, r.top(), scrollsize, p.first, bgcol);
-        painter.fillRect(r.left() + r.width() - scrollsize, r.top() + p.first, scrollsize, p.second - p.first, sbcol);
-        painter.fillRect(r.left() + r.width() - scrollsize, r.top() + p.second, scrollsize, r.height() - p.second, bgcol);
+        painter.fillRect(r.left() + r.width() - Settings::scaled(scrollsize), r.top(), Settings::scaled(scrollsize), p.first, bgcol);
+        painter.fillRect(r.left() + r.width() - Settings::scaled(scrollsize), r.top() + p.first, Settings::scaled(scrollsize), p.second - p.first, sbcol);
+        painter.fillRect(r.left() + r.width() - Settings::scaled(scrollsize), r.top() + p.second, Settings::scaled(scrollsize), r.height() - p.second, bgcol);
     }
 }
 
@@ -376,8 +377,8 @@ void ZScrollArea::mouseMoveEvent(QMouseEvent *e)
     // Mouse button is not pressed. Only check if hovering state changed.
     if (!dragging)
     {
-        bool shouldhover = x >= p.first && x < p.second && y >= h - scrollsize && y < h;
-        if (x >= 0 && x < w && y >= 0 && y < h - scrollsize)
+        bool shouldhover = x >= p.first && x < p.second && y >= h - Settings::scaled(scrollsize) && y < h;
+        if (x >= 0 && x < w && y >= 0 && y < h - Settings::scaled(scrollsize))
             e->ignore();
         if (hovering != shouldhover)
         {
@@ -509,12 +510,12 @@ void ZScrollArea::resizeEvent(QResizeEvent *e)
 
     if (ori == Horizontal)
     {
-        int top = std::min(h, oh) - scrollsize;
+        int top = std::min(h, oh) - Settings::scaled(scrollsize);
         update(mleft, mtop + top, w, h - top);
     }
     else
     {
-        int left = std::min(w, ow) - scrollsize;
+        int left = std::min(w, ow) - Settings::scaled(scrollsize);
         update(mleft + left, mtop, w - left, h);
     }
 
@@ -564,17 +565,11 @@ QRect ZScrollArea::drawArea() const
     if (type == Scrollbar)
     {
         if (ori == Horizontal)
-            r.setBottom(r.bottom() - scrollsize);
+            r.setBottom(r.bottom() - Settings::scaled(scrollsize));
         else
-            r.setRight(r.right() - scrollsize);
+            r.setRight(r.right() - Settings::scaled(scrollsize));
     }
-    //else
-    //{
-    //    if (ori == Horizontal)
-    //        r.adjust(scrollsize, 0, -scrollsize, 0);
-    //    else
-    //        r.adjust(0, scrollsize, 0, -scrollsize);
-    //}
+
     return r;
 }
 
@@ -645,8 +640,8 @@ void ZScrollArea::drawButton(QPainter &p, QRect r, double padding, ScrollerOrien
 {
     p.save();
 
-    double hpadding = ori == ScrollerOrientation::Horizontal ? padding / 2 : padding;
-    double vpadding = ori == ScrollerOrientation::Vertical ? padding / 2 : padding;
+    double hpadding = ori == ScrollerOrientation::Horizontal ? padding / 2 + 1 : padding + r.height() * 0.3;
+    double vpadding = ori == ScrollerOrientation::Vertical ? padding / 2 + 1 : padding + r.width() * 0.3;
     r.adjust(hpadding, vpadding, -hpadding, -vpadding);
 
     double w = r.width();
@@ -717,9 +712,9 @@ QRect ZScrollArea::scrollArea() const
     r.adjust(mleft, mtop, -mright, -mbottom);
 
     if (ori == Horizontal)
-        return QRect(r.left(), r.top() + r.height() - scrollsize, r.width(), scrollsize);
+        return QRect(r.left(), r.top() + r.height() - Settings::scaled(scrollsize), r.width(), Settings::scaled(scrollsize));
     else
-        return QRect(r.left() + r.width() - scrollsize, r.top(), scrollsize, r.height());
+        return QRect(r.left() + r.width() - Settings::scaled(scrollsize), r.top(), Settings::scaled(scrollsize), r.height());
 }
 
 void ZScrollArea::page()
@@ -753,7 +748,7 @@ void ZScrollArea::page()
 
     // Ignore page up / page down request when mouse is not over the needed
     // side of the scroll bar.
-    if ((dragpos < 0 && xy >= p1.first) || (dragpos >= p1.second - p1.first && xy < p1.second) || yx > hw || yx < hw - scrollsize || xy < 0 || xy > wh)
+    if ((dragpos < 0 && xy >= p1.first) || (dragpos >= p1.second - p1.first && xy < p1.second) || yx > hw || yx < hw - Settings::scaled(scrollsize) || xy < 0 || xy > wh)
         return;
 
     int smin = scrollMin();
@@ -806,9 +801,9 @@ void ZScrollArea::updateScroller()
     int w = r.width();
     int h = r.height();
     if (ori == Horizontal)
-        update(r.left(), r.top() + h - scrollsize, w, scrollsize);
+        update(r.left(), r.top() + h - Settings::scaled(scrollsize), w, Settings::scaled(scrollsize));
     else
-        update(r.left() + w - scrollsize, r.top(), w, h);
+        update(r.left() + w - Settings::scaled(scrollsize), r.top(), w, h);
 }
 
 void ZScrollArea::updateButtons()

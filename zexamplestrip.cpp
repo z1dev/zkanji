@@ -17,6 +17,7 @@
 #include "fontsettings.h"
 #include "globalui.h"
 #include "colorsettings.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -77,12 +78,12 @@ void ZExamplePopup::popup(Dictionary *d, const fastarray<ExampleWordsData::Form,
 
     forms = &wordforms;
 
-    lineheight = fm.height() + 2;
+    lineheight = fm.height() + Settings::scaled(2);
 
     formsavailable = 0;
 
     // Width of the longest word line.
-    int w = wordrect.width() - popupMargin * 2 - 1;
+    int w = wordrect.width() - Settings::scaled(popupMargin) * 2 - 1;
     QString str;
     for (int ix = 0; ix != wordforms.size(); ++ix)
     {
@@ -99,10 +100,10 @@ void ZExamplePopup::popup(Dictionary *d, const fastarray<ExampleWordsData::Form,
             str = dat.kanji.toQStringRaw();
         else
             str = QStringLiteral("%1[%2]").arg(dat.kanji.toQStringRaw()).arg(dat.kana.toQStringRaw());
-        w = std::max(w, fm.boundingRect(str).width() + 2);
+        w = std::max(w, fm.boundingRect(str).width() + Settings::scaled(2));
     }
 
-    QRect r(0, 0, w + popupMargin * 2, formsavailable * lineheight + popupMargin * 2);
+    QRect r(0, 0, w + Settings::scaled(popupMargin) * 2, formsavailable * lineheight + Settings::scaled(popupMargin) * 2);
     setMinimumSize(r.size());
     setMaximumSize(r.size());
 
@@ -200,7 +201,7 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     QFont f = Settings::kanaFont();
     painter.setFont(f);
 
-    int top = popupMargin + 1;
+    int top = Settings::scaled(popupMargin) + 1;
     int flags = Qt::AlignLeft | Qt::AlignTop | Qt::TextDontClip | Qt::TextSingleLine;
     QString str;
     for (int ix = 0; ix != forms->size(); ++ix)
@@ -216,14 +217,14 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
 
         if (hovered == ix)
         {
-            painter.fillRect(popupMargin, top - 1, rect().width() - popupMargin * 2, lineheight, Settings::textColor(owner->isActiveWindow(), ColorSettings::SelBg));
+            painter.fillRect(Settings::scaled(popupMargin), top - 1, rect().width() - Settings::scaled(popupMargin) * 2, lineheight, Settings::textColor(owner->isActiveWindow(), ColorSettings::SelBg));
             painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::SelText));
         }
         else
             painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Text));
 
 
-        painter.drawText(popupMargin + 1, top, 1, 1, flags, str);
+        painter.drawText(Settings::scaled(popupMargin) + 1, top, 1, 1, flags, str);
 
         top += lineheight;
     }
@@ -235,7 +236,7 @@ void ZExamplePopup::leaveEvent(QEvent *e)
 
     if (hovered != -1)
     {
-        update(QRect(popupMargin, popupMargin + lineheight * hovered, rect().width() - popupMargin * 2, lineheight));
+        update(QRect(Settings::scaled(popupMargin), Settings::scaled(popupMargin) + lineheight * hovered, rect().width() - Settings::scaled(popupMargin) * 2, lineheight));
         hovered = -1;
     }
 
@@ -257,7 +258,7 @@ void ZExamplePopup::mousePressEvent(QMouseEvent *e)
 
     // Not all word forms are shown. Notify the parent about the real word
     // form position.
-    int pos = (e->pos().y() - popupMargin) / lineheight + 1;
+    int pos = (e->pos().y() - Settings::scaled(popupMargin)) / lineheight + 1;
     if (pos <= 0 || pos > formsavailable)
         return;
 
@@ -278,18 +279,18 @@ void ZExamplePopup::mouseMoveEvent(QMouseEvent *e)
 {
     base::mouseMoveEvent(e);
 
-    int hpos = (e->pos().y() - popupMargin) / lineheight;
-    if (hpos >= formsavailable || e->pos().y() < popupMargin || e->pos().x() < popupMargin || e->pos().x() >= rect().width() - popupMargin)
+    int hpos = (e->pos().y() - Settings::scaled(popupMargin)) / lineheight;
+    if (hpos >= formsavailable || e->pos().y() < Settings::scaled(popupMargin) || e->pos().x() < Settings::scaled(popupMargin) || e->pos().x() >= rect().width() - Settings::scaled(popupMargin))
         hpos = -1;
 
     if (hpos == hovered)
         return;
 
     if (hovered != -1)
-        update(QRect(popupMargin, popupMargin + lineheight * hovered, rect().width() - popupMargin * 2, lineheight));
+        update(QRect(Settings::scaled(popupMargin), Settings::scaled(popupMargin) + lineheight * hovered, rect().width() - Settings::scaled(popupMargin) * 2, lineheight));
     hovered = hpos;
     if (hovered != -1)
-        update(QRect(popupMargin, popupMargin + lineheight * hovered, rect().width() - popupMargin * 2, lineheight));
+        update(QRect(Settings::scaled(popupMargin), Settings::scaled(popupMargin) + lineheight * hovered, rect().width() - Settings::scaled(popupMargin) * 2, lineheight));
 }
 
 void ZExamplePopup::mouseReleaseEvent(QMouseEvent *e)
@@ -324,7 +325,7 @@ ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), dis
     int jh = jfm.height();
     int th = tfm.height();
 
-    setMinimumHeight(jh + th + 6 + scrollerSize());
+    setMinimumHeight(jh + th + 6 + Settings::scaled(scrollerSize()));
 
     connect(gUI, &GlobalUI::settingsChanged, this, &ZExampleStrip::reset);
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &ZExampleStrip::dictionaryRemoved);
@@ -521,14 +522,15 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
     if (index == -1)
         return;
 
-    int x = -scrollPos() + 4;
+    int gap = Settings::scaled(4);
+    int x = -scrollPos() + gap;
 
     QFont jf = Settings::kanaFont();
     QFont tf = Settings::mainFont();
     if (display == ExampleDisplay::Both)
     {
-        adjustFontSize(jf, (r.height() - 4) * 0.5);
-        adjustFontSize(tf, (r.height() - 4) * 0.38);
+        adjustFontSize(jf, (r.height() - gap) * 0.5);
+        adjustFontSize(tf, (r.height() - gap) * 0.38);
     }
     else
     {
@@ -539,7 +541,7 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
     QFontMetrics jfm(jf);
     QFontMetrics tfm(tf);
 
-    int jh = jfm.height() - jfm.descent() + 3;
+    int jh = jfm.height() - jfm.descent() + Settings::scaled(3);
     int th = tfm.height();
 
     int flags = Qt::AlignLeft | Qt::AlignTop | Qt::TextDontClip | Qt::TextSingleLine;
@@ -548,8 +550,8 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
 
     if (display == ExampleDisplay::Both)
     {
-        int jtop = std::max(r.top() + 2, r.top() + (r.height() - jh - th - 2) / 2);
-        int ttop = jtop + jh + 2;
+        int jtop = std::max(r.top() + gap / 2, r.top() + (r.height() - jh - th - Settings::scaled(2)) / 2);
+        int ttop = jtop + jh + gap / 2;
 
         painter.setFont(jf);
         //painter.drawText(QRect(x, jtop, 1, 1), flags, sentence.japanese.toQStringRaw());
@@ -631,11 +633,12 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
 
     int hpos = -1;
 
-    if (hovered != -1 && hovered != wordrect.size() && wordrect[hovered].adjusted(-2, -2, 2, 2).contains(e->pos()))
+    int gap2 = Settings::scaled(2);
+    if (hovered != -1 && hovered != wordrect.size() && wordrect[hovered].adjusted(-gap2, -gap2, gap2, gap2).contains(e->pos()))
         hpos = hovered;
     for (int ix = 0; ix != wordrect.size() && hpos == -1; ++ix)
     {
-        if (!wordrect[ix].isEmpty() && wordrect[ix].adjusted(-2, -2, 2, 2).contains(e->pos()))
+        if (!wordrect[ix].isEmpty() && wordrect[ix].adjusted(-gap2, -gap2, gap2, gap2).contains(e->pos()))
             hpos = ix;
     }
 
@@ -712,6 +715,7 @@ int ZExampleStrip::scrollMax() const
     if (index == -1)
         return 0;
 
+    int gap = Settings::scaled(4);
     if ((display == ExampleDisplay::Japanese && jpwidth == -1) || (display == ExampleDisplay::Translated && trwidth == -1) || (display == ExampleDisplay::Both && (trwidth == -1 || jpwidth == -1)))
     {
         QFont jf = Settings::kanaFont();
@@ -721,8 +725,8 @@ int ZExampleStrip::scrollMax() const
 
         if (display == ExampleDisplay::Both)
         {
-            adjustFontSize(jf, (r.height() - 4) * 0.5);
-            adjustFontSize(tf, (r.height() - 4) * 0.38);
+            adjustFontSize(jf, (r.height() - gap) * 0.5);
+            adjustFontSize(tf, (r.height() - gap) * 0.38);
         }
         else
         {
@@ -742,11 +746,11 @@ int ZExampleStrip::scrollMax() const
     }
 
     if (display == ExampleDisplay::Both)
-        return std::max(jpwidth, trwidth) + 8;
+        return std::max(jpwidth, trwidth) + Settings::scaled(8);
     else if (display == ExampleDisplay::Japanese)
-        return jpwidth + 8;
+        return jpwidth + Settings::scaled(8);
     else
-        return trwidth + 8;
+        return trwidth + Settings::scaled(8);
 }
 
 int ZExampleStrip::scrollPage() const
@@ -855,10 +859,12 @@ void ZExampleStrip::fillWordRects()
 
     QFont jf = Settings::kanaFont();
     QFont tf = Settings::mainFont();
+
+    int gap = Settings::scaled(4);
     if (display == ExampleDisplay::Both)
     {
-        adjustFontSize(jf, (r.height() - 4) * 0.5);
-        adjustFontSize(tf, (r.height() - 4) * 0.38);
+        adjustFontSize(jf, (r.height() - gap) * 0.5);
+        adjustFontSize(tf, (r.height() - gap) * 0.38);
     }
     else
     {
@@ -869,17 +875,17 @@ void ZExampleStrip::fillWordRects()
     QFontMetrics fm(jf);
     QFontMetrics tfm(tf);
 
-    int jh = fm.height() - fm.descent() + 3;
+    int jh = fm.height() - fm.descent() + Settings::scaled(3);
     int th = tfm.height();
 
     int y;
     if (display == ExampleDisplay::Both)
-        y = std::max(r.top() + 2, r.top() + (r.height() - jh - th - 2) / 2);
+        y = std::max(r.top() + gap / 2, r.top() + (r.height() - jh - th - gap / 2) / 2);
     else if (display == ExampleDisplay::Japanese)
         y = r.top() + (r.height() - jh) / 2;
 
 
-    int x = -scrollPos() + 4;
+    int x = -scrollPos() + gap;
 
     // Currently word.
     int pos = 0;
@@ -914,7 +920,7 @@ void ZExampleStrip::fillWordRects()
         }
 
         if (found)
-            wordrect.push_back(QRect(x, y, w, fm.height() - fm.descent() + 3));
+            wordrect.push_back(QRect(x, y, w, fm.height() - fm.descent() + Settings::scaled(3)));
         else
             wordrect.push_back(QRect(-1, -1, 0, 0));
 
@@ -937,7 +943,8 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
     if (fillrects)
         hovered = -1;
 
-    int x = -scrollPos() + 4;
+    int gap = Settings::scaled(4);
+    int x = -scrollPos() + gap;
 
     int flags = Qt::AlignLeft | Qt::AlignTop | Qt::TextDontClip | Qt::TextSingleLine;
 
@@ -991,7 +998,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
             }
 
             if (found)
-                wordrect.push_back(QRect(x, y, w, fm.height() - fm.descent() + 3));
+                wordrect.push_back(QRect(x, y, w, fm.height() - fm.descent() + Settings::scaled(3)));
             else
                 wordrect.push_back(QRect(-1, -1, 0, 0));
         }
@@ -1049,13 +1056,14 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
 
 void ZExampleStrip::updateWordRect(int index)
 {
-    update(wordrect[index].adjusted(-3, -3, 3, 3));
+    int gap = Settings::scaled(3);
+    update(wordrect[index].adjusted(-gap, -gap, gap, gap));
 }
 
 void ZExampleStrip::updateDots()
 {
     int left = 0;
-    int right = wordrect.size() - 1;
+    int right = wordrect.size() - Settings::scaled(1);
     while (left < wordrect.size() && wordrect[left].isEmpty())
         ++left;
     while (right > left && wordrect[right].isEmpty())
@@ -1063,7 +1071,7 @@ void ZExampleStrip::updateDots()
     if (left == wordrect.size())
         return;
 
-    update(wordrect[left].left() - 1, wordrect[left].bottom() + 1, wordrect[right].right() - wordrect[left].left() + 2, 2);
+    update(wordrect[left].left() - 1, wordrect[left].bottom() + 1, wordrect[right].right() - wordrect[left].left() + Settings::scaled(2), Settings::scaled(2));
 }
 
 void ZExampleStrip::selectForm(int form, int wpos)

@@ -712,9 +712,9 @@ namespace Settings
 
             QFont f = qApp->font();
             f.setPointSizeF(f.pointSizeF() * Settings::general.scale / 100.0);
-            qApp->setFont(f);
 
             gUI->applyStyleSheet();
+            qApp->setFont(f);
         }
     }
 

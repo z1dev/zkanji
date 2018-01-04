@@ -121,9 +121,6 @@
      <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectItems</enum>
      </property>
-     <property name="uniformRowHeights">
-      <bool>true</bool>
-     </property>
      <property name="expandsOnDoubleClick">
       <bool>true</bool>
      </property>
