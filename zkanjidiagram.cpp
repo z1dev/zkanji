@@ -377,7 +377,7 @@ bool ZKanjiDiagram::event(QEvent *e)
             bool resized = false;
             QRect r = rect();
             int siz = std::min(r.width(), r.height()) * kanjiRectMul;
-            if (stroke && stroke->width() != siz)
+            if (!stroke || stroke->width() != siz)
             {
                 stroke.reset(new QImage(siz, siz, QImage::Format_ARGB32_Premultiplied));
                 stroke->fill(qRgba(0, 0, 0, 0));

@@ -113,7 +113,7 @@ namespace Settings
     //const QColor similarbgddef = QColor(241, 247, 247);
     //const QColor partsbgddef = QColor(231, 247, 231);
     //const QColor partofbgddef = QColor(247, 239, 231);
-    const QColor strokedotddef = QColor(65, 80, 72);
+    const QColor strokedotddef = QColor(165, 80, 72);
 
     const QColor stat1ddef = QColor(0, 162, 212);
     const QColor stat2ddef = QColor(120, 212, 40);
