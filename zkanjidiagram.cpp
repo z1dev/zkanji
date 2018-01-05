@@ -488,7 +488,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
         //    gridColor = static_cast<QRgb>(gridHint);
         //}
 
-        QColor gridColor = mixColors(Settings::textColor(isActiveWindow(), ColorSettings::Bg), Settings::textColor(isActiveWindow(), ColorSettings::Text), 0.85);
+        QColor gridColor = Settings::uiColor(ColorSettings::Grid);
 
         p.setPen(gridColor);
         p.setBrush(Qt::transparent);

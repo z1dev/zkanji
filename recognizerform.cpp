@@ -158,11 +158,12 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     //opts.initFrom(this);
     //opts.showDecorationSelected = true;
     //int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-    QColor gridColor = mixColors(Settings::textColor(isActiveWindow(), ColorSettings::Bg), Settings::textColor(isActiveWindow(), ColorSettings::Text), 0.85);
+    QColor gridcolor = Settings::uiColor(ColorSettings::Grid);
+    QColor textcolor = mixColors(Settings::textColor(isActiveWindow(), ColorSettings::Bg), Settings::textColor(isActiveWindow(), ColorSettings::Text), 0.7);
 
     double hx = area.width() / 20.;
 
-    p.setPen(gridColor);
+    p.setPen(gridcolor);
 
     if (grid)
     {
@@ -186,6 +187,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     // Instruction text when the recognizer is empty.
     if (!drawing && strokes.empty())
     {
+        p.setPen(textcolor);
         p.setFont(QFont(Settings::fonts.main, ptsize));
         p.drawText(QRectF(hx * 3, hx * 3, area.width() - hx * 6, area.height() - hx * 6), Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, instructions());
     }
@@ -197,7 +199,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
 
     // Paint the currently drawn stroke.
     if (newstroke.size() > 1)
-        paintStroke(-1, p, gridColor, event->rect());
+        paintStroke(-1, p, gridcolor, event->rect());
 }
 
 void RecognizerArea::mousePressEvent(QMouseEvent *event)
