@@ -9,7 +9,6 @@
 
 #include <QMainWindow>
 #include <QSignalMapper>
-//#include <QMenu>
 
 namespace Ui {
     class ZKanjiForm;

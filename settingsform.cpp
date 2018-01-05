@@ -336,19 +336,19 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     //ui->colGridCBox->setDefaultColor(static_cast<QRgb>(qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &gridopt, ui->sitesTable)));
     ui->colGridCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Grid));
 
-    ui->colBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base));
-    ui->colTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Text));
-    ui->colSelBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Highlight));
-    ui->colSelTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::HighlightedText));
-    ui->coliBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Base));
-    ui->coliTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Text));
-    ui->coliSelBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Highlight));
-    ui->coliSelTextCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::HighlightedText));
+    ui->colBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
+    ui->colTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Text));
+    ui->colSelBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Highlight));
+    ui->colSelTextCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::HighlightedText));
+    ui->coliBgCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Base));
+    ui->coliTextCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
+    ui->coliSelBgCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Highlight));
+    ui->coliSelTextCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::HighlightedText));
 
-    ui->colScrollBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base));
-    ui->colScrollCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Text));
-    ui->coliScrollBgCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base));
-    ui->coliScrollCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Inactive, QPalette::Text));
+    ui->colScrollBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
+    ui->colScrollCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
+    ui->coliScrollBgCBox->setDefaultColor(qApp->palette().color(QPalette::Active, QPalette::Base));
+    ui->coliScrollCBox->setDefaultColor(qApp->palette().color(QPalette::Inactive, QPalette::Text));
 
     ui->colStudyCorrectCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyCorrect));
     ui->colStudyWrongCBox->setDefaultColor(Settings::defUiColor(ColorSettings::StudyWrong));
@@ -380,9 +380,9 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     ui->bgKataCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KataBg));
     ui->bgHiraCBox->setDefaultColor(Settings::defUiColor(ColorSettings::HiraBg));
     ui->textSimilarCBox->setDefaultColor(Settings::defUiColor(ColorSettings::SimilarText));
-    //ui->bgSimilarCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::SimilarBg)*/);
-    //ui->bgPartsCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::PartsBg)*/);
-    //ui->bgPartOfCBox->setDefaultColor(qApp->style()->standardPalette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::PartOfBg)*/);
+    //ui->bgSimilarCBox->setDefaultColor(qApp->style()->palette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::SimilarBg)*/);
+    //ui->bgPartsCBox->setDefaultColor(qApp->style()->palette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::PartsBg)*/);
+    //ui->bgPartOfCBox->setDefaultColor(qApp->style()->palette().color(QPalette::Active, QPalette::Base) /*Settings::defUiColor(ColorSettings::PartOfBg)*/);
 
     ui->colStat1CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat1));
     ui->colStat2CBox->setDefaultColor(Settings::defUiColor(ColorSettings::Stat2));

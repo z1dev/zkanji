@@ -1195,11 +1195,7 @@ void ZKanjiForm::dictionaryRenamed(int index, int orderindex)
 
 void ZKanjiForm::fillMainMenu()
 {
-//#ifdef Q_OS_MAX
-//    QMenuBar *menu = new QMenuBar(nullptr);
-//#else
     QMenuBar *menu = menuBar();
-//#endif
 
     QFont tmp = menu->font();
     tmp.setKerning(false);
