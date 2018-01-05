@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="buttonsWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
        <number>0</number>
@@ -48,151 +48,195 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="shownLabel">
-        <property name="text">
-         <string>Filters:</string>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="shownLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Filters:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f1Button">
+           <property name="text">
+            <string>1</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f2Button">
+           <property name="text">
+            <string>2</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f3Button">
+           <property name="text">
+            <string>3</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f4Button">
+           <property name="text">
+            <string>4</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f5Button">
+           <property name="text">
+            <string>5</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f6Button">
+           <property name="text">
+            <string>6</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f7Button">
+           <property name="text">
+            <string>7</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="f8Button">
+           <property name="text">
+            <string>8</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="f1Button">
-        <property name="text">
-         <string>1</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
+       <widget class="QWidget" name="widget_2" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QToolButton" name="allButton">
+           <property name="text">
+            <string>All</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>5</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f2Button">
-        <property name="text">
-         <string>2</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f3Button">
-        <property name="text">
-         <string>3</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f4Button">
-        <property name="text">
-         <string>4</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f5Button">
-        <property name="text">
-         <string>5</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f6Button">
-        <property name="text">
-         <string>6</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f7Button">
-        <property name="text">
-         <string>7</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="f8Button">
-        <property name="text">
-         <string>8</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>8</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QToolButton" name="resetButton">
-        <property name="text">
-         <string>Reset</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
@@ -222,6 +266,13 @@
       <property name="bottomMargin">
        <number>2</number>
       </property>
+      <item>
+       <widget class="QToolButton" name="resetButton">
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QWidget" name="strokeWidget" native="true">
         <property name="sizePolicy">
@@ -255,7 +306,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Stroke cnt.:</string>
+            <string>Stroke count:</string>
            </property>
           </widget>
          </item>
@@ -806,7 +857,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_22">
          <property name="spacing">
-          <number>2</number>
+          <number>3</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -846,8 +897,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>18</width>
-               <height>18</height>
+               <width>16</width>
+               <height>16</height>
               </size>
              </property>
              <property name="checkable">
@@ -869,8 +920,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>18</width>
-               <height>18</height>
+               <width>16</width>
+               <height>16</height>
               </size>
              </property>
              <property name="checkable">
@@ -889,8 +940,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>18</width>
-               <height>18</height>
+               <width>16</width>
+               <height>16</height>
               </size>
              </property>
              <property name="checkable">
@@ -909,8 +960,8 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>18</width>
-               <height>18</height>
+               <width>16</width>
+               <height>16</height>
               </size>
              </property>
              <property name="checkable">
@@ -969,80 +1020,94 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_25">
-     <property name="spacing">
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_23">
-       <property name="text">
-        <string>Order:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="sortCBox">
-       <item>
+    <widget class="QWidget" name="sortWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="sortLabel">
         <property name="text">
-         <string>Jouyou grade</string>
+         <string>Order:</string>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>JLPT level</string>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="sortCBox">
+        <item>
+         <property name="text">
+          <string>Jouyou grade</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>JLPT level</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kanji frequency</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Words with kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Word frequency</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Stroke count</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Radical number</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Unicode</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>EUC/JIS</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_11">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kanji frequency</string>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>274</width>
+          <height>5</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Words with kanji</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Word frequency</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Stroke count</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Radical number</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Unicode</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>EUC/JIS</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_11">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
@@ -1055,183 +1120,190 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_26">
-     <property name="spacing">
-      <number>2</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_24">
-       <property name="text">
-        <string>From:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="fromCBox">
-       <property name="sizeAdjustPolicy">
-        <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-       </property>
-       <item>
-        <property name="text">
-         <string>All</string>
+    <widget class="QWidget" name="fromWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QComboBox" name="fromCBox">
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Clipboard</string>
+        <item>
+         <property name="text">
+          <string>From all</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>From clipboard</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Only common kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Only jouyou kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Only JLPT kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Essential Kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gakken Kanji Dictionary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>New J-E Character Dictionary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Remembering the Kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Remembering the Kanji 6th</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Remembering the Kanji (Fr.)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>A Guide to Rem. Japanese Char.</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Modern R. J-E Char. Dictionary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>New Nelson Char. Dictionary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spahn &amp; Hadamitzky Dictionary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spahn &amp; Hadamitzky K &amp; K</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kanji and Kana (old)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Japanese For Busy People</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kanji Way</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Japanese Kanji Flashcards</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Compact Kanji Guide</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kodansha Kanji Dictionary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2001 Kanji</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Guide to Reading and Writing</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Guide to Reading and Writing 3rd</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kanji in Context</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kanji Learners Dictionary (1999)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Kanji Learners Dictionary (2013)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tuttle Kanji Cards</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_12">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Common</string>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>208</width>
+          <height>5</height>
+         </size>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Jouyou</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>JLPT</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Essential Kanji</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Gakken Kanji Dictionary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>New J-E Character Dictionary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Remembering the Kanji</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Remembering the Kanji 6th</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Remembering the Kanji (Fr.)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>A Guide to Rem. Japanese Characters</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Modern R. J-E Character Dictionary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>New Nelson Character Dictionary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Spahn &amp; Hadamitzky Dictionary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Spahn &amp; Hadamitzky Kanji and Kana</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kanji and Kana (old)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Japanese For Busy People</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kanji Way</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Japanese Kanji Flashcards</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Compact Kanji Guide</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kodansha Kanji Dictionary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>2001 Kanji</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Guide to Reading and Writing</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Guide to Reading and Writing 3rd</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kanji in Context</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kanji Learners Dictionary (1999)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Kanji Learners Dictionary (2013)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Tuttle Kanji Cards</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_12">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

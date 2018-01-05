@@ -120,6 +120,7 @@ public slots:
 protected:
     virtual void showEvent(QShowEvent *e) override;
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
+    virtual void resizeEvent(QResizeEvent *e) override;
 private:
     Ui::KanjiSearchWidget *ui;
 private:
@@ -169,6 +170,7 @@ private slots:
     void on_f6Button_clicked();
     void on_f7Button_clicked();
     void on_f8Button_clicked();
+    void on_allButton_clicked(bool checked);
     //void on_clearButton_clicked();
 
     // Checks or unchecks the checkbox next to a filter widget depending on its state.

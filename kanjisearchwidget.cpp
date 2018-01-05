@@ -419,6 +419,23 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     optionsLayout->setHorizontalSpacing(10);
     ui->optionsWidget->setLayout(optionsLayout);
 
+
+    tmplayout = ui->buttonsWidget->layout();
+    tmpitems.clear();
+    while (tmplayout->count())
+        tmpitems.push_back(ui->buttonsWidget->layout()->takeAt(0));
+    delete tmplayout;
+
+    ZFlowLayout *buttonsLayout = new ZFlowLayout(ui->buttonsWidget);
+
+    for (QLayoutItem *item : tmpitems)
+        buttonsLayout->addItem(item);
+
+    buttonsLayout->setMargin(0);
+    buttonsLayout->setVerticalSpacing(0);
+    buttonsLayout->setHorizontalSpacing(2);
+    ui->buttonsWidget->setLayout(buttonsLayout);
+
     ui->kanjiGrid->setModel(new KanjiGridSortModel(&mainKanjiListModel(), KanjiGridSortOrder::Jouyou, ui->kanjiGrid->dictionary(), ui->kanjiGrid));
     ui->readingEdit->setValidator(&kanaValidator());
 
@@ -764,6 +781,7 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
     ui->f6Button->setChecked(ui->radicalsWidget->isVisibleTo(ui->optionsWidget));
     ui->f7Button->setChecked(ui->indexWidget->isVisibleTo(ui->optionsWidget));
     ui->f8Button->setChecked(ui->skipWidget->isVisibleTo(ui->optionsWidget));
+    ui->allButton->setChecked(ui->f1Button->isChecked() && ui->f2Button->isChecked() && ui->f3Button->isChecked() && ui->f4Button->isChecked() && ui->f5Button->isChecked() && ui->f6Button->isChecked() && ui->f7Button->isChecked() && ui->f8Button->isChecked());
 
     ui->optionsWidget->setVisible(ui->line->isVisibleTo(this));
 
@@ -1109,6 +1127,34 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
 
     popup.popup(e->globalPos());
     e->accept();
+}
+
+void KanjiSearchWidget::resizeEvent(QResizeEvent *e)
+{
+    base::resizeEvent(e);
+
+    if (ui->sortWidget->layout()->count() == 3 && width() - ui->sortLabel->width() - ui->sortCBox->width() - ui->sortWidget->layout()->spacing() * 2 >= ui->fromCBox->width())
+    {
+        if (isVisibleTo(window()) && window()->isVisible())
+        {
+            ui->sortCBox->setMinimumWidth(ui->sortCBox->width());
+            ui->fromCBox->setMinimumWidth(ui->fromCBox->width());
+        }
+        QBoxLayout *l = static_cast<QBoxLayout*>(ui->sortWidget->layout());
+        l->insertWidget(2, ui->fromCBox);
+        ui->fromWidget->hide();
+        QSizePolicy pol = ui->sortWidget->sizePolicy();
+        pol.setHorizontalPolicy(QSizePolicy::Ignored);
+        ui->sortWidget->setSizePolicy(pol);
+    }
+    else if (ui->sortWidget->layout()->count() == 4 && width() - ui->sortLabel->width() - ui->sortCBox->width() - ui->sortWidget->layout()->spacing() * 2 < ui->fromCBox->width())
+    {
+        static_cast<QBoxLayout*>(ui->fromWidget->layout())->insertWidget(0, ui->fromCBox);
+        ui->fromWidget->show();
+        QSizePolicy pol = ui->sortWidget->sizePolicy();
+        pol.setHorizontalPolicy(QSizePolicy::Preferred);
+        ui->sortWidget->setSizePolicy(pol);
+    }
 }
 
 bool KanjiSearchWidget::filtersMatch(const RuntimeKanjiFilters &a, const RuntimeKanjiFilters &b)
@@ -1801,6 +1847,20 @@ void KanjiSearchWidget::on_f8Button_clicked()
     showHideAction(9);
 }
 
+void KanjiSearchWidget::on_allButton_clicked(bool checked)
+{
+    //ui->f1Button->setChecked(checked);
+    //ui->f2Button->setChecked(checked);
+    //ui->f3Button->setChecked(checked);
+    //ui->f4Button->setChecked(checked);
+    //ui->f5Button->setChecked(checked);
+    //ui->f6Button->setChecked(checked);
+    //ui->f7Button->setChecked(checked);
+    //ui->f8Button->setChecked(checked);
+
+    showHideAction(checked ? 0 : 1);
+}
+
 
 //void KanjiSearchWidget::on_clearButton_clicked()
 //{
@@ -1906,6 +1966,8 @@ void KanjiSearchWidget::showHideAction(int index)
     ui->f6Button->setChecked(ui->radicalsWidget->isVisibleTo(ui->optionsWidget));
     ui->f7Button->setChecked(ui->indexWidget->isVisibleTo(ui->optionsWidget));
     ui->f8Button->setChecked(ui->skipWidget->isVisibleTo(ui->optionsWidget));
+
+    ui->allButton->setChecked(ui->f1Button->isChecked() && ui->f2Button->isChecked() && ui->f3Button->isChecked() && ui->f4Button->isChecked() && ui->f5Button->isChecked() && ui->f6Button->isChecked() && ui->f7Button->isChecked() && ui->f8Button->isChecked());
 
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)

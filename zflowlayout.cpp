@@ -5,6 +5,8 @@
 **/
 
 #include <QWidget>
+#include <cmath>
+
 #include "zflowlayout.h"
 
 
@@ -83,13 +85,19 @@ QSize ZFlowLayout::minimumSize() const
         //    continue;
         //}
         if (!item->isEmpty())
+        {
             size.expandedTo(item->minimumSize());
+            QWidget *w = const_cast<QLayoutItem*>(item)->widget();
+            if (w != nullptr && w->sizePolicy().horizontalPolicy() == QSizePolicy::Fixed)
+            {
+                size.setWidth(std::max(size.width(), w->sizeHint().width()));
+            }
+        }
     }
 
     size += QSize(left + right, top + bottom);
 
     size.setHeight(heightForWidth(geometry().width()));
-
     return size;
 }
 
@@ -102,6 +110,7 @@ void ZFlowLayout::setGeometry(const QRect &r)
     QSize siz = minimumSize();
     parentWidget()->setMinimumHeight(siz.height());
     parentWidget()->setMaximumHeight(siz.height());
+    parentWidget()->setMinimumWidth(siz.width());
 }
 
 bool ZFlowLayout::hasHeightForWidth() const
