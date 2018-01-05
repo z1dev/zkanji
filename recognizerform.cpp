@@ -158,7 +158,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     //opts.initFrom(this);
     //opts.showDecorationSelected = true;
     //int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-    QColor gridColor = Settings::uiColor(ColorSettings::Grid); //static_cast<QRgb>(gridHint);
+    QColor gridColor = mixColors(Settings::textColor(isActiveWindow(), ColorSettings::Bg), Settings::textColor(isActiveWindow(), ColorSettings::Text), 0.85);
 
     double hx = area.width() / 20.;
 
