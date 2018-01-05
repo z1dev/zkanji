@@ -84,12 +84,12 @@ namespace Settings
     const QColor studywrongddef = QColor(245, 0, 0);
     const QColor studynewddef = QColor(80, 140, 200);
 
-    const QColor infddef = QColor(255, 255, 234);
-    const QColor attribddef = Qt::black;
-    const QColor typesddef = QColor(64, 128, 48);
-    const QColor notesddef = QColor(144, 64, 32);
-    const QColor fieldsddef = QColor(48, 64, 128);
-    const QColor dialectddef = QColor(128, 48, 64);
+    const QColor infddef = QColor(56, 56, 44);
+    const QColor attribddef = QColor(175, 206, 175);
+    const QColor typesddef = QColor(76, 218, 50);
+    const QColor notesddef = QColor(235, 80, 40);
+    const QColor fieldsddef = QColor(42, 160, 230);
+    const QColor dialectddef = QColor(188, 30, 112);
     const QColor sentencewordddef = QColor(255, 0, 0);
     const QColor kanaonlyddef = QColor(144, 176, 160);
     const QColor kanjiexbgddef = QColor(210, 255, 210);
@@ -98,22 +98,22 @@ namespace Settings
     const QColor okucolorddef = QColor(48, 162, 255);
 
     const QColor n5ddef = QColor(255, 34, 34);
-    const QColor n4ddef = QColor(50, 68, 220);
+    const QColor n4ddef = QColor(50, 115, 240);
     const QColor n3ddef = QColor(7, 160, 153);
     const QColor n2ddef = QColor(145, 77, 200);
-    const QColor n1ddef = QColor(Qt::black);
+    const QColor n1ddef = QColor(248, 248, 255);
 
     const QColor nowordsddef = QColor(192, 192, 192);
-    const QColor unsortedddef = QColor(247, 247, 240);
+    const QColor unsortedddef = QColor(66, 68, 81);
 
-    const QColor katabgddef = QColor(157, 216, 243);
-    const QColor hirabgddef = QColor(157, 243, 149);
+    const QColor katabgddef = QColor(0, 100, 130);
+    const QColor hirabgddef = QColor(50, 92, 12);
 
-    const QColor similartextddef = QColor(0, 145, 245);
+    const QColor similartextddef = QColor(40, 136, 205);
     //const QColor similarbgddef = QColor(241, 247, 247);
     //const QColor partsbgddef = QColor(231, 247, 231);
     //const QColor partofbgddef = QColor(247, 239, 231);
-    const QColor strokedotddef = QColor(255, 0, 0);
+    const QColor strokedotddef = QColor(65, 80, 72);
 
     const QColor stat1ddef = QColor(0, 162, 212);
     const QColor stat2ddef = QColor(120, 212, 40);
