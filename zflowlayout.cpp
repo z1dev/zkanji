@@ -10,7 +10,7 @@
 #include "zflowlayout.h"
 
 
-ZFlowLayout::ZFlowLayout(QWidget *parent) : base(parent), cached(-2, -2)/*, modeSpace(0, 0)*/, hspac(-1), vspac(-1)
+ZFlowLayout::ZFlowLayout(QWidget *parent) : base(parent), cached(-2, -2)/*, modeSpace(0, 0)*/, hspac(-1), vspac(-1), align(Qt::AlignTop)
 {
 
 }
@@ -196,6 +196,41 @@ void ZFlowLayout::setVerticalSpacing(int spac)
     cached = QSize(-2, -2);
 }
 
+uint ZFlowLayout::spacingAfter(QWidget *w) const
+{
+    auto it = spacingafter.find(w);
+    if (it == spacingafter.end())
+        return QWIDGETSIZE_MAX;
+    return it->second;
+}
+
+void ZFlowLayout::setSpacingAfter(QWidget *w, uint val)
+{
+    uint r = spacingAfter(w);
+    if (r == val)
+        return;
+    if (val != QWIDGETSIZE_MAX)
+        spacingafter[w] = val;
+    else
+        spacingafter.erase(w);
+
+    cached = QSize(-2, -2);
+}
+
+Qt::Alignment ZFlowLayout::alignment() const
+{
+    return align;
+}
+
+void ZFlowLayout::setAlignment(Qt::Alignment val)
+{
+    val &= (Qt::AlignTop | Qt::AlignBottom | Qt::AlignVCenter);
+    if (val == align)
+        return;
+    val = align;
+}
+
+
 int ZFlowLayout::smartSpacing(QStyle::PixelMetric pm) const
 {
     QObject *p = parent();
@@ -293,6 +328,13 @@ void ZFlowLayout::recompute(const QRect &r, bool update)
             }
 
             QWidget *widget = item->widget();
+            int whs = hs;
+            if (widget != nullptr)
+            {
+                auto sait = spacingafter.find(widget);
+                if (sait != spacingafter.end())
+                    whs = sait->second;
+            }
 
             // Negative for items that cannot grow from their current size.
             int limitprefix = -1;
@@ -315,7 +357,7 @@ void ZFlowLayout::recompute(const QRect &r, bool update)
             }
 
             auto nextit = nextVisibleIt(endit, list.end());
-            computeSpacing(item, nextit != list.end() ? *nextit : nullptr, spacex, spacey, hs, vs, style);
+            computeSpacing(item, nextit != list.end() ? *nextit : nullptr, spacex, spacey, whs, vs, style);
 
             int itemh = hint.height();
             if (rowh + rows < itemh + spacey)
@@ -459,9 +501,27 @@ void ZFlowLayout::recompute(const QRect &r, bool update)
                 hint.setWidth(itemw);
 
                 auto nextit = nextVisibleIt(it, list.end());
-                computeSpacing(item, nextit != list.end() ? *nextit : nullptr, spacex, spacey, hs, vs, style);
 
-                item->setGeometry(QRect(QPoint(x, y), hint));
+                QWidget *widget = item->widget();
+                int whs = hs;
+                if (widget != nullptr)
+                {
+                    auto sait = spacingafter.find(widget);
+                    if (sait != spacingafter.end())
+                        whs = sait->second;
+                }
+
+                computeSpacing(item, nextit != list.end() ? *nextit : nullptr, spacex, spacey, whs, vs, style);
+
+                int alignedy = y;
+                if (hint.height() < rowh && align != Qt::AlignTop)
+                {
+                    if (align == Qt::AlignBottom)
+                        alignedy = y + rowh - hint.height();
+                    else if (align == Qt::AlignVCenter)
+                        alignedy = y + (rowh - hint.height()) / 2;
+                }
+                item->setGeometry(QRect(QPoint(x, alignedy), hint));
 
                 x += itemw + spacex;
             }

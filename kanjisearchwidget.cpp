@@ -416,7 +416,7 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     optionsLayout->setMargin(0);
     optionsLayout->setVerticalSpacing(3);
-    optionsLayout->setHorizontalSpacing(10);
+    optionsLayout->setHorizontalSpacing(8);
     ui->optionsWidget->setLayout(optionsLayout);
 
 
@@ -1040,10 +1040,18 @@ void KanjiSearchWidget::showEvent(QShowEvent *e)
     base::showEvent(e);
     
     ZFlowLayout *flow = (ZFlowLayout*)ui->optionsWidget->layout();
+    flow->setAlignment(Qt::AlignVCenter);
     flow->restrictWidth(ui->meaningWidget, restrictedWidgetSize(ui->meaningEdit, 16) + ui->meaningWidget->layout()->spacing() + ui->meaningLabel->width());
     flow->restrictWidth(ui->readingWidget, restrictedWidgetSize(ui->readingEdit, 12) + ui->readingLabel->width() + ui->readingCBox->width() + ui->okuriganaButton->width() + ui->readingWidget->layout()->spacing() * 3);
     //flow->restrictWidth(ui->indexWidget, restrictedWidgetSize(ui->indexEdit, 12) + ui->indexLabel->width() + ui->indexCBox->width() + ui->indexWidget->layout()->spacing() * 2);
     flow->restrictWidth(ui->radicalsWidget, ui->radicalsLabel->width() + restrictedWidgetSize(ui->radicalsCBox, 20) + ui->radicalsWidget->layout()->spacing());
+    flow->setSpacingAfter(ui->resetWidget, 0);
+
+    if (ui->okuriganaButton->height() != ui->readingCBox->height())
+    {
+        ui->okuriganaButton->setMinimumHeight(ui->readingCBox->height());
+        ui->readingCBox->setMinimumHeight(ui->okuriganaButton->height());
+    }
 
 }
 

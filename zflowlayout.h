@@ -64,6 +64,21 @@ public:
     void setHorizontalSpacing(int spac);
     int verticalSpacing() const;
     void setVerticalSpacing(int spac);
+
+    // Spacing used after specific widgets. If the widget's spacing is not specified,
+    // QWIDGETSIZE_MAX is returned.
+    uint spacingAfter(QWidget *w) const;
+    // Changes the spacing used after the passed widget to val, that can be different than the
+    // spacing specified in setHorizontalSpacing(). Setting val to QWIDGETSIZE_MAX will erase
+    // the widget's spacing.
+    void setSpacingAfter(QWidget *w, uint val);
+
+    // Returns how widgets not as tall as a row are placed vertically. Default alignment is
+    // Qt::AlignTop.
+    Qt::Alignment alignment() const;
+    // Set how widgets not as tall as a row should be placed vertically. Default alignment is
+    // Qt::AlignTop. Horizontal alignments and Qt::Baseline are ignored.
+    void setAlignment(Qt::Alignment val);
 private:
     int smartSpacing(QStyle::PixelMetric pm) const;
 
@@ -87,6 +102,9 @@ private:
     // Widths set with restrictWidth(). This map is never cleared unless QWIDGETSIZE_MAX is
     // passed for every previously restricted widget.
     std::map<QWidget*, uint> restrictions;
+    // Spacing used after widgets, ignoring the horizontal spacing set for the layout. Only
+    // widgets in this map have different spacing.
+    std::map<QWidget*, uint> spacingafter;
 
     // See makeModeSpace().
     //QSize modeSpace;
@@ -97,6 +115,8 @@ private:
     int hspac;
     // Spacing between rows of items.
     int vspac;
+
+    Qt::Alignment align;
 
     typedef QLayout base;
 };
