@@ -23,8 +23,8 @@ enum class Commands {
     StudyWord, CreateNewWord, CopyWordDef, CopyWordKanji,
     CopyWordKana, CopyWord, AppendWordKanji, AppendWordKana,
 
-    ResetKanjiSearch, StrokeFilter, MeaningFilter, ReadingFilter,
-    JLPTFilter, JouyouFilter, RadicalsFilter, IndexFilter,
+    ResetKanjiSearch, StrokeFilter, JLPTFilter, MeaningFilter,
+    ReadingFilter, JouyouFilter, RadicalsFilter, IndexFilter,
     SKIPFilter,
 
     ShowKanjiInfo, KanjiToGroup, EditKanjiDef, CollectKanjiWords,

@@ -621,9 +621,9 @@ void KanjiSearchWidget::saveState(KanjiFilterData &data) const
     //    data.strokemin = 0, data.strokemax = 0;
 
     data.filters = ((ui->strokeWidget->isVisibleTo(ui->optionsWidget) ?  0x01 : 0)) |
-                   ((ui->meaningWidget->isVisibleTo(ui->optionsWidget) ? 0x02 : 0)) |
-                   ((ui->readingWidget->isVisibleTo(ui->optionsWidget) ? 0x04 : 0)) |
-                   ((ui->jlptWidget->isVisibleTo(ui->optionsWidget) ? 0x08 : 0)) |
+                   ((ui->jlptWidget->isVisibleTo(ui->optionsWidget) ? 0x02 : 0)) |
+                   ((ui->meaningWidget->isVisibleTo(ui->optionsWidget) ? 0x04 : 0)) |
+                   ((ui->readingWidget->isVisibleTo(ui->optionsWidget) ? 0x08 : 0)) |
                    ((ui->jouyouWidget->isVisibleTo(ui->optionsWidget) ? 0x10 : 0)) |
                    ((ui->radicalsWidget->isVisibleTo(ui->optionsWidget) ? 0x20 : 0)) |
                    ((ui->indexWidget->isVisibleTo(ui->optionsWidget) ? 0x40 : 0)) |
@@ -710,23 +710,23 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
         ui->strokeEdit->setText(IntMinMaxToString(1, std::numeric_limits<int>::max() - 1, data.strokemin, data.strokemax));
 
     if (Settings::general.savewinstates)
-        ui->meaningWidget->setVisible((data.filters & 0x02) != 0);
+        ui->jlptWidget->setVisible((data.filters & 0x02) != 0);
+    if (Settings::kanji.savefilters)
+        ui->jlptEdit->setText(IntMinMaxToString(1, 5, data.jlptmin, data.jlptmax));
+
+    if (Settings::general.savewinstates)
+        ui->meaningWidget->setVisible((data.filters & 0x04) != 0);
     if (Settings::kanji.savefilters)
         ui->meaningEdit->setText(data.meaning);
 
     if (Settings::general.savewinstates)
-        ui->readingWidget->setVisible((data.filters & 0x04) != 0);
+        ui->readingWidget->setVisible((data.filters & 0x08) != 0);
     if (Settings::kanji.savefilters)
     {
         ui->readingCBox->setCurrentIndex(data.readingon && data.readingkun ? 0 : data.readingon ? 1 : 2);
         ui->okuriganaButton->setChecked(data.readingoku);
         ui->readingEdit->setText(data.reading);
     }
-
-    if (Settings::general.savewinstates)
-        ui->jlptWidget->setVisible((data.filters & 0x08) != 0);
-    if (Settings::kanji.savefilters)
-        ui->jlptEdit->setText(IntMinMaxToString(1, 5, data.jlptmin, data.jlptmax));
 
     if (Settings::general.savewinstates)
         ui->jouyouWidget->setVisible((data.filters & 0x10) != 0);
@@ -774,9 +774,9 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
         ui->skipWidget->isVisibleTo(ui->optionsWidget) || ui->indexWidget->isVisibleTo(ui->optionsWidget));
 
     ui->f1Button->setChecked(ui->strokeWidget->isVisibleTo(ui->optionsWidget));
-    ui->f2Button->setChecked(ui->meaningWidget->isVisibleTo(ui->optionsWidget));
-    ui->f3Button->setChecked(ui->readingWidget->isVisibleTo(ui->optionsWidget));
-    ui->f4Button->setChecked(ui->jlptWidget->isVisibleTo(ui->optionsWidget));
+    ui->f2Button->setChecked(ui->jlptWidget->isVisibleTo(ui->optionsWidget));
+    ui->f3Button->setChecked(ui->meaningWidget->isVisibleTo(ui->optionsWidget));
+    ui->f4Button->setChecked(ui->readingWidget->isVisibleTo(ui->optionsWidget));
     ui->f5Button->setChecked(ui->jouyouWidget->isVisibleTo(ui->optionsWidget));
     ui->f6Button->setChecked(ui->radicalsWidget->isVisibleTo(ui->optionsWidget));
     ui->f7Button->setChecked(ui->indexWidget->isVisibleTo(ui->optionsWidget));
@@ -852,15 +852,15 @@ void KanjiSearchWidget::executeCommand(int command)
         ui->f1Button->toggle();
         ui->f1Button->click();
         break;
-    case (int)Commands::MeaningFilter:
+    case (int)Commands::JLPTFilter:
         ui->f2Button->toggle();
         ui->f2Button->click();
         break;
-    case (int)Commands::ReadingFilter:
+    case (int)Commands::MeaningFilter:
         ui->f3Button->toggle();
         ui->f3Button->click();
         break;
-    case (int)Commands::JLPTFilter:
+    case (int)Commands::ReadingFilter:
         ui->f4Button->toggle();
         ui->f4Button->click();
         break;
@@ -900,13 +900,13 @@ void KanjiSearchWidget::commandState(int command, bool &enabled, bool &checked, 
     case (int)Commands::StrokeFilter:
         checked = ui->f1Button->isChecked();
         break;
-    case (int)Commands::MeaningFilter:
+    case (int)Commands::JLPTFilter:
         checked = ui->f2Button->isChecked();
         break;
-    case (int)Commands::ReadingFilter:
+    case (int)Commands::MeaningFilter:
         checked = ui->f3Button->isChecked();
         break;
-    case (int)Commands::JLPTFilter:
+    case (int)Commands::ReadingFilter:
         checked = ui->f4Button->isChecked();
         break;
     case (int)Commands::JouyouFilter:
@@ -1089,21 +1089,21 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
     connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
     popmap.setMapping(a, 2);
 
+    a = popup.addAction("JLPT level filter");
+    a->setCheckable(true);
+    a->setChecked(ui->jlptEdit->isVisible());
+    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
+    popmap.setMapping(a, 3);
+
     a = popup.addAction("Meaning filter");
     a->setCheckable(true);
     a->setChecked(ui->meaningEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 3);
+    popmap.setMapping(a, 4);
 
     a = popup.addAction("Reading filter");
     a->setCheckable(true);
     a->setChecked(ui->readingEdit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 4);
-
-    a = popup.addAction("JLPT level filter");
-    a->setCheckable(true);
-    a->setChecked(ui->jlptEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
     popmap.setMapping(a, 5);
 
@@ -1938,14 +1938,14 @@ void KanjiSearchWidget::showHideAction(int index)
     case 2: // Stroke count
         ui->strokeWidget->setVisible(!ui->strokeWidget->isVisibleTo(ui->optionsWidget));
         break;
-    case 3: // Meaning
+    case 3: // JLPT
+        ui->jlptWidget->setVisible(!ui->jlptWidget->isVisibleTo(ui->optionsWidget));
+        break;
+    case 4: // Meaning
         ui->meaningWidget->setVisible(!ui->meaningWidget->isVisibleTo(ui->optionsWidget));
         break;
-    case 4: // Reading
+    case 5: // Reading
         ui->readingWidget->setVisible(!ui->readingWidget->isVisibleTo(ui->optionsWidget));
-        break;
-    case 5: // JLPT
-        ui->jlptWidget->setVisible(!ui->jlptWidget->isVisibleTo(ui->optionsWidget));
         break;
     case 6: // Jouyou
         ui->jouyouWidget->setVisible(!ui->jouyouWidget->isVisibleTo(ui->optionsWidget));
@@ -1967,9 +1967,9 @@ void KanjiSearchWidget::showHideAction(int index)
         ui->skipWidget->isVisibleTo(ui->optionsWidget) || ui->indexWidget->isVisibleTo(ui->optionsWidget));
 
     ui->f1Button->setChecked(ui->strokeWidget->isVisibleTo(ui->optionsWidget));
-    ui->f2Button->setChecked(ui->meaningWidget->isVisibleTo(ui->optionsWidget));
-    ui->f3Button->setChecked(ui->readingWidget->isVisibleTo(ui->optionsWidget));
-    ui->f4Button->setChecked(ui->jlptWidget->isVisibleTo(ui->optionsWidget));
+    ui->f2Button->setChecked(ui->jlptWidget->isVisibleTo(ui->optionsWidget));
+    ui->f3Button->setChecked(ui->meaningWidget->isVisibleTo(ui->optionsWidget));
+    ui->f4Button->setChecked(ui->readingWidget->isVisibleTo(ui->optionsWidget));
     ui->f5Button->setChecked(ui->jouyouWidget->isVisibleTo(ui->optionsWidget));
     ui->f6Button->setChecked(ui->radicalsWidget->isVisibleTo(ui->optionsWidget));
     ui->f7Button->setChecked(ui->indexWidget->isVisibleTo(ui->optionsWidget));
@@ -1981,9 +1981,9 @@ void KanjiSearchWidget::showHideAction(int index)
     if (categ != CommandCategories::NoCateg)
     {
         ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::StrokeFilter, categ), ui->f1Button->isChecked());
-        ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::MeaningFilter, categ), ui->f2Button->isChecked());
-        ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::ReadingFilter, categ), ui->f3Button->isChecked());
-        ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::JLPTFilter, categ), ui->f4Button->isChecked());
+        ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::JLPTFilter, categ), ui->f2Button->isChecked());
+        ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::MeaningFilter, categ), ui->f3Button->isChecked());
+        ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::ReadingFilter, categ), ui->f4Button->isChecked());
         ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::JouyouFilter, categ), ui->f5Button->isChecked());
         ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::RadicalsFilter, categ), ui->f6Button->isChecked());
         ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::IndexFilter, categ), ui->f7Button->isChecked());
