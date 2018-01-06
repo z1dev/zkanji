@@ -12,11 +12,10 @@
 #include "ui_radform.h"
 #include "zui.h"
 
-RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm), sizeinited(false), model(nullptr), btnresult(Cancel)
+RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm), expandsize(-1), model(nullptr), btnresult(Cancel)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
-    setAttribute(Qt::WA_DontShowOnScreen);
 
     scaleWidget(this);
 
@@ -65,6 +64,14 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
 
     connect(ui->radsList, &QListWidget::currentRowChanged, this, &RadicalForm::radsRowChanged);
     connect(ui->radsList, &QListWidget::itemDoubleClicked, this, &RadicalForm::radsDoubleClicked);
+
+    setAttribute(Qt::WA_DontShowOnScreen);
+    show();
+    showHidePrevSel();
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    ui->expandWidget->installEventFilter(this);
 }
 
 RadicalForm::~RadicalForm()
@@ -240,23 +247,33 @@ void RadicalForm::on_addButton_clicked()
     ui->searchEdit->setText(QString());
 }
 
-void RadicalForm::showEvent(QShowEvent *event)
+//void RadicalForm::showEvent(QShowEvent *event)
+//{
+//    if (ui->prevSelButton->text().isEmpty())
+//    {
+//        if (expandsize != -1)
+//        {
+//            hide();
+//            showHidePrevSel();
+//            setAttribute(Qt::WA_DontShowOnScreen, false);
+//            show();
+//            return;
+//        }
+//        sizeinited = true;
+//        QShowEvent *e = new QShowEvent();
+//        qApp->postEvent(this, e);
+//    }
+//    base::showEvent(event);
+//}
+
+bool RadicalForm::eventFilter(QObject *o, QEvent *e)
 {
-    if (ui->prevSelButton->text().isEmpty())
+    if (o == ui->expandWidget && e->type() == QEvent::Resize)
     {
-        if (sizeinited)
-        {
-            hide();
-            showHidePrevSel();
-            setAttribute(Qt::WA_DontShowOnScreen, false);
-            show();
-            return;
-        }
-        sizeinited = true;
-        QShowEvent *e = new QShowEvent();
-        qApp->postEvent(this, e);
+        if (ui->expandWidget->isVisibleTo(this))
+            expandsize = ui->expandWidget->height();
     }
-    base::showEvent(event);
+    return base::eventFilter(o, e);
 }
 
 void RadicalForm::updateSettings()
@@ -313,27 +330,35 @@ void RadicalForm::clearSelection()
 
 void RadicalForm::showHidePrevSel()
 {
-    int h = ui->expandWidget->frameGeometry().height() + centralWidget()->layout()->spacing();
+    if (expandsize == -1)
+        expandsize = ui->expandWidget->height();
+    int oldexp = expandsize;
 
-    QSize s = geometry().size();
+    int h = /*centralWidget()->layout()->spacing() +*/ ui->splitter->handleWidth();
+    int gridsize = ui->gridWidget->height();
+
+    QSize s = size(); // geometry().size();
     if (ui->expandWidget->isVisibleTo(this))
     {
-        ui->prevSelButton->setText(tr("Previous selections") + QStringLiteral(" >>"));
+        ui->prevSelButton->setText(tr("Show filter history") + QStringLiteral(" >>"));
         ui->expandWidget->hide();
+        ui->splitter->refresh();
+        ui->splitter->updateGeometry();
 
+        ui->gridWidget->layout()->activate();
         centralWidget()->layout()->activate();
         layout()->activate();
-        ui->radsButtons->layout()->activate();
 
-        s.setHeight(s.height() - h);
+        s.setHeight(s.height() - expandsize - h);
         resize(s);
     }
     else
     {
-        ui->prevSelButton->setText(tr("Previous selections") + QStringLiteral(" <<"));
-        s.setHeight(s.height() + h);
+        ui->prevSelButton->setText(tr("Hide filter history") + QStringLiteral(" <<"));
+        s.setHeight(s.height() + h + expandsize);
         resize(s);
         ui->expandWidget->show();
+        ui->splitter->setSizes({ gridsize, oldexp });
     }
 }
 

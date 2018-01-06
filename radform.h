@@ -87,7 +87,8 @@ public slots:
 
     void on_addButton_clicked();
 protected:
-    virtual void showEvent(QShowEvent *event) override;
+    virtual bool eventFilter(QObject *o, QEvent *e) override;
+    //virtual void showEvent(QShowEvent *event) override;
 private:
     // Switches between the parts and radicals display.
     void updateMode();
@@ -109,10 +110,9 @@ private:
 
     Ui::RadicalForm *ui;
 
-    // The first time the window is shown, it should be resized
-    // to hide the previous radical selections list. This value is
-    // set to true after it happened.
-    bool sizeinited;
+    // The size of the expandable filters history when shown. The value is -1 before the part
+    // is first hidden.
+    int expandsize;
 
     ZVariedModel *model;
 
