@@ -619,7 +619,8 @@ void PrintTextBlock::paintFurigana(QPainter &p, int x, int y, int width, int pos
 
         // Resetting stretch that was set above.
         furif.setStretch(100);
-        furifm = QFontMetrics(furif);
+        p.setFont(furif);
+        furifm = p.fontMetrics();
         return;
     }
 
@@ -979,17 +980,24 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
     // Page number font
     QFont pf = QFont(Settings::printDefFont(), pr);
 
-    // Determine the size of the fonts from the line size.
-    adjustFontSize(kf, linesize * 0.9/*, QString(QChar(0x4e80))*/);
-    adjustFontSize(ff, linesize * 0.6);
-    adjustFontSize(df, linesize/*, QStringLiteral("mgMG")*/);
-    adjustFontSize(tf, linesize);
-    adjustFontSize(pf, m * 0.6);
+    QPainter p;
+    p.begin(pr);
 
-    QFontMetrics kfm(kf);
-    QFontMetrics ffm(ff);
-    QFontMetrics dfm(df);
-    QFontMetrics tfm(tf);
+    // Determine the size of the fonts from the line size.
+    adjustFontSize(kf, linesize * 0.9, &p/*, QString(QChar(0x4e80))*/);
+    adjustFontSize(ff, linesize * 0.6, &p);
+    adjustFontSize(df, linesize, &p/*, QStringLiteral("mgMG")*/);
+    adjustFontSize(tf, linesize, &p);
+    adjustFontSize(pf, m * 0.6, &p);
+
+    p.setFont(kf);
+    QFontMetrics kfm = p.fontMetrics();
+    p.setFont(ff);
+    QFontMetrics ffm = p.fontMetrics();
+    p.setFont(df);
+    QFontMetrics dfm = p.fontMetrics();
+    p.setFont(tf);
+    QFontMetrics tfm = p.fontMetrics();
 
     WordEntry *e;
 
@@ -1011,15 +1019,12 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
     // Used for every printed string at every step.
     QString str;
 
-    QPainter p;
-    p.begin(pr);
-
     p.setPen(QPen(p.pen().color(), std::max(0.1, 0.009 * pres)));
 
     if (!printing && Settings::print.doublepage)
     {
         QFont tmpf = QFont(Settings::printDefFont(), pr);
-        adjustFontSize(tmpf, pres * 0.65/*, QStringLiteral("mgMG")*/);
+        adjustFontSize(tmpf, pres * 0.65, &p/*, QStringLiteral("mgMG")*/);
 
         p.setFont(tmpf);
         p.drawText(0, 0, pagerect.width(), pagerect.height(), Qt::AlignCenter | Qt::TextWordWrap, tr("This page won't be printed. It's only included here to allow the pages to face each other in the preview."));

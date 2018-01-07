@@ -373,21 +373,37 @@ void drawTextBaseline(QPainter *p, QPointF pos, bool hcenter, QRectF clip, QStri
         p->setClipPath(pp);
 }
 
-void adjustFontSize(QFont &f, int height/*, QString str*/)
+void adjustFontSize(QFont &f, int height, QPainter *p/*, QString str*/)
 {
+    QFont oldf = p != nullptr ? p->font() : QFont();
+
     f.setPixelSize(Settings::scaled(100));
     QFontMetrics fm(f);
+    if (p != nullptr)
+    {
+        p->setFont(f);
+        fm = p->fontMetrics();
+    }
     //QRect br = fm.boundingRect(str);
     double h = fm.overlinePos() + fm.underlinePos() /*br.height()*/;
     double dif = double(h) / height;
     f.setPixelSize(f.pixelSize() / dif);
 
     // Do a second measurement for more precision.
-    fm = QFontMetrics(f);
+    if (p != nullptr)
+    {
+        p->setFont(f);
+        fm = p->fontMetrics();
+    }
+    else
+        fm = QFontMetrics(f);
     //br = fm.boundingRect(str);
     h = fm.overlinePos() + fm.underlinePos() /*br.height()*/;
     dif = double(h) / height;
     f.setPixelSize(f.pixelSize() / dif);
+
+    if (p != nullptr)
+        p->setFont(oldf);
 }
 
 static int _sizeHelper(double charnum, int charw)

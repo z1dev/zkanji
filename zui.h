@@ -95,7 +95,7 @@ void drawTextBaseline(QPainter *p, QPointF pos, bool hcenter, QRectF clip, QStri
 // Updates the passed font's size to fit a given height. Pass a string which
 // will be used for measurement. This string can be anything, but it's best
 // if it holds characters that extend vertically the most.
-void adjustFontSize(QFont &f, int height/*, QString str*/);
+void adjustFontSize(QFont &f, int height, QPainter *p = nullptr/*, QString str*/);
 
 // Used in restrictWidgetSize to specify whether the minimum, the maximum or both width
 // restriction sizes should be set.

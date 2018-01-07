@@ -349,16 +349,26 @@ void RadicalForm::showHidePrevSel()
         centralWidget()->layout()->activate();
         layout()->activate();
 
-        s.setHeight(s.height() - expandsize - h);
-        resize(s);
+        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+        {
+            s.setHeight(s.height() - expandsize - h);
+            resize(s);
+        }
     }
     else
     {
         ui->prevSelButton->setText(tr("Hide filter history") + QStringLiteral(" <<"));
-        s.setHeight(s.height() + h + expandsize);
-        resize(s);
+        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+        {
+            s.setHeight(s.height() + h + expandsize);
+            resize(s);
+        }
+
         ui->expandWidget->show();
-        ui->splitter->setSizes({ gridsize, oldexp });
+        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+            ui->splitter->setSizes({ gridsize, oldexp });
+        else
+            ui->splitter->setSizes({ gridsize - oldexp - ui->splitter->handleWidth(), oldexp });
     }
 }
 
