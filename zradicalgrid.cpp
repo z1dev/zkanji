@@ -566,6 +566,8 @@ void ZRadicalGrid::init()
 {
     //QFont::StyleStrategy ss;
 
+    int lastsize = -1;
+
     float radh = 0.72;
     radfontsize = int(heights * radh);
     QFont radfont = Settings::radicalFont();
@@ -576,14 +578,23 @@ void ZRadicalGrid::init()
     QFontMetrics radmet(radfont);
     while (radmet.boundingRect(QString(QChar(0x9F3B))).height() > int(heights * 0.72))
     {
+        QFontInfo fi(radfont);
+        lastsize = fi.pointSize();
+
         do {
             radh -= 0.03;
-        } while (radfontsize == int(heights * radh));
+        } while (radh > 0 && radfontsize == int(heights * radh));
+
         radfontsize = int(heights * radh);
+        if (radfontsize <= 0)
+            break;
 
         radfont.setPointSize(radfontsize);
         radmet = QFontMetrics(radfont);
     }
+    if (lastsize != -1 && radfontsize <= 0)
+        radfontsize = lastsize;
+    lastsize = -1;
 
     float nameh = 0.4;
     namefontsize = int(heights * nameh);
@@ -598,14 +609,23 @@ void ZRadicalGrid::init()
     QFontMetrics namemet(namefont);
     while (namemet.boundingRect(QString(QChar(0x9F3B))).height() > int(heights * 0.4))
     {
+        QFontInfo fi(namefont);
+        lastsize = fi.pointSize();
+
         do {
             nameh -= 0.03;
-        } while (namefontsize == int(heights * nameh));
+        } while (nameh >= 0 && namefontsize == int(heights * nameh));
+
         namefontsize = int(heights * nameh);
+        if (namefontsize <= 0)
+            break;
 
         namefont.setPointSize(namefontsize);
         namemet = QFontMetrics(namefont);
     }
+    if (lastsize != -1 && namefontsize <= 0)
+        namefontsize = lastsize;
+    lastsize = -1;
 
     float infoh = 0.24;
     notesfontsize = int(heights * infoh);
@@ -613,14 +633,23 @@ void ZRadicalGrid::init()
     QFontMetrics nfmet(notesfont);
     while (nfmet.boundingRect(QStringLiteral("123456789")).height() > int(heights * 0.24))
     {
+        QFontInfo fi(notesfont);
+        lastsize = fi.pointSize();
+
         do {
             infoh -= 0.03;
-        } while (notesfontsize == int(heights * infoh));
+        } while (infoh >= 0 && notesfontsize == int(heights * infoh));
+
         notesfontsize = int(heights * infoh);
+        if (notesfontsize <= 0)
+            break;
 
         notesfont.setPointSize(notesfontsize);
         nfmet = QFontMetrics(notesfont);
     }
+    if (lastsize != -1 && radh <= 0)
+        notesfontsize = lastsize;
+    lastsize = -1;
 
     int p = 0;
     for (int ix = 0; ix != 231; ++ix)

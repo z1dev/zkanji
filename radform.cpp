@@ -12,6 +12,9 @@
 #include "ui_radform.h"
 #include "zui.h"
 
+//-------------------------------------------------------------
+
+
 RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm), expandsize(-1), model(nullptr), btnresult(Cancel)
 {
     ui->setupUi(this);
@@ -391,3 +394,7 @@ void RadicalForm::handleButtons(QAbstractButton *button)
     }
     close();
 }
+
+
+//-------------------------------------------------------------
+
