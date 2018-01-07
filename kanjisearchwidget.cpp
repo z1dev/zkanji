@@ -1141,12 +1141,12 @@ void KanjiSearchWidget::resizeEvent(QResizeEvent *e)
 {
     base::resizeEvent(e);
 
-    if (ui->sortWidget->layout()->count() == 3 && width() - ui->sortLabel->width() - ui->sortCBox->width() - ui->sortWidget->layout()->spacing() * 2 >= ui->fromCBox->width())
+    if (ui->sortWidget->layout()->count() == 3 && width() - ui->sortLabel->width() - ui->sortCBox->minimumSizeHint().width() - ui->sortWidget->layout()->spacing() * 2 >= ui->fromCBox->minimumSizeHint().width())
     {
         if (isVisibleTo(window()) && window()->isVisible())
         {
-            ui->sortCBox->setMinimumWidth(ui->sortCBox->width());
-            ui->fromCBox->setMinimumWidth(ui->fromCBox->width());
+            ui->sortCBox->setMinimumWidth(ui->sortCBox->minimumSizeHint().width());
+            ui->fromCBox->setMinimumWidth(ui->fromCBox->minimumSizeHint().width());
         }
         QBoxLayout *l = static_cast<QBoxLayout*>(ui->sortWidget->layout());
         l->insertWidget(2, ui->fromCBox);
@@ -1155,7 +1155,7 @@ void KanjiSearchWidget::resizeEvent(QResizeEvent *e)
         pol.setHorizontalPolicy(QSizePolicy::Ignored);
         ui->sortWidget->setSizePolicy(pol);
     }
-    else if (ui->sortWidget->layout()->count() == 4 && width() - ui->sortLabel->width() - ui->sortCBox->width() - ui->sortWidget->layout()->spacing() * 2 < ui->fromCBox->width())
+    else if (ui->sortWidget->layout()->count() == 4 && width() - ui->sortLabel->width() - ui->sortCBox->minimumSizeHint().width() - ui->sortWidget->layout()->spacing() * 2 < ui->fromCBox->minimumSizeHint().width())
     {
         static_cast<QBoxLayout*>(ui->fromWidget->layout())->insertWidget(0, ui->fromCBox);
         ui->fromWidget->show();
