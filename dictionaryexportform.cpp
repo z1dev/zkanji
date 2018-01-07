@@ -25,7 +25,7 @@ DictionaryExportForm::DictionaryExportForm(QWidget *parent) : base(parent), ui(n
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     exportbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     exportbutton->setText(tr("Export"));

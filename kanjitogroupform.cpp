@@ -24,7 +24,7 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->groupWidget->setMultiSelect(true);
     connect(ui->groupWidget, &GroupWidget::selectionChanged, this, &KanjiToGroupForm::selChanged);

@@ -20,7 +20,7 @@ DictionaryTextForm::DictionaryTextForm(QWidget *parent) : base(parent), ui(new U
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &DictionaryTextForm::accept);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DictionaryTextForm::close);

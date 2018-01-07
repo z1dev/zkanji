@@ -27,6 +27,7 @@
 #include "formstate.h"
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
+#include "fontsettings.h"
 
 
 //-------------------------------------------------------------
@@ -43,6 +44,10 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
         updatepending(false), updateforced(true), savecolumndata(true), listmode(DictSearch), mode(SearchMode::Japanese), browseorder(Settings::dictionary.browseorder)
 {
     ui->setupUi(this);
+
+    // Scaling would break these fonts.
+    //ui->jpCBox->lineEdit()->setFont(Settings::kanaFont(false));
+    //ui->browseEdit->setFont(Settings::kanaFont(false));
 
     ui->jpCBox->setDictionary(dict);
     ui->browseEdit->setDictionary(dict);

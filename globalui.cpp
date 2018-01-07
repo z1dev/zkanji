@@ -11,9 +11,12 @@
 #include <QWindow>
 #include <QClipboard>
 #include <QStringBuilder>
+#include <QFormLayout>
+#include <QSplitter>
 
 #include "globalui.h"
 #include "zui.h"
+#include "zkanalineedit.h"
 #include "zkanjimain.h"
 #include "zevents.h"
 #include "zkanjiform.h"
@@ -503,6 +506,24 @@ void GlobalUI::applyStyleSheet()
         QString("QScrollBar::add-line:vertical { height: %1px; } QScrollBar::sub-line:vertical { height: %1px; } QScrollBar::add-line:horizontal { width: %1px; } QScrollBar::sub-line:horizontal { width: %1px; } ").arg(Settings::scaled(scrollbtnw)) %
         QString("QSplitter::handle { background-color: %1; } ").arg(Settings::colors.lighttheme ? qApp->palette().color(QPalette::Active, QPalette::Base).darker(115).name() : qApp->palette().color(QPalette::Active, QPalette::Base).lighter(115).name()));
 
+}
+
+void GlobalUI::scaleWidget(QWidget *w)
+{
+    if (w == nullptr)
+        return;
+
+    _scaleWidget(w);
+
+    // Recursion of child widgets is done in _scaleWidget()
+}
+
+void GlobalUI::preventWidgetScale(QWidget *w)
+{
+    if (w == nullptr)
+        return;
+
+    _registerWidgetScale(w);
 }
 
 void GlobalUI::clipCopy(const QString &str) const
@@ -1561,6 +1582,11 @@ void GlobalUI::enableAutoSave()
     --autosavecounter;
 }
 
+void GlobalUI::scaledWidgetDestroyed(QObject *o)
+{
+    scaledwidgets.remove((QWidget*)o);
+}
+
 void GlobalUI::installShortcuts(bool install)
 {
     if (!install)
@@ -1614,6 +1640,112 @@ void GlobalUI::installShortcuts(bool install)
 
         //connect(kanjiPopupShortcut, &QxtGlobalShortcut::activated, this, &GlobalUI::showPopup);
     }
+}
+
+void GlobalUI::_scaleSpacerItem(QSpacerItem *s)
+{
+    QSizePolicy sp = s->sizePolicy();
+    QSize sh = s->sizeHint();
+    s->changeSize(Settings::scaled(sh.width()), Settings::scaled(sh.height()), sp.horizontalPolicy(), sp.verticalPolicy());
+}
+
+void GlobalUI::_scaleLayout(QLayout *l)
+{
+    if (l == nullptr)
+        return;
+
+    int ll, t, r, b;
+    l->getContentsMargins(&ll, &t, &r, &b);
+    l->setContentsMargins(Settings::scaled(ll), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
+
+    for (int ix = 0, siz = l->count(); ix != siz; ++ix)
+    {
+        QLayoutItem *la = l->itemAt(ix);
+        if (la->isEmpty())
+            continue;
+        QSpacerItem *si = la->spacerItem();
+        if (si != nullptr)
+            _scaleSpacerItem(si);
+        QLayout *ll = la->layout();
+        if (ll != nullptr)
+            _scaleLayout(ll);
+    }
+
+    // Spacing can be inherited so we set it only after the rest is done.
+
+    if (dynamic_cast<QBoxLayout*>(l) != nullptr)
+        l->setSpacing(Settings::scaled(l->spacing()));
+    else if (dynamic_cast<QFormLayout*>(l) != nullptr)
+    {
+        ((QFormLayout*)l)->setHorizontalSpacing(Settings::scaled(((QFormLayout*)l)->horizontalSpacing()));
+        ((QFormLayout*)l)->setVerticalSpacing(Settings::scaled(((QFormLayout*)l)->verticalSpacing()));
+    }
+    else if (dynamic_cast<QGridLayout*>(l) != nullptr)
+    {
+        ((QGridLayout*)l)->setHorizontalSpacing(Settings::scaled(((QGridLayout*)l)->horizontalSpacing()));
+        ((QGridLayout*)l)->setVerticalSpacing(Settings::scaled(((QGridLayout*)l)->verticalSpacing()));
+    }
+}
+
+void GlobalUI::_scaleWidget(QWidget *w)
+{
+    if (scaledwidgets.contains(w))
+        return;
+    _registerWidgetScale(w);
+
+    int minw = w->minimumWidth();
+    int maxw = w->maximumWidth();
+    if (minw != 0)
+        w->setMinimumWidth(Settings::scaled(minw));
+    if (maxw != QWIDGETSIZE_MAX && maxw < Settings::scaled(maxw))
+        w->setMaximumWidth(Settings::scaled(maxw));
+    int minh = w->minimumHeight();
+    int maxh = w->maximumHeight();
+    if (minh != 0)
+        w->setMinimumHeight(Settings::scaled(minh));
+    if (maxh != QWIDGETSIZE_MAX && maxh < Settings::scaled(maxh))
+        w->setMaximumHeight(Settings::scaled(maxh));
+
+    if (w->font() != qApp->font() && dynamic_cast<ZKanaLineEdit*>(w) == nullptr)
+    {
+        QFont f = w->font();
+        f.setPointSizeF(Settings::scaled(f.pointSizeF()));
+        w->setFont(f);
+    }
+
+    //int l, t, r, b;
+    //w->getContentsMargins(&l, &t, &r, &b);
+    //w->setContentsMargins(Settings::scaled(l), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
+
+    if (dynamic_cast<QSplitter*>(w) != nullptr)
+    {
+        QSplitter *spl = (QSplitter*)w;
+        spl->setHandleWidth(Settings::scaled(spl->handleWidth()));
+    }
+
+    QAbstractButton *btn = dynamic_cast<QAbstractButton*>(w);
+    if (btn != nullptr)
+    {
+        QSize siz = btn->iconSize();
+        btn->setIconSize(QSize(Settings::scaled(siz.width()), Settings::scaled(siz.height())));
+
+    }
+
+    // Some attributes can only be set recursively because they use what was inherited by
+    // the parent, and would increase spacing/padding etc. too much in nested widgets. Use
+    // direct-children-only to avoid this.
+
+    QList<QWidget*> wlist = w->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
+    for (int ix = 0, siz = wlist.size(); ix != siz; ++ix)
+        _scaleWidget(wlist.at(ix));
+
+    _scaleLayout(w->layout());
+}
+
+void GlobalUI::_registerWidgetScale(QWidget *w)
+{
+    scaledwidgets.insert(w);
+    connect(w, &QWidget::destroyed, this, &GlobalUI::scaledWidgetDestroyed);
 }
 
 //void GlobalUI::wordFilterErased(int index)

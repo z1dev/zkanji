@@ -52,12 +52,24 @@ namespace Settings
     // TODO: replace this with SOD drawings?
     QString radicalFontName();
 
-    QFont kanjiFont();
-    QFont radicalFont();
-    QFont kanaFont();
-    QFont mainFont();
-    QFont notesFont();
-    QFont extraFont();
+    // Default font used for kanji grid. Set scaled to false to return a size without
+    // interface scaling, and true to get the interface scaled value.
+    QFont kanjiFont(bool scaled = true);
+    // Default font used for radical grid. Set scaled to false to return a size without
+    // interface scaling, and true to get the interface scaled value.
+    QFont radicalFont(bool scaled = true);
+    // Default font used for kana line edits. Set scaled to false to return a size without
+    // interface scaling, and true to get the interface scaled value.
+    QFont kanaFont(bool scaled = true);
+    // Default font used for untranslated text. Set scaled to false to return a size without
+    // interface scaling, and true to get the interface scaled value.
+    QFont mainFont(bool scaled = true);
+    // Default font used for dictionary notes. Set scaled to false to return a size without
+    // interface scaling, and true to get the interface scaled value.
+    QFont notesFont(bool scaled = true);
+    // Default font used for special text, like inflections. Set scaled to false to return a
+    // size without interface scaling, and true to get the interface scaled value.
+    QFont extraFont(bool scaled = true);
 
     QFont printKanaFont();
     QFont printDefFont();

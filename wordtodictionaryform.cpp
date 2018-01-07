@@ -26,7 +26,7 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->wordsTable->setSelectionType(ListSelectionType::Toggle);
     ui->meaningsTable->setSelectionType(ListSelectionType::None);

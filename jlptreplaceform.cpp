@@ -11,6 +11,8 @@
 #include "zui.h"
 #include "words.h"
 #include "kanji.h"
+#include "globalui.h"
+
 
 //-------------------------------------------------------------
 
@@ -21,7 +23,7 @@ JLPTReplaceForm::JLPTReplaceForm(QWidget *parent) : base(parent), ui(new Ui::JLP
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     connect(ui->abortButton, &QPushButton::clicked, this, &JLPTReplaceForm::close);
     connect(ui->skipButton, &QPushButton::clicked, this, &JLPTReplaceForm::skip);

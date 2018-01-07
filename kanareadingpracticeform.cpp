@@ -29,7 +29,7 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
 {
     ui->setupUi(this);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     QFont f = ui->mainLabel->font();
     f.setFamily(Settings::fonts.kana);

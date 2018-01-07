@@ -24,6 +24,7 @@
 #include "fontsettings.h"
 #include "recognizersettings.h"
 #include "colorsettings.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -486,7 +487,7 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent), ui(new Ui::Recog
     setAttribute(Qt::WA_ShowWithoutActivating);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     connect(ui->closeButton, &QAbstractButton::clicked, this, &RecognizerForm::close);
 

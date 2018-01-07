@@ -25,7 +25,7 @@ WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::Wor
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->wordsTable->setSelectionType(ListSelectionType::None);
     ui->groupWidget->setMultiSelect(true);

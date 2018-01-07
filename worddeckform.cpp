@@ -338,7 +338,7 @@ WordDeckForm::WordDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordDeckF
     ui->setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     connect(ui->deckTable, &WordDeckListView::editorClosed, this, &WordDeckForm::editorClosed);
     ui->deckTable->setEditColumn(0);

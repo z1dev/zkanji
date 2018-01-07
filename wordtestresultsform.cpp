@@ -132,7 +132,7 @@ WordTestResultsForm::WordTestResultsForm(QWidget *parent) : base(parent), ui(new
     ui->setupUi(this);
     ui->wordsTable->setStudyDefinitionUsed(true);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 }
 
 WordTestResultsForm::~WordTestResultsForm()

@@ -5,12 +5,13 @@
 **/
 
 #include <QPushButton>
-#include "zui.h"
+//#include "zui.h"
 #include "ui_grouppickerform.h"
 #include "grouppickerform.h"
 #include "words.h"
 #include "groups.h"
 #include "zabstracttreemodel.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -40,7 +41,7 @@ GroupPickerForm::GroupPickerForm(bool onlycategories, QWidget *parent) : base(pa
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->instructionLabel->hide();
     ui->groupWidget->setDictionary(ZKanji::dictionary(0));
@@ -61,7 +62,7 @@ GroupPickerForm::GroupPickerForm(GroupWidget::Modes mode, bool onlycategories, Q
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->instructionLabel->hide();
     ui->groupWidget->setDictionary(ZKanji::dictionary(0));

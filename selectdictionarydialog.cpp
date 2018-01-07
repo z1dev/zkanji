@@ -18,7 +18,7 @@
 SelectDictionaryDialog::SelectDictionaryDialog(QWidget *parent) : base(parent), ui(new Ui::SelectDictionaryDialog)
 {
     ui->setupUi(this);
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 }
 
 SelectDictionaryDialog::~SelectDictionaryDialog()

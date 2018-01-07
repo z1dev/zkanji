@@ -9,7 +9,7 @@
 #include "words.h"
 #include "groups.h"
 #include "zgrouptreemodel.h"
-#include "zui.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -19,7 +19,7 @@ GroupImportForm::GroupImportForm(QWidget *parent) : base(parent), ui(new Ui::Gro
 {
     ui->setupUi(this);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     importbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     importbutton->setText(tr("Import"));

@@ -11,7 +11,7 @@
 #include "zgrouptreemodel.h"
 #include "words.h"
 #include "groups.h"
-#include "zui.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -21,7 +21,7 @@ GroupExportForm::GroupExportForm(QWidget *parent) : base(parent), ui(new Ui::Gro
 {
     ui->setupUi(this);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     exportbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     exportbutton->setText(tr("Export"));

@@ -17,6 +17,8 @@
 #include "colorsettings.h"
 #include "romajizer.h"
 #include "generalsettings.h"
+#include "globalui.h"
+
 
 //-------------------------------------------------------------
 
@@ -866,7 +868,7 @@ WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
 {
     ui->setupUi(this);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     setAttribute(Qt::WA_DontShowOnScreen);
     show();

@@ -625,7 +625,7 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->wordsTable->setSelectionType(ListSelectionType::Extended);
     ui->wordsTable->setStudyDefinitionUsed(true);

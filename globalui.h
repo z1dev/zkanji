@@ -28,6 +28,7 @@ class QXmlStreamReader;
 class QXmlStreamWriter;
 class Dictionary;
 class QWindow;
+class QSpacerItem;
 
 
 // Structure for hiding / showing app windows in a safe way. Calls GlobalUI::hideAppWindows()
@@ -197,6 +198,14 @@ public:
     // Sets the application stylesheet to have some stretch sizes and colors.
     void applyStyleSheet();
 
+    // Scales dimensions of child widgets and of the widget itself depending on current
+    // scaling.
+    void scaleWidget(QWidget *w);
+
+    // Prevents scaling of the passed widget and all its children when itself or its parent is
+    // passed to scaleWidget() later.
+    void preventWidgetScale(QWidget *w);
+
     // Copies str to clipboard as plain text, overwriting its contents.
     void clipCopy(const QString &str) const;
     // Appends str to the plain text found in the clipboard. If no plain text is stored there,
@@ -306,11 +315,22 @@ private slots:
     // enableAutoSave() the same number of times as disableAutoSave() was called to start
     // saving again. Use AutoSaveGuard objects outside this class.
     void enableAutoSave();
+
+    void scaledWidgetDestroyed(QObject *o);
 private:
     GlobalUI(QObject *parent = nullptr);
 
     // Installs and uninstalls system wide shortcuts for the popup dictionaries.
     void installShortcuts(bool install);
+
+    // Helper for scaleWidget(). Scales spacer items in layouts.
+    void _scaleSpacerItem(QSpacerItem *s);
+    // Helper for scaleWidget(). Scales layouts.
+    void _scaleLayout(QLayout *l);
+    // Helper for scaleWidget(). Scales widget and children.
+    void _scaleWidget(QWidget *w);
+    // Registers widget as scaled to stop scaling it a second time.
+    void _registerWidgetScale(QWidget *w);
 
     KanjiInfoForm *kanjiinfo;
     // Blocks showing new kanji info when positive non zero.
@@ -353,6 +373,9 @@ private:
     // Maps the popup dictionary keyboard shortcuts and tray icon context menu to showPopup
     // calls.
     QSignalMapper popupmap;
+
+    // Widgets scaled by calling scaleWidget() or preventWidgetScale().
+    QSet<QWidget*> scaledwidgets;
 
     friend class HideAppWindowsGuard;
     friend class AutoSaveGuard;

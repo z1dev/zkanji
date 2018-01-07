@@ -235,7 +235,7 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     resetBtn = ui->buttonBox->button(QDialogButtonBox::Reset);
     okBtn = ui->buttonBox->button(QDialogButtonBox::Ok);

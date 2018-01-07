@@ -39,7 +39,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->setupUi(this);
     windowInit();
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     if (parent != nullptr && !parent->windowFlags().testFlag(Qt::WindowStaysOnTopHint))
         setStayOnTop(false);

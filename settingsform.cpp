@@ -303,7 +303,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
 {
     ui->setupUi(this);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     if (!QSystemTrayIcon::isSystemTrayAvailable())
         ui->trayBox->setEnabled(false);

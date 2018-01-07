@@ -27,6 +27,7 @@
 #include "groups.h"
 #include "jlptreplaceform.h"
 #include "generalsettings.h"
+#include "globalui.h"
 
 
 extern char ZKANJI_PROGRAM_VERSION[];
@@ -286,7 +287,7 @@ DictImport::DictImport(QWidget *parent) : base(parent), ui(new Ui::DictImport), 
     ui->finishButton->setEnabled(false);
     connect(ui->finishButton, &QPushButton::clicked, this, &DictImport::closeAfterImport);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 }
 
 DictImport::~DictImport()

@@ -1290,7 +1290,7 @@ namespace Settings
         return Settings::fonts.kanji;
     }
 
-    QFont kanjiFont()
+    QFont kanjiFont(bool scaled)
     {
         QFont f = { fonts.kanji, Settings::scaled(fonts.kanjifontsize) };
         if (Settings::fonts.nokanjialias)
@@ -1302,29 +1302,29 @@ namespace Settings
         return f;
     }
 
-    QFont radicalFont()
+    QFont radicalFont(bool scaled)
     {
-        return QFont{ radicalFontName(), Settings::scaled(fonts.kanjifontsize) };
+        return QFont{ radicalFontName(), scaled ? Settings::scaled(fonts.kanjifontsize) : fonts.kanjifontsize};
     }
 
-    QFont kanaFont()
+    QFont kanaFont(bool scaled)
     {
-        return QFont{ Settings::fonts.kana, Settings::scaled(9) };
+        return QFont{ Settings::fonts.kana, scaled ? Settings::scaled(9): 9 };
     }
 
-    QFont mainFont()
+    QFont mainFont(bool scaled)
     {
-        return QFont{ Settings::fonts.main, Settings::scaled(9) };
+        return QFont{ Settings::fonts.main, scaled ? Settings::scaled(9) : 9 };
     }
 
-    QFont notesFont()
+    QFont notesFont(bool scaled)
     {
-        return QFont{ Settings::fonts.info, Settings::scaled(7), Settings::fonts.infostyle == FontSettings::Bold || Settings::fonts.infostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::fonts.infostyle == FontSettings::Italic || Settings::fonts.infostyle == FontSettings::BoldItalic };
+        return QFont{ Settings::fonts.info, scaled ? Settings::scaled(7) : 7, Settings::fonts.infostyle == FontSettings::Bold || Settings::fonts.infostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::fonts.infostyle == FontSettings::Italic || Settings::fonts.infostyle == FontSettings::BoldItalic };
     }
 
-    QFont extraFont()
+    QFont extraFont(bool scaled)
     {
-        return QFont{ Settings::fonts.main, Settings::scaled(9), QFont::Bold };
+        return QFont{ Settings::fonts.main, scaled ? Settings::scaled(9) : 9, QFont::Bold };
     }
 
     QFont printKanaFont()

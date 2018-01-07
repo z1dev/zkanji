@@ -233,7 +233,7 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *prnt) : base(prnt),
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(index));
     ui->dictInfoText->viewport()->installEventFilter(this);

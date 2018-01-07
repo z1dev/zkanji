@@ -546,7 +546,7 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidge
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->dictWidget->setSaveColumnData(false);
 

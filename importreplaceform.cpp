@@ -12,6 +12,7 @@
 #include "words.h"
 #include "zkanjimain.h"
 #include "zdictionarymodel.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -26,7 +27,7 @@ LabelDialog::LabelDialog(QWidget *parent) : base(parent)
     ly->addWidget(lb);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 }
 
 LabelDialog::~LabelDialog()
@@ -42,7 +43,7 @@ ImportReplaceForm::ImportReplaceForm(Dictionary *olddir, Dictionary *newdir, QWi
 {
     ui->setupUi(this);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
 

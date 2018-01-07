@@ -11,6 +11,8 @@
 #include "radform.h"
 #include "ui_radform.h"
 #include "zui.h"
+#include "globalui.h"
+
 
 //-------------------------------------------------------------
 
@@ -20,7 +22,7 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     setDisplayMode(RadicalFilterModes::Parts);
     ui->searchEdit->setValidator(&kanaValidator());

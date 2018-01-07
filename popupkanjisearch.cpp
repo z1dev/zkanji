@@ -118,7 +118,7 @@ PopupKanjiSearch::PopupKanjiSearch(QWidget *parent) : base(parent), ui(new Ui::P
     ui->setupUi(this);
     windowInit();
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_ShowWithoutActivating, false);

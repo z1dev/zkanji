@@ -417,7 +417,7 @@ FilterListForm::FilterListForm(WordFilterConditions *conditions, QWidget *parent
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->filterTable->setAutoSizeColumns(true);
     ui->filterTable->setSelectionType(ListSelectionType::Single);

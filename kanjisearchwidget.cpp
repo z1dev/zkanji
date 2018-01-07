@@ -29,6 +29,7 @@
 #include "generalsettings.h"
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
+#include "fontsettings.h"
 
 
 //-------------------------------------------------------------
@@ -388,6 +389,9 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    // Scaling would break these fonts.
+    //ui->readingEdit->setFont(Settings::kanaFont(false));
 
     restrictWidgetSize(ui->strokeEdit, 8, AdjustedValue::MinMax);
     restrictWidgetSize(ui->jlptEdit, 6, AdjustedValue::MinMax);

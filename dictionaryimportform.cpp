@@ -7,7 +7,7 @@
 #include "dictionaryimportform.h"
 #include "ui_dictionaryimportform.h"
 #include "words.h"
-#include "zui.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -20,7 +20,7 @@ DictionaryImportForm::DictionaryImportForm(QWidget *parent) : base(parent), ui(n
     connect(ui->fullOption, &QRadioButton::toggled, this, &DictionaryImportForm::optionChanged);
     connect(ui->partOption, &QRadioButton::toggled, this, &DictionaryImportForm::optionChanged);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     importbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
     importbutton->setText(tr("Next"));

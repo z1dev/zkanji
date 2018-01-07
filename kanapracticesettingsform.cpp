@@ -59,7 +59,7 @@ KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(paren
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags & (~Qt::WindowMinMaxButtonsHint) | Qt::MSWindowsFixedSizeDialogHint);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     connect(ui->closeButton, &QPushButton::clicked, this, &DialogWindow::closeCancel);
 

@@ -224,7 +224,7 @@ CollectWordsForm::CollectWordsForm(QWidget *parent) : base(parent), ui(new Ui::C
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     ui->readingsView->setFontSizeHint(26, 12);
     ui->readingsView->setSelectionType(ListSelectionType::Extended);

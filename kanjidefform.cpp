@@ -21,7 +21,7 @@ KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
-    scaleWidget(this);
+    gUI->scaleWidget(this);
 
     int h = ui->origText->fontMetrics().height() * 10;
     ui->origText->setFixedHeight(h);
