@@ -27,6 +27,7 @@
 #include "zkanjigridview.h"
 #include "zdictionarylistview.h"
 #include "generalsettings.h"
+#include "colorsettings.h"
 
 // Mode button triangle image size.
 static const int _triS = 4;
@@ -683,17 +684,22 @@ void ZKanjiWidget::floatToWindow()
 
 QPixmap ZKanjiWidget::modeTriangleImage(const QPixmap &img)
 {
-    int _iconW = img.width();
-    int _iconH = img.height();
+    int iconW = img.width();
+    int iconH = img.height();
+
+    int striS = Settings::scaled(_triS);
+    int striPH = Settings::scaled(_triPH);
+    int striPV = Settings::scaled(_triPV);
 
     //static const QPointF tript[3] = { QPointF(_iconW + _triP + _triS - 2, _iconH - _triS - 1), QPointF(_iconW + _triP + _triS - 2, _iconH - 2), QPointF(_iconW + _triP - 1, _iconH - 2) };
-    static const QPointF tript[3] = { QPointF(_iconW + _triS + _triPH - 0.5, _iconH - _triS + _triPV - 1 /*- 0.5*/), QPointF(_iconW + _triS + _triPH - 0.5, _iconH - 0.5 + _triPV), QPointF(_iconW + _triPH - 1 /*0.5*/, _iconH + _triPV - 0.5) };
+    static const QPointF tript[3] = { QPointF(iconW + striS + striPH - 0.5, iconH - striS + striPV - 1 /*- 0.5*/), QPointF(iconW + striS + striPH - 0.5, iconH - 0.5 + striPV), QPointF(iconW + striPH - 1 /*0.5*/, iconH + striPV - 0.5) };
 
-    QPixmap copy(_iconW + _triS + _triPH, _iconH + _triPV);
+    QPixmap copy(iconW + striS + striPH, iconH + striPV);
     copy.fill(QColor(0, 0, 0, 0));
     QPainter p(&copy);
     p.drawPixmap(QPoint(0, 0), img);
-    p.setBrush(QBrush(qRgb(0, 0, 0)));
+    p.setPen(Settings::textColor(ColorSettings::Text));
+    p.setBrush(QBrush(Settings::textColor(ColorSettings::Text)));
     p.drawPolygon(tript, 3);
     p.end();
 
