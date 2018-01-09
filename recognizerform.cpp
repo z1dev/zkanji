@@ -912,7 +912,7 @@ bool RecognizerObject::event(QEvent *e)
         Settings::recognizer.rect = RecognizerForm::instance->geometry();
         return true;
     }
-    else if (e->type() == RecognizerHiddenEvent::Type())
+    else if (e->type() == RecognizerHiddenEvent::Type() && RecognizerForm::instance != nullptr)
     {
         RecognizerForm::instance->setParent(nullptr/*, Qt::Tool*/);
 
