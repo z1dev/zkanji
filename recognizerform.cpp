@@ -200,7 +200,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
 
     // Paint the currently drawn stroke.
     if (newstroke.size() > 1)
-        paintStroke(-1, p, gridcolor, event->rect());
+        paintStroke(-1, p, textcolor, event->rect());
 }
 
 void RecognizerArea::mousePressEvent(QMouseEvent *event)
