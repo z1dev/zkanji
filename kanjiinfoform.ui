@@ -726,7 +726,7 @@
                 <bool>true</bool>
                </property>
                <property name="autoRaise">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -746,7 +746,7 @@
                 <bool>true</bool>
                </property>
                <property name="autoRaise">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -766,7 +766,7 @@
                 <bool>true</bool>
                </property>
                <property name="autoRaise">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
               </widget>
              </item>

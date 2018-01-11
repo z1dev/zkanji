@@ -22,6 +22,7 @@ ZKanaLineEdit::ZKanaLineEdit(QWidget *parent) : base(parent), dict(nullptr)
 {
     connect(gUI, &GlobalUI::settingsChanged, this, &ZKanaLineEdit::settingsChanged);
     settingsChanged();
+    gUI->preventWidgetScale(this);
 }
 
 ZKanaLineEdit::~ZKanaLineEdit()

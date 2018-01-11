@@ -71,6 +71,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     
     connect(readingCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readingBoxChanged(int)));
 
+    updateGeometry();
     setAttribute(Qt::WA_DontShowOnScreen, true);
     show();
     ignoreresize = true;

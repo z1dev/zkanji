@@ -1706,7 +1706,7 @@ void GlobalUI::_scaleWidget(QWidget *w)
     if (maxh != QWIDGETSIZE_MAX && maxh < Settings::scaled(maxh))
         w->setMaximumHeight(Settings::scaled(maxh));
 
-    if (w->font() != qApp->font() && dynamic_cast<ZKanaLineEdit*>(w) == nullptr)
+    if (w->font() != qApp->font())
     {
         QFont f = w->font();
         f.setPointSizeF(Settings::scaled(f.pointSizeF()));
@@ -1728,7 +1728,6 @@ void GlobalUI::_scaleWidget(QWidget *w)
     {
         QSize siz = btn->iconSize();
         btn->setIconSize(QSize(Settings::scaled(siz.width()), Settings::scaled(siz.height())));
-
     }
 
     // Some attributes can only be set recursively because they use what was inherited by
