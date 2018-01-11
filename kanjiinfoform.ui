@@ -635,6 +635,9 @@
                <property name="text">
                 <string>00</string>
                </property>
+               <property name="textFormat">
+                <enum>Qt::RichText</enum>
+               </property>
               </widget>
              </item>
              <item>

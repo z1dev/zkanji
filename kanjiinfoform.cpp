@@ -39,10 +39,12 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->setupUi(this);
     windowInit();
 
-    gUI->scaleWidget(this);
+    gUI->preventWidgetScale(ui->countLabel);
 
     if (parent != nullptr && !parent->windowFlags().testFlag(Qt::WindowStaysOnTopHint))
         setStayOnTop(false);
+
+    gUI->scaleWidget(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -87,7 +89,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->kanjiView->setMinimumHeight(restrictedWidgetSize(ui->infoText, 32));
 
     Settings::updatePalette(ui->infoText);
-
 
     QFont radf = Settings::radicalFont();
     radf.setPointSize(10);
@@ -383,7 +384,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
     ui->partsScroller->setDictionary(dict);
     ui->partofScroller->setDictionary(dict);
 
-    ui->countLabel->setText(QStringLiteral("%1").arg(ZKanji::elements()->size() != 0 ? ZKanji::elements()->strokeCount(kindex < 0 ? (-1 - kindex) : k->element, 0) : k->strokes, 2, 10, QChar('0')));
+    ui->countLabel->setText(QStringLiteral("<span style=\"font-weight: bold; font-size: %2pt;\">%1</span>").arg(ZKanji::elements()->size() != 0 ? ZKanji::elements()->strokeCount(kindex < 0 ? (-1 - kindex) : k->element, 0) : k->strokes, 2, 10, QChar('0')).arg(Settings::scaled(ui->countLabel->font().pointSize())));
 
     std::vector<int> l;
     if (k != nullptr)
@@ -927,7 +928,7 @@ void KanjiInfoForm::disableUnlock()
 
 void KanjiInfoForm::strokeChanged(int index, bool ended)
 {
-    ui->countLabel->setText(QStringLiteral("%1").arg(index, 2, 10, QChar('0')));
+    ui->countLabel->setText(QStringLiteral("<span style=\"font-weight: bold; font-size: %2pt;\">%1</span>").arg(index, 2, 10, QChar('0')).arg(Settings::scaled(ui->countLabel->font().pointSize())));
 
     if (ended)
         ui->stopButton->setChecked(true);

@@ -20,14 +20,26 @@
   <defs
      id="defs4">
     <linearGradient
+       id="linearGradient8079"
+       inkscape:collect="always">
+      <stop
+         id="stop8075"
+         offset="0"
+         style="stop-color:#000000;stop-opacity:0" />
+      <stop
+         id="stop8077"
+         offset="1"
+         style="stop-color:#000000;stop-opacity:0.5186916" />
+    </linearGradient>
+    <linearGradient
        inkscape:collect="always"
        id="linearGradient4002">
       <stop
-         style="stop-color:#000000;stop-opacity:1;"
+         style="stop-color:#080808;stop-opacity:0.65887851"
          offset="0"
          id="stop3998" />
       <stop
-         style="stop-color:#000000;stop-opacity:0.35514018"
+         style="stop-color:#1e1e1e;stop-opacity:0.26168224"
          offset="1"
          id="stop4000" />
     </linearGradient>
@@ -40,10 +52,10 @@
          id="stop3980" />
       <stop
          id="stop3990"
-         offset="0.92105311"
+         offset="0.6832087"
          style="stop-color:#ffffff;stop-opacity:1;" />
       <stop
-         style="stop-color:#ffffff;stop-opacity:0.21495327"
+         style="stop-color:#ffffff;stop-opacity:0"
          offset="1"
          id="stop3982" />
     </linearGradient>
@@ -60,21 +72,21 @@
        gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient4002"
+       xlink:href="#linearGradient8079"
        id="radialGradient4004"
-       cx="-622.10363"
-       cy="919.15014"
-       fx="-622.10363"
-       fy="919.15014"
+       cx="-620.94733"
+       cy="920.52997"
+       fx="-620.94733"
+       fy="920.52997"
        r="26.308595"
-       gradientTransform="matrix(1,0,0,1.0283964,0,-26.100577)"
+       gradientTransform="matrix(0.99999993,0,-3.2974331e-8,1.0283964,-0.05131483,-24.424031)"
        gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4002"
        id="radialGradient4010"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,1.0283964,0,-26.100577)"
+       gradientTransform="matrix(1,0,0,1.0283964,-0.05129829,-24.424031)"
        cx="-622.10363"
        cy="919.15014"
        fx="-622.10363"
@@ -88,9 +100,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="5.6341057"
-     inkscape:cy="17.23212"
+     inkscape:zoom="0.70000001"
+     inkscape:cx="115.14433"
+     inkscape:cy="-35.773593"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -101,7 +113,8 @@
      inkscape:window-height="1177"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     showguides="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -128,7 +141,7 @@
        ry="24.543343"
        transform="matrix(1,0,0.21093426,0.97750025,0,0)" />
     <g
-       transform="matrix(0.65624255,-0.14660424,0.47196936,0.74866412,0.75484425,249.37425)"
+       transform="matrix(0.65624255,-0.14660424,0.47196936,0.74866412,-0.00277015,248.11156)"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:60px;line-height:125%;font-family:'Malgun Gothic';-inkscape-font-specification:'Malgun Gothic Bold';letter-spacing:0px;word-spacing:0px;fill:url(#radialGradient4004);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="text4140">
       <path
