@@ -349,7 +349,7 @@ namespace ZKanji
                     hasoku = true;
                     // TODO: .arg() usage where user input is replaced, defend against inserting %1 etc. which can cause trouble with subsequent .arg() calls.
                     // HTML escape any user input string with toHtmlEscaped().
-                    str.insert(ix * 2 + 2, QString("<span style='color: #%1%2%3'>").arg(c.red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
+                    str.insert(ix * 2 + 2, QString("<span style='color: %1'>").arg(c.name()));
                     spansiz = 29;
                 }
             }

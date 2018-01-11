@@ -5,6 +5,10 @@
 **/
 
 #include <QScrollBar>
+#include <QTextStream>
+#include <QtSvg>
+#include <QSvgRenderer>
+#include <QByteArray>
 
 #include "kanjiinfoform.h"
 #include "ui_kanjiinfoform.h"
@@ -163,6 +167,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     connect(ui->similarScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
     connect(ui->partsScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
     connect(ui->partofScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
+
+    settingsChanged();
 }
 
 KanjiInfoForm::~KanjiInfoForm()
@@ -376,7 +382,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
 
     ui->kanjiView->setKanjiIndex(kindex);
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; }").arg(Settings::scaled(10)));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(false, ColorSettings::Text).name()));
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(d, kindex));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
 
@@ -562,7 +568,7 @@ void KanjiInfoForm::resizeEvent(QResizeEvent *e)
 
     //    ui->refWidget->layout()->setGeometry(r);
     //}
-
+    
     _resized();
 
     //setMinimumHeight(rect().width() / 2);
@@ -990,29 +996,24 @@ void KanjiInfoForm::scrollerClicked(int index)
 void KanjiInfoForm::settingsChanged()
 {
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; }").arg(Settings::scaled(10)));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(false, ColorSettings::Text).name()));
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
 
-    //ui->similarWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::SimilarBg)).name()));
-    //ui->partsWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartsBg)).name()));
-    //ui->partofWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartOfBg)).name()));
-
-    //ui->similarScroller->model()->setBgColor(Settings::uiColor(ColorSettings::SimilarBg));
-    //ui->partsScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartsBg));
-    //ui->partofScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartOfBg));
-
-    std::vector<int> l;
     int kindex = ui->kanjiView->kanjiIndex();
-    int kelem = kindex < 0 ? -1 - kindex : ZKanji::kanjis[kindex]->element;
-    if (kelem >= 0)
-        ZKanji::elements()->elementParts(kelem, !Settings::kanji.listparts, true, l);
-    partsmodel->setItems(l);
-    l.clear();
-    if (kelem >= 0)
-        ZKanji::elements()->elementParents(kelem, !Settings::kanji.listparts, true, l);
-    partofmodel->setItems(l);
-    l.clear();
+    if (kindex != INT_MIN)
+    {
+        std::vector<int> l;
+        int kelem = kindex < 0 ? -1 - kindex : ZKanji::kanjis[kindex]->element;
+        if (kelem >= 0)
+            ZKanji::elements()->elementParts(kelem, !Settings::kanji.listparts, true, l);
+        partsmodel->setItems(l);
+        l.clear();
+        if (kelem >= 0)
+            ZKanji::elements()->elementParents(kelem, !Settings::kanji.listparts, true, l);
+        partofmodel->setItems(l);
+        l.clear();
+    }
 
     ui->similarScroller->update();
     ui->partsScroller->update();
@@ -1021,6 +1022,14 @@ void KanjiInfoForm::settingsChanged()
     QFont radf = Settings::radicalFont();
     radf.setPointSize(10);
     ui->radSymLabel->setFont(radf);
+
+    loadColorIcon(ui->playButton, ":/playbtn.svg", qApp->palette().color(QPalette::Text));
+    loadColorIcon(ui->pauseButton, ":/playpausebtn.svg", qApp->palette().color(QPalette::Text));
+    loadColorIcon(ui->stopButton, ":/playstopbtn.svg", qApp->palette().color(QPalette::Text));
+    loadColorIcon(ui->rewindButton, ":/playfrwbtn.svg", qApp->palette().color(QPalette::Text));
+    loadColorIcon(ui->backButton, ":/playsteprwbtn.svg", qApp->palette().color(QPalette::Text));
+    loadColorIcon(ui->foreButton, ":/playstepfwdbtn.svg", qApp->palette().color(QPalette::Text));
+    loadColorIcon(ui->endButton, ":/playffwdbtn.svg", qApp->palette().color(QPalette::Text));
 }
 
 void KanjiInfoForm::dictionaryReset()
@@ -1034,6 +1043,30 @@ void KanjiInfoForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary 
 {
     if (d == dict)
         close();
+}
+
+void KanjiInfoForm::loadColorIcon(QAbstractButton *w, QString name, QColor col)
+{
+    QFile file(name);
+    file.open(QIODevice::ReadOnly);
+    QTextStream stream(&file);
+    QString str = stream.readAll();
+    file.close();
+    str.replace(QLatin1String("#000000"), QString("%1").arg(col.name()));
+
+    QSvgRenderer r;
+    r.load(str.toUtf8());
+
+    QImage img = QImage(w->iconSize().width(), w->iconSize().height(), QImage::Format_ARGB32_Premultiplied);
+    img.fill(qRgba(0, 0, 0, 0));
+
+    QPainter p(&img);
+    r.render(&p, QRect(0, 0, w->iconSize().width(), w->iconSize().height()));
+    p.end();
+
+    
+    QIcon ico(QPixmap::fromImage(img));
+    w->setIcon(ico);
 }
 
 

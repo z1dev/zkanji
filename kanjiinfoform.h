@@ -117,6 +117,10 @@ private slots:
     void dictionaryReset();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
+    // Reads an SVG image file as text, replacing the black color (#000000) with the current
+    // text color, and setting the result as icon for the passed widget.
+    void loadColorIcon(QAbstractButton *w, QString name, QColor col);
+
     Ui::KanjiInfoForm *ui;
 
     // Toggle button for only showing selected example words for kanji.

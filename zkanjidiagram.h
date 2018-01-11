@@ -29,6 +29,8 @@ public:
     ~ZKanjiDiagram();
 
     void setKanjiIndex(int newindex);
+    // Index of currently displayed kanji or element. When displaying elements, this value is
+    // negative. When no kanji nor element is set, INT_MIN is returned.
     int kanjiIndex() const;
 
     bool strokes() const;

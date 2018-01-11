@@ -99,12 +99,12 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
     getContentsMargins(&l, &t, &rr, &b);
     QRect r = rect();
     r.adjust(l, t, -rr, -b);
-    p.fillRect(r, Settings::textColor(hasFocus(), ColorSettings::Bg));
+    p.fillRect(r, Settings::textColor(isActiveWindow(), ColorSettings::Bg));
 
     r.adjust(4, 0, -4, 0);
     p.setClipRect(r);
 
-    p.setPen(Settings::textColor(hasFocus(), ColorSettings::Text));
+    p.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
 
     QString str = toKana(QString("hiraganaKATAKANA"), true) + QChar(0x611f) + QChar(0x3058) + QChar(0x5e79) + QChar(0x4e8b) + QChar(0x6f22) + QChar(0x5b57) + QChar(0x76e3) + QChar(0x4e8b) + QChar(0x5b8c) + QChar(0x6cbb);
 
