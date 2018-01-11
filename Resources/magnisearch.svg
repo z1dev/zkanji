@@ -13,7 +13,7 @@
    viewBox="0 0 48 48"
    id="svg4270"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="magnisearch.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -24,16 +24,16 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1505"
-     inkscape:window-height="794"
+     inkscape:window-width="1920"
+     inkscape:window-height="1177"
      id="namedview4901"
      showgrid="false"
-     inkscape:zoom="9.8333333"
-     inkscape:cx="33.243759"
-     inkscape:cy="22.596088"
-     inkscape:window-x="156"
-     inkscape:window-y="202"
-     inkscape:window-maximized="0"
+     inkscape:zoom="4.9166667"
+     inkscape:cx="17.786132"
+     inkscape:cy="22.291003"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:current-layer="svg4270" />
   <defs
      id="defs4272">
@@ -485,6 +485,12 @@
      id="path6022-3"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cssczzc" />
+  <path
+     sodipodi:nodetypes="cssssccssssc"
+     inkscape:connector-curvature="0"
+     d="m 15.037392,44.083594 h -4.532227 c -0.9184955,0 -1.6584951,-0.738398 -1.6584951,-1.656898 V 7.3038201 c 0,-0.9186 0.7399996,-1.6586 1.6584951,-1.6586 h 4.532227 M 2.6575215,44.083494 h 4.532227 c 0.9184954,0 1.6584964,-0.738298 1.6584964,-1.656798 V 7.3037201 c 0,-0.9185 -0.740001,-1.6585 -1.6584964,-1.6585 h -4.532227"
+     style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#e5e5e5;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.28400004;stroke-opacity:1"
+     id="path8802" />
   <path
      id="path6015-7"
      style="opacity:1;fill:url(#linearGradient6150-5);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.6981594;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.28400004;stroke-opacity:1"
