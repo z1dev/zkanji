@@ -14,6 +14,8 @@ struct ColorSettings
 {
     enum SystemColorTypes { Bg, Text, SelBg, SelText, ScrollBg, ScrollHandle };
 
+    bool useinactive = true;
+
     QColor bg;
     QColor text;
     QColor selbg;

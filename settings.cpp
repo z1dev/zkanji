@@ -221,6 +221,7 @@ namespace Settings
 
         // Color settings
 
+        ini.setValue("colors/useinactive", colors.useinactive);
         ini.setValue("colors/bg", colors.bg);
         ini.setValue("colors/text", colors.text);
         ini.setValue("colors/selbg", colors.selbg);
@@ -859,6 +860,7 @@ namespace Settings
 
         // Color settings
 
+        colors.useinactive = ini.value("colors/useinactive", true).value<bool>();
         colors.bg = ini.value("colors/bg").value<QColor>();
         colors.text = ini.value("colors/text").value<QColor>();
         colors.selbg = ini.value("colors/selbg").value<QColor>();
@@ -1344,6 +1346,9 @@ namespace Settings
 
     QColor textColor(const QPalette &pal, bool active, ColorSettings::SystemColorTypes type)
     {
+        if (!colors.useinactive)
+            active = true;
+
         switch (type)
         {
         case ColorSettings::Bg:

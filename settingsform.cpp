@@ -589,6 +589,7 @@ void SettingsForm::reset()
     ui->kanjiSizeCBox->setCurrentText(QString::number(Settings::fonts.kanjifontsize));
     on_kanjiSizeCBox_currentIndexChanged(ui->kanjiSizeCBox->currentIndex());
 
+    ui->useInactiveBox->setChecked(Settings::colors.useinactive);
     ui->colBgCBox->setCurrentColor(Settings::colors.bg);
     ui->colTextCBox->setCurrentColor(Settings::colors.text);
     ui->colSelBgCBox->setCurrentColor(Settings::colors.selbg);
@@ -871,7 +872,7 @@ void SettingsForm::applyClicked()
     Settings::fonts.kanjifontsize = ui->kanjiSizeCBox->currentText().toInt();
 
 
-    Settings::colors.grid = ui->colGridCBox->currentColor();
+    Settings::colors.useinactive = ui->useInactiveBox->isChecked();
     Settings::colors.bg = ui->colBgCBox->currentColor();
     Settings::colors.text = ui->colTextCBox->currentColor();
     Settings::colors.selbg = ui->colSelBgCBox->currentColor();
@@ -880,6 +881,8 @@ void SettingsForm::applyClicked()
     Settings::colors.texti = ui->coliTextCBox->currentColor();
     Settings::colors.selbgi = ui->coliSelBgCBox->currentColor();
     Settings::colors.seltexti = ui->coliSelTextCBox->currentColor();
+
+    Settings::colors.grid = ui->colGridCBox->currentColor();
 
     Settings::colors.scrollbg = ui->colScrollBgCBox->currentColor();
     Settings::colors.scrollh = ui->colScrollCBox->currentColor();

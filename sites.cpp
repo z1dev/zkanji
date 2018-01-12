@@ -325,7 +325,7 @@ void SitesItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
     bool selected = owner()->rowSelected(index.row());
 
-    QPalette::ColorGroup colorgrp = (option.state & QStyle::State_Active) ? QPalette::Active : QPalette::Inactive;
+    QPalette::ColorGroup colorgrp = !owner()->isActiveWindow()/*(option.state & QStyle::State_Active)*/ ? QPalette::Inactive : QPalette::Active;
 
     QColor celltextcol = index.data((int)CellRoles::TextColor).value<QColor>();
     QColor basetextcol = option.palette.color(colorgrp, QPalette::Text);

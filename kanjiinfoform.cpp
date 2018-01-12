@@ -92,7 +92,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     //ui->kanjiView->setMinimumHeight(ui->playbackLayout->sizeHint().width());
     ui->kanjiView->setMinimumHeight(restrictedWidgetSize(ui->infoText, 32));
 
-    Settings::updatePalette(ui->infoText);
+    //Settings::updatePalette(ui->infoText);
 
     QFont radf = Settings::radicalFont();
     radf.setPointSize(10);
@@ -382,7 +382,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
 
     ui->kanjiView->setKanjiIndex(kindex);
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(false, ColorSettings::Text).name()));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(isActiveWindow(), ColorSettings::Text).name()));
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(d, kindex));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
 
@@ -547,6 +547,17 @@ bool KanjiInfoForm::event(QEvent *e)
     }
     if (e->type() == QEvent::Show)
         ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
+    if (e->type() == QEvent::WindowActivate || e->type() == QEvent::WindowDeactivate)
+    {
+        int oldpos = ui->infoText->verticalScrollBar()->value();
+        ui->infoText->setPlainText(QString());
+        ui->infoText->document()->setDefaultStyleSheet(QString());
+        Settings::updatePalette(ui->infoText);
+        ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(e->type() == QEvent::WindowActivate, ColorSettings::Text).name()));
+        //ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
+        ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
+        ui->infoText->verticalScrollBar()->setValue(oldpos);
+    }
 
     return base::event(e);
 }
@@ -996,9 +1007,10 @@ void KanjiInfoForm::scrollerClicked(int index)
 void KanjiInfoForm::settingsChanged()
 {
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(false, ColorSettings::Text).name()));
-    ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(isActiveWindow(), ColorSettings::Text).name()));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
+    Settings::updatePalette(ui->infoText);
+    ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
 
     int kindex = ui->kanjiView->kanjiIndex();
     if (kindex != INT_MIN)

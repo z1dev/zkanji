@@ -32,7 +32,7 @@ void ZListViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     bool current = index.isValid() ? owner()->hasFocus() && owner()->currentRow() == index.row() : false;
     bool selected = /*owner()->selectionType() == ListSelectionType::Single ? current : */owner()->rowSelected(index.row());
 
-    QPalette::ColorGroup colorgrp = (index.isValid() && !index.flags().testFlag(Qt::ItemIsEnabled)) ? QPalette::Disabled : (option.state & QStyle::State_Active) ? QPalette::Active : QPalette::Inactive;
+    QPalette::ColorGroup colorgrp = (index.isValid() && !index.flags().testFlag(Qt::ItemIsEnabled)) ? QPalette::Disabled : !owner()->isActiveWindow()/*(option.state & QStyle::State_Active)*/ ? QPalette::Inactive : QPalette::Active;
 
     QColor cellcol = index.data((int)CellRoles::CellColor).value<QColor>();
     QColor basecol = option.palette.color(colorgrp, QPalette::Base);
