@@ -15,7 +15,9 @@
 #include <QLayout>
 #include <QSharedMemory>
 #include <QStringBuilder>
+#include <QTextStream>
 #include <initializer_list>
+#include <iostream>
 
 #include "zui.h"
 #include "zevents.h"
@@ -38,6 +40,8 @@
 #ifdef WIN32
 #include <Windows.h>
 #endif
+
+extern char ZKANJI_PROGRAM_VERSION[];
 
 int showAndQuit(QString title, QString text)
 {
@@ -727,6 +731,39 @@ int main(int argc, char *argv[])
     QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/qt5_plugins");
 #endif
 
+    QStringList args = a.arguments();
+
+    if (args.contains("--help") || args.contains("-h") || args.contains("-?") || args.contains("/help") || args.contains("/h") || args.contains("/?"))
+    {
+        QTextStream out(stdout);
+        out << "zkanji " << ZKANJI_PROGRAM_VERSION << endl;
+        out << "USAGE: zkanji [option]" << endl;
+        out << endl;
+        out << "  --help, -h, -?, /help, /h, /?" << endl;
+        out << "                  show command line flags without starting the program." << endl;
+        out << endl;
+        out << "  -i [path]       import JMdict dictionary data at startup from files at path." << endl;
+        out << endl;
+        out << "  Files needed for import are: JMdict in UTF-8 encoding," << endl;
+        out << "                               kanjidic in EUC-JP encoding," << endl;
+        out << "                               radkfile in EUC-JP encoding," << endl;
+        out << "                               kanjiorder.txt," << endl;
+        out << "                               JLPTNData.txt," << endl;
+        out << "                               radkelement.txt," << endl;
+        out << "                               zradfile.txt" << endl;
+        out << endl;
+        out << "  -e [path]       import the Tanaka Corpus example sentences data at startup" << endl;
+        out << "                  from files at path. Only works if the dictionary data is" << endl;
+        out << "                  already generated." << endl;
+        out << endl;
+        out << "  Files needed for import are: examples.utf the Tanaka Corpus in UTF-8" << endl;
+        out << "                               encoding." << endl;
+        out << endl;
+        out << "  -ie [path]      can be used when the files are located at the same path." << endl;
+        out.flush();
+        exit(0);
+    }
+
 #ifdef Q_OS_WIN
     QIcon prgico(":/program.ico");
     a.setWindowIcon(prgico);
@@ -760,7 +797,6 @@ int main(int argc, char *argv[])
 
         loadRecognizerData();
 
-        QStringList args = a.arguments();
         handleArguments(args);
 
         checkAppFolder();
