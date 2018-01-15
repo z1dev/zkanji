@@ -151,7 +151,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
 
     QStylePainter p(this);
 
-    p.fillRect(rect(), Settings::textColor(isActiveWindow(), ColorSettings::Bg));
+    p.fillRect(rect(), Settings::textColor(this, ColorSettings::Bg));
     p.setRenderHint(QPainter::Antialiasing, true);
     p.translate(area.left() + ((area.width() % 2) ? 0. : 0.5), area.top() + ((area.width() % 2) ? 0. : 0.5));
 
@@ -160,7 +160,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
     //opts.showDecorationSelected = true;
     //int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
     QColor gridcolor = Settings::uiColor(ColorSettings::Grid);
-    QColor textcolor = mixColors(Settings::textColor(isActiveWindow(), ColorSettings::Bg), Settings::textColor(isActiveWindow(), ColorSettings::Text), 0.7);
+    QColor textcolor = mixColors(Settings::textColor(this, ColorSettings::Bg), Settings::textColor(this, ColorSettings::Text), 0.7);
 
     double hx = area.width() / 20.;
 
@@ -193,10 +193,10 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
         p.drawText(QRectF(hx * 3, hx * 3, area.width() - hx * 6, area.height() - hx * 6), Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, instructions());
     }
 
-    p.setPen(Settings::textColor(ColorSettings::Text));
+    p.setPen(Settings::textColor(this, ColorSettings::Text));
     // Paint the strokes already in drawn.
     for (int ix = 0, siz = std::min(strokes.size(), strokepos); ix != siz; ++ix)
-        paintStroke(ix, p, Settings::textColor(ColorSettings::Text), event->rect());
+        paintStroke(ix, p, Settings::textColor(this, ColorSettings::Text), event->rect());
 
     // Paint the currently drawn stroke.
     if (newstroke.size() > 1)

@@ -92,10 +92,9 @@ struct DictColumnData
     QString text;
 };
 
-// Base class for models used in ZDictionaryListView widgets. Provides
-// everything necessary for listing words in a table.
-// To show special data in columns override the data functions and specify
-// each column by setColumns(), addColumn() and removeColumn().
+// Base class for models used in ZDictionaryListView widgets. Provides everything necessary
+// for listing words in a table. To show special data in columns override the data functions
+// and specify each column by setColumns(), addColumn() and removeColumn().
 class DictionaryItemModel : public ZAbstractTableModel
 {
     Q_OBJECT

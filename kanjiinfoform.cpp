@@ -382,7 +382,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
 
     ui->kanjiView->setKanjiIndex(kindex);
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(isActiveWindow(), ColorSettings::Text).name()));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(this, ColorSettings::Text).name()));
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(d, kindex));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
 
@@ -553,8 +553,7 @@ bool KanjiInfoForm::event(QEvent *e)
         ui->infoText->setPlainText(QString());
         ui->infoText->document()->setDefaultStyleSheet(QString());
         Settings::updatePalette(ui->infoText);
-        ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(e->type() == QEvent::WindowActivate, ColorSettings::Text).name()));
-        //ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
+        ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(this, ColorSettings::Text).name()));
         ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
         ui->infoText->verticalScrollBar()->setValue(oldpos);
     }
@@ -1007,7 +1006,7 @@ void KanjiInfoForm::scrollerClicked(int index)
 void KanjiInfoForm::settingsChanged()
 {
     ui->infoText->setPlainText(QString());
-    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(isActiveWindow(), ColorSettings::Text).name()));
+    ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(this, ColorSettings::Text).name()));
     ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
     Settings::updatePalette(ui->infoText);
     ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));

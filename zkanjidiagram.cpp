@@ -389,19 +389,19 @@ bool ZKanjiDiagram::event(QEvent *e)
             p.begin(stroke.get());
             p.setRenderHint(QPainter::Antialiasing);
             p.setPen(Qt::transparent);
-            p.setBrush(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+            p.setBrush(Settings::textColor(this, ColorSettings::Text));
 
             if (resized)
                 for (int ix = 0; ix != partpos - 1; ++ix)
                 {
                     if (showdir)
-                        ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
+                        ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(this, ColorSettings::Text));
                     else
                         ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix);
                 }
 
             if (showdir)
-                ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, partpos - 1, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
+                ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, partpos - 1, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(this, ColorSettings::Text));
             else
                 ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, partpos - 1);
             p.end();
@@ -470,7 +470,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
 
     QPainter p(this);
     QRect r = rect();
-    p.fillRect(r, Settings::textColor(isActiveWindow(), ColorSettings::Bg));
+    p.fillRect(r, Settings::textColor(this, ColorSettings::Bg));
 
     p.setRenderHint(QPainter::Antialiasing);
 
@@ -539,7 +539,7 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
 
         //QFontMetrics fm(f);
 
-        p.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
         p.setFont(f);
 
         //p.drawText(r, Qt::AlignHCenter | Qt::AlignVCenter, QString(k));
@@ -562,13 +562,13 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
         if (stroke)
         {
             p.setPen(Qt::transparent);
-            p.setBrush(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+            p.setBrush(Settings::textColor(this, ColorSettings::Text));
 
             p.drawImage((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, *stroke);
             if (strokepos != ZKanji::elements()->strokeCount(elem, 0) && partpos != 0)
             {
                 if (showdir)
-                    ZKanji::elements()->drawStrokePart(p, true, elem, 0, strokepos, QRectF((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, stroke->width(), stroke->height()), parts, partpos - 1, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
+                    ZKanji::elements()->drawStrokePart(p, true, elem, 0, strokepos, QRectF((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, stroke->width(), stroke->height()), parts, partpos - 1, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(this, ColorSettings::Text));
                 else
                     ZKanji::elements()->drawStrokePart(p, true, elem, 0, strokepos, QRectF((r.width() - stroke->width()) / 2, (r.height() - stroke->height()) / 2, stroke->width(), stroke->height()), parts, partpos - 1);
             }
@@ -610,8 +610,8 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
     double minw = 0;
     if (showstrokes)
     {
-        p.setBrush(Settings::textColor(isActiveWindow(), ColorSettings::Bg));
-        p.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        p.setBrush(Settings::textColor(this, ColorSettings::Bg));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
 
         //QFont f = Settings::mainFont();
         //f.setPointSize(10);
@@ -651,8 +651,8 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
     }
     if (showradical)
     {
-        p.setBrush(Settings::textColor(isActiveWindow(), ColorSettings::Bg));
-        p.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        p.setBrush(Settings::textColor(this, ColorSettings::Bg));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
 
         QFont radf = Settings::radicalFont();
         radf.setPointSize(12);
@@ -699,11 +699,11 @@ void ZKanjiDiagram::updateImage()
             p.begin(stroke.get());
             p.setRenderHint(QPainter::Antialiasing);
             p.setPen(Qt::transparent);
-            p.setBrush(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+            p.setBrush(Settings::textColor(this, ColorSettings::Text));
             for (int ix = 0; ix != partpos; ++ix)
             {
                 if (showdir)
-                    ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
+                    ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(this, ColorSettings::Text));
                 else
                     ZKanji::elements()->drawStrokePart(p, false, elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), parts, ix);
             }
@@ -732,7 +732,7 @@ void ZKanjiDiagram::updateImage()
 
     if (drawnpos == 0 && showshadow)
     {
-        QColor col = mixColors(Settings::textColor(isActiveWindow(), ColorSettings::Text), Settings::textColor(isActiveWindow(), ColorSettings::Bg), 0.2);
+        QColor col = mixColors(Settings::textColor(this, ColorSettings::Text), Settings::textColor(this, ColorSettings::Bg), 0.2);
         painter.setPen(Qt::transparent);
         painter.setBrush(col);
 
@@ -747,12 +747,12 @@ void ZKanjiDiagram::updateImage()
     }
 
     painter.setPen(Qt::transparent);
-    painter.setBrush(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+    painter.setBrush(Settings::textColor(this, ColorSettings::Text));
 
     while (drawnpos < strokepos)
     {
         if (showdir)
-            ZKanji::elements()->drawStroke(painter, elem, 0, drawnpos, QRectF(0, 0, siz, siz), siz / partcountdiv, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(isActiveWindow(), ColorSettings::Text));
+            ZKanji::elements()->drawStroke(painter, elem, 0, drawnpos, QRectF(0, 0, siz, siz), siz / partcountdiv, Settings::uiColor(ColorSettings::StrokeDot), Settings::textColor(this, ColorSettings::Text));
         else
             ZKanji::elements()->drawStroke(painter, elem, 0, drawnpos, QRectF(0, 0, siz, siz), siz / partcountdiv);
         ++drawnpos;

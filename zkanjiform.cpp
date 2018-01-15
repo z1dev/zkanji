@@ -1334,12 +1334,13 @@ void ZKanjiForm::fillMainMenu()
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Reset"), QKeySequence(tr("Ctrl+R")), makeCommand(Commands::ResetKanjiSearch, CommandCategories::SearchCateg), false);
     kanjisrcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Stroke count filter"), Qt::Key_1, makeCommand(Commands::StrokeFilter, CommandCategories::SearchCateg), true);
-    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Meaning filter"), Qt::Key_2, makeCommand(Commands::MeaningFilter, CommandCategories::SearchCateg), true);
-    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Reading filter"), Qt::Key_3, makeCommand(Commands::ReadingFilter, CommandCategories::SearchCateg), true);
-    kanjisrcsubmenu->addSeparator();
-    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("JLPT filter"), Qt::Key_4, makeCommand(Commands::JLPTFilter, CommandCategories::SearchCateg), true);
+    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("JLPT filter"), Qt::Key_2, makeCommand(Commands::JLPTFilter, CommandCategories::SearchCateg), true);
+    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Meaning filter"), Qt::Key_4, makeCommand(Commands::MeaningFilter, CommandCategories::SearchCateg), true);
+    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Reading filter"), Qt::Key_5, makeCommand(Commands::ReadingFilter, CommandCategories::SearchCateg), true);
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Jouyou filter"), Qt::Key_5, makeCommand(Commands::JouyouFilter, CommandCategories::SearchCateg), true);
+    kanjisrcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Radicals filter"), Qt::Key_6, makeCommand(Commands::RadicalsFilter, CommandCategories::SearchCateg), true);
+    kanjisrcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Index filter"), Qt::Key_7, makeCommand(Commands::IndexFilter, CommandCategories::SearchCateg), true);
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("SKIP filter"), Qt::Key_8, makeCommand(Commands::SKIPFilter, CommandCategories::SearchCateg), true);
     kanjisearchmenu->addSeparator();

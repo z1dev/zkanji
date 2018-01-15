@@ -35,6 +35,36 @@
 //-------------------------------------------------------------
 
 
+bool filterActive(KanjiFilterData dat, KanjiFilters f)
+{
+    return (dat.filters & (1 << (int)f)) != 0;
+}
+
+bool filterActive(uchar dat, KanjiFilters f)
+{
+    return (dat & (1 << (int)f)) != 0;
+}
+
+void setFilter(KanjiFilterData &dat, KanjiFilters f, bool set)
+{
+    if (set)
+        dat.filters |= (1 << (int)f);
+    else
+        dat.filters &= ~(1 << (int)f);
+}
+
+void setFilter(uchar &dat, KanjiFilters f, bool set)
+{
+    if (set)
+        dat |= (1 << (int)f);
+    else
+        dat &= ~(1 << (int)f);
+}
+
+
+//-------------------------------------------------------------
+
+
 namespace FormStates
 {
     KanjiFilterData kanjifilters;
@@ -43,7 +73,7 @@ namespace FormStates
     {
         return data.filters == 0xff && data.ordertype == KanjiGridSortOrder::Jouyou && data.fromtype == KanjiFromT::All &&
             data.strokemin == 0 && data.strokemax == 0 && data.meaning.isEmpty() && data.reading.isEmpty() &&
-            data.readingon && data.readingkun && data.readingoku && data.jlptmin == 0 && data.jlptmax == 0 &&
+            data.readingon && data.readingkun && data.readingoku && data.jlptmin == -1 && data.jlptmax == -1 &&
             data.skip1 == 0 && data.skip2 == -1 && data.skip3 == -1 && data.jouyou == 0 && data.indextype == KanjiIndexT::Unicode &&
             data.index.isEmpty() && data.rads == RadicalFilter() /*data.fromtype == KanjiFromT::All && *//*data.rads.mode == RadicalFilter::Parts && data.rads.grouped == false &&
             data.rads.groups.empty()*/;
@@ -67,25 +97,25 @@ namespace FormStates
         if (Settings::general.savewinstates)
             writer.writeAttribute("from", fromtext[(int)data.fromtype]);
 
-        if (((data.strokemin > 0 || data.strokemax > 0) && Settings::kanji.savefilters) || (!(data.filters & 0x01) && Settings::general.savewinstates))
+        if (((data.strokemin > 0 || data.strokemax > 0) && Settings::kanji.savefilters) || (!filterActive(data, KanjiFilters::Strokes) && Settings::general.savewinstates))
         {
             writer.writeEmptyElement("Stroke");
             if ((data.strokemin > 0 || data.strokemax > 0) && Settings::kanji.savefilters)
                 writer.writeAttribute("count", IntMinMaxToString(1, std::numeric_limits<int>::max() - 1, data.strokemin, data.strokemax));
-            if (!(data.filters & 0x01) && Settings::general.savewinstates)
+            if (!filterActive(data, KanjiFilters::Strokes) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
 
-        if (Settings::kanji.savefilters || (!(data.filters & 0x02) && Settings::general.savewinstates))
+        if (Settings::kanji.savefilters || (!filterActive(data, KanjiFilters::Meaning) && Settings::general.savewinstates))
         {
             writer.writeEmptyElement("Meaning");
             if (Settings::kanji.savefilters)
                 writer.writeAttribute("text", data.meaning);
-            if (!(data.filters & 0x02) && Settings::general.savewinstates)
+            if (!filterActive(data, KanjiFilters::Meaning) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
 
-        if (Settings::kanji.savefilters || (!(data.filters & 0x04) && Settings::general.savewinstates))
+        if (Settings::kanji.savefilters || (!filterActive(data, KanjiFilters::Reading) && Settings::general.savewinstates))
         {
             writer.writeEmptyElement("Reading");
             if (Settings::kanji.savefilters)
@@ -95,30 +125,30 @@ namespace FormStates
                 writer.writeAttribute("text", data.reading);
             }
 
-            if (!(data.filters & 0x04) && Settings::general.savewinstates)
+            if (!filterActive(data, KanjiFilters::Reading) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
 
-        if (((data.jlptmin > 0 || data.jlptmax > 0) && Settings::kanji.savefilters) || (!(data.filters & 0x08) && Settings::general.savewinstates))
+        if (((data.jlptmin >= 0 || data.jlptmax >= 0) && Settings::kanji.savefilters) || (!filterActive(data, KanjiFilters::JLPT) && Settings::general.savewinstates))
         {
             writer.writeEmptyElement("JLPT");
-            if ((data.jlptmin > 0 || data.jlptmax > 0) && Settings::kanji.savefilters)
-                writer.writeAttribute("text", IntMinMaxToString(1, 5, data.jlptmin, data.jlptmax));
-            if (!(data.filters & 0x08) && Settings::general.savewinstates)
+            if ((data.jlptmin >= 0 || data.jlptmax >= 0) && Settings::kanji.savefilters)
+                writer.writeAttribute("text", IntMinMaxToString(0, 5, data.jlptmin, data.jlptmax));
+            if (!filterActive(data, KanjiFilters::JLPT) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
 
-        if (Settings::kanji.savefilters || (!(data.filters & 0x10) && Settings::general.savewinstates))
+        if (Settings::kanji.savefilters || (!filterActive(data, KanjiFilters::Jouyou) && Settings::general.savewinstates))
         {
             const QString jouyoutext[] = { "all", "e1", "e2", "e3", "e4", "e5", "e6", "eall", "s", "n", "vn" };
             writer.writeEmptyElement("Jouyou");
             if (Settings::kanji.savefilters)
                 writer.writeAttribute("grade", jouyoutext[data.jouyou]);
-            if (!(data.filters & 0x10) && Settings::general.savewinstates)
+            if (!filterActive(data, KanjiFilters::Jouyou) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
 
-        if ((Settings::kanji.savefilters && (data.skip1 != 0 || data.skip2 != -1 || data.skip3 != -1)) || (!(data.filters & 0x80) && Settings::general.savewinstates))
+        if ((Settings::kanji.savefilters && (data.skip1 != 0 || data.skip2 != -1 || data.skip3 != -1)) || (!filterActive(data, KanjiFilters::SKIP) && Settings::general.savewinstates))
         {
             writer.writeEmptyElement("SKIP");
             if (Settings::kanji.savefilters && (data.skip1 != 0 || data.skip2 != -1 || data.skip3 != -1))
@@ -130,11 +160,11 @@ namespace FormStates
                 if (data.skip3 != -1)
                     writer.writeAttribute("field2", QString::number(data.skip3));
             }
-            if (!(data.filters & 0x80) && Settings::general.savewinstates)
+            if (!filterActive(data, KanjiFilters::SKIP) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
 
-        if (Settings::kanji.savefilters || (!(data.filters & 0x40) && Settings::general.savewinstates))
+        if (Settings::kanji.savefilters || (!filterActive(data, KanjiFilters::Index) && Settings::general.savewinstates))
         {
             const QString indextext[] = { "unicode", "euc", "sjis", "jis208", "kuten",
                 "oneil", "gakken", "halper", "heisig", "heisign", "heisigf", "henshall",
@@ -149,11 +179,11 @@ namespace FormStates
                 if (!data.index.isEmpty())
                     writer.writeAttribute("text", data.index);
             }
-                if (!(data.filters & 0x40) && Settings::general.savewinstates)
+                if (!filterActive(data, KanjiFilters::Index) && Settings::general.savewinstates)
                     writer.writeAttribute("hide", "1");
         }
 
-        if ((Settings::kanji.savefilters && data.rads != RadicalFilter()) || (!(data.filters & 0x20) && Settings::general.savewinstates))
+        if ((Settings::kanji.savefilters && data.rads != RadicalFilter()) || (!filterActive(data, KanjiFilters::Radicals) && Settings::general.savewinstates))
         {
             writer.writeStartElement("Radicals");
             if (data.rads != RadicalFilter())
@@ -161,7 +191,7 @@ namespace FormStates
                 writer.writeAttribute("mode", data.rads.mode == RadicalFilterModes::Parts ? "parts" : data.rads.mode == RadicalFilterModes::Radicals ? "radicals" : "named");
                 writer.writeAttribute("grouped", data.rads.grouped ? True : False);
             }
-            if (!(data.filters & 0x20) && Settings::general.savewinstates)
+            if (!filterActive(data, KanjiFilters::Radicals) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", True);
             if (!data.rads.groups.empty())
             {
@@ -217,7 +247,7 @@ namespace FormStates
                 if (Settings::kanji.savefilters && reader.attributes().hasAttribute("count"))
                     findStrIntMinMax(reader.attributes().value("count").toString(), 1, std::numeric_limits<int>::max() - 1, data.strokemin, data.strokemax);
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x01;
+                    setFilter(data, KanjiFilters::Strokes, false);
                 reader.skipCurrentElement();
             }
 
@@ -226,7 +256,7 @@ namespace FormStates
                 if (Settings::kanji.savefilters && reader.attributes().hasAttribute("text"))
                     data.meaning = reader.attributes().value("text").toString();
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x02;
+                    setFilter(data, KanjiFilters::Meaning, false);
                 reader.skipCurrentElement();
             }
 
@@ -244,16 +274,16 @@ namespace FormStates
                     data.reading = reader.attributes().value("text").toString();
 
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x04;
+                    setFilter(data, KanjiFilters::Reading, false);
                 reader.skipCurrentElement();
             }
 
             if (reader.name() == "JLPT")
             {
                 if (Settings::kanji.savefilters && reader.attributes().hasAttribute("text"))
-                    findStrIntMinMax(reader.attributes().value("text").toString(), 1, 5, data.jlptmin, data.jlptmax);
+                    findStrIntMinMax(reader.attributes().value("text").toString(), 0, 5, data.jlptmin, data.jlptmax);
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x08;
+                    setFilter(data, KanjiFilters::JLPT, false);
                 reader.skipCurrentElement();
             }
 
@@ -268,7 +298,7 @@ namespace FormStates
                         data.jouyou = (pos - jouyoutext);
                 }
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x10;
+                    setFilter(data, KanjiFilters::Jouyou, false);
 
                 reader.skipCurrentElement();
             }
@@ -296,7 +326,7 @@ namespace FormStates
                         data.skip3 = val;
                 }
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x80;
+                    setFilter(data, KanjiFilters::SKIP, false);
                 reader.skipCurrentElement();
             }
 
@@ -320,7 +350,7 @@ namespace FormStates
                 }
 
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x40;
+                    setFilter(data, KanjiFilters::Index, false);
 
                 reader.skipCurrentElement();
             }
@@ -328,7 +358,7 @@ namespace FormStates
             if (reader.name() == "Radicals")
             {
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
-                    data.filters &= ~0x20;
+                    setFilter(data, KanjiFilters::Radicals, false);
 
                 bool finished = false;
                 if (Settings::kanji.savefilters)
@@ -444,7 +474,7 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     ui->readingEdit->setValidator(&kanaValidator());
 
     ui->strokeEdit->setValidator(new IntRangeValidator(1, std::numeric_limits<int>::max() - 1, true, this));
-    ui->jlptEdit->setValidator(new IntRangeValidator(1, 5, true, this));
+    ui->jlptEdit->setValidator(new IntRangeValidator(0, 5, true, this));
 
     fillFilters(filters);
 
@@ -624,15 +654,23 @@ void KanjiSearchWidget::saveState(KanjiFilterData &data) const
     //else
     //    data.strokemin = 0, data.strokemax = 0;
 
-    data.filters = ((ui->strokeWidget->isVisibleTo(ui->optionsWidget) ?  0x01 : 0)) |
-                   ((ui->jlptWidget->isVisibleTo(ui->optionsWidget) ? 0x02 : 0)) |
-                   ((ui->meaningWidget->isVisibleTo(ui->optionsWidget) ? 0x04 : 0)) |
-                   ((ui->readingWidget->isVisibleTo(ui->optionsWidget) ? 0x08 : 0)) |
-                   ((ui->jouyouWidget->isVisibleTo(ui->optionsWidget) ? 0x10 : 0)) |
-                   ((ui->radicalsWidget->isVisibleTo(ui->optionsWidget) ? 0x20 : 0)) |
-                   ((ui->indexWidget->isVisibleTo(ui->optionsWidget) ? 0x40 : 0)) |
-                   ((ui->skipWidget->isVisibleTo(ui->optionsWidget) ? 0x80 : 0));
-    
+    //data.filters = ((ui->strokeWidget->isVisibleTo(ui->optionsWidget) ?  0x01 : 0)) |
+    //               ((ui->jlptWidget->isVisibleTo(ui->optionsWidget) ? 0x02 : 0)) |
+    //               ((ui->meaningWidget->isVisibleTo(ui->optionsWidget) ? 0x04 : 0)) |
+    //               ((ui->readingWidget->isVisibleTo(ui->optionsWidget) ? 0x08 : 0)) |
+    //               ((ui->jouyouWidget->isVisibleTo(ui->optionsWidget) ? 0x10 : 0)) |
+    //               ((ui->radicalsWidget->isVisibleTo(ui->optionsWidget) ? 0x20 : 0)) |
+    //               ((ui->indexWidget->isVisibleTo(ui->optionsWidget) ? 0x40 : 0)) |
+    //               ((ui->skipWidget->isVisibleTo(ui->optionsWidget) ? 0x80 : 0));
+    setFilter(data, KanjiFilters::Strokes, ui->strokeWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::JLPT, ui->jlptWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::Meaning, ui->meaningWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::Reading, ui->readingWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::Jouyou, ui->jouyouWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::Radicals, ui->radicalsWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::Index, ui->indexWidget->isVisibleTo(ui->optionsWidget));
+    setFilter(data, KanjiFilters::SKIP, ui->skipWidget->isVisibleTo(ui->optionsWidget));
+
 
     data.meaning = /*ui->meaningWidget->isVisibleTo(ui->optionsWidget) ?*/ ui->meaningEdit->text().trimmed() /*: QString()*/;
     data.reading = /*ui->readingWidget->isVisibleTo(ui->optionsWidget) ?*/ ui->readingEdit->text().trimmed() /*: QString()*/;
@@ -642,7 +680,7 @@ void KanjiSearchWidget::saveState(KanjiFilterData &data) const
     data.readingoku = ui->okuriganaButton->isChecked();
 
     //if (ui->jlptWidget->isVisibleTo(ui->optionsWidget))
-    findStrIntMinMax(ui->jlptEdit->text(), 1, 5, data.jlptmin, data.jlptmax);
+    findStrIntMinMax(ui->jlptEdit->text(), 0, 5, data.jlptmin, data.jlptmax);
     //else
     //    data.jlptmin = 0, data.jlptmax = 0;
 
@@ -709,22 +747,22 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
     }
 
     if (Settings::general.savewinstates)
-        ui->strokeWidget->setVisible((data.filters & 0x01) != 0);
+        ui->strokeWidget->setVisible(filterActive(data, KanjiFilters::Strokes));
     if (Settings::kanji.savefilters)
         ui->strokeEdit->setText(IntMinMaxToString(1, std::numeric_limits<int>::max() - 1, data.strokemin, data.strokemax));
 
     if (Settings::general.savewinstates)
-        ui->jlptWidget->setVisible((data.filters & 0x02) != 0);
+        ui->jlptWidget->setVisible(filterActive(data, KanjiFilters::JLPT));
     if (Settings::kanji.savefilters)
-        ui->jlptEdit->setText(IntMinMaxToString(1, 5, data.jlptmin, data.jlptmax));
+        ui->jlptEdit->setText(IntMinMaxToString(0, 5, data.jlptmin, data.jlptmax));
 
     if (Settings::general.savewinstates)
-        ui->meaningWidget->setVisible((data.filters & 0x04) != 0);
+        ui->meaningWidget->setVisible(filterActive(data, KanjiFilters::Meaning));
     if (Settings::kanji.savefilters)
         ui->meaningEdit->setText(data.meaning);
 
     if (Settings::general.savewinstates)
-        ui->readingWidget->setVisible((data.filters & 0x08) != 0);
+        ui->readingWidget->setVisible(filterActive(data, KanjiFilters::Reading));
     if (Settings::kanji.savefilters)
     {
         ui->readingCBox->setCurrentIndex(data.readingon && data.readingkun ? 0 : data.readingon ? 1 : 2);
@@ -733,12 +771,12 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
     }
 
     if (Settings::general.savewinstates)
-        ui->jouyouWidget->setVisible((data.filters & 0x10) != 0);
+        ui->jouyouWidget->setVisible(filterActive(data, KanjiFilters::Jouyou));
     if (Settings::kanji.savefilters)
         ui->jouyouCBox->setCurrentIndex(data.jouyou);
 
     if (Settings::general.savewinstates)
-        ui->skipWidget->setVisible((data.filters & 0x80) != 0);
+        ui->skipWidget->setVisible(filterActive(data, KanjiFilters::SKIP));
     if (Settings::kanji.savefilters)
     {
         ui->skip1Button->setChecked(data.skip1 == 1);
@@ -750,7 +788,7 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
     }
 
     if (Settings::general.savewinstates)
-        ui->indexWidget->setVisible((data.filters & 0x40) != 0);
+        ui->indexWidget->setVisible(filterActive(data, KanjiFilters::Index));
     if (Settings::kanji.savefilters)
     {
         ui->indexCBox->setCurrentIndex((int)data.indextype);
@@ -758,7 +796,7 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
     }
 
     if (Settings::general.savewinstates)
-        ui->radicalsWidget->setVisible((data.filters & 0x20) != 0);
+        ui->radicalsWidget->setVisible(filterActive(data, KanjiFilters::Radicals));
     if (Settings::kanji.savefilters)
     {
         int index = 0;
@@ -939,82 +977,6 @@ void KanjiSearchWidget::fillFilters(RuntimeKanjiFilters &f) const
     }
 }
 
-//void KanjiSearchWidget::useFilters(KanjiFilters f)
-//{
-//    KanjiFilters f;
-//
-//    bool success;
-//    int val;
-//
-//    if (ui->strokeWidget->isVisibleTo(ui->optionsWidget))
-//        findStrIntMinMax(ui->strokeEdit->text(), 1, std::numeric_limits<int>::max() - 1, f.strokemin, f.strokemax);
-//    else
-//        f.strokemin = 0, f.strokemax = 0;
-//
-//    f.meaning = ui->meaningWidget->isVisibleTo(ui->optionsWidget) ? ui->meaningEdit->text().trimmed() : QString();
-//    f.reading = ui->readingWidget->isVisibleTo(ui->optionsWidget) ? ui->readingEdit->text().trimmed() : QString();
-//    ui->readingEdit->validator()->fixup(f.reading);
-//    f.readingon = ui->readingCBox->currentIndex() == 0 || ui->readingCBox->currentIndex() == 1;
-//    f.readingkun = ui->readingCBox->currentIndex() == 0 || ui->readingCBox->currentIndex() == 2;
-//    f.readingokurigana = ui->okuriganaButton->isChecked();
-//
-//    if (ui->jlptWidget->isVisibleTo(ui->optionsWidget))
-//        findStrIntMinMax(ui->jlptEdit->text(), 1, 5, f.jlptmin, f.jlptmax);
-//    else
-//        f.jlptmin = 0, f.jlptmax = 0;
-//
-//    if (ui->skipWidget->isVisibleTo(ui->optionsWidget))
-//    {
-//        f.skip1 = ui->skip1Button->isChecked() ? 1 : ui->skip2Button->isChecked() ? 2 : ui->skip3Button->isChecked() ? 3 : ui->skip4Button->isChecked() ? 4 : 0;
-//        val = ui->skip1Edit->text().trimmed().toInt(&success);
-//        if (success)
-//            f.skip2 = val;
-//        else
-//            f.skip2 = 0;
-//        val = ui->skip2Edit->text().trimmed().toInt(&success);
-//        if (success)
-//            f.skip3 = val;
-//        else
-//            f.skip3 = 0;
-//    }
-//    else
-//    {
-//        f.skip1 = 0;
-//        f.skip2 = 0;
-//        f.skip3 = 0;
-//    }
-//
-//    f.jouyou = ui->jouyouWidget->isVisibleTo(ui->optionsWidget) ? ui->jouyouCBox->currentIndex() : 0;
-//
-//    f.indextype = (KanjiIndexT)ui->indexCBox->currentIndex();
-//    f.index = ui->indexWidget->isVisibleTo(ui->optionsWidget) ? ui->indexEdit->text().trimmed() : QString();
-//
-//    f.fromtype = (KanjiFromT)ui->fromCBox->currentIndex();
-//
-//    if (ui->radicalsWidget->isVisibleTo(ui->optionsWidget))
-//    {
-//        if (radform != nullptr)
-//        {
-//            f.rads = radform->activeFilter();
-//            f.tmprads = radform->selectionToFilter();
-//        }
-//        else
-//        {
-//            f.rads.groups.clear();
-//            f.tmprads.clear();
-//            if (ui->radicalsCBox->currentIndex() != 0 && ui->radicalsCBox->currentIndex() < ui->radicalsCBox->count() - 1)
-//                f.rads = radicalFiltersModel().filters(ui->radicalsCBox->currentIndex() - 1);
-//        }
-//    }
-//    else
-//    {
-//        f.rads.groups.clear();
-//        f.tmprads.clear();
-//    }
-//
-//    return f;
-//}
-
 void KanjiSearchWidget::reset()
 {
     ui->strokeEdit->setText(QString());
@@ -1172,31 +1134,31 @@ void KanjiSearchWidget::resizeEvent(QResizeEvent *e)
 bool KanjiSearchWidget::filtersMatch(const RuntimeKanjiFilters &a, const RuntimeKanjiFilters &b)
 {
     return
-        (((!(a.data.filters & 0x01) || (a.data.strokemin == 0 && a.data.strokemax == 0)) && (!(b.data.filters & 0x01) || (b.data.strokemin == 0 && b.data.strokemax == 0))) ||
-        (clamp(!(a.data.filters & 0x01) ? 0 : a.data.strokemin, 0, 30) == clamp(!(b.data.filters & 0x01) ? 0 : b.data.strokemin, 0, 30) && 
-        clamp(!(a.data.filters & 0x01) ? 0 : a.data.strokemax, 0, 30) == clamp(!(b.data.filters & 0x01) ? 0 : b.data.strokemax, 0, 30))) &&
+        (((!filterActive(a.data, KanjiFilters::Strokes) || (a.data.strokemin == 0 && a.data.strokemax == 0)) && (!filterActive(b.data, KanjiFilters::Strokes) || (b.data.strokemin == 0 && b.data.strokemax == 0))) ||
+        (clamp(!filterActive(a.data, KanjiFilters::Strokes) ? 0 : a.data.strokemin, 0, 30) == clamp(!filterActive(b.data, KanjiFilters::Strokes) ? 0 : b.data.strokemin, 0, 30) &&
+        clamp(!filterActive(a.data, KanjiFilters::Strokes) ? 0 : a.data.strokemax, 0, 30) == clamp(!filterActive(b.data, KanjiFilters::Strokes) ? 0 : b.data.strokemax, 0, 30))) &&
 
-        ((!(a.data.filters & 0x02) ? QString() : a.data.meaning.toLower()) == (!(b.data.filters & 0x02) ? QString() : b.data.meaning.toLower())) &&
+        ((!filterActive(a.data, KanjiFilters::Meaning) ? QString() : a.data.meaning.toLower()) == (!filterActive(b.data, KanjiFilters::Meaning) ? QString() : b.data.meaning.toLower())) &&
 
-        (((!(a.data.filters & 0x04) || a.data.reading.isEmpty()) && (!(b.data.filters & 0x04) || b.data.reading.isEmpty())) ||
-        ((!(a.data.filters & 0x04) ? QString() : hiraganize(a.data.reading)) == (!(b.data.filters & 0x04) ? QString() : hiraganize(b.data.reading)) &&
-        ((a.data.filters & 0x04) != 0 && (b.data.filters & 0x04) != 0 && a.data.readingon == b.data.readingon && a.data.readingkun == b.data.readingkun && a.data.readingoku == b.data.readingoku))) &&
+        (((!filterActive(a.data, KanjiFilters::Reading) || a.data.reading.isEmpty()) && (!filterActive(b.data, KanjiFilters::Reading) || b.data.reading.isEmpty())) ||
+        ((!filterActive(a.data, KanjiFilters::Reading) ? QString() : hiraganize(a.data.reading)) == (!filterActive(b.data, KanjiFilters::Reading) ? QString() : hiraganize(b.data.reading)) &&
+        (filterActive(a.data, KanjiFilters::Reading) != 0 && filterActive(b.data, KanjiFilters::Reading) != 0 && a.data.readingon == b.data.readingon && a.data.readingkun == b.data.readingkun && a.data.readingoku == b.data.readingoku))) &&
 
-        (std::max(0, !(a.data.filters & 0x08) ? 0 : a.data.jlptmin) == std::max(0, !(b.data.filters & 0x08) ? 0 : b.data.jlptmin) &&
-        std::min(5, !(a.data.filters & 0x08) ? 5 : a.data.jlptmax) == std::min(5, !(b.data.filters & 0x08) ? 5 : b.data.jlptmax)) &&
+        (clamp(!filterActive(a.data, KanjiFilters::JLPT) ? -1 : a.data.jlptmin, -1, 5) == clamp(!filterActive(b.data, KanjiFilters::JLPT) ? -1 : b.data.jlptmin, -1, 5) &&
+        clamp(!filterActive(a.data, KanjiFilters::JLPT) ? -1 : a.data.jlptmax, -1, 5) == clamp(!filterActive(b.data, KanjiFilters::JLPT) ? -1 : b.data.jlptmax, -1, 5)) &&
 
-        ((!(a.data.filters & 0x10) ? 0 : a.data.jouyou) == (!(b.data.filters & 0x10) ? 0 : b.data.jouyou)) &&
+        ((!filterActive(a.data, KanjiFilters::Jouyou) ? 0 : a.data.jouyou) == (!filterActive(b.data, KanjiFilters::Jouyou) ? 0 : b.data.jouyou)) &&
 
-        ((!(a.data.filters & 0x80) ? 0 : a.data.skip1) == (!(b.data.filters & 0x80) ? 0 : b.data.skip1) &&
-        clamp(!(a.data.filters & 0x80) ? 0 : a.data.skip2, 0, 30) == clamp(!(b.data.filters & 0x80) ? 0 : b.data.skip2, 0, 30) &&
-        clamp(!(a.data.filters & 0x80) ? 0 : a.data.skip3, 0, 30) == clamp(!(b.data.filters & 0x80) ? 0 : b.data.skip3, 0, 30)) &&
+        ((!filterActive(a.data, KanjiFilters::SKIP) ? 0 : a.data.skip1) == (!filterActive(b.data, KanjiFilters::SKIP) ? 0 : b.data.skip1) &&
+        clamp(!filterActive(a.data, KanjiFilters::SKIP) ? 0 : a.data.skip2, 0, 30) == clamp(!filterActive(b.data, KanjiFilters::SKIP) ? 0 : b.data.skip2, 0, 30) &&
+        clamp(!filterActive(a.data, KanjiFilters::SKIP) ? 0 : a.data.skip3, 0, 30) == clamp(!filterActive(b.data, KanjiFilters::SKIP) ? 0 : b.data.skip3, 0, 30)) &&
 
-        (((!(a.data.filters & 0x40) || a.data.index.isEmpty()) && (!(b.data.filters & 0x40) || b.data.index.isEmpty())) ||
-        ((!(a.data.filters & 0x40) ? QString() : a.data.index.toLower()) == (!(b.data.filters & 0x40) ? QString() : b.data.index.toLower()) &&
+        (((!filterActive(a.data, KanjiFilters::Index) || a.data.index.isEmpty()) && (!filterActive(b.data, KanjiFilters::Index) || b.data.index.isEmpty())) ||
+        ((!filterActive(a.data, KanjiFilters::Index) ? QString() : a.data.index.toLower()) == (!filterActive(b.data, KanjiFilters::Index) ? QString() : b.data.index.toLower()) &&
         a.data.indextype == b.data.indextype)) &&
 
-        ((!(a.data.filters & 0x20) ? RadicalFilter() : a.data.rads) == (!(b.data.filters & 0x20) ? RadicalFilter() : b.data.rads)) &&
-        ((!(a.data.filters & 0x20) ? std::vector<ushort>() : a.tmprads) == (!(b.data.filters & 0x20) ? std::vector<ushort>() : b.tmprads)) &&
+        ((!filterActive(a.data, KanjiFilters::Radicals) ? RadicalFilter() : a.data.rads) == (!filterActive(b.data, KanjiFilters::Radicals) ? RadicalFilter() : b.data.rads)) &&
+        ((!filterActive(a.data, KanjiFilters::Radicals) ? std::vector<ushort>() : a.tmprads) == (!filterActive(b.data, KanjiFilters::Radicals) ? std::vector<ushort>() : b.tmprads)) &&
 
         (a.data.fromtype == b.data.fromtype);
 }
@@ -1204,14 +1166,14 @@ bool KanjiSearchWidget::filtersMatch(const RuntimeKanjiFilters &a, const Runtime
 bool KanjiSearchWidget::filtersEmpty(const RuntimeKanjiFilters &f)
 {
     return
-        (!(f.data.filters & 0x01) || (f.data.strokemin == 0 && f.data.strokemax == 0) || (f.data.strokemax != 0 && f.data.strokemax < f.data.strokemin)) &&
-        (!(f.data.filters & 0x02) || f.data.meaning.isEmpty()) &&
-        (!(f.data.filters & 0x04) || f.data.reading.isEmpty()) &&
-        (!(f.data.filters & 0x08) || (f.data.jlptmin == 0 && f.data.jlptmax == 0) || (f.data.jlptmax != 0 && f.data.jlptmax < f.data.jlptmin)) &&
-        (!(f.data.filters & 0x10) || (f.data.jouyou == 0)) &&
-        (!(f.data.filters & 0x80) || (f.data.skip1 == 0 && (f.data.skip2 <= 0 || f.data.skip2 > 30) && (f.data.skip3 <= 0 || f.data.skip3 > 30))) &&
-        (!(f.data.filters & 0x40) || f.data.index.isEmpty()) &&
-        (!(f.data.filters & 0x20) || (f.data.rads == RadicalFilter() && f.tmprads.empty())) &&
+        (!filterActive(f.data.filters, KanjiFilters::Strokes) || (f.data.strokemin == 0 && f.data.strokemax == 0) || (f.data.strokemax != 0 && f.data.strokemax < f.data.strokemin)) &&
+        (!filterActive(f.data.filters, KanjiFilters::Meaning) || f.data.meaning.isEmpty()) &&
+        (!filterActive(f.data.filters, KanjiFilters::Reading) || f.data.reading.isEmpty()) &&
+        (!filterActive(f.data.filters, KanjiFilters::JLPT) || (f.data.jlptmin == -1 && f.data.jlptmax == -1) || (f.data.jlptmax != -1 && f.data.jlptmax < f.data.jlptmin)) &&
+        (!filterActive(f.data.filters, KanjiFilters::Jouyou) || (f.data.jouyou == 0)) &&
+        (!filterActive(f.data.filters, KanjiFilters::SKIP) || (f.data.skip1 == 0 && (f.data.skip2 <= 0 || f.data.skip2 > 30) && (f.data.skip3 <= 0 || f.data.skip3 > 30))) &&
+        (!filterActive(f.data.filters, KanjiFilters::Index) || f.data.index.isEmpty()) &&
+        (!filterActive(f.data.filters, KanjiFilters::Radicals) || (f.data.rads == RadicalFilter() && f.tmprads.empty())) &&
         f.data.fromtype == KanjiFromT::All;
 }
 
@@ -1221,7 +1183,7 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
 
     RadicalFilter rads = f.data.rads;
 
-    if ((f.data.filters & 0x20) == 0 || rads.groups.empty())
+    if (!filterActive(f.data.filters, KanjiFilters::Radicals) || rads.groups.empty())
     {
         for (int ix = 0; ix != ZKanji::kanjicount; ++ix)
             list.push_back(ix);
@@ -1423,7 +1385,7 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
             }
         }
 
-        if ((f.data.filters & 0x40) != 0 && !f.data.index.isEmpty())
+        if (filterActive(f.data, KanjiFilters::Index) && !f.data.index.isEmpty())
         {
             QString str;
             match = false;
@@ -1587,31 +1549,31 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
             }
         }
 
-        if ((f.data.filters & 0x01) != 0 && ((f.data.strokemin != 0 && k->strokes < f.data.strokemin) || (f.data.strokemax != 0 && k->strokes > f.data.strokemax) || (f.data.strokemax == 0 && f.data.strokemin != 0 && k->strokes != f.data.strokemin)))
+        if (filterActive(f.data, KanjiFilters::Strokes) && ((f.data.strokemin != 0 && k->strokes < f.data.strokemin) || (f.data.strokemax != 0 && k->strokes > f.data.strokemax) || (f.data.strokemax == 0 && f.data.strokemin != 0 && k->strokes != f.data.strokemin)))
         {
             list.erase(list.begin() + ix);
             continue;
         }
 
-        if ((f.data.filters & 0x08) != 0 && ((f.data.jlptmin <= f.data.jlptmax || f.data.jlptmax == 0) && ((f.data.jlptmin != 0 && k->jlpt < f.data.jlptmin) || (f.data.jlptmax != 0 && k->jlpt > f.data.jlptmax))))
+        if (filterActive(f.data, KanjiFilters::JLPT) && ((f.data.jlptmin != -1 && k->jlpt < f.data.jlptmin) || (f.data.jlptmax != -1 && k->jlpt > f.data.jlptmax) || (f.data.jlptmax == -1 && f.data.jlptmin != -1 && k->jlpt != f.data.jlptmin)))
         {
             list.erase(list.begin() + ix);
             continue;
         }
 
-        if ((f.data.filters & 0x80) != 0 && ((f.data.skip1 != 0 && f.data.skip1 != k->skips[0]) || (f.data.skip2 > 0 && f.data.skip2 != k->skips[1]) || (f.data.skip3 > 0 && f.data.skip3 != k->skips[2])))
+        if (filterActive(f.data, KanjiFilters::SKIP) && ((f.data.skip1 != 0 && f.data.skip1 != k->skips[0]) || (f.data.skip2 > 0 && f.data.skip2 != k->skips[1]) || (f.data.skip3 > 0 && f.data.skip3 != k->skips[2])))
         {
             list.erase(list.begin() + ix);
             continue;
         }
 
-        if ((f.data.filters & 0x10) != 0 && (f.data.jouyou != 0 && (k->jouyou == 0 || (f.data.jouyou != 7 && f.data.jouyou != k->jouyou) || (f.data.jouyou == 7 && k->jouyou > 6))))
+        if (filterActive(f.data, KanjiFilters::Jouyou) && (f.data.jouyou != 0 && (k->jouyou == 0 || (f.data.jouyou != 7 && f.data.jouyou != k->jouyou) || (f.data.jouyou == 7 && k->jouyou > 6))))
         {
             list.erase(list.begin() + ix);
             continue;
         }
 
-        if ((f.data.filters & 0x04) != 0 && !f.data.reading.isEmpty())
+        if (filterActive(f.data, KanjiFilters::Reading) && !f.data.reading.isEmpty())
         {
             match = false;
             QString str = hiraganize(f.data.reading);
@@ -1647,7 +1609,7 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
         // Throw out anything not matching the meaning. There is no tree for kanji
         // meanings, so the only way is to go through each of them and check for
         // matches.
-        if ((f.data.filters & 0x02) != 0 && !f.data.meaning.isEmpty())
+        if (filterActive(f.data, KanjiFilters::Meaning) && !f.data.meaning.isEmpty())
         {
             const int mlen = f.data.meaning.size();
             const QString mstr = f.data.meaning.toLower();
@@ -1674,7 +1636,7 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
         }
     }
 
-    if ((f.data.filters & 0x20) != 0 && radform != nullptr)
+    if (filterActive(f.data, KanjiFilters::Radicals) && radform != nullptr)
     {
         // The radical selecting window needs the list before filtering by the temporary
         // radical selection, so passing a list of kanji after the function returns is too

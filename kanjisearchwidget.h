@@ -32,6 +32,12 @@ enum class KanjiFromT {
 struct KanjiFilterData;
 
 enum class KanjiGridSortOrder : int;
+
+// Filters in the order they appear in the "filters" member of kanjiFilterData.
+enum class KanjiFilters : uchar {
+    Strokes, JLPT, Meaning, Reading,
+    Jouyou, Radicals, Index, SKIP };
+
 struct KanjiFilterData
 {
     uchar filters = 0xff;
@@ -50,8 +56,8 @@ struct KanjiFilterData
     bool readingkun = true;
     bool readingoku = true;
     //bool usejlpt;
-    int jlptmin = 0;
-    int jlptmax = 0;
+    int jlptmin = -1;
+    int jlptmax = -1;
     //bool usejouyou;
     int jouyou = 0;
     //bool useskip;
@@ -65,6 +71,16 @@ struct KanjiFilterData
     // Radical filters.
     RadicalFilter rads;
 };
+
+// Returns whether the dat.filters member contains the (1 << (int)f) bit set.
+bool filterActive(KanjiFilterData dat, KanjiFilters f);
+// Returns whether the dat byte contains the (1 << (int)f) bit set.
+bool filterActive(uchar dat, KanjiFilters f);
+
+// Checks or unchecks the bit for a given filter in dat.filters.
+void setFilter(KanjiFilterData &dat, KanjiFilters f, bool set = true);
+// Checks or unchecks the bit for a given filter in dat.
+void setFilter(uchar &dat, KanjiFilters f, bool set = true);
 
 struct RuntimeKanjiFilters
 {

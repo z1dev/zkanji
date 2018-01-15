@@ -461,16 +461,6 @@ bool TestWordsItemModel::rowScored(int row) const
     return items[list[row]].correct + items[list[row]].incorrect != 0;
 }
 
-//void TestWordsItemModel::setData(std::vector<int> indexes)
-//{
-//    disconnect();
-//    connect();
-//    beginResetModel();
-//    dict = d;
-//    list = indexes;
-//    endResetModel();
-//}
-
 int TestWordsItemModel::indexes(int pos) const
 {
     return items[list[pos]].windex;
@@ -500,12 +490,10 @@ QVariant TestWordsItemModel::data(const QModelIndex &index, int role) const
     if (headerData(col, Qt::Horizontal, (int)DictColumnRoles::Type).toInt() == (int)TestWordsColumnTypes::Order && role == Qt::DisplayRole)
         return QString::number(list[row] + 1);
 
-    if (!index.isValid() || (/*role != (int)CellRoles::TextColor &&*/ role != (int)CellRoles::CellColor) || !items[list[row]].excluded)
+    if (!index.isValid() || (role != (int)CellRoles::CellColor) || !items[list[row]].excluded)
         return base::data(index, role);
 
-    //QPalette::ColorGroup colgrp = ((QWidget*)parent())->window()->isActiveWindow() ? QPalette::Active : QPalette::Inactive;
-    //QColor col = qApp->palette().color(colgrp, role == (int)CellRoles::CellColor ? QPalette::Base : QPalette::Text);
-    return mixColors(QColor(160, 160, 160), Settings::textColor(ColorSettings::Bg), 0.2); /*mixColors(col, QColor(Qt::gray));*/
+    return mixColors(QColor(160, 160, 160), Settings::textColor((QWidget*)parent(), ColorSettings::Bg), 0.2);
 }
 
 Qt::ItemFlags TestWordsItemModel::flags(const QModelIndex &index) const
@@ -863,8 +851,7 @@ bool TestWordsItemModel::comparedEqual(TestWordsDisplay disp, int windex1, int w
 
 
 WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
-    base(parent), ui(new Ui::WordTestSettingsForm), group(group), model(nullptr),
-    scolumn(0), sorder(Qt::AscendingOrder)
+    base(parent), ui(new Ui::WordTestSettingsForm), group(group), model(nullptr), scolumn(0), sorder(Qt::AscendingOrder)
 {
     ui->setupUi(this);
 
@@ -882,7 +869,7 @@ WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
     setWindowTitle(tr("Word test settings") + QString(" - %1").arg(group->name()));
 
     group->studyData().applyScore();
-    model = new TestWordsItemModel(group, this);
+    model = new TestWordsItemModel(group, ui->dictWidget);
 
     connect(ui->askKanjiBox, &QCheckBox::toggled, this, &WordTestSettingsForm::updateStartSave);
     connect(ui->askKanaBox, &QCheckBox::toggled, this, &WordTestSettingsForm::updateStartSave);

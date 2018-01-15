@@ -98,6 +98,11 @@ namespace Settings
     QColor textColor(bool active, ColorSettings::SystemColorTypes type);
 
     // Returns the color selected in the settings for elements with active/inactive state,
+    // like the text and backgrounds, using the application palette. Whether the displayed
+    // state is active or inactive depends on the passed widget.
+    QColor textColor(QWidget *w, ColorSettings::SystemColorTypes type);
+
+    // Returns the color selected in the settings for elements with active/inactive state,
     // like the text and backgrounds, using the application palette for active widgets.
     QColor textColor(ColorSettings::SystemColorTypes type);
 

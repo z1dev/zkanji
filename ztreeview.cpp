@@ -1167,7 +1167,7 @@ void GroupTreeView::paintEvent(QPaintEvent *e)
 
     // Painting over the default implementation while dragging, to show the drop position.
     QPainter p(viewport());
-    QColor hicol = Settings::textColor(ColorSettings::SelBg); //qApp->palette().color(QPalette::Highlight);
+    QColor hicol = Settings::textColor(this, ColorSettings::SelBg);
     p.fillRect(indrect, hicol);
 }
 

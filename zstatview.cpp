@@ -211,9 +211,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     QFontMetrics fm = fontMetrics();
     int fmh = fm.height();
 
-    bool wndactive = isActiveWindow();
-
-    p.fillRect(rect(), Settings::textColor(wndactive, ColorSettings::Bg));
+    p.fillRect(rect(), Settings::textColor(this, ColorSettings::Bg));
 
     ZRect r = statRect();
     p.setPen(Settings::uiColor(ColorSettings::Grid));
@@ -235,7 +233,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
         if (ix == siz - 1 && ix != 0 && ticks[ix - 1].second - fmh * 1.5 < 0)
             break;
 
-        p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
         p.drawText(QRectF(0, r.top() + pos - fmh / 2, r.left() - 7, fmh), QString::number(num), Qt::AlignRight | Qt::AlignVCenter);
     }
     if (ticks.empty() || ticks.back().second != 0)
@@ -250,7 +248,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     if (!vlabel.isEmpty())
     {
         p.save();
-        p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
         p.rotate(-90);
         QFont f = font();
         f.setBold(true);
@@ -297,7 +295,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
             r2.setBottom(height());
             p.setClipRect(QRect(QPoint(std::max(r2.left(), r.left()), r2.top()), QPoint(std::min(r2.right(), r.right()), r2.bottom())), Qt::ReplaceClip);
 
-            p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+            p.setPen(Settings::textColor(this, ColorSettings::Text));
             p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, bm->barLabel(pos));
 
             ++pos;
@@ -313,7 +311,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
         // Draw x-axis grid lines at equal distances but only for exact date positions. They
         // all should show the same time of the day as the first one.
 
-        p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
 
         int barw = fm.width(QStringLiteral("9999:99:99")) + 16;
         // Pixel position in stat drawing rectangle.
@@ -331,7 +329,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
             dater = fm.boundingRect(str).adjusted(-5, 0, 5, 5);
             dater.moveTo(left + r.left() - dater.width() / 2, r.bottom() + 7);
 
-            p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+            p.setPen(Settings::textColor(this, ColorSettings::Text));
             p.drawText(dater, Qt::AlignHCenter | Qt::AlignTop, str);
 
             if (left != 0)
@@ -541,7 +539,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     if (!hlabel.isEmpty())
     {
         p.save();
-        p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+        p.setPen(Settings::textColor(this, ColorSettings::Text));
         QFont f = font();
         f.setBold(true);
         p.setFont(f);
@@ -617,7 +615,6 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
     // When drawing the bar, fmh * 1.5 height will be excluded from top to draw the bar texts,
     // but the grid should be drawn above it.
     int gap = std::min<int>(r.height() / 2, fmh * 1.5);
-    bool wndactive = isActiveWindow();
 
     for (int ix = 0; ix != cnt; ++ix)
     {
@@ -626,11 +623,11 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
             br = QRect(r.left() + r.width() * 0.2, r.bottom() - ((r.height() - gap) * ((double)sum / maxval)), r.width() * 0.6, 0);
 
             // Draw text above the bar
-            p.setPen(Settings::textColor(wndactive, ColorSettings::Text));
+            p.setPen(Settings::textColor(this, ColorSettings::Text));
             QRect tr = QRect(br.left(), br.top() - fmh - 2, br.width(), fmh + 2);
             QString str = QString::number(sum);
             QRect br2 = p.boundingRect(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
-            p.fillRect(br2.adjusted(-1, 0, 1, 0), Settings::textColor(wndactive, ColorSettings::Bg));
+            p.fillRect(br2.adjusted(-1, 0, 1, 0), Settings::textColor(this, ColorSettings::Bg));
             p.drawText(tr, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, str);
         }
         br.setBottom(r.bottom() - ((r.height() - gap) * double(sum - stats[ix]) / maxval));

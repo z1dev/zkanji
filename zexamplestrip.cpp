@@ -154,12 +154,12 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     QRect rr = QRect(owner->mapToGlobal(QPoint(0, 0)), owner->size());
     rr = QRect(mapFromGlobal(rr.topLeft()), mapFromGlobal(rr.bottomRight()));
 
-    painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Text));
+    painter.setPen(Settings::textColor(owner, ColorSettings::Text));
     if (side == (Bottom | Left))
     {
         QPointF pt[] = { QPointF(std::max<double>(r.left(), rr.left() + 0.5), r.bottom()), r.bottomLeft(), r.topLeft(), r.topRight(), r.bottomRight(), QPointF(std::min<double>(r.left() + rectwidth - 2, rr.right() + 0.5), r.bottom()) };
         painter.drawPolyline(pt, 6);
-        painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Bg));
+        painter.setPen(Settings::textColor(owner, ColorSettings::Bg));
         --pt[5].rx();
         ++pt[0].rx();
         painter.drawLine(pt[5], pt[0]);
@@ -168,7 +168,7 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     {
         QPointF pt[] = { QPointF(std::min<double>(r.right(), rr.right() + 0.5), r.bottom()), r.bottomRight(), r.topRight(), r.topLeft(), r.bottomLeft(), QPointF(std::max<double>(r.right() - rectwidth + 2, rr.left() + 0.5), r.bottom()) };
         painter.drawPolyline(pt, 6);
-        painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Bg));
+        painter.setPen(Settings::textColor(owner, ColorSettings::Bg));
         ++pt[5].rx();
         --pt[0].rx();
         painter.drawLine(pt[5], pt[0]);
@@ -177,7 +177,7 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     {
         QPointF pt[] = { QPointF(std::max<double>(r.left(), rr.left() + 0.5), r.top()), r.topLeft(), r.bottomLeft(), r.bottomRight(), r.topRight(), QPointF(std::min<double>(r.left() + rectwidth - 2, rr .right() + 0.5), r.top()) };
         painter.drawPolyline(pt, 6);
-        painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Bg));
+        painter.setPen(Settings::textColor(owner, ColorSettings::Bg));
         --pt[5].rx();
         ++pt[0].rx();
         painter.drawLine(pt[5], pt[0]);
@@ -186,7 +186,7 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     {
         QPointF pt[] = { QPointF(std::min<double>(r.right(), rr.right() + 0.5), r.top()), r.topRight(), r.bottomRight(), r.topLeft(), r.topLeft(), QPointF(std::max<double>(r.right() - rectwidth + 2, rr .left() + 0.5), r.top()) };
         painter.drawPolyline(pt, 6);
-        painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Bg));
+        painter.setPen(Settings::textColor(owner, ColorSettings::Bg));
         ++pt[5].rx();
         --pt[0].rx();
         painter.drawLine(pt[5], pt[0]);
@@ -194,9 +194,9 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
 
     r.adjust(0, 0, -1, -1);
 
-    painter.fillRect(r, Settings::textColor(owner->isActiveWindow(), ColorSettings::Bg));
+    painter.fillRect(r, Settings::textColor(owner, ColorSettings::Bg));
 
-    painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Text));
+    painter.setPen(Settings::textColor(owner, ColorSettings::Text));
 
     QFont f = Settings::kanaFont();
     painter.setFont(f);
@@ -217,11 +217,11 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
 
         if (hovered == ix)
         {
-            painter.fillRect(Settings::scaled(popupMargin), top - 1, rect().width() - Settings::scaled(popupMargin) * 2, lineheight, Settings::textColor(owner->isActiveWindow(), ColorSettings::SelBg));
-            painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::SelText));
+            painter.fillRect(Settings::scaled(popupMargin), top - 1, rect().width() - Settings::scaled(popupMargin) * 2, lineheight, Settings::textColor(owner, ColorSettings::SelBg));
+            painter.setPen(Settings::textColor(owner, ColorSettings::SelText));
         }
         else
-            painter.setPen(Settings::textColor(owner->isActiveWindow(), ColorSettings::Text));
+            painter.setPen(Settings::textColor(owner, ColorSettings::Text));
 
 
         painter.drawText(Settings::scaled(popupMargin) + 1, top, 1, 1, flags, str);
@@ -517,7 +517,7 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
     QRect r = drawArea();
     painter.setClipRect(r);
 
-    painter.fillRect(r, Settings::textColor(isActiveWindow(), ColorSettings::Bg));
+    painter.fillRect(r, Settings::textColor(this, ColorSettings::Bg));
 
     if (index == -1)
         return;
@@ -557,14 +557,14 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
         //painter.drawText(QRect(x, jtop, 1, 1), flags, sentence.japanese.toQStringRaw());
         paintJapanese(&painter, jfm, jtop);
 
-        painter.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        painter.setPen(Settings::textColor(this, ColorSettings::Text));
         painter.setFont(tf);
         painter.drawText(QRect(x, ttop, 1, 1), flags, sentence.translated.toQStringRaw());
     }
     else if (display == ExampleDisplay::Japanese)
     {
         int jtop = r.top() + (r.height() - jh) / 2;
-        painter.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        painter.setPen(Settings::textColor(this, ColorSettings::Text));
         painter.setFont(jf);
         //painter.drawText(QRect(x, jtop, 1, 1), flags, sentence.japanese.toQStringRaw());
         paintJapanese(&painter, jfm, jtop);
@@ -572,7 +572,7 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
     else
     {
         int ttop = r.top() + (r.height() - th) / 2;
-        painter.setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        painter.setPen(Settings::textColor(this, ColorSettings::Text));
         painter.setFont(tf);
         painter.drawText(QRect(x, ttop, 1, 1), flags, sentence.translated.toQStringRaw());
     }
@@ -971,7 +971,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
         if (gaplen != 0)
         {
             QString str = sentence.japanese.toQString(gappos, gaplen);
-            p->setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+            p->setPen(Settings::textColor(this, ColorSettings::Text));
             p->drawText(x, y, 1, 1, flags, str);
             x += fm.width(str);
         }
@@ -981,7 +981,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
         // bounding rectangle can cover neighbouring words.
         if (hovered != pos)
         {
-            p->setPen(wordpos == pos ? Settings::uiColor(ColorSettings::SentenceWord) : Settings::textColor(isActiveWindow(), ColorSettings::Text));
+            p->setPen(wordpos == pos ? Settings::uiColor(ColorSettings::SentenceWord) : Settings::textColor(this, ColorSettings::Text));
             p->drawText(x, y, 1, 1, flags, str);
         }
         int w = fm.width(str);
@@ -1007,7 +1007,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
         ++pos;
     }
 
-    p->setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+    p->setPen(Settings::textColor(this, ColorSettings::Text));
 
     // Last part of the sentence without a word rectangle.
     int gappos = sentence.words[pos - 1].pos + sentence.words[pos - 1].len;
@@ -1023,14 +1023,14 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
     {
         QRectF r = wordrect[hovered];
         r.adjust(-1.5, -1.5, 1.5, 1.5);
-        p->setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        p->setPen(Settings::textColor(this, ColorSettings::Text));
         p->drawRect(r);
         r.adjust(0, 0, -1, -1);
-        p->fillRect(r, Settings::textColor(isActiveWindow(), ColorSettings::Bg));
+        p->fillRect(r, Settings::textColor(this, ColorSettings::Bg));
 
         QString str = sentence.japanese.toQString(sentence.words[hovered].pos, sentence.words[hovered].len);
 
-        p->setPen(wordpos == hovered ? Settings::uiColor(ColorSettings::SentenceWord) : Settings::textColor(isActiveWindow(), ColorSettings::Text));
+        p->setPen(wordpos == hovered ? Settings::uiColor(ColorSettings::SentenceWord) : Settings::textColor(this, ColorSettings::Text));
         p->drawText(wordrect[hovered].left(), y, 1, 1, flags, str);
     }
 
@@ -1051,7 +1051,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
 
     }
 
-    p->setPen(Settings::textColor(isActiveWindow(), ColorSettings::Text));
+    p->setPen(Settings::textColor(this, ColorSettings::Text));
 }
 
 void ZExampleStrip::updateWordRect(int index)

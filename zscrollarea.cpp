@@ -120,7 +120,6 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
 
     QRect r = rect();
     QPalette pal = qApp->palette();
-    bool wndactive = isActiveWindow();
 
     if (type == Buttons)
     {
@@ -198,8 +197,8 @@ void ZScrollArea::paintEvent(QPaintEvent *e)
     r.adjust(mleft, mtop, -mright, -mbottom);
 
     std::pair<int, int> p = scrollPositions(r);
-    QColor bgcol = Settings::textColor(wndactive, ColorSettings::ScrollBg);
-    QColor sbcol = Settings::textColor(wndactive, ColorSettings::ScrollHandle);
+    QColor bgcol = Settings::textColor(this, ColorSettings::ScrollBg);
+    QColor sbcol = Settings::textColor(this, ColorSettings::ScrollHandle);
     if (!dragging && !hovering)
         sbcol = mixColors(bgcol, sbcol, 0.4);
 

@@ -1389,6 +1389,11 @@ namespace Settings
         return textColor(qApp->palette(), active, type);
     }
 
+    QColor textColor(QWidget *w, ColorSettings::SystemColorTypes type)
+    {
+        return textColor(w->hasFocus(), type);
+    }
+
     QColor textColor(ColorSettings::SystemColorTypes type)
     {
         return textColor(qApp->palette(), true, type);
