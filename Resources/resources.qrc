@@ -75,5 +75,6 @@
         <file>testsettings.svg</file>
         <file>dockwindows.svg</file>
         <file>pin.svg</file>
+        <file>programicon.svg</file>
     </qresource>
 </RCC>

@@ -655,7 +655,11 @@ void GlobalUI::minimizeToTray()
     connect(a, &QAction::triggered, this, &GlobalUI::quit);
 
     trayicon->setContextMenu(traymenu.get());
-    trayicon->setIcon(QIcon(":/program.ico"));
+//#ifdef Q_OS_WIN
+//    trayicon->setIcon(QIcon(":/program.ico"));
+//#else
+    trayicon->setIcon(QIcon(":/programicon.svg"));
+//#endif
     trayicon->setToolTip("zkanji");
     trayicon->show();
 }
