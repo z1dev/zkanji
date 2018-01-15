@@ -676,9 +676,9 @@ void GlobalUI::restoreFromTray()
     {
         //w->setWindowState(Qt::WindowActive);
         w->show();
+        w->showNormal();
         w->raise();
         w->activateWindow();
-        w->showNormal();
         disconnect(w, &QWidget::destroyed, this, &GlobalUI::hiddenWindowDestroyed);
     }
     qApp->setQuitOnLastWindowClosed(true);
