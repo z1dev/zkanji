@@ -110,7 +110,6 @@ public slots:
 
     void on_studyIncludeEdit_textChanged(const QString &text);
 
-    void on_siteTypeCBox_currentIndexChanged(int index);
     void sitesSelChanged(int curr, int prev);
     void on_siteNameEdit_textEdited(const QString &text);
     void on_siteUrlEdit_textEdited(const QString &text);

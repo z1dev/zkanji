@@ -1069,13 +1069,6 @@ void SettingsForm::on_studyIncludeEdit_textChanged(const QString &text)
         ui->studyIncludeCBox->setEnabled(val != 0);
 }
 
-void SettingsForm::on_siteTypeCBox_currentIndexChanged(int index)
-{
-    SitesListModel *m = (SitesListModel*)ui->sitesTable->model();
-
-    ui->sitesTable->setCurrentRow(0);
-}
-
 void SettingsForm::sitesSelChanged(int curr, int prev)
 {
     SitesListModel *m = (SitesListModel*)ui->sitesTable->model();
