@@ -13,6 +13,7 @@
 #include <cmath>
 
 #include "zcolorcombobox.h"
+#include "colorsettings.h"
 
 
 //-------------------------------------------------------------
@@ -326,11 +327,11 @@ void ZColorListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     }
     else
     {
-        painter->setPen(QPen(Qt::red, 2));
+        painter->setPen(QPen(Settings::uiColor(ColorSettings::StudyWrong), 2) /*QPen(Qt::red, 2)*/ );
         painter->drawLine(clrect.left() + 1, clrect.bottom() + 1, clrect.right(), clrect.top() + 2);
     }
 
-    painter->setPen(Qt::black);
+    painter->setPen(owner->palette().color(owner->hasFocus() ? QPalette::Active : QPalette::Inactive, QPalette::Text));
     painter->drawRect(clrect);
 
     if (op.direction == Qt::RightToLeft)
@@ -506,11 +507,12 @@ void ZColorComboBox::paintEvent(QPaintEvent *e)
     }
     else
     {
-        painter.setPen(QPen(Qt::red, 2));
+        painter.setPen(QPen(Settings::uiColor(ColorSettings::StudyWrong), 2) /*QPen(Qt::red, 2)*/);
         painter.drawLine(clrect.left() + 1, clrect.bottom() + 1, clrect.right(), clrect.top() + 2);
     }
 
-    painter.setPen(Qt::black);
+    painter.setPen(palette().color(hasFocus() ? QPalette::Active : QPalette::Inactive, QPalette::Text));
+    //painter.setPen(Qt::black);
     painter.drawRect(clrect);
 
     if (opt.direction == Qt::RightToLeft)
