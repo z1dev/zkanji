@@ -673,14 +673,18 @@ void GlobalUI::restoreFromTray()
     traymenu.reset();
 
     for (QWidget *w : appwin)
-    {
-        //w->setWindowState(Qt::WindowActive);
         w->show();
+
+    qApp->processEvents();
+
+    for (QWidget *w : appwin)
+    {
         w->showNormal();
         w->raise();
         w->activateWindow();
         disconnect(w, &QWidget::destroyed, this, &GlobalUI::hiddenWindowDestroyed);
     }
+
     qApp->setQuitOnLastWindowClosed(true);
     appwin.clear();
 
