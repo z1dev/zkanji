@@ -37,6 +37,7 @@
 #include "worddeck.h"
 #include "sites.h"
 
+
 //-------------------------------------------------------------
 
 
@@ -44,7 +45,7 @@ const double kanjiRowSize = 0.78;
 const double defRowSize = 0.78;
 const double notesRowSize = 0.55;
 
-ZDictionaryListView::ZDictionaryListView(QWidget *parent) : base(parent), multi(false), /*selection(new RangeSelection), */studydefs(false), ignorechange(false), textselectable(true), selecting(false)
+ZDictionaryListView::ZDictionaryListView(QWidget *parent) : base(parent), popup(nullptr), multi(false), /*selection(new RangeSelection), */studydefs(false), ignorechange(false), textselectable(true), selecting(false)
 {
     setItemDelegate(new DictionaryListDelegate(this));
 

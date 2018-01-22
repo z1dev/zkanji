@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>424</width>
+    <width>421</width>
     <height>480</height>
    </rect>
   </property>
@@ -1144,14 +1144,37 @@
     </widget>
    </item>
    <item>
-    <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+     <property name="spacing">
+      <number>0</number>
      </property>
-    </widget>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ZStatusBar" name="kanjiStatus" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>5</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QWidget" name="fromWidget" native="true">
@@ -1178,12 +1201,12 @@
         </property>
         <item>
          <property name="text">
-          <string>From all</string>
+          <string>Show all</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>From clipboard</string>
+          <string>Clipboard contents</string>
          </property>
         </item>
         <item>
@@ -1343,14 +1366,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZKanaLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZKanjiGridView</class>
@@ -1359,9 +1387,10 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zcombobox.h</header>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

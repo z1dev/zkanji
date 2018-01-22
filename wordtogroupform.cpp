@@ -39,6 +39,8 @@ WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::Wor
     acceptButton->setDefault(true);
     acceptButton->setEnabled(false);
     connect(acceptButton, &QPushButton::clicked, this, &WordToGroupForm::accept);
+
+    ui->wordsTable->assignStatusBar(ui->listStatus);
 }
 
 WordToGroupForm::~WordToGroupForm()

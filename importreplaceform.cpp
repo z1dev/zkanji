@@ -55,6 +55,8 @@ ImportReplaceForm::ImportReplaceForm(Dictionary *olddir, Dictionary *newdir, QWi
     connect(ui->dict, &DictionaryWidget::rowChanged, this, &ImportReplaceForm::dictRowChanged);
     connect(ui->useButton, &QPushButton::clicked, this, &ImportReplaceForm::useClicked);
     connect(ui->skipButton, &QPushButton::clicked, this, &ImportReplaceForm::skipClicked);
+
+    ui->missingTable->assignStatusBar(ui->status);
 }
 
 ImportReplaceForm::~ImportReplaceForm()

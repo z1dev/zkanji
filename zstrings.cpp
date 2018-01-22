@@ -379,7 +379,7 @@ QString Strings::wordTypesText(int type)
     return result;
 }
 
-QString Strings::wordTypesTextLong(int type)
+QString Strings::wordTypesTextLong(int type, QString separator)
 {
     QString result;
 
@@ -388,7 +388,7 @@ QString Strings::wordTypesTextLong(int type)
         if ((type & (1 << ix)) != 0)
         {
             if (!result.isEmpty())
-                result += " ";
+                result += separator;
             result += wordTypeLong(ix);
         }
     }
@@ -413,6 +413,23 @@ QString Strings::wordNotesText(int note)
     return result;
 }
 
+QString Strings::wordNotesTextLong(int note, QString separator)
+{
+    QString result;
+
+    for (int ix = 0; note != 0 && ix != (int)WordNotes::Count; ++ix)
+    {
+        if ((note & (1 << ix)) != 0)
+        {
+            if (!result.isEmpty())
+                result += separator;
+            result += wordNoteLong(ix);
+        }
+    }
+
+    return result;
+}
+
 QString Strings::wordFieldsText(int field)
 {
     QString result;
@@ -430,6 +447,23 @@ QString Strings::wordFieldsText(int field)
     return result;
 }
 
+QString Strings::wordFieldsTextLong(int field, QString separator)
+{
+    QString result;
+
+    for (int ix = 0; field != 0 && ix != (int)WordFields::Count; ++ix)
+    {
+        if ((field & (1 << ix)) != 0)
+        {
+            if (!result.isEmpty())
+                result += separator;
+            result += wordFieldLong(ix);
+        }
+    }
+
+    return result;
+}
+
 QString Strings::wordDialectsText(int dia)
 {
     QString result;
@@ -441,6 +475,23 @@ QString Strings::wordDialectsText(int dia)
             if (!result.isEmpty())
                 result += " ";
             result += wordDialect(ix);
+        }
+    }
+
+    return result;
+}
+
+QString Strings::wordDialectsTextLong(int dia, QString separator)
+{
+    QString result;
+
+    for (int ix = 0; dia != 0 && ix != (int)WordDialects::Count; ++ix)
+    {
+        if ((dia & (1 << ix)) != 0)
+        {
+            if (!result.isEmpty())
+                result += separator;
+            result += wordDialectLong(ix);
         }
     }
 

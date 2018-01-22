@@ -203,7 +203,7 @@
              </font>
             </property>
             <property name="text">
-             <string notr="true"> </string>
+             <string notr="true"/>
             </property>
            </widget>
           </item>
@@ -215,7 +215,7 @@
              </font>
             </property>
             <property name="text">
-             <string notr="true"> </string>
+             <string notr="true"/>
             </property>
            </widget>
           </item>
@@ -227,7 +227,7 @@
              </font>
             </property>
             <property name="text">
-             <string notr="true"> </string>
+             <string notr="true"/>
             </property>
            </widget>
           </item>
@@ -544,11 +544,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="status">
-   <property name="sizeGripEnabled">
-    <bool>false</bool>
-   </property>
-  </widget>
+  <widget class="ZStatusBar" name="status"/>
  </widget>
  <customwidgets>
   <customwidget>
@@ -569,8 +565,14 @@
    <header>zkanjidiagram.h</header>
    <container>1</container>
   </customwidget>
- </customwidgets>
- <resources>
+    <customwidget>
+      <class>ZStatusBar</class>
+      <extends>QStatusBar</extends>
+      <header>zstatusbar.h</header>
+      <container>1</container>
+    </customwidget>
+  </customwidgets>
+  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>
  <connections/>

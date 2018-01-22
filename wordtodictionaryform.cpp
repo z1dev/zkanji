@@ -31,6 +31,9 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
     ui->wordsTable->setSelectionType(ListSelectionType::Toggle);
     ui->meaningsTable->setSelectionType(ListSelectionType::None);
 
+    ui->wordsTable->assignStatusBar(ui->wordsStatus);
+    ui->meaningsTable->assignStatusBar(ui->meaningsStatus);
+
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToDictionaryForm::dictionaryToBeRemoved);
 }
 

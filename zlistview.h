@@ -24,6 +24,7 @@ class RangeSelection;
 struct Range;
 struct Interval;
 struct ListStateData;
+class ZStatusBar;
 
 // None: Nothing can ge selected. There's only the current row indicator.
 // Single: Only one row can be selected at a time. (default)
@@ -115,6 +116,9 @@ public:
 
     void setModel(ZAbstractTableModel *newmodel);
     ZAbstractTableModel* model() const;
+
+    void assignStatusBar(ZStatusBar *bar);
+    ZStatusBar* statusBar() const;
 
     virtual QSize sizeHint() const override;
     void setSizeHint(QSize newsizehint);
@@ -375,11 +379,7 @@ private:
     // requestingContextMenu signal.
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
 
-    using QTableView::selectionModel;
-    using QTableView::setSelectionModel;
-    using QTableView::currentIndex;
-    using QTableView::setSelectionMode;
-    using QTableView::selectionMode;
+    void statusDestroyed();
 
     //virtual void setSelectionModel(QItemSelectionModel *newselmodel) override final;
 
@@ -418,6 +418,9 @@ private:
 
     void _invalidate();
 
+    // Adds and updates the status bar labels when the current selection changes.
+    void updateStatus();
+
     // Used when clicking and dragging inside the view.
     // None: not dragging.
     // CanDrag: the user clicked inside a selection and might start dragging it.
@@ -432,6 +435,8 @@ private:
     // Starting row of multiselection. When selecting items with shift pressed, items between
     // the selpivot and the current row will be selected, beside the normal selection.
     int selpivot;
+
+    ZStatusBar *status;
 
     // Whether auto sizing of columns is enabled or not.
     bool autosize;
@@ -507,6 +512,12 @@ private:
     std::vector<ColumnSizingData> tmpcolsize;
 
     QBasicTimer doubleclicktimer;
+
+    using QTableView::selectionModel;
+    using QTableView::setSelectionModel;
+    using QTableView::currentIndex;
+    using QTableView::setSelectionMode;
+    using QTableView::selectionMode;
 
     typedef QTableView  base;
 };

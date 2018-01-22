@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>349</width>
+    <width>348</width>
     <height>300</height>
    </rect>
   </property>
@@ -171,7 +171,18 @@
         </widget>
        </item>
        <item>
-        <widget class="ZKanjiGridView" name="kanjiGrid" native="true"/>
+        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="ZKanjiGridView" name="kanjiGrid" native="true"/>
+         </item>
+         <item>
+          <widget class="ZStatusBar" name="kanjiStatus" native="true">
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -181,15 +192,21 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GroupWidget</class>
-   <extends>QWidget</extends>
-   <header>groupwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZKanjiGridView</class>
    <extends>QWidget</extends>
    <header>zkanjigridview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GroupWidget</class>
+   <extends>QWidget</extends>
+   <header>groupwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

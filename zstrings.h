@@ -53,10 +53,13 @@ struct Strings : QObject
     static ushort wordTagDialects(const QString &str, bool *ok = nullptr);
 
     static QString wordTypesText(int types);
-    static QString wordTypesTextLong(int types);
+    static QString wordTypesTextLong(int types, QString separator = QStringLiteral(", "));
     static QString wordNotesText(int notes);
+    static QString wordNotesTextLong(int types, QString separator = QStringLiteral(", "));
     static QString wordFieldsText(int fields);
+    static QString wordFieldsTextLong(int types, QString separator = QStringLiteral(", "));
     static QString wordDialectsText(int dials);
+    static QString wordDialectsTextLong(int types, QString separator = QStringLiteral(", "));
     static QString wordInfoText(int info);
     static QString wordInflectionText(std::vector<InfTypes> infl);
 

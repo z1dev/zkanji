@@ -12,6 +12,8 @@
 #include "smartvector.h"
 #include "ranges.h"
 
+enum class StatusTypes : int;
+
 // Custom roles for columns in a ZListView. Any model used in the list view can provide these
 // values and they will be used.
 // AutoSized: enum ColumnAutoSize. The type of auto sizing of a column. If this value is not
@@ -124,6 +126,23 @@ public:
     virtual Qt::DropActions supportedDragActions() const override;
     virtual Qt::DropActions supportedDropActions(bool samesource, const QMimeData *mime) const;
 
+    // The number of status widgets needed on a status bar for this view. Excludes the number
+    // of the row count widget, as it's always included.
+    virtual int statusCount() const;
+    // Type of status widget at statusindex position on a status bar.
+    virtual StatusTypes statusType(int statusindex) const;
+    // Text of status labels on widget at statusindex position on a status bar. Negative
+    // value means the title text for this status widget. In that case the labelindex is
+    // ignored. There can be one or two labels after the title text, denoted by label index,
+    // depending on statusType(). Rowpos says which value the text should refer to.
+    virtual QString statusText(int statusindex, int labelindex, int rowpos) const;
+    // Size of status label on widget at statusindex position on a status bar. Labelindex can
+    // be negative to mean the title label.
+    virtual int statusSize(int statusindex, int labelindex) const;
+    // Whether the first status label after the title label is text-aligned right or not. Only
+    // called when the statusType() is TitleValue.
+    virtual bool statusAlignRight(int statusindex) const;
+
     // Signal replacements:
     void signalRowsRemoved(const smartvector<Range> &ranges);
     void signalRowsInserted(const smartvector<Interval> &intervals);
@@ -175,6 +194,12 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::DisplayRole) override;
     virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::DisplayRole) override;
     virtual bool setItemData(const QModelIndex &index, const QMap<int, QVariant> &roles) override;
+
+    virtual int statusCount() const override;
+    virtual StatusTypes statusType(int statusindex) const override;
+    virtual QString statusText(int statusindex, int labelindex, int rowpos) const override;
+    virtual int statusSize(int statusindex, int labelindex) const override;
+    virtual bool statusAlignRight(int statusindex) const override;
 
     virtual QModelIndex buddy(const QModelIndex &index) const override;
     virtual bool canFetchMore(const QModelIndex &parent) const override;

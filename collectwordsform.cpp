@@ -264,6 +264,8 @@ CollectWordsForm::CollectWordsForm(QWidget *parent) : base(parent), ui(new Ui::C
     connect(ui->posCBox, &QComboBox::currentTextChanged, this, &CollectWordsForm::positionBoxChanged);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &CollectWordsForm::dictionaryToBeRemoved);
+
+    ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
 }
 
 CollectWordsForm::~CollectWordsForm()

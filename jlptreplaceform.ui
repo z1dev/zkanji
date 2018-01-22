@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>552</width>
-    <height>379</height>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -334,7 +334,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="infoBar"/>
+  <widget class="ZStatusBar" name="status"/>
  </widget>
  <customwidgets>
   <customwidget>
@@ -343,6 +343,12 @@
    <header>dictionarywidget.h</header>
    <container>1</container>
   </customwidget>
+   <customwidget>
+     <class>ZStatusBar</class>
+     <extends>QStatusBar</extends>
+     <header>zstatusbar.h</header>
+     <container>1</container>
+   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>undoButton</tabstop>

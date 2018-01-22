@@ -112,6 +112,8 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     updateSearchMode();
     
     qApp->postEvent(this, new StartEvent());
+
+    ui->wordsTable->assignStatusBar(ui->listStatus);
 }
 
 DictionaryWidget::~DictionaryWidget()

@@ -75,13 +75,11 @@ private:
     QString entered;
 
     // Label showing number of items due to be tested.
-    QLabel *dueLabel;
-
+    //QLabel *dueLabel;
     // Label showing number of items that were retried twice and failed.
-    QLabel *wrongLabel;
-
+    //QLabel *wrongLabel;
     // Label showing passed time.
-    QLabel *timeLabel;
+    //QLabel *timeLabel;
 
     QBasicTimer timer;
 

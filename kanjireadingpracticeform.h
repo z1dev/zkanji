@@ -79,9 +79,9 @@ private:
     Ui::KanjiReadingPracticeForm *ui;
     WordDeck *deck;
 
-    QLabel *dueLabel;
-    QLabel *correctLabel;
-    QLabel *wrongLabel;
+    //QLabel *dueLabel;
+    //QLabel *correctLabel;
+    //QLabel *wrongLabel;
 
     int tries;
 

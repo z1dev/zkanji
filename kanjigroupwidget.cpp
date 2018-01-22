@@ -36,6 +36,8 @@ KanjiGroupWidget::KanjiGroupWidget(QWidget *parent) : base(parent), ui(new Ui::K
     connect(ui->kanjiGrid, &ZKanjiGridView::selectionChanged, this, &KanjiGroupWidget::kanjiSelectionChanged);
 
     ui->splitter->setSizes({ Settings::scaled(150), Settings::scaled(250) });
+
+    ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
 }
 
 KanjiGroupWidget::~KanjiGroupWidget()

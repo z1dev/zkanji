@@ -636,6 +636,8 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
     cancelbutton = ui->buttonBox->button(QDialogButtonBox::Cancel);
     connect(okbutton, &QPushButton::clicked, this, &WordToDeckForm::okButtonClicked);
     connect(cancelbutton, &QPushButton::clicked, this, &WordToDeckForm::close);
+
+    ui->wordsTable->assignStatusBar(ui->listStatus);
 }
 
 WordToDeckForm::~WordToDeckForm()

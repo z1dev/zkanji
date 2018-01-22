@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>67</height>
+    <width>387</width>
+    <height>88</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -605,6 +605,10 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="ZStatusBar" name="listStatus" native="true">
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -612,6 +616,11 @@
    <class>ZKanaLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>ZDictionaryListView</class>
@@ -630,9 +639,10 @@
    <header>zcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>ZComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zcombobox.h</header>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -8,6 +8,7 @@
 #include <QtEvents>
 #include <QColor>
 #include <QSet>
+#include <QStringBuilder>
 //#include "zkanjimain.h"
 #include "zdictionarymodel.h"
 #include "words.h"
@@ -24,7 +25,8 @@
 #include "globalui.h"
 #include "colorsettings.h"
 #include "generalsettings.h"
-
+#include "zstatusbar.h"
+#include "zstrings.h"
 
 //-------------------------------------------------------------
 
@@ -296,6 +298,68 @@ QMimeData* DictionaryItemModel::mimeData(const QModelIndexList& ind) const
     data->setData("zkanji/words", arr);
 
     return data;
+}
+
+int DictionaryItemModel::statusCount() const
+{
+    return 1;
+}
+
+StatusTypes DictionaryItemModel::statusType(int statusindex) const
+{
+    return StatusTypes::SingleValue;
+}
+
+QString DictionaryItemModel::statusText(int statusindex, int labelindex, int rowpos) const
+{
+    QString r;
+
+    if (rowpos == -1)
+        return QString();
+
+    WordEntry *e = items(rowpos);
+
+    // Last meaning that had to be included in the text.
+    int last = -1;
+
+    for (int ix = 0, siz = e->defs.size(); ix != siz; ++ix)
+    {
+        if (last == -1 || e->defs[last].attrib != e->defs[ix].attrib)
+        {
+            int jlptn = 0;
+            if (Settings::dictionary.showjlpt)
+            {
+                WordCommons *wc = ZKanji::commons.findWord(e->kanji.data(), e->kana.data(), e->romaji.data());
+                if (wc != nullptr)
+                    jlptn = wc->jlptn;
+            }
+            last = ix;
+
+            r += (ix != 0 ? QString("%1) ").arg(ix + 1) : QString()) %
+                (Settings::dictionary.showjlpt && jlptn != 0 ? QString("(N%1) ").arg(jlptn) : QString()) %
+                (e->defs[ix].attrib.types != 0 ? Strings::wordTypesTextLong(e->defs[ix].attrib.types) % QStringLiteral(" ") : QString()) %
+                (e->defs[ix].attrib.notes != 0 ? Strings::wordNotesTextLong(e->defs[ix].attrib.notes) % QStringLiteral(" ") : QString()) %
+                (e->defs[ix].attrib.fields != 0 ? Strings::wordFieldsTextLong(e->defs[ix].attrib.fields) % QStringLiteral(" ") : QString()) %
+                (e->defs[ix].attrib.dialects != 0 ? Strings::wordDialectsTextLong(e->defs[ix].attrib.dialects) % QStringLiteral(" ") : QString());
+        }
+    }
+
+    // Numbering is only needed if there are different attributes for different meanings. We
+    // add the first number here only if this was the case.
+    if (last != 0)
+        r = "1) " % r;
+
+    return r;
+}
+
+int DictionaryItemModel::statusSize(int statusindex, int labelindex) const
+{
+    return 0;
+}
+
+bool DictionaryItemModel::statusAlignRight(int statusindex) const
+{
+    return false;
 }
 
 //QStringList DictionaryItemModel::mimeTypes() const

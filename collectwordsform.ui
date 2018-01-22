@@ -207,20 +207,30 @@
         </widget>
        </item>
        <item>
-        <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>1</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QVBoxLayout" name="widget_5" stretch="1,0">
+         <property name="spacing">
+          <number>0</number>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>220</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
+         <item>
+          <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>220</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="ZStatusBar" name="kanjiStatus" native="true"/>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -361,17 +371,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DictionaryWidget</class>
-   <extends>QWidget</extends>
-   <header>dictionarywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZListBox</class>
-   <extends>QTableView</extends>
-   <header>zlistbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
@@ -383,9 +382,26 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>DictionaryWidget</class>
+   <extends>QWidget</extends>
+   <header>dictionarywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZDictionaryComboBox</class>
    <extends>QComboBox</extends>
    <header>zdictionarycombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZListBox</class>
+   <extends>QTableView</extends>
+   <header>zlistbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

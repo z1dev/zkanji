@@ -277,7 +277,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="ZStatusBar" name="status"/>
  </widget>
  <customwidgets>
   <customwidget>
@@ -290,7 +290,13 @@
    <extends>QTableView</extends>
    <header>zdictionarylistview.h</header>
   </customwidget>
- </customwidgets>
- <resources/>
+    <customwidget>
+      <class>ZStatusBar</class>
+      <extends>QStatusBar</extends>
+      <header>zstatusbar.h</header>
+      <container>1</container>
+    </customwidget>
+  </customwidgets>
+  <resources/>
  <connections/>
 </ui>

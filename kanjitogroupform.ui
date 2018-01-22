@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>252</height>
+    <width>383</width>
+    <height>289</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,13 +46,44 @@
        <bool>false</bool>
       </property>
       <widget class="GroupWidget" name="groupWidget" native="true"/>
-      <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
+      <widget class="QWidget" name="widget" native="true">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
+         <verstretch>1</verstretch>
         </sizepolicy>
        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="ZKanjiGridView" name="kanjiGrid" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ZStatusBar" name="kanjiStatus" native="true">
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -68,6 +99,18 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZKanjiGridView</class>
+   <extends>QWidget</extends>
+   <header>zkanjigridview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>GroupWidget</class>
    <extends>QWidget</extends>
    <header>groupwidget.h</header>
@@ -77,12 +120,6 @@
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>
    <header>dialogwindow.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZKanjiGridView</class>
-   <extends>QWidget</extends>
-   <header>zkanjigridview.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

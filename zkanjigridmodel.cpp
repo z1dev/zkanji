@@ -13,6 +13,7 @@
 #include "kanji.h"
 #include "ranges.h"
 #include "colorsettings.h"
+#include "zstatusbar.h"
 
 //-------------------------------------------------------------
 
@@ -35,6 +36,31 @@ bool KanjiGridModel::empty() const
 KanjiGroup* KanjiGridModel::kanjiGroup() const
 {
     return nullptr;
+}
+
+int KanjiGridModel::statusCount() const
+{
+    return 0;
+}
+
+StatusTypes KanjiGridModel::statusType(int statusindex) const
+{
+    return StatusTypes::TitleValue;
+}
+
+QString KanjiGridModel::statusText(int statusindex, int labelindex, int kanjipos) const
+{
+    return QString();
+}
+
+int KanjiGridModel::statusSize(int statusindex, int labelindex) const
+{
+    return 0;
+}
+
+bool KanjiGridModel::statusAlignRight(int statusindex) const
+{
+    return false;
 }
 
 QMimeData* KanjiGridModel::mimeData(const std::vector<int> &indexes) const
@@ -198,6 +224,91 @@ ushort MainKanjiListModel::kanjiAt(int pos) const
     if (pos < 0 || pos >= size())
         return -1;
     return pos;
+}
+
+int MainKanjiListModel::statusCount() const
+{
+    return 3;
+}
+
+StatusTypes MainKanjiListModel::statusType(int statusindex) const
+{
+    return StatusTypes::TitleValue;
+}
+
+QString MainKanjiListModel::statusText(int statusindex, int labelindex, int kanjipos) const
+{
+    if (labelindex == -1)
+    {
+        switch (statusindex)
+        {
+        case 0:
+            return tr("G") + ":";
+        case 1:
+            return tr("N") + ":";
+        case 2:
+            return tr("F") + ":";
+        default:
+            return QString();
+        }
+    }
+    else
+    {
+        if (kanjipos == -1)
+            return "-";
+
+        KanjiEntry *e = ZKanji::kanjis[kanjipos];
+
+        switch (statusindex)
+        {
+        case 0:
+            return QString::number(e->jouyou);
+        case 1:
+            return QString::number(e->jlpt);
+        case 2:
+            return QString::number(e->frequency);
+        default:
+            return QString();
+        }
+    }
+}
+
+int MainKanjiListModel::statusSize(int statusindex, int labelindex) const
+{
+    if (labelindex == -1)
+    {
+        //switch (statusindex)
+        //{
+        //case 0:
+        //    return tr("G") + ":";
+        //case 1:
+        //    return tr("N") + ":";
+        //case 2:
+        //    return tr("F") + ":";
+        //default:
+        //    return QString();
+        //}
+        return 0;
+    }
+    else
+    {
+        switch (statusindex)
+        {
+        case 0:
+            return 2;
+        case 1:
+            return 2;
+        case 2:
+            return 5;
+        default:
+            return 0;
+        }
+    }
+}
+
+bool MainKanjiListModel::statusAlignRight(int statusindex) const
+{
+    return false;
 }
 
 
@@ -873,6 +984,31 @@ int KanjiGridSortModel::size() const
 ushort KanjiGridSortModel::kanjiAt(int pos) const
 {
     return basemodel->kanjiAt(list[pos]);
+}
+
+int KanjiGridSortModel::statusCount() const
+{
+    return basemodel->statusCount();
+}
+
+StatusTypes KanjiGridSortModel::statusType(int statusindex) const
+{
+    return basemodel->statusType(statusindex);
+}
+
+QString KanjiGridSortModel::statusText(int statusindex, int labelindex, int kanjipos) const
+{
+    return basemodel->statusText(statusindex, labelindex, kanjipos < 0 || kanjipos >= list.size() ? kanjipos : list[kanjipos]);
+}
+
+int KanjiGridSortModel::statusSize(int statusindex, int labelindex) const
+{
+    return basemodel->statusSize(statusindex, labelindex);
+}
+
+bool KanjiGridSortModel::statusAlignRight(int statusindex) const
+{
+    return basemodel->statusAlignRight(statusindex);
 }
 
 QColor KanjiGridSortModel::textColorAt(int pos) const

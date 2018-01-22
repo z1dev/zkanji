@@ -17,6 +17,7 @@
 #include <QXmlStreamReader>
 
 #include "zlistview.h"
+#include "zstatusbar.h"
 #include "zabstracttablemodel.h"
 #include "zlistviewitemdelegate.h"
 #include "zevents.h"
@@ -33,8 +34,8 @@
 
 
 ZListView::ZListView(QWidget *parent) : base(parent), selection(new RangeSelection), currentrow(-1), seltype(ListSelectionType::Single),
-selpivot(-1), autosize(true), sizebase(ListSizeBase::Custom), firstrow(-1), lastrow(-1), checkcol(-1), state(State::None), doubleclick(false), mousedown(false), pressed(false),
-        hover(false), canclickedit(false), editcolumn(0), ignorechange(false), dragpos(-1)
+        selpivot(-1), status(nullptr), autosize(true), sizebase(ListSizeBase::Custom), firstrow(-1), lastrow(-1), checkcol(-1), state(State::None),
+        doubleclick(false), mousedown(false), pressed(false), hover(false), canclickedit(false), editcolumn(0), ignorechange(false), dragpos(-1)
 {
     setAttribute(Qt::WA_MouseTracking);
 
@@ -351,6 +352,8 @@ void ZListView::setCurrentRow(int rowindex)
         updateRow(currentrow);
         scrollToRow(currentrow);
     }
+
+    updateStatus();
 
     if (row != currentrow)
         emit currentRowChanged(currentrow, row);
@@ -751,6 +754,8 @@ void ZListView::setModel(ZAbstractTableModel *newmodel)
         //connect(selectionModel(), &QItemSelectionModel::currentRowChanged, this, &ZListView::currentRowChanged);
     }
 
+    updateStatus();
+
     if (prevcur != currentrow)
         emit currentRowChanged(currentrow, prevcur);
     if (selchange)
@@ -760,6 +765,24 @@ void ZListView::setModel(ZAbstractTableModel *newmodel)
 ZAbstractTableModel* ZListView::model() const
 {
     return (ZAbstractTableModel*)base::model();
+}
+
+void ZListView::assignStatusBar(ZStatusBar *bar)
+{
+    if (bar == status)
+        return;
+    if (status != nullptr)
+        disconnect(status, nullptr, this, nullptr);
+    status = bar;
+    if (status != nullptr)
+        connect(status, &QObject::destroyed, this, &ZListView::statusDestroyed);
+
+    updateStatus();
+}
+
+ZStatusBar* ZListView::statusBar() const
+{
+    return status;
 }
 
 QSize ZListView::sizeHint() const
@@ -918,6 +941,8 @@ void ZListView::reset()
 
     resetColumnData();
 
+    updateStatus();
+
     if (prevcur != currentrow)
         emit currentRowChanged(currentrow, prevcur);
     if (selchange)
@@ -973,6 +998,8 @@ void ZListView::rowsRemoved(const smartvector<Range> &ranges)
 
     viewport()->update();
 
+    updateStatus();
+
     updateGeometries();
 }
 
@@ -993,6 +1020,8 @@ void ZListView::rowsInserted(const smartvector<Interval> &intervals)
 
     viewport()->update();
 
+    updateStatus();
+
     updateGeometries();
 }
 
@@ -1012,6 +1041,8 @@ void ZListView::rowsMoved(const smartvector<Range> &ranges, int pos)
         resetColumnData();
 
     viewport()->update();
+
+    updateStatus();
 
     updateGeometries();
 }
@@ -1056,6 +1087,7 @@ void ZListView::layoutChanged(const QList<QPersistentModelIndex> &parents, QAbst
     }
 
     scrollToRow(currentrow);
+    updateStatus();
 
     viewport()->update();
 }
@@ -1151,13 +1183,16 @@ QMimeData* ZListView::dragMimeData() const
 void ZListView::changeCurrent(int rowindex)
 {
     int row = currentrow;
-    currentrow = rowindex;
-    if (row != currentrow)
+    if (row != rowindex)
     {
-        if (row != -1)
-            updateRow(row);
         if (currentrow != -1)
             updateRow(currentrow);
+        currentrow = rowindex;
+        if (currentrow != -1)
+            updateRow(currentrow);
+
+        updateStatus();
+
         emit currentRowChanged(currentrow, row);
     }
 }
@@ -2177,16 +2212,6 @@ void ZListView::paintEvent(QPaintEvent *e)
     p.drawRect(vrect);
 }
 
-void ZListView::contextMenuEvent(QContextMenuEvent *e)
-{
-    doubleclicktimer.stop();
-
-    QModelIndex index = indexAt(e->pos());
-    int row = index.isValid() ? mapToSelection(index.row()) : -1;
-    if (requestingContextMenu(e->pos(), e->globalPos(), row))
-        e->accept();
-}
-
 bool ZListView::viewportEvent(QEvent *e)
 {
     switch (e->type())
@@ -2208,6 +2233,22 @@ bool ZListView::viewportEvent(QEvent *e)
         return QAbstractScrollArea::viewportEvent(e);
     }
     return base::viewportEvent(e);
+}
+
+void ZListView::contextMenuEvent(QContextMenuEvent *e)
+{
+    doubleclicktimer.stop();
+
+    QModelIndex index = indexAt(e->pos());
+    int row = index.isValid() ? mapToSelection(index.row()) : -1;
+    if (requestingContextMenu(e->pos(), e->globalPos(), row))
+        e->accept();
+}
+
+void ZListView::statusDestroyed()
+{
+    if (status != nullptr)
+        assignStatusBar(nullptr);
 }
 
 void ZListView::autoResizeColumns(bool forced)
@@ -2485,6 +2526,70 @@ void ZListView::_invalidate()
 {
     if (parentWidget()->layout() != nullptr)
         parentWidget()->layout()->invalidate();
+}
+
+void ZListView::updateStatus()
+{
+    if (status == nullptr || model() == nullptr)
+    {
+        if (status != nullptr)
+            status->clear();
+        return;
+    }
+    
+
+    int scnt = model()->statusCount();
+    if ((scnt == 0 && status->size() != 1) || (scnt != 0 && status->size() != scnt + 1))
+    {
+        status->clear();
+
+        status->add(QString(), 0, "0 :", 9, "0", 10);
+
+        if (scnt == 0)
+            status->add(QString(), 0);
+        else
+        {
+            for (int ix = 0, siz = scnt; ix != siz; ++ix)
+            {
+                switch (model()->statusType(ix))
+                {
+                case StatusTypes::TitleValue:
+                    status->add(model()->statusText(ix, -1, -1), model()->statusSize(ix, -1), model()->statusText(ix, 0, currentrow), model()->statusSize(ix, 0), model()->statusAlignRight(ix));
+                    break;
+                case StatusTypes::TitleDouble:
+                    status->add(model()->statusText(ix, -1, -1), model()->statusSize(ix, -1), model()->statusText(ix, 0, currentrow), model()->statusSize(ix, 0), model()->statusText(ix, 1, currentrow), model()->statusSize(ix, 1));
+                    break;
+                case StatusTypes::DoubleValue:
+                    status->add("", 0, model()->statusText(ix, 0, currentrow), model()->statusSize(ix, 0), model()->statusText(ix, 1, currentrow), model()->statusSize(ix, 1));
+                    break;
+                case StatusTypes::SingleValue:
+                    status->add(model()->statusText(ix, 0, currentrow), model()->statusSize(ix, 0));
+                    break;
+                }
+            }
+        }
+    }
+
+    status->setValues(0, QString::number(mapToSelection(model()->rowCount() - 1) + 1) + " /", QString::number(mapToSelection(currentrow) + 1));
+
+    for (int ix = 0, siz = scnt; ix != siz; ++ix)
+    {
+        switch (model()->statusType(ix))
+        {
+        case StatusTypes::TitleValue:
+            status->setValue(ix + 1, model()->statusText(ix, 0, currentrow));
+            break;
+        case StatusTypes::TitleDouble:
+            status->setValues(ix + 1, model()->statusText(ix, 0, currentrow), model()->statusText(ix, 1, currentrow));
+            break;
+        case StatusTypes::DoubleValue:
+            status->setValues(ix + 1, model()->statusText(ix, 0, currentrow), model()->statusText(ix, 1, currentrow));
+            break;
+        case StatusTypes::SingleValue:
+            status->setValue(ix + 1, model()->statusText(ix, 0, currentrow));
+            break;
+        }
+    }
 }
 
 

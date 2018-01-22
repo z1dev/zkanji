@@ -35,11 +35,13 @@
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
 #include "generalsettings.h"
+#include "zstatusbar.h"
+
 
 //-------------------------------------------------------------
 
 
-ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullptr), connected(false), dict(ZKanji::dictionary(0)), 
+ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullptr), connected(false), dict(ZKanji::dictionary(0)), popup(nullptr), status(nullptr),
         state(State::None), cellsize(Settings::scaled(std::ceil(Settings::fonts.kanjifontsize / 0.7))), autoscrollmargin(24), cols(0), rows(0), mousedown(false),
         current(-1), selpivot(-1), selection(new RangeSelection), kanjitipcell(-1), kanjitipkanji(-1), dragind(-1)
 {
@@ -250,8 +252,13 @@ void ZKanjiGridView::reset()
     recompute(viewport()->size());
     recomputeScrollbar(viewport()->size());
 
+    if (status != nullptr)
+        status->clear();
+
     current = -1;
     setAsCurrent(newcurrent);
+    if (newcurrent == -1)
+        updateStatus();
 
     updateCommands();
 
@@ -492,6 +499,24 @@ KanjiGridModel* ZKanjiGridView::model() const
     return itemmodel;
 }
 
+void ZKanjiGridView::assignStatusBar(ZStatusBar *bar)
+{
+    if (bar == status)
+        return;
+    if (status != nullptr)
+        disconnect(status, nullptr, this, nullptr);
+    status = bar;
+    if (status != nullptr)
+        connect(status, &QObject::destroyed, this, &ZKanjiGridView::statusDestroyed);
+
+    updateStatus();
+}
+
+ZStatusBar* ZKanjiGridView::statusBar() const
+{
+    return status;
+}
+
 int ZKanjiGridView::selCount() const
 {
     return selection->size();
@@ -728,7 +753,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
         selection->clear();
     selection->selectRange(first, last, true);
 
-    //int oldcurrent = current;
+    int oldcurrent = current;
     int newcurrent = endindex;
     //updateCell(oldcurrent);
     //updateCell(current);
@@ -738,6 +763,8 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
     setAsCurrent(newcurrent);
 
     updateCommands();
+    if (oldcurrent != newcurrent)
+        updateStatus();
 
     emit selectionChanged();
 }
@@ -1669,6 +1696,79 @@ void ZKanjiGridView::dropEvent(QDropEvent *e)
 
 }
 
+void ZKanjiGridView::updateStatus()
+{
+    if (status == nullptr || itemmodel == nullptr)
+    {
+        if (status != nullptr)
+            status->clear();
+        return;
+    }
+
+    if ((itemmodel->statusCount() == 0 && status->size() != 2) || (itemmodel->statusCount() != 0 && status->size() != itemmodel->statusCount() + 1))
+    {
+        status->clear();
+
+        status->add(QString(), 0, "0 :", 7, "0", 7);
+       
+        if (itemmodel->statusCount() == 0)
+            status->add(QString(), 0);
+        else
+        {
+            for (int ix = 0, siz = itemmodel->statusCount(); ix != siz; ++ix)
+            {
+                switch (itemmodel->statusType(ix))
+                {
+                case StatusTypes::TitleValue:
+                    status->add(itemmodel->statusText(ix, -1, -1), itemmodel->statusSize(ix, -1), itemmodel->statusText(ix, 0, current), itemmodel->statusSize(ix, 0), itemmodel->statusAlignRight(ix));
+                    break;
+                case StatusTypes::TitleDouble:
+                    status->add(itemmodel->statusText(ix, -1, -1), itemmodel->statusSize(ix, -1), itemmodel->statusText(ix, 0, current), itemmodel->statusSize(ix, 0), itemmodel->statusText(ix, 1, current), itemmodel->statusSize(ix, 1));
+                    break;
+                case StatusTypes::DoubleValue:
+                    status->add("", 0, itemmodel->statusText(ix, 0, current), itemmodel->statusSize(ix, 0), itemmodel->statusText(ix, 1, current), itemmodel->statusSize(ix, 1));
+                    break;
+                case StatusTypes::SingleValue:
+                    status->add(itemmodel->statusText(ix, 0, current), itemmodel->statusSize(ix, 0));
+                    break;
+                }
+            }
+        }
+    }
+
+    status->setValues(0, QString::number(itemmodel->size()) + " /", QString::number(current + 1));
+
+    if (itemmodel->statusCount() == 0)
+        status->setValue(1, current == -1 ? "-" : dictionary()->kanjiMeaning(itemmodel->kanjiAt(current)) );
+    else
+    {
+        for (int ix = 0, siz = itemmodel->statusCount(); ix != siz; ++ix)
+        {
+            switch (itemmodel->statusType(ix))
+            {
+            case StatusTypes::TitleValue:
+                status->setValue(ix + 1, itemmodel->statusText(ix, 0, current));
+                break;
+            case StatusTypes::TitleDouble:
+                status->setValues(ix + 1, itemmodel->statusText(ix, 0, current), itemmodel->statusText(ix, 1, current));
+                break;
+            case StatusTypes::DoubleValue:
+                status->setValues(ix + 1, itemmodel->statusText(ix, 0, current), itemmodel->statusText(ix, 1, current));
+                break;
+            case StatusTypes::SingleValue:
+                status->setValue(ix + 1, itemmodel->statusText(ix, 0, current));
+                break;
+            }
+        }
+    }
+}
+
+void ZKanjiGridView::statusDestroyed()
+{
+    if (status != nullptr)
+        assignStatusBar(nullptr);
+}
+
 void ZKanjiGridView::recompute(const QSize &size)
 {
     if (itemmodel == nullptr || itemmodel->empty())
@@ -1777,6 +1877,8 @@ void ZKanjiGridView::setAsCurrent(int index)
 
     if (current != -1)
         gUI->setInfoKanji(dictionary(), model()->kanjiAt(current));
+
+    updateStatus();
 }
 
 CommandCategories ZKanjiGridView::activeCategory() const

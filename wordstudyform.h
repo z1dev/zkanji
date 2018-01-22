@@ -141,12 +141,15 @@ private:
 
     Ui::WordStudyForm *ui;
 
-    QLabel *dueLabel1;
-    QLabel *dueLabel2;
-    QLabel *testedLabel1;
-    QLabel *testedLabel2;
-    QLabel *etaLabel;
-    QLabel *timeLabel;
+    //QLabel *dueLabel1;
+    //QLabel *dueLabel2;
+    //QLabel *testedLabel1;
+    //QLabel *testedLabel2;
+    //QLabel *etaLabel;
+    //QLabel *timeLabel;
+
+    // Index on the status bar to display time.
+    int timeindex;
 
     QBasicTimer timer;
 

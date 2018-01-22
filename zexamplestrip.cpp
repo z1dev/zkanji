@@ -1037,7 +1037,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
     // Paint dotted line below the words.
     if (hovered != -1)
     {
-        QPen pen(Qt::black);
+        QPen pen(Settings::textColor(this, ColorSettings::Text));
         pen.setDashPattern({ 1, 1 });
         p->setPen(pen);
 

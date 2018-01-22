@@ -294,6 +294,8 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
 
     entry.reset(new WordEntry);
     original.reset(new WordEntry);
+
+    ui->defTable->assignStatusBar(ui->listStatus);
 }
 
 WordEditorForm::~WordEditorForm()

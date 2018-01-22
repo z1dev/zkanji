@@ -58,7 +58,18 @@
        </widget>
       </item>
       <item>
-       <widget class="ZDictionaryListView" name="missingTable"/>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="ZDictionaryListView" name="missingTable"/>
+        </item>
+        <item>
+         <widget class="ZStatusBar" name="status" native="true">
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -135,15 +146,21 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZDictionaryListView</class>
-   <extends>QTableView</extends>
-   <header>zdictionarylistview.h</header>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>DictionaryWidget</class>
    <extends>QWidget</extends>
    <header>dictionarywidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZDictionaryListView</class>
+   <extends>QTableView</extends>
+   <header>zdictionarylistview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

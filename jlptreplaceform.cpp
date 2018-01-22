@@ -30,13 +30,17 @@ JLPTReplaceForm::JLPTReplaceForm(QWidget *parent) : base(parent), ui(new Ui::JLP
     connect(ui->useButton, &QPushButton::clicked, this, &JLPTReplaceForm::replace);
     connect(ui->undoButton, &QPushButton::clicked, this, &JLPTReplaceForm::undo);
 
-    restrictWidgetSize(ui->replacedLabel, 10);
-    restrictWidgetSize(ui->skippedLabel, 10);
-    restrictWidgetSize(ui->wordsLabel, 10);
+    ui->status->add(tr("Number of words:"), 0, "0", 10);
+    ui->status->add(tr("Number of words:"), 0, "0", 10);
+    ui->status->add(tr("Number of words:"), 0, "0", 10);
 
-    ui->infoBar->addWidget(ui->wordsWidget);
-    ui->infoBar->addWidget(ui->replacedWidget);
-    ui->infoBar->addWidget(ui->skippedWidget);
+    //restrictWidgetSize(ui->replacedLabel, 10);
+    //restrictWidgetSize(ui->skippedLabel, 10);
+    //restrictWidgetSize(ui->wordsLabel, 10);
+
+    //ui->status->addWidget(ui->wordsWidget);
+    //ui->status->addWidget(ui->replacedWidget);
+    //ui->status->addWidget(ui->skippedWidget);
 }
 
 JLPTReplaceForm::~JLPTReplaceForm()
@@ -143,9 +147,13 @@ void JLPTReplaceForm::updateButtons()
         ui->dict->setSearchText(QString());
     }
 
-    ui->replacedLabel->setText(QString::number(pos - skipped));
-    ui->skippedLabel->setText(QString::number(skipped));
-    ui->wordsLabel->setText(QString::number(list.size() - pos));
+    ui->status->setValue(0, QString::number(pos - skipped));
+    ui->status->setValue(1, QString::number(pos - skipped));
+    ui->status->setValue(2, QString::number(pos - skipped));
+
+    //ui->replacedLabel->setText(QString::number(pos - skipped));
+    //ui->skippedLabel->setText(QString::number(skipped));
+    //ui->wordsLabel->setText(QString::number(list.size() - pos));
 
     ui->undoButton->setEnabled(pos > 0);
     ui->skipButton->setEnabled(pos != list.size());

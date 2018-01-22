@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>361</width>
+    <width>343</width>
     <height>216</height>
    </rect>
   </property>
@@ -80,13 +80,44 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="ZDictionaryListView" name="wordsTable">
+      <widget class="QWidget" name="widget" native="true">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>1</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="ZDictionaryListView" name="wordsTable">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ZStatusBar" name="listStatus" native="true">
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -102,15 +133,21 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZDictionaryListView</class>
+   <extends>QTableView</extends>
+   <header>zdictionarylistview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>GroupWidget</class>
    <extends>QWidget</extends>
    <header>groupwidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZDictionaryListView</class>
-   <extends>QTableView</extends>
-   <header>zdictionarylistview.h</header>
   </customwidget>
   <customwidget>
    <class>DialogWindow</class>

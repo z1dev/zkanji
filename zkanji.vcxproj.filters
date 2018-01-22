@@ -944,9 +944,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_kanareadingpracticeform.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="kanawritingpracticeform.cpp">
-      <Filter>Code\Files with .ui\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_kanawritingpracticeform.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -976,6 +973,18 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_zdictionarycombobox.cpp">
       <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="zstatusbar.cpp">
+      <Filter>Code\ZObject\Widgets\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zstatusbar.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zstatusbar.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="kanawritingpracticeform.cpp">
+      <Filter>Code\Files with .ui\Study\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1378,9 +1387,6 @@
     <CustomBuild Include="kanawritingpracticeform.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="kanawritingpracticeform.h">
-      <Filter>Code\Files with .ui\Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="zstatview.h">
       <Filter>Code\ZObject\Widgets\Header Files</Filter>
     </CustomBuild>
@@ -1389,6 +1395,12 @@
     </CustomBuild>
     <CustomBuild Include="zdictionarycombobox.h">
       <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zstatusbar.h">
+      <Filter>Code\ZObject\Widgets\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="kanawritingpracticeform.h">
+      <Filter>Code\Files with .ui\Study\Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

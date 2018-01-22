@@ -84,14 +84,17 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
     restrictWidgetWiderSize(ui->text3Label, 1.05);
     restrictWidgetWiderSize(ui->text4Label, 1.05);
 
-    statusBar()->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Time:"), 0, timeLabel = new QLabel(this), "99:99", 6));
-    timeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Time:"), 0, "99:99", 6, true);
+    //ui->status->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Time:"), 0, timeLabel = new QLabel(this), "99:99", 6));
+    //timeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    statusBar()->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Remaining:"), 0, dueLabel = new QLabel(this), "0", 4));
-    dueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Remaining:"), 0, "0", 4, true);
+    //ui->status->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Remaining:"), 0, dueLabel = new QLabel(this), "0", 4));
+    //dueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    statusBar()->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Mistakes:"), 0, wrongLabel = new QLabel(this), "0", 4));
-    wrongLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Mistakes:"), 0, "0", 4, true);
+    //ui->status->addWidget(createStatusWidget(ui->status, -1, nullptr, tr("Mistakes:"), 0, wrongLabel = new QLabel(this), "0", 4));
+    //wrongLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     ui->frame->setStyleSheet(QString("background: %1").arg(qApp->palette().color(QPalette::Active, QPalette::Base).name()));
 
@@ -138,7 +141,7 @@ void KanaReadingPracticeForm::on_restartButton_clicked()
 
 bool KanaReadingPracticeForm::event(QEvent *e)
 {
-    if (e->type() == QEvent::Timer && ((QTimerEvent*)e)->timerId() == timer.timerId() && timeLabel->text() != "-")
+    if (e->type() == QEvent::Timer && ((QTimerEvent*)e)->timerId() == timer.timerId() && ui->status->value(0) != "-")
     {
 
         QDateTime now = QDateTime::currentDateTimeUtc();
@@ -146,7 +149,8 @@ bool KanaReadingPracticeForm::event(QEvent *e)
         if (passed >= 60 * 60)
             stopTimer(true);
         else
-            timeLabel->setText(DateTimeFunctions::formatPassedTime(passed, false));
+            ui->status->setValue(0, DateTimeFunctions::formatPassedTime(passed, false));
+        //timeLabel->setText(DateTimeFunctions::formatPassedTime(passed, false));
     }
 
     return base::event(e);
@@ -268,8 +272,10 @@ void KanaReadingPracticeForm::next()
         stopTimer(false);
 
         ui->resultLabel->setStyleSheet(QString());
-        dueLabel->setText(0);
-        wrongLabel->setText(QString::number(mistakes));
+        ui->status->setValue(1, "0");
+        ui->status->setValue(2, QString::number(mistakes));
+        //dueLabel->setText(0);
+        //wrongLabel->setText(QString::number(mistakes));
 
         if (retries == 2)
             ui->r1Label->setStyleSheet(QString("color: %1").arg(Settings::uiColor(ColorSettings::StudyWrong).name()));
@@ -290,8 +296,10 @@ void KanaReadingPracticeForm::next()
         return;
     }
 
-    dueLabel->setText(QString::number(std::max(0, (int)list.size() - pos)));
-    wrongLabel->setText(QString::number(mistakes));
+    ui->status->setValue(1, QString::number(std::max(0, (int)list.size() - pos)));
+    ui->status->setValue(2, QString::number(mistakes));
+    //dueLabel->setText(QString::number(std::max(0, (int)list.size() - pos)));
+    //wrongLabel->setText(QString::number(mistakes));
 
     entered = QString();
     setTextLabels();
@@ -382,14 +390,14 @@ void KanaReadingPracticeForm::stopTimer(bool hide)
 {
     timer.stop();
     if (hide)
-        timeLabel->setText("-");
+        ui->status->setValue(0, "-");
 }
 
 void KanaReadingPracticeForm::startTimer()
 {
     timer.start(1000, this);
     starttime = QDateTime::currentDateTimeUtc();
-    timeLabel->setText(DateTimeFunctions::formatPassedTime(0, false));
+    ui->status->setValue(0, DateTimeFunctions::formatPassedTime(0, false));
 }
 
 void KanaReadingPracticeForm::setTextLabels()

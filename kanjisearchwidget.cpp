@@ -530,6 +530,8 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     connect(&popmap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
 
+    ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
+
     // Page selection
     //connect(ui->meaningButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
     //connect(ui->readingButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);

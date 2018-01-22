@@ -1490,8 +1490,10 @@
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">padding: 0.2em 2em;
-text-align: left</string>
+           <string notr="true">
+                        padding: 0.2em 2em;
+                        text-align: left
+                      </string>
           </property>
           <property name="text">
            <string>3. Quit the test</string>
@@ -1506,8 +1508,10 @@ text-align: left</string>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">padding: 0.2em 2em;
-text-align: left</string>
+           <string notr="true">
+                        padding: 0.2em 2em;
+                        text-align: left
+                      </string>
           </property>
           <property name="text">
            <string>1. Continue testing</string>
@@ -1566,7 +1570,7 @@ text-align: left</string>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="ZStatusBar" name="status"/>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1584,8 +1588,14 @@ text-align: left</string>
    <extends>QLabel</extends>
    <header>wordstudyform.h</header>
   </customwidget>
- </customwidgets>
- <resources>
+    <customwidget>
+      <class>ZStatusBar</class>
+      <extends>QStatusBar</extends>
+      <header>zstatusbar.h</header>
+      <container>1</container>
+    </customwidget>
+  </customwidgets>
+  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>
  <connections/>

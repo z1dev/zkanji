@@ -138,6 +138,12 @@ public:
 
     virtual QMimeData* mimeData(const QModelIndexList& indexes) const override;
     //virtual QStringList mimeTypes() const override;
+
+    virtual int statusCount() const override;
+    virtual StatusTypes statusType(int statusindex) const override;
+    virtual QString statusText(int statusindex, int labelindex, int rowpos) const override;
+    virtual int statusSize(int statusindex, int labelindex) const override;
+    virtual bool statusAlignRight(int statusindex) const override;
 protected:
     // Creates the connections for word data change and removal to the current dictionary.
     void connect();

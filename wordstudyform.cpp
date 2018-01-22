@@ -361,12 +361,16 @@ void WordStudyForm::exec(WordDeck *d)
 
     deck->startTest();
 
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel1 = new QLabel(this), "0", 5, dueLabel2 = new QLabel(this), "(0)", 7));
-    dueLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Tested") + ": ", 0, testedLabel1 = new QLabel(this), "0", 5, testedLabel2 = new QLabel(this), "(0)", 7));
-    testedLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    statusBar()->addWidget(createStatusWidget(this, -1, nullptr, tr("ETA") + ": ", 0, etaLabel = new QLabel(this), "00:00:00", 0));
-    statusBar()->addWidget(createStatusWidget(this, -1, nullptr, tr("Time passed") + ": ", 0, timeLabel = new QLabel(this), "00:00:00", 0));
+    ui->status->add(tr("Due") + ":", 0, "0", 5, "(0)", 7);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel1 = new QLabel(this), "0", 5, dueLabel2 = new QLabel(this), "(0)", 7));
+    //dueLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Tested") + ":", 0, "0", 5, "(0)", 7);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Tested") + ": ", 0, testedLabel1 = new QLabel(this), "0", 5, testedLabel2 = new QLabel(this), "(0)", 7));
+    //testedLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("ETA") + ":", 0, "00:00:00", 0);
+    //statusBar()->addWidget(createStatusWidget(this, -1, nullptr, tr("ETA") + ": ", 0, etaLabel = new QLabel(this), "00:00:00", 0));
+    ui->status->add(tr("Time passed") + ":", 0, "00:00:00", 0);
+    //statusBar()->addWidget(createStatusWidget(this, -1, nullptr, tr("Time passed") + ": ", 0, timeLabel = new QLabel(this), "00:00:00", 0));
 
     ui->testStack->setCurrentWidget(ui->inputPage);
     setAttribute(Qt::WA_DontShowOnScreen, true);
@@ -458,20 +462,26 @@ void WordStudyForm::exec(WordStudy *s)
     if (s->studySettings().method == WordStudyMethod::Gradual)
     {
         QLabel *roundLabel;
-        statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Round") + ": ", 0, roundLabel = new QLabel(this), QString::number(s->currentRound() + 1), 4));
-        roundLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel1 = new QLabel(this), "0", 5, dueLabel2 = new QLabel(this), "(0)", 7));
+        ui->status->add(tr("Round") + ":", 0, QString::number(s->currentRound() + 1), 4, true);
+        //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Round") + ": ", 0, roundLabel = new QLabel(this), QString::number(s->currentRound() + 1), 4));
+        //roundLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->status->add(tr("Due") + ":", 0, "0", 5, "(0)", 7);
+        //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel1 = new QLabel(this), "0", 5, dueLabel2 = new QLabel(this), "(0)", 7));
     }
     else
-        statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel1 = new QLabel(this), "0", 5));
-    dueLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->status->add(tr("Due") + ":", 0, "0", 5, true);
+//    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel1 = new QLabel(this), "0", 5));
+//    dueLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Correct") + ": ", 0, testedLabel1 = new QLabel(this), "0", 5));
-    testedLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Wrong") + ": ", 0, testedLabel2 = new QLabel(this), "0", 5));
-    testedLabel2->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Correct") + ":", 0, "0", 4, true);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Correct") + ": ", 0, testedLabel1 = new QLabel(this), "0", 5));
+    //testedLabel1->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Wrong") + ":", 0, "0", 4, true);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Wrong") + ": ", 0, testedLabel2 = new QLabel(this), "0", 5));
+    //testedLabel2->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Time passed") + ": ", 0, timeLabel = new QLabel(this), "00:00:00", 0));
+    timeindex = ui->status->add(tr("Time passed") + ":", 0, "00:00:00", 0);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Time passed") + ": ", 0, timeLabel = new QLabel(this), "00:00:00", 0));
 
     showNext();
 
@@ -533,7 +543,8 @@ bool WordStudyForm::event(QEvent *e)
             int hours = passedtime / 1000 / 60 / 60;
             int minutes = (passedtime - hours * 60 * 60 * 1000) / 1000 / 60;
             int seconds = (passedtime - hours * 60 * 60 * 1000 - minutes * 60 * 1000) / 1000;
-            timeLabel->setText(QString("%1:%2:%3").arg(QString::number(hours), 2, QChar('0')).arg(QString::number(minutes), 2, QChar('0')).arg(QString::number(seconds), 2, QChar('0')));
+            ui->status->setValue(timeindex, QString("%1:%2:%3").arg(QString::number(hours), 2, QChar('0')).arg(QString::number(minutes), 2, QChar('0')).arg(QString::number(seconds), 2, QChar('0')));
+            //timeLabel->setText(QString("%1:%2:%3").arg(QString::number(hours), 2, QChar('0')).arg(QString::number(minutes), 2, QChar('0')).arg(QString::number(seconds), 2, QChar('0')));
 
         }
     }
@@ -1319,11 +1330,15 @@ void WordStudyForm::updateDeckLabels()
     int hours = eta / 10 / 60 / 60;
     int minutes = (eta - hours * 60 * 60 * 10) / 10 / 60;
     int seconds = (eta - hours * 60 * 60 * 10 - minutes * 60 * 10) / 10;
-    etaLabel->setText(QString("%1:%2:%3").arg(QString::number(hours), 2, QChar('0')).arg(QString::number(minutes), 2, QChar('0')).arg(QString::number(seconds), 2, QChar('0')));
-    dueLabel1->setText(QString("%1").arg(QString::number(deck->dueSize())));
-    dueLabel2->setText(QString("(%1)").arg(QString::number(deck->newSize())));
-    testedLabel1->setText(QString("%1").arg(QString::number(passedcount)));
-    testedLabel2->setText(QString("(%1)").arg(QString::number(deck->failedSize())));
+
+    ui->status->setValue(2, QString("%1:%2:%3").arg(QString::number(hours), 2, QChar('0')).arg(QString::number(minutes), 2, QChar('0')).arg(QString::number(seconds), 2, QChar('0')));
+    //etaLabel->setText(QString("%1:%2:%3").arg(QString::number(hours), 2, QChar('0')).arg(QString::number(minutes), 2, QChar('0')).arg(QString::number(seconds), 2, QChar('0')));
+    ui->status->setValues(0, QString::number(deck->dueSize()), QString("(%1)").arg(QString::number(deck->newSize())));
+    //dueLabel1->setText(QString("%1").arg(QString::number(deck->dueSize())));
+    //dueLabel2->setText(QString("(%1)").arg(QString::number(deck->newSize())));
+    ui->status->setValues(1, QString::number(passedcount), QString("(%1)").arg(QString::number(deck->failedSize())));
+    //testedLabel1->setText(QString("%1").arg(QString::number(passedcount)));
+    //testedLabel2->setText(QString("(%1)").arg(QString::number(deck->failedSize())));
 
     bool newcard = deck->nextNewCard();
     bool failedcard = !newcard && deck->nextFailedCard();
@@ -1345,11 +1360,19 @@ void WordStudyForm::updateDeckLabels()
 
 void WordStudyForm::updateStudyLabels()
 {
-    dueLabel1->setText(QString("%1").arg(QString::number(study->dueCount())));
+    //dueLabel1->setText(QString("%1").arg(QString::number(study->dueCount())));
     if (study->studySettings().method == WordStudyMethod::Gradual)
-        dueLabel2->setText(QString("(%1)").arg(QString::number(study->newCount())));
-    testedLabel1->setText(QString("%1").arg(QString::number(study->correctCount())));
-    testedLabel2->setText(QString("%1").arg(QString::number(study->wrongCount())));
+    {
+        ui->status->setValues(1, QString::number(study->dueCount()), QString("(%1)").arg(QString::number(study->newCount())));
+        //dueLabel2->setText(QString("(%1)").arg(QString::number(study->newCount())));
+    }
+    else
+        ui->status->setValue(0, QString::number(study->dueCount()));
+
+    ui->status->setValue(study->studySettings().method == WordStudyMethod::Gradual ? 2 : 1, QString::number(study->correctCount()));
+    //testedLabel1->setText(QString("%1").arg(QString::number(study->correctCount())));
+    ui->status->setValue(study->studySettings().method == WordStudyMethod::Gradual ? 3 : 2, QString::number(study->wrongCount()));
+    //testedLabel2->setText(QString("%1").arg(QString::number(study->wrongCount())));
 
     bool newcard = study->nextNew();
     bool failedcard = !newcard && study->nextFailed();

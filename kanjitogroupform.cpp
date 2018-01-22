@@ -41,6 +41,8 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     ui->groupWidget->addControlWidget(dictCBox);
 
     connect(dictCBox, (void(QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &KanjiToGroupForm::setDictionary);
+
+    ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
 }
 
 KanjiToGroupForm::~KanjiToGroupForm()

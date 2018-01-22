@@ -123,12 +123,15 @@ KanjiReadingPracticeForm::KanjiReadingPracticeForm(WordDeck *deck, QWidget *pare
 
     ui->kanjiLabel->setFont(Settings::kanjiFont());
 
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel = new QLabel(this), "0", 5));
-    dueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Correct") + ": ", 0, correctLabel = new QLabel(this), "0", 5));
-    correctLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Wrong") + ": ", 0, wrongLabel = new QLabel(this), "0", 5));
-    wrongLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Due:"), 0, "0", 5, true);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Due") + ": ", 0, dueLabel = new QLabel(this), "0", 5));
+    //dueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Correct:"), 0, "0", 5, true);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Correct") + ": ", 0, correctLabel = new QLabel(this), "0", 5));
+    //correctLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->status->add(tr("Wrong:"), 0, "0", 5, true);
+    //statusBar()->addWidget(createStatusWidget(this, 2, nullptr, tr("Wrong") + ": ", 0, wrongLabel = new QLabel(this), "0", 5));
+    //wrongLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
 
     connect(ui->acceptButton, &QPushButton::clicked, this, &KanjiReadingPracticeForm::readingAccepted);
@@ -312,9 +315,12 @@ void KanjiReadingPracticeForm::initNextRound()
 
 void KanjiReadingPracticeForm::updateLabels()
 {
-    dueLabel->setText(QString("%1").arg(QString::number(deck->readingsQueued())));
-    correctLabel->setText(QString("%1").arg(QString::number(correct)));
-    wrongLabel->setText(QString("%1").arg(QString::number(wrong)));
+    ui->status->setValue(0, QString::number(deck->readingsQueued()));
+    ui->status->setValue(1, QString::number(correct));
+    ui->status->setValue(2, QString::number(wrong));
+    //dueLabel->setText(QString("%1").arg(QString::number(deck->readingsQueued())));
+    //correctLabel->setText(QString("%1").arg(QString::number(correct)));
+    //wrongLabel->setText(QString("%1").arg(QString::number(wrong)));
 }
 
 

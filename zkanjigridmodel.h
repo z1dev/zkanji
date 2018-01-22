@@ -11,13 +11,13 @@
 #include <QColor>
 #include "smartvector.h"
 
-class KanjiEntry;
 class KanjiGroup;
 class Dictionary;
 class GroupBase;
 struct Range;
 struct Interval;
 class QMimeData;
+enum class StatusTypes : int;
 
 // A model (data provider) of a list of kanji for ZKanjiGridViews. While not a Qt model,
 // mimics the view/model design, but as it doesn't have to be so general, its functions
@@ -55,6 +55,23 @@ public:
 
     // Kanji index at the passed cell position.
     virtual ushort kanjiAt(int pos) const = 0;
+
+    // The number of status widgets needed on a status bar for this grid. Excludes the number
+    // of kanji widget, as it's always included.
+    virtual int statusCount() const;
+    // Type of status widget at statusindex position on a status bar.
+    virtual StatusTypes statusType(int statusindex) const;
+    // Text of status labels on widget at statusindex position on a status bar. Negative
+    // value means the title text for this status widget. In that case the labelindex is
+    // ignored. There can be one or two labels after the title text, denoted by label index,
+    // depending on statusType(). Kanjipos says which value the text should refer to.
+    virtual QString statusText(int statusindex, int labelindex, int kanjipos) const;
+    // Size of status label on widget at statusindex position on a status bar. Labelindex can
+    // be negative to mean the title label.
+    virtual int statusSize(int statusindex, int labelindex) const;
+    // Whether the first status label after the title label is text-aligned right or not. Only
+    // called when the statusType() is TitleValue.
+    virtual bool statusAlignRight(int statusindex) const;
 
     // Color of the kanji to be drawn at pos position. Return an invalid color to
     // use the default color from the settings.
@@ -126,6 +143,12 @@ public:
 
     // Returns the index of the kanji in the main kanji list at pos position.
     virtual ushort kanjiAt(int pos) const override;
+
+    virtual int statusCount() const override;
+    virtual StatusTypes statusType(int statusindex) const override;
+    virtual QString statusText(int statusindex, int kanjipos, int labelindex) const override;
+    virtual int statusSize(int statusindex, int labelindex) const override;
+    virtual bool statusAlignRight(int statusindex) const override;
 private:
     typedef KanjiGridModel base;
 };
@@ -138,13 +161,11 @@ public:
     KanjiListModel(QObject *parent = nullptr);
     virtual ~KanjiListModel();
 
-    // Copies the list of kanji indexes to the model to be shown.
-    // This replaces the previous list and removes any group that
-    // was set.
+    // Copies the list of kanji indexes to the model to be shown. This replaces the previous
+    // list and removes any group that was set.
     void setList(const std::vector<ushort> &newlist);
-    // Moves the list of kanji indexes to the model to be shown.
-    // This replaces the previous list and removes any group that
-    // was set.
+    // Moves the list of kanji indexes to the model to be shown. This replaces the previous
+    // list and removes any group that was set.
     void setList(std::vector<ushort> &&newlist);
 
     const std::vector<ushort>& getList() const;
@@ -227,6 +248,12 @@ public:
 
     virtual int size() const override;
     virtual ushort kanjiAt(int pos) const override;
+
+    virtual int statusCount() const override;
+    virtual StatusTypes statusType(int statusindex) const override;
+    virtual QString statusText(int statusindex, int kanjipos, int labelindex) const override;
+    virtual int statusSize(int statusindex, int labelindex) const override;
+    virtual bool statusAlignRight(int statusindex) const override;
 
     virtual QColor textColorAt(int pos) const override;
     // Returns the unsorted background color for kanji not found by the sorting criteria.

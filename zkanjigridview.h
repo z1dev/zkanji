@@ -24,6 +24,7 @@ class KanjiGroup;
 class KanjiGridModel;
 class Dictionary;
 class RangeSelection;
+class ZStatusBar;
 struct Interval;
 struct Range;
 enum class CommandCategories;
@@ -43,6 +44,9 @@ public:
 
     void setModel(KanjiGridModel *newmodel);
     KanjiGridModel* model() const;
+
+    void assignStatusBar(ZStatusBar *bar);
+    ZStatusBar* statusBar() const;
 
     Dictionary* dictionary() const;
     void setDictionary(Dictionary *newdict);
@@ -175,6 +179,12 @@ protected:
     virtual void dragMoveEvent(QDragMoveEvent *e) override;
     virtual void dropEvent(QDropEvent *e) override;
 private:
+    // Populates the status bar if it's empty and updates the values to reflect current
+    // selection.
+    void updateStatus();
+
+    void statusDestroyed();
+
     // Computes new column and row counts depending on the passed viewport's width.
     void recompute(const QSize &size);
     // Computes scrollbar ranges depending on the passed viewport size and row count.
@@ -227,6 +237,8 @@ private:
 
     // Context menu shown for kanji.
     QMenu *popup;
+
+    ZStatusBar *status;
 
     State state;
 

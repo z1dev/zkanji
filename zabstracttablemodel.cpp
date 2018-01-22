@@ -6,6 +6,7 @@
 
 #include "zabstracttablemodel.h"
 #include "zlistview.h"
+#include "zstatusbar.h"
 
 
 //-------------------------------------------------------------
@@ -77,6 +78,31 @@ Qt::DropActions ZAbstractTableModel::supportedDragActions() const
 Qt::DropActions ZAbstractTableModel::supportedDropActions(bool samesource, const QMimeData *mime) const
 {
     return 0;
+}
+
+int ZAbstractTableModel::statusCount() const
+{
+    return 0;
+}
+
+StatusTypes ZAbstractTableModel::statusType(int statusindex) const
+{
+    return StatusTypes::TitleValue;
+}
+
+QString ZAbstractTableModel::statusText(int statusindex, int labelindex, int kanjipos) const
+{
+    return QString();
+}
+
+int ZAbstractTableModel::statusSize(int statusindex, int labelindex) const
+{
+    return 0;
+}
+
+bool ZAbstractTableModel::statusAlignRight(int statusindex) const
+{
+    return false;
 }
 
 void ZAbstractTableModel::signalRowsRemoved(const smartvector<Range> &ranges)
@@ -207,6 +233,31 @@ bool ZAbstractProxyTableModel::setItemData(const QModelIndex &index, const QMap<
     if (model)
         return model->setItemData(mapToSource(index), roles);
     return false;
+}
+
+int ZAbstractProxyTableModel::statusCount() const
+{
+    return model->statusCount();
+}
+
+StatusTypes ZAbstractProxyTableModel::statusType(int statusindex) const
+{
+    return model->statusType(statusindex);
+}
+
+QString ZAbstractProxyTableModel::statusText(int statusindex, int labelindex, int rowpos) const
+{
+    return model->statusText(statusindex, labelindex, mapToSource(index(rowpos, 0)).row());
+}
+
+int ZAbstractProxyTableModel::statusSize(int statusindex, int labelindex) const
+{
+    return model->statusSize(statusindex, labelindex);
+}
+
+bool ZAbstractProxyTableModel::statusAlignRight(int statusindex) const
+{
+    return model->statusAlignRight(statusindex);
 }
 
 QModelIndex ZAbstractProxyTableModel::buddy(const QModelIndex &index) const

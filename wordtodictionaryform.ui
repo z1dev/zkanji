@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>432</height>
+    <width>558</width>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
-     <number>2</number>
+     <number>4</number>
     </property>
     <property name="leftMargin">
      <number>4</number>
@@ -72,18 +72,10 @@
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="ZDictionaryListView" name="wordsTable">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-      <widget class="QWidget" name="meaningsWidget" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="QWidget" name="widget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="spacing">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="leftMargin">
          <number>0</number>
@@ -98,14 +90,72 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Existing meanings of this word in the destination dictionary:</string>
+         <widget class="ZDictionaryListView" name="wordsTable">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="ZDictionaryListView" name="meaningsTable"/>
+         <widget class="ZStatusBar" name="wordsStatus" native="true">
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="meaningsWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="widget_3" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Existing meanings of this word in the destination dictionary:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ZDictionaryListView" name="meaningsTable"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="ZStatusBar" name="meaningsStatus" native="true">
+         </widget>
         </item>
        </layout>
       </widget>
@@ -166,6 +216,12 @@
    <class>ZDictionaryListView</class>
    <extends>QTableView</extends>
    <header>zdictionarylistview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
