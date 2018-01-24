@@ -1,26 +1,76 @@
+#include <QtEvents>
 #include <QBoxLayout>
 #include <QLabel>
 #include <QStyle>
+#include <QMainWindow>
+#include <QPainter>
+#include <QStyleOption>
+#include <QSizeGrip>
+#include <QApplication>
+#include <QLayoutItem>
 
 #include <cmath>
 
 #include "zstatusbar.h"
+#include "zevents.h"
 #include "zui.h"
 #include "globalui.h"
 #include "generalsettings.h"
 
+
 //-------------------------------------------------------------
 
 
-ZStatusLayout::ZStatusLayout(QWidget *parent) : base(parent)
+ZStatusLayout::ZStatusLayout(QWidget *parent) : base(parent), contents(nullptr), grip(nullptr), showthegrip(false), cacheheight(-1)
 {
-    int margin = Settings::scaled(2);
-    setContentsMargins(margin, margin, margin, margin);
+    setContentsMargins(0, 0, 0, 0);
+
+    ZStatusLayout *l = new ZStatusLayout(this);
+    contents = new QWidget();
+    contents->setLayout(l);
+    addWidget(contents);
+}
+
+ZStatusLayout::ZStatusLayout(ZStatusLayout *parent) : base(nullptr), contents(nullptr), grip(nullptr), showthegrip(false), cacheheight(-1)
+{
+    setContentsMargins(Settings::scaled(2), Settings::scaled(3), Settings::scaled(0), Settings::scaled(2));
 }
 
 ZStatusLayout::~ZStatusLayout()
 {
     ;
+}
+
+void ZStatusLayout::createSizeGrip()
+{
+    if (grip == nullptr)
+    {
+        showthegrip = true;
+        grip = new QSizeGrip(parentWidget());
+        gUI->scaleWidget(grip);
+        grip->hide();
+        addWidget(grip);
+    }
+
+    if (grip && parentWidget()->isVisible())
+      showTheGrip();
+}
+
+void ZStatusLayout::deleteSizeGrip()
+{
+    showthegrip = false;
+    delete grip;
+    grip = nullptr;
+}
+
+bool ZStatusLayout::hasSizeGrip() const
+{
+    return showthegrip || grip != nullptr;
+}
+
+void ZStatusLayout::add(QWidget *w)
+{
+    itemAt(0)->widget()->layout()->addWidget(w);
 }
 
 void ZStatusLayout::addItem(QLayoutItem *item)
@@ -62,13 +112,20 @@ QSize ZStatusLayout::minimumSize() const
 
     if (cacheheight == -1)
     {
-        cacheheight = dynamic_cast<QWidget*>(parent()) != nullptr ? ((QWidget*)parent())->fontMetrics().height() : 0;
-        for (const QLayoutItem *item : list)
+        if (contents != nullptr)
         {
-            if (!item->isEmpty())
-                cacheheight = std::max(cacheheight, item->minimumSize().height());
+            ZStatusLayout *sl = (ZStatusLayout*)itemAt(0)->widget()->layout();
+            cacheheight = std::max((grip != nullptr && grip->isVisible() ? grip->height() : 0), sl->minimumSize().height() /*+ (sl->isEmpty() ? parentWidget()->fontMetrics().height() : 0)*/);
         }
-
+        else
+        {
+            cacheheight = parentWidget() != nullptr ? parentWidget()->fontMetrics().height() : 0;
+            for (const QLayoutItem *item : list)
+            {
+                if (!item->isEmpty())
+                    cacheheight = std::max(cacheheight, item->minimumSize().height());
+            }
+        }
     }
 
     return QSize(std::max(1, left + right), cacheheight + top + bottom);
@@ -89,16 +146,39 @@ void ZStatusLayout::setGeometry(const QRect &r)
     r2.setHeight(minimumSize().height());
     base::setGeometry(r2);
 
-    parentWidget()->setMinimumHeight(r2.height());
-    parentWidget()->setMaximumHeight(r2.height());
+    if (contents != nullptr)
+    {
+        parentWidget()->setMinimumHeight(r2.height());
+        parentWidget()->setMaximumHeight(r2.height());
+    }
 }
 
 void ZStatusLayout::realign(const QRect &r)
 {
+    if (contents != nullptr)
+    {
+        // When realigining top level layout, only move the child layout and size grips.
+
+        if (list.empty() || list.size() > 2)
+            return;
+
+        ZStatusLayout *sl = (ZStatusLayout*)itemAt(0)->widget()->layout();
+        cacheheight = std::max((grip != nullptr && grip->isVisible() ? grip->height() : 0), sl->minimumSize().height() /*+ (sl->isEmpty() ? parentWidget()->fontMetrics().height() : 0)*/);
+
+        itemAt(0)->widget()->setGeometry(r.adjusted(0, 0, grip != nullptr && grip->isVisible() ? -grip->sizeHint().width() : 0, 0));
+        if (grip != nullptr && grip->isVisible())
+        {
+            QSize siz = grip->sizeHint();
+            if (!siz.isEmpty())
+                grip->setGeometry(QRect(QPoint(r.right() - siz.width() + 1, r.bottom() - siz.height() + 1), siz));
+        }
+        return;
+    }
+    
     int left, top, right, bottom;
     getContentsMargins(&left, &top, &right, &bottom);
 
-    cacheheight = dynamic_cast<QWidget*>(parent()) != nullptr ? ((QWidget*)parent())->fontMetrics().height() : 0;
+    cacheheight = parentWidget() != nullptr ? parentWidget()->fontMetrics().height() : 0;
 
     QStyle *style = nullptr;
     int hs = Settings::scaled(6);
@@ -212,6 +292,20 @@ void ZStatusLayout::realign(const QRect &r)
     }
 }
 
+void ZStatusLayout::showTheGrip()
+{
+    if (!showthegrip)
+        return;
+
+    showthegrip = false;
+    if (!grip || grip->isVisible())
+        return;
+
+    grip->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
+    QMetaObject::invokeMethod(grip, "_q_showIfNotHidden", Qt::DirectConnection);
+    grip->setAttribute(Qt::WA_WState_ExplicitShowHide, false);
+}
+
 QSize ZStatusLayout::minimumSize()
 {
     int left, top, right, bottom;
@@ -219,11 +313,19 @@ QSize ZStatusLayout::minimumSize()
 
     if (cacheheight == -1)
     {
-        cacheheight = dynamic_cast<QWidget*>(parent()) != nullptr ? ((QWidget*)parent())->fontMetrics().height() : 0;
-        for (const QLayoutItem *item : list)
+        if (contents != nullptr)
         {
-            if (!item->isEmpty())
-                cacheheight = std::max(cacheheight, item->minimumSize().height());
+            ZStatusLayout *sl = (ZStatusLayout*)itemAt(0)->widget()->layout();
+            cacheheight = std::max((grip != nullptr && grip->isVisible() ? grip->height() : 0), sl->minimumSize().height() /*+ (sl->isEmpty() ? parentWidget()->fontMetrics().height() : 0)*/);
+        }
+        else
+        {
+            cacheheight = parentWidget() != nullptr ? parentWidget()->fontMetrics().height() : 0;
+            for (const QLayoutItem *item : list)
+            {
+                if (!item->isEmpty())
+                    cacheheight = std::max(cacheheight, item->minimumSize().height());
+            }
         }
     }
 
@@ -259,16 +361,24 @@ void ZStatusLayout::computeSpacing(QLayoutItem *first, QLayoutItem *next, int &s
 
 ZStatusBar::ZStatusBar(QWidget *parent) : base(parent)
 {
+    base::setSizeGripEnabled(false);
+
     QSizePolicy pol = sizePolicy();
     pol.setVerticalPolicy(QSizePolicy::Fixed);
-    pol.setHorizontalPolicy(QSizePolicy::Ignored);
+    pol.setHorizontalPolicy(QSizePolicy::Expanding);
     setSizePolicy(pol);
 
     if (layout() != nullptr)
         delete layout();
 
-    ZStatusLayout *l = new ZStatusLayout(this);
+    ZStatusLayout *l = new ZStatusLayout();
     setLayout(l);
+
+    ((ZStatusLayout*)layout())->createSizeGrip();
+
+    // We must check if the status bar has been added to a main form to create the grip. It
+    // can only be done after some event processing, as the status bar is just being created.
+    qApp->postEvent(this, new InitWindowEvent());
 }
 
 ZStatusBar::~ZStatusBar()
@@ -467,9 +577,34 @@ void ZStatusBar::setValues(int index, QString val1, QString val2)
     }
 }
 
+void ZStatusBar::setSizeGripEnabled(bool showing)
+{
+    if (!showing || dynamic_cast<QMainWindow*>(parentWidget()) == nullptr || ((QMainWindow*)parentWidget())->statusBar() != this)
+    {
+        ((ZStatusLayout*)layout())->deleteSizeGrip();
+        return;
+    }
+
+    ((ZStatusLayout*)layout())->createSizeGrip();
+}
+
+bool ZStatusBar::event(QEvent *e)
+{
+    if (e->type() == InitWindowEvent::Type())
+    {
+        if (((ZStatusLayout*)layout())->hasSizeGrip())
+            setSizeGripEnabled(true);
+        return true;
+    }
+
+    return QWidget::event(e);
+}
+
 void ZStatusBar::showEvent(QShowEvent *e)
 {
     QWidget::showEvent(e);
+    if (((ZStatusLayout*)layout())->hasSizeGrip())
+        ((ZStatusLayout*)layout())->createSizeGrip();
 }
 
 void ZStatusBar::resizeEvent(QResizeEvent *e)
@@ -477,9 +612,35 @@ void ZStatusBar::resizeEvent(QResizeEvent *e)
     QWidget::resizeEvent(e);
 }
 
+void ZStatusBar::paintEvent(QPaintEvent *e)
+{
+    if (dynamic_cast<QMainWindow*>(parentWidget()) != nullptr && ((QMainWindow*)parentWidget())->statusBar() == this)
+    {
+        QPainter p(this);
+        QStyleOption opt;
+        opt.initFrom(this);
+        style()->drawPrimitive(QStyle::PE_PanelStatusBar, &opt, &p, this);
+
+        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        {
+            QRect r = list[ix].second->geometry().adjusted(Settings::scaled(-2), Settings::scaled(-1), Settings::scaled(2), Settings::scaled(1));
+            if (e->rect().intersects(r))
+            {
+                QStyleOption opt(0);
+                opt.rect = r;
+                opt.palette = palette();
+                opt.state = QStyle::State_None;
+                style()->drawPrimitive(QStyle::PE_FrameStatusBarItem, &opt, &p, list[ix].second);
+            }
+        }
+    }
+    else
+        QWidget::paintEvent(e);
+}
+
 void ZStatusBar::addWidget(QWidget *w)
 {
-    ((ZStatusLayout*)layout())->addWidget(w);
+    ((ZStatusLayout*)layout())->add(w);
 }
 
 

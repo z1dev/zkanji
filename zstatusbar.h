@@ -12,12 +12,22 @@
 // * SingleValue : A single value label that can extend horizontally.
 enum class StatusTypes : int { TitleValue, TitleDouble, DoubleValue, SingleValue };
 
+class QSizeGrip;
 class ZStatusLayout : public QLayout
 {
     Q_OBJECT
 public:
-    ZStatusLayout(QWidget *parent);
+    ZStatusLayout(QWidget *parent = nullptr);
     virtual ~ZStatusLayout();
+
+    void createSizeGrip();
+    void deleteSizeGrip();
+    // Returns true if a sizing grip is created or to be created for this layout.
+    bool hasSizeGrip() const;
+
+    // Adds a status widget item to the layout. If this is the top layout, adds it to the
+    // child layout instead.
+    void add(QWidget *w);
 
     virtual void addItem(QLayoutItem *item) override;
 
@@ -29,8 +39,10 @@ public:
 
     virtual void invalidate() override;
     virtual void setGeometry(const QRect &r) override;
-private:
+
     QSize minimumSize();
+private:
+    ZStatusLayout(ZStatusLayout *parent);
 
     // Helper function for recompute(), for computing the vertical and horizontal spacing
     // between items.
@@ -39,9 +51,25 @@ private:
     // Moves the widgets to their correct positions on the parent widget.
     void realign(const QRect &r);
 
+    void showTheGrip();
+
     QList<QLayoutItem*> list;
 
+    // Widget only created for top level layout in the status bar, that holds the status
+    // widgets added with add().
+    QWidget *contents;
+
+    // A sizing grip when shown. The value is left null if the status bar is not directly on a
+    // main window.
+    QSizeGrip *grip;
+    // The sizing grip hides itself on maximize and needs to be explicitly notified that it
+    // should show itself when the status bar is shown in general. When this is set to true,
+    // the grip will be notified about it on status bar show.
+    bool showthegrip;
+
     mutable int cacheheight;
+
+    using QLayout::addWidget;
 
     typedef QLayout base;
 };
@@ -94,9 +122,13 @@ public:
     // Changes the text of the two value labels on the widget at the index position. Only
     // valid if the widget was added by the two values override of add().
     void setValues(int index, QString val1, QString val2);
+
+    void setSizeGripEnabled(bool showing/*, int dummy = 0*/);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void showEvent(QShowEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;
+    virtual void paintEvent(QPaintEvent *e) override;
 private:
     void addWidget(QWidget *w);
 
