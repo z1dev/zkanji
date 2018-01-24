@@ -1464,7 +1464,7 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
     case DayFixedDate:
         dt = QDateTime(getLTDay(dt));
     case NormalDate:
-        dt.toString(formatString());
+        return dt.toString(formatString());
     }
 
     return QString();
