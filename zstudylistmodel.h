@@ -13,6 +13,8 @@
 class WordDeck;
 class WordDeckItem;
 
+enum class StatusTypes : int;
+
 enum class WordPartBits : uchar;
 
 enum class DeckColumnTypes
@@ -101,6 +103,12 @@ public:
     //virtual QStringList mimeTypes() const override;
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+
+    virtual int statusCount() const override;
+    virtual StatusTypes statusType(int statusindex) const override;
+    virtual QString statusText(int statusindex, int labelindex, int rowpos) const override;
+    virtual int statusSize(int statusindex, int labelindex) const override;
+    virtual bool statusAlignRight(int statusindex) const override;
 protected slots:;
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
     virtual void entryChanged(int windex, bool studydef) override;

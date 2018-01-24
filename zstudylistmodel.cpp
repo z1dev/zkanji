@@ -16,6 +16,7 @@
 #include "ranges.h"
 #include "dialogs.h"
 #include "generalsettings.h"
+#include "zstatusbar.h"
 
 //-------------------------------------------------------------
 
@@ -772,6 +773,77 @@ bool StudyListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     addWordsToDeck(dictionary(), deck, indexes, (QWidget*)gUI->activeMainForm());
 
     return true;
+}
+
+int StudyListModel::statusCount() const
+{
+    return 1;
+}
+
+StatusTypes StudyListModel::statusType(int statusindex) const
+{
+    return StatusTypes::TitleValue;
+}
+
+QString StudyListModel::statusText(int statusindex, int labelindex, int rowpos) const
+{
+    if (statusindex != 0)
+        return QString();
+
+    // Title label, same for every row.
+    if (labelindex == -1)
+        return tr("Studied parts:");
+
+    if (rowpos < 0)
+        return tr("-");
+
+    int itemindex = list[rowpos];
+
+    uchar types;
+    WordPartBits thistype;
+
+    if (mode == DeckItemViewModes::Queued)
+    {
+        FreeWordDeckItem *item = deck->queuedItems(itemindex);
+        types = item->data->types;
+        thistype = item->questiontype;
+    }
+    else if (mode == DeckItemViewModes::Studied)
+    {
+        LockedWordDeckItem *item = deck->studiedItems(itemindex);
+        //StudyDeck *study = deck->getStudyDeck();
+        types = item->data->types;
+        thistype = item->questiontype;
+    }
+    else // if (mode == DeckItemViewModes::Tested)
+    {
+        LockedWordDeckItem *item = deck->studiedItems(itemindex);
+        //StudyDeck *study = deck->getStudyDeck();
+        types = item->data->types;
+        thistype = item->questiontype;
+    }
+
+    QString result;
+    QString genstr = "[%1]";
+    QString currstr = "<b>[%1]</b>";
+    if ((types & (int)WordPartBits::Kanji) != 0)
+        result += (thistype == WordPartBits::Kanji ? currstr : genstr).arg(tr("Written"));
+    if ((types & (int)WordPartBits::Kana) != 0)
+        result += (thistype == WordPartBits::Kana ? currstr : genstr).arg(tr("Kana"));
+    if ((types & (int)WordPartBits::Definition) != 0)
+        result += (thistype == WordPartBits::Definition ? currstr : genstr).arg(tr("Definition"));
+
+    return result;
+}
+
+int StudyListModel::statusSize(int statusindex, int labelindex) const
+{
+    return 0;
+}
+
+bool StudyListModel::statusAlignRight(int statusindex) const
+{
+    return false;
 }
 
 void StudyListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)

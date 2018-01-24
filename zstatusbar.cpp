@@ -165,7 +165,13 @@ void ZStatusLayout::realign(const QRect &r)
         ZStatusLayout *sl = (ZStatusLayout*)itemAt(0)->widget()->layout();
         cacheheight = std::max((grip != nullptr && grip->isVisible() ? grip->height() : 0), sl->minimumSize().height() /*+ (sl->isEmpty() ? parentWidget()->fontMetrics().height() : 0)*/);
 
+#if 0
+        // Use this if the size grip should hide the status indicator texts and widgets.
         itemAt(0)->widget()->setGeometry(r.adjusted(0, 0, grip != nullptr && grip->isVisible() ? -grip->sizeHint().width() : 0, 0));
+#else
+        itemAt(0)->widget()->setGeometry(r.adjusted(0, 0, r.width()/*grip != nullptr && grip->isVisible() ? -grip->sizeHint().width() : 0*/, 0));
+#endif
+
         if (grip != nullptr && grip->isVisible())
         {
             QSize siz = grip->sizeHint();
