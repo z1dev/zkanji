@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -7,6 +7,7 @@
 #ifndef ZEXAMPLESTRIP_H
 #define ZEXAMPLESTRIP_H
 
+#include <QBasicTimer>
 #include <memory>
 #include "zscrollarea.h"
 #include "sentences.h"
@@ -33,6 +34,7 @@ protected:
     virtual bool event(QEvent *e) override;
 
     virtual void paintEvent(QPaintEvent *e) override;
+    virtual void enterEvent(QEvent *e) override;
     virtual void leaveEvent(QEvent *e) override;
 
     virtual void mousePressEvent(QMouseEvent *e) override;
@@ -62,6 +64,10 @@ private:
 
     // Number of available word forms.
     int formsavailable;
+
+    // On some systems the mouseEnter and mouseLeave messages are not reliable, and a timer is
+    // needed to wait for them to arrive. 
+    QBasicTimer waittimer;
 
     typedef QWidget base;
 };

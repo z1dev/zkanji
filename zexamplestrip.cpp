@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -67,6 +67,7 @@ ZExamplePopup::ZExamplePopup(ZExampleStrip *owner) :
 
 ZExamplePopup::~ZExamplePopup()
 {
+    waittimer.stop();
     ZExPopupDestroyedEvent e(this);
     qApp->sendEvent(owner, &e);
 }
@@ -137,8 +138,21 @@ bool ZExamplePopup::event(QEvent *e)
     if (e->type() == EndEvent::Type())
     {
         if (!underMouse() && !owner->underMouse())
-            deleteLater();
+        {
+            waittimer.start(100, this);
+            //deleteLater();
+        }
         return true;
+    }
+    else if (e->type() == QEvent::Timer)
+    {
+        QTimerEvent *te = (QTimerEvent*)e;
+        if (te->timerId() == waittimer.timerId())
+        {
+            waittimer.stop();
+            if (!underMouse() && !owner->underMouse())
+                deleteLater();
+        }
     }
 
     return base::event(e);
@@ -228,6 +242,11 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
 
         top += lineheight;
     }
+}
+
+void ZExamplePopup::enterEvent(QEvent *e)
+{
+    waittimer.stop();
 }
 
 void ZExamplePopup::leaveEvent(QEvent *e)
