@@ -1,10 +1,12 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
 
 #include <QMessageBox>
+#include <QApplication>
+#include <QDesktopWidget>
 #include "filtereditorform.h"
 #include "ui_filtereditorform.h"
 #include "words.h"
@@ -50,6 +52,27 @@ FilterEditorForm::FilterEditorForm(int filterindex, QWidget *parent) : base(pare
         ui->nameEdit->setText(filter.name);
     }
     allowApply();
+
+    setAttribute(Qt::WA_DontShowOnScreen);
+    show();
+    updateGeometry();
+    QRect frame = frameGeometry();
+    QRect geom = geometry();
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    QRect desk = qApp->desktop()->availableGeometry(parent);
+    QRect pframe = parent->frameGeometry();
+
+    int l = pframe.left() + pframe.width() + 1;
+    int t = std::max(desk.top(), pframe.top());
+    int w = std::min(desk.width(), frame.width());
+    int h = std::min(desk.height(), frame.height());
+
+    if (l + w >= desk.left() + desk.width() && pframe.left() - desk.left() > (desk.left() + desk.width()) - (pframe.left() + pframe.width()))
+        l = std::max(desk.left(), pframe.left() - w);
+
+    setGeometry(l + (geom.left() - frame.left()), t + (geom.top() - frame.top()), w + (frame.width() - geom.width()), h + (frame.height() - geom.height()));
 }
 
 FilterEditorForm::~FilterEditorForm()
@@ -80,7 +103,7 @@ void FilterEditorForm::changeEvent(QEvent *e)
     if (e->type() == QEvent::ActivationChange)
     {
         //qApp->processEvents();
-        if (qApp->activeWindow() != this && (qApp->activeWindow() == nullptr || (qApp->activeWindow()->parentWidget() != this)))
+        if (qApp->activeWindow() != this && (qApp->activeWindow() == nullptr || (qApp->activeWindow()->parent() != this)))
             deleteLater();
     }
 
