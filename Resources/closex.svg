@@ -20,26 +20,6 @@
   <defs
      id="defs4">
     <linearGradient
-       id="linearGradient942"
-       inkscape:collect="always">
-      <stop
-         id="stop936"
-         offset="0"
-         style="stop-color:#a71c00;stop-opacity:0.07943925" />
-      <stop
-         style="stop-color:#a61b00;stop-opacity:0.04672897"
-         offset="0.73768836"
-         id="stop946" />
-      <stop
-         style="stop-color:#a61b00;stop-opacity:0.48598132"
-         offset="0.80857497"
-         id="stop944" />
-      <stop
-         id="stop940"
-         offset="1"
-         style="stop-color:#ff3e3e;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient
        inkscape:collect="always"
        id="linearGradient4163">
       <stop
@@ -108,17 +88,6 @@
          offset="1"
          id="stop4147-0" />
     </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient942"
-       id="radialGradient928"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3020918,-0.07951171,0.12257402,2.0072848,-72.317054,-2971.4677)"
-       cx="-112.41347"
-       cy="1995.7081"
-       fx="-112.41347"
-       fy="1995.7081"
-       r="24.022743" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -128,7 +97,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.959798"
-     inkscape:cx="31.985103"
+     inkscape:cx="-14.229376"
      inkscape:cy="30.282811"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -172,11 +141,5 @@
        d="m 13.081968,1012.6954 10.874123,10.8719 10.871926,-10.8719 4.768544,4.7685 -10.871927,10.872 10.871927,10.8741 -4.768544,4.7685 -10.871926,-10.874 -10.874123,10.874 -4.7685427,-4.7685 10.8741227,-10.8741 -10.8741227,-10.872 z"
        id="path4157"
        inkscape:connector-curvature="0" />
-    <path
-       sodipodi:nodetypes="sssssssss"
-       inkscape:connector-curvature="0"
-       id="path926"
-       d="m 7.6767417,1004.3394 c -4.2648787,0 -7.69948537,3.4347 -7.69948537,7.6995 v 32.6466 c 0,4.2648 3.43460667,7.6995 7.69948537,7.6995 H 40.323258 c 4.264879,0 7.699486,-3.4347 7.699486,-7.6995 v -32.6466 c 0,-4.2648 -3.434607,-7.6995 -7.699486,-7.6995 z"
-       style="opacity:1;fill:url(#radialGradient928);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:11.24076462;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;font-variant-east_asian:normal;vector-effect:none" />
   </g>
 </svg>
