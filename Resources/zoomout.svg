@@ -13,7 +13,7 @@
    viewBox="0 0 48 48"
    id="svg4968"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="zoomout.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -31,12 +31,13 @@
      showguides="false"
      inkscape:guide-bbox="true"
      inkscape:zoom="13.906433"
-     inkscape:cx="6.7438494"
-     inkscape:cy="31.737433"
+     inkscape:cx="17.02686"
+     inkscape:cy="26.631882"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4968" />
+     inkscape:current-layer="svg4968"
+     inkscape:snap-global="false" />
   <defs
      id="defs4970">
     <radialGradient
@@ -429,6 +430,11 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <path
+     style="opacity:1;vector-effect:none;fill:#e5e5e5;fill-opacity:1;fill-rule:evenodd;stroke:#e5e5e5;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.28400004;stroke-opacity:1"
+     d="m 24.399803,3.0370383 c -7.802621,4.405889 -10.084991,16.8787777 -4.807889,22.3390377 0.262522,0.271633 0.199926,0.678209 -0.01548,1.042269 -0.438818,0.741686 -2.775183,2.674195 -4.445819,4.412565 -3.730374,3.881614 -5.4942554,5.752954 -8.0060144,10.255176 -1.224609,2.195061 -1.154629,3.458991 -0.478096,4.996535 0.326915,0.742976 1.706767,1.712277 3.8762214,0.758166 2.182888,-0.960021 3.086396,-2.181749 4.97331,-4.524129 2.451154,-3.042825 4.178825,-6.565727 7.002652,-11.513302 0.575495,-1.008313 0.948445,-1.934951 1.427155,-1.658 1.591043,0.92047 2.553668,1.652038 6.981081,1.813589 C 34.313428,31.083249 39.47788,29.532083 42.7616,23.71031 46.595414,16.913247 45.167787,10.261512 42.147835,6.1991433 38.388057,1.1415802 29.3167,0.26062315 24.399803,3.0370383 Z"
+     id="path9055"
+     inkscape:connector-curvature="0" />
   <path
      style="opacity:1;fill:url(#linearGradient6084);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.7619257;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.28400004;stroke-opacity:1"
      d="m 36.72988,6.0513224 c 0.881453,0.297912 0.735567,0.06683 1.781487,1.357236 3.047972,3.7604476 2.578136,7.9319496 0.946576,11.6660126 -1.716323,3.928062 -6.224314,7.255749 -10.909637,5.476247 4.297839,3.527721 9.863297,3.238246 12.929307,-1.130232 C 44.543619,19.05211 44.504154,11.64457 40.445273,7.9570744 36.386391,4.2695776 38.947461,5.7347604 36.72988,6.0513224 Z"

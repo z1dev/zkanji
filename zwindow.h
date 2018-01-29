@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -17,7 +17,7 @@ class ZWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    ZWindow(QWidget *parent = nullptr);
+    ZWindow(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     virtual ~ZWindow();
 
     void setParent(QWidget *newparent);
@@ -87,7 +87,7 @@ private:
     BorderStyle border;
 
     std::vector<QWidget*> grabbers;
-    
+
 
     typedef QMainWindow base;
 };

@@ -297,13 +297,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="Line" name="line_3">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -340,7 +333,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Stroke count:</string>
+            <string>Strokes:</string>
            </property>
           </widget>
          </item>
@@ -431,6 +424,26 @@
           </widget>
          </item>
          <item>
+          <widget class="QToolButton" name="mAfterButton">
+           <property name="icon">
+            <iconset resource="Resources/resources.qrc">
+             <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>18</width>
+             <height>18</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="ZLineEdit" name="meaningEdit"/>
          </item>
         </layout>
@@ -474,32 +487,84 @@
           </widget>
          </item>
          <item>
-          <widget class="ZKanaLineEdit" name="readingEdit"/>
-         </item>
-         <item>
-          <widget class="QComboBox" name="readingCBox">
+          <widget class="QWidget" name="rOptionsWidget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <item>
-            <property name="text">
-             <string>On / Kun</string>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <property name="spacing">
+             <number>4</number>
             </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>On</string>
+            <property name="leftMargin">
+             <number>0</number>
             </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Kun</string>
+            <property name="topMargin">
+             <number>0</number>
             </property>
-           </item>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolButton" name="rAfterButton">
+                <property name="icon">
+                 <iconset resource="Resources/resources.qrc">
+                  <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>18</width>
+                  <height>18</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="rStrictButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="icon">
+                 <iconset resource="Resources/resources.qrc">
+                  <normaloff>:/strictsrch.svg</normaloff>:/strictsrch.svg</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>18</width>
+                  <height>18</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
+         </item>
+         <item>
+          <widget class="ZKanaLineEdit" name="readingEdit"/>
          </item>
          <item>
           <widget class="QToolButton" name="okuriganaButton">

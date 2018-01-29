@@ -39,6 +39,7 @@
 #include "zcombobox.h"
 #include "zkanalineedit.h"
 #include "studysettings.h"
+#include "colorsettings.h"
 
 //-------------------------------------------------------------
 
@@ -781,6 +782,46 @@ QPixmap renderFromSvg(QString svgpath, int w, int h, QRect r)
 
     p.end();
     return result;
+}
+
+
+// Mode button triangle image size.
+static const int _triS = 4;
+// Mode button spacing between icon and triangle horizontally.
+static const int _triPH = -2;
+// Mode button spacing between icon and triangle vertically.
+static const int _triPV = 2;
+
+QPixmap triangleImage(const QPixmap &img)
+{
+    int iconW = img.width();
+    int iconH = img.height();
+
+    int striS = Settings::scaled(_triS);
+    int striPH = Settings::scaled(_triPH);
+    int striPV = Settings::scaled(_triPV);
+
+    //static const QPointF tript[3] = { QPointF(_iconW + _triP + _triS - 2, _iconH - _triS - 1), QPointF(_iconW + _triP + _triS - 2, _iconH - 2), QPointF(_iconW + _triP - 1, _iconH - 2) };
+    static const QPointF tript[3] = { QPointF(iconW + striS + striPH - 0.5, iconH - striS + striPV - 1 /*- 0.5*/), QPointF(iconW + striS + striPH - 0.5, iconH - 0.5 + striPV), QPointF(iconW + striPH - 1 /*0.5*/, iconH + striPV - 0.5) };
+
+    QPixmap copy(iconW + striS + striPH, iconH + striPV);
+    copy.fill(QColor(0, 0, 0, 0));
+    QPainter p(&copy);
+    p.drawPixmap(QPoint(0, 0), img);
+    p.setPen(Settings::textColor(ColorSettings::Text));
+    p.setBrush(QBrush(Settings::textColor(ColorSettings::Text)));
+    p.drawPolygon(tript, 3);
+    p.end();
+
+    return copy;
+}
+
+QSize triangleSize(const QSize &siz)
+{
+    int striS = Settings::scaled(_triS);
+    int striPH = Settings::scaled(_triPH);
+    int striPV = Settings::scaled(_triPV);
+    return QSize(siz.width() + striS + striPH, siz.height() + striPV);
 }
 
 //void renderFromSvg(QPainter &dest, QString svgpath, QRect r)

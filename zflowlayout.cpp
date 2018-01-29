@@ -88,10 +88,8 @@ QSize ZFlowLayout::minimumSize() const
         {
             size.expandedTo(item->minimumSize());
             QWidget *w = const_cast<QLayoutItem*>(item)->widget();
-            if (w != nullptr && w->sizePolicy().horizontalPolicy() == QSizePolicy::Fixed)
-            {
+            if (w != nullptr && (w->sizePolicy().horizontalPolicy() == QSizePolicy::Fixed || w->sizePolicy().horizontalPolicy() == QSizePolicy::Minimum || w->sizePolicy().horizontalPolicy() == QSizePolicy::MinimumExpanding))
                 size.setWidth(std::max(size.width(), w->sizeHint().width()));
-            }
         }
     }
 
@@ -417,13 +415,13 @@ void ZFlowLayout::recompute(const QRect &r, bool update)
                     if (item->isEmpty() || sizes[sizespos] <= 0)
                         continue;
 
-                    int maxw = restrictedWidth(item->widget());
+                    uint maxw = std::max<uint>(restrictedWidth(item->widget()), item->widget()->sizeHint().width());
 
                     int extraw = wdiff / expnum;
 
                     if (sizes[sizespos] + extraw >= maxw)
                     {
-                        int tmpw = std::max(0, maxw - sizes[sizespos]);
+                        int tmpw = std::max(0, (int)maxw - sizes[sizespos]);
                         leftover += extraw - tmpw;
                         sizes[sizespos] = -sizes[sizespos] - tmpw;
                     }
@@ -479,7 +477,7 @@ void ZFlowLayout::recompute(const QRect &r, bool update)
                     wdiff -= extraw;
                     --expnum;
 
-                    sizes[sizespos] -= extraw;
+                    sizes[sizespos] = -std::abs(sizes[sizespos]) - extraw;
                 }
             }
 

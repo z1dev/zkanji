@@ -44,7 +44,7 @@ PopupDictionary::PopupDictionary(QWidget *parent) : base(parent), ui(new Ui::Pop
     gUI->scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
-    setAttribute(Qt::WA_ShowWithoutActivating, false);
+    //setAttribute(Qt::WA_ShowWithoutActivating, false);
 
     ui->dictionary->addBackWidget(ui->controlWidget);
     ui->pinButton->setCheckable(Settings::popup.autohide);

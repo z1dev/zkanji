@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -94,13 +94,13 @@ namespace {
 const int POPUP_RESIZE_BORDER_SIZE = 4;
 
 
-ZWindow::ZWindow(QWidget *parent) : base(parent, Qt::Dialog |
+ZWindow::ZWindow(QWidget *parent, Qt::WindowFlags f) : base(parent, Qt::Dialog |
     /*
     #ifdef Q_OS_LINUX
     Qt::X11BypassWindowManagerHint |
     #endif
     */
-    Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
+    Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | f), inited(false), grabside((int)GrabSide::None), grabbing(false), border(BorderStyle::Resizable)
 {
     setMouseTracking(true);
 

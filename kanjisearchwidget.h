@@ -45,26 +45,20 @@ struct KanjiFilterData
     KanjiGridSortOrder ordertype = (KanjiGridSortOrder)0;
     KanjiFromT fromtype = KanjiFromT::All;
 
-    //bool usestroke;
     int strokemin = 0;
     int strokemax = 0;
-    //bool usemeaning;
     QString meaning;
-    //bool usereading;
+    bool meaningafter = true;
     QString reading;
-    bool readingon = true;
-    bool readingkun = true;
+    bool readingafter = true;
+    bool readingstrict = true;
     bool readingoku = true;
-    //bool usejlpt;
     int jlptmin = -1;
     int jlptmax = -1;
-    //bool usejouyou;
     int jouyou = 0;
-    //bool useskip;
     int skip1 = 0;
     int skip2 = -1;
     int skip3 = -1;
-    //bool useindex;
     KanjiIndexT indextype = KanjiIndexT::Unicode;
     QString index;
 
@@ -188,6 +182,8 @@ private slots:
     void on_f8Button_clicked();
     void on_allButton_clicked(bool checked);
     //void on_clearButton_clicked();
+
+    void on_rOptionsButton_toggled(bool checked);
 
     // Checks or unchecks the checkbox next to a filter widget depending on its state.
     //void updateCheckbox();

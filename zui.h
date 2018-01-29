@@ -228,6 +228,15 @@ QPixmap renderFromSvg(QString svgpath, int w, int h, QRect r);
 
 //void renderFromSvg(QPainter &dest, QString svgpath, QRect r);
 
+// Adds a triangle at the bottom right corner of an image to be displayed as icon on buttons.
+// Because the image is not scalable, this must be called with a pre-scaled pixmap
+QPixmap triangleImage(const QPixmap &img);
+
+// Returns the size of the image returned by triangleImage(), if the argument had siz size.
+// Because that function works with pre-scaled image, siz must be scaled.
+QSize triangleSize(const QSize &siz);
+
+
 enum class Flags { FromJapanese, ToJapanese, Flag, Browse };
 namespace ZKanji
 {

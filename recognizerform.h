@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -24,7 +24,7 @@ class RecognizerArea : public QFrame
 {
     Q_OBJECT
 
-signals:
+        signals :
     // Signals that the list of recognized characters was updated, and passes the list of
     // element indexes of the recognized characters in l.
     void changed(const std::vector<int> &l);
@@ -156,12 +156,12 @@ class RecognizerObject : public QObject
 protected:
     virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *obj, QEvent *e) override;
-private slots:
+    private slots:
     void buttonClicked();
     void buttonDestroyed();
 private:
     typedef QObject base;
-    
+
     friend class RecognizerForm;
 };
 
@@ -197,7 +197,7 @@ public:
 
     static void popup(QToolButton *btn);
 
-public slots:
+    public slots:
     void on_gridButton_toggled(bool checked);
     void on_generalButton_toggled(bool checked);
     void on_clearButton_clicked();
@@ -271,4 +271,3 @@ void uninstallRecognizer(QToolButton *btn, ZKanaComboBox *edit);
 
 
 #endif // RECOGNIZERFORM_H
-

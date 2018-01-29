@@ -121,7 +121,7 @@ PopupKanjiSearch::PopupKanjiSearch(QWidget *parent) : base(parent), ui(new Ui::P
     gUI->scaleWidget(this);
 
     setAttribute(Qt::WA_QuitOnClose, false);
-    setAttribute(Qt::WA_ShowWithoutActivating, false);
+    //setAttribute(Qt::WA_ShowWithoutActivating, false);
 
     ui->pinButton->setCheckable(Settings::popup.kanjiautohide);
     //ui->captionWidget->installEventFilter(this);

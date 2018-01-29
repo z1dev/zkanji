@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -72,8 +72,8 @@ namespace FormStates
     bool emptyState(const KanjiFilterData &data)
     {
         return data.filters == 0xff && data.ordertype == KanjiGridSortOrder::Jouyou && data.fromtype == KanjiFromT::All &&
-            data.strokemin == 0 && data.strokemax == 0 && data.meaning.isEmpty() && data.reading.isEmpty() &&
-            data.readingon && data.readingkun && data.readingoku && data.jlptmin == -1 && data.jlptmax == -1 &&
+            data.strokemin == 0 && data.strokemax == 0 && data.meaning.isEmpty() && data.meaningafter && data.reading.isEmpty() &&
+            data.readingafter && !data.readingstrict && data.readingoku && data.jlptmin == -1 && data.jlptmax == -1 &&
             data.skip1 == 0 && data.skip2 == -1 && data.skip3 == -1 && data.jouyou == 0 && data.indextype == KanjiIndexT::Unicode &&
             data.index.isEmpty() && data.rads == RadicalFilter() /*data.fromtype == KanjiFromT::All && *//*data.rads.mode == RadicalFilter::Parts && data.rads.grouped == false &&
             data.rads.groups.empty()*/;
@@ -110,7 +110,10 @@ namespace FormStates
         {
             writer.writeEmptyElement("Meaning");
             if (Settings::kanji.savefilters)
+            {
+                writer.writeAttribute("anyafter", data.meaningafter ? True : False);
                 writer.writeAttribute("text", data.meaning);
+            }
             if (!filterActive(data, KanjiFilters::Meaning) && Settings::general.savewinstates)
                 writer.writeAttribute("hide", "1");
         }
@@ -120,7 +123,8 @@ namespace FormStates
             writer.writeEmptyElement("Reading");
             if (Settings::kanji.savefilters)
             {
-                writer.writeAttribute("type", data.readingon && data.readingkun ? "on+kun" : data.readingon ? "on" : "kun");
+                writer.writeAttribute("anyafter", data.readingafter ? True : False);
+                writer.writeAttribute("strict", data.readingstrict ? True : False);
                 writer.writeAttribute("oku", data.readingoku ? True : False);
                 writer.writeAttribute("text", data.reading);
             }
@@ -253,6 +257,8 @@ namespace FormStates
 
             if (reader.name() == "Meaning")
             {
+                if (Settings::kanji.savefilters && reader.attributes().hasAttribute("anyafter"))
+                    data.meaningafter = reader.attributes().value("anyafter") != False;
                 if (Settings::kanji.savefilters && reader.attributes().hasAttribute("text"))
                     data.meaning = reader.attributes().value("text").toString();
                 if (Settings::general.savewinstates && reader.attributes().value("hide") == True)
@@ -262,14 +268,12 @@ namespace FormStates
 
             if (reader.name() == "Reading")
             {
-                if (Settings::kanji.savefilters && reader.attributes().hasAttribute("type"))
-                {
-                    QStringRef str = reader.attributes().value("type");
-                    data.readingon = str == QStringLiteral("on+kun") || str == QStringLiteral("on");
-                    data.readingkun = str == QStringLiteral("on+kun") || str == QStringLiteral("kun");
-                }
+                if (Settings::kanji.savefilters && reader.attributes().hasAttribute("anyafter"))
+                    data.readingafter = reader.attributes().value("anyafter") != False;
+                if (Settings::kanji.savefilters && reader.attributes().hasAttribute("strict"))
+                    data.readingstrict = reader.attributes().value("strict") != False;
                 if (Settings::kanji.savefilters && reader.attributes().hasAttribute("oku"))
-                    data.readingoku = reader.attributes().value("oku")!= False;
+                    data.readingoku = reader.attributes().value("oku") != False;
                 if (Settings::kanji.savefilters)
                     data.reading = reader.attributes().value("text").toString();
 
@@ -453,7 +457,6 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     optionsLayout->setHorizontalSpacing(8);
     ui->optionsWidget->setLayout(optionsLayout);
 
-
     tmplayout = ui->buttonsWidget->layout();
     tmpitems.clear();
     while (tmplayout->count())
@@ -499,8 +502,10 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     // Filtering activated on these
     connect(ui->strokeEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::filter);
     connect(ui->meaningEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::filter);
+    connect(ui->mAfterButton, &QToolButton::clicked, this, &KanjiSearchWidget::filter);
     connect(ui->readingEdit, &ZLineEdit::textChanged, this, &KanjiSearchWidget::filter);
-    connect(ui->readingCBox, SIGNAL(activated(int)), this, SLOT(filter()));
+    connect(ui->rAfterButton, &QToolButton::clicked, this, &KanjiSearchWidget::filter);
+    connect(ui->rStrictButton, &QToolButton::clicked, this, &KanjiSearchWidget::filter);
     connect(ui->okuriganaButton, &QToolButton::toggled, this, &KanjiSearchWidget::filter);
     connect(ui->jlptEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::filter);
     connect(ui->skip1Button, &QToolButton::toggled, this, &KanjiSearchWidget::skipButtonsToggled);
@@ -531,15 +536,6 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     connect(&popmap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
 
     ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
-
-    // Page selection
-    //connect(ui->meaningButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
-    //connect(ui->readingButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
-    //connect(ui->jlptButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
-    //connect(ui->jouyouButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
-    //connect(ui->partsButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
-    //connect(ui->skipButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
-    //connect(ui->indexButton, &QToolButton::toggled, this, &KanjiSearchWidget::showPage);
 }
 
 KanjiSearchWidget::~KanjiSearchWidget()
@@ -675,10 +671,11 @@ void KanjiSearchWidget::saveState(KanjiFilterData &data) const
 
 
     data.meaning = /*ui->meaningWidget->isVisibleTo(ui->optionsWidget) ?*/ ui->meaningEdit->text().trimmed() /*: QString()*/;
+    data.meaningafter = ui->mAfterButton->isChecked();
     data.reading = /*ui->readingWidget->isVisibleTo(ui->optionsWidget) ?*/ ui->readingEdit->text().trimmed() /*: QString()*/;
     ui->readingEdit->validator()->fixup(data.reading);
-    data.readingon = ui->readingCBox->currentIndex() == 0 || ui->readingCBox->currentIndex() == 1;
-    data.readingkun = ui->readingCBox->currentIndex() == 0 || ui->readingCBox->currentIndex() == 2;
+    data.readingafter = ui->rAfterButton->isChecked();
+    data.readingstrict = ui->rStrictButton->isChecked();
     data.readingoku = ui->okuriganaButton->isChecked();
 
     //if (ui->jlptWidget->isVisibleTo(ui->optionsWidget))
@@ -761,13 +758,17 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
     if (Settings::general.savewinstates)
         ui->meaningWidget->setVisible(filterActive(data, KanjiFilters::Meaning));
     if (Settings::kanji.savefilters)
+    {
+        ui->mAfterButton->setChecked(data.meaningafter);
         ui->meaningEdit->setText(data.meaning);
+    }
 
     if (Settings::general.savewinstates)
         ui->readingWidget->setVisible(filterActive(data, KanjiFilters::Reading));
     if (Settings::kanji.savefilters)
     {
-        ui->readingCBox->setCurrentIndex(data.readingon && data.readingkun ? 0 : data.readingon ? 1 : 2);
+        ui->rAfterButton->setChecked(data.readingafter);
+        ui->rStrictButton->setChecked(data.readingstrict);
         ui->okuriganaButton->setChecked(data.readingoku);
         ui->readingEdit->setText(data.reading);
     }
@@ -984,8 +985,10 @@ void KanjiSearchWidget::reset()
     ui->strokeEdit->setText(QString());
     ui->radicalsCBox->setCurrentIndex(0);
     ui->meaningEdit->setText(QString());
+    ui->mAfterButton->setChecked(true);
     ui->readingEdit->setText(QString());
-    ui->readingCBox->setCurrentIndex(0);
+    ui->rAfterButton->setChecked(true);
+    ui->rStrictButton->setChecked(false);
     ui->okuriganaButton->setChecked(true);
     ui->jlptEdit->setText(QString());
     ui->jouyouCBox->setCurrentIndex(0);
@@ -1006,19 +1009,19 @@ void KanjiSearchWidget::reset()
 void KanjiSearchWidget::showEvent(QShowEvent *e)
 {
     base::showEvent(e);
-    
+
     ZFlowLayout *flow = (ZFlowLayout*)ui->optionsWidget->layout();
     flow->setAlignment(Qt::AlignVCenter);
-    flow->restrictWidth(ui->meaningWidget, restrictedWidgetSize(ui->meaningEdit, 16) + ui->meaningWidget->layout()->spacing() + ui->meaningLabel->width());
-    flow->restrictWidth(ui->readingWidget, restrictedWidgetSize(ui->readingEdit, 12) + ui->readingLabel->width() + ui->readingCBox->width() + ui->okuriganaButton->width() + ui->readingWidget->layout()->spacing() * 3);
+    flow->restrictWidth(ui->meaningWidget, restrictedWidgetSize(ui->meaningEdit, 12) + ui->meaningWidget->layout()->spacing() * 2 + ui->meaningLabel->width() + ui->mAfterButton->width());
+    flow->restrictWidth(ui->readingWidget, restrictedWidgetSize(ui->readingEdit, 8) + ui->readingLabel->width() + ui->rAfterButton->width() + ui->rStrictButton->width() + ui->okuriganaButton->width() + ui->readingWidget->layout()->spacing() * 2);
     //flow->restrictWidth(ui->indexWidget, restrictedWidgetSize(ui->indexEdit, 12) + ui->indexLabel->width() + ui->indexCBox->width() + ui->indexWidget->layout()->spacing() * 2);
     flow->restrictWidth(ui->radicalsWidget, ui->radicalsLabel->width() + restrictedWidgetSize(ui->radicalsCBox, 20) + ui->radicalsWidget->layout()->spacing());
     flow->setSpacingAfter(ui->resetWidget, 0);
 
-    if (ui->okuriganaButton->height() != ui->readingCBox->height())
+    if (ui->okuriganaButton->height() != ui->rAfterButton->height())
     {
-        ui->okuriganaButton->setMinimumHeight(ui->readingCBox->height());
-        ui->readingCBox->setMinimumHeight(ui->okuriganaButton->height());
+        ui->okuriganaButton->setMinimumHeight(ui->rAfterButton->height());
+        ui->rAfterButton->setMinimumHeight(ui->okuriganaButton->height());
     }
 
 }
@@ -1140,11 +1143,13 @@ bool KanjiSearchWidget::filtersMatch(const RuntimeKanjiFilters &a, const Runtime
         (clamp(!filterActive(a.data, KanjiFilters::Strokes) ? 0 : a.data.strokemin, 0, 30) == clamp(!filterActive(b.data, KanjiFilters::Strokes) ? 0 : b.data.strokemin, 0, 30) &&
         clamp(!filterActive(a.data, KanjiFilters::Strokes) ? 0 : a.data.strokemax, 0, 30) == clamp(!filterActive(b.data, KanjiFilters::Strokes) ? 0 : b.data.strokemax, 0, 30))) &&
 
-        ((!filterActive(a.data, KanjiFilters::Meaning) ? QString() : a.data.meaning.toLower()) == (!filterActive(b.data, KanjiFilters::Meaning) ? QString() : b.data.meaning.toLower())) &&
+        (((!filterActive(a.data, KanjiFilters::Meaning) || a.data.meaning.isEmpty()) && (!filterActive(b.data, KanjiFilters::Meaning) || b.data.meaning.isEmpty())) ||
+        ((!filterActive(a.data, KanjiFilters::Meaning) ? QString() : a.data.meaning.toLower()) == (!filterActive(b.data, KanjiFilters::Meaning) ? QString() : b.data.meaning.toLower()) &&
+        (filterActive(a.data, KanjiFilters::Meaning) && filterActive(b.data, KanjiFilters::Meaning) && a.data.meaningafter == b.data.meaningafter))) &&
 
         (((!filterActive(a.data, KanjiFilters::Reading) || a.data.reading.isEmpty()) && (!filterActive(b.data, KanjiFilters::Reading) || b.data.reading.isEmpty())) ||
         ((!filterActive(a.data, KanjiFilters::Reading) ? QString() : hiraganize(a.data.reading)) == (!filterActive(b.data, KanjiFilters::Reading) ? QString() : hiraganize(b.data.reading)) &&
-        (filterActive(a.data, KanjiFilters::Reading) != 0 && filterActive(b.data, KanjiFilters::Reading) != 0 && a.data.readingon == b.data.readingon && a.data.readingkun == b.data.readingkun && a.data.readingoku == b.data.readingoku))) &&
+        (filterActive(a.data, KanjiFilters::Reading) && filterActive(b.data, KanjiFilters::Reading) && a.data.readingstrict == b.data.readingstrict && a.data.readingafter == b.data.readingafter && a.data.readingoku == b.data.readingoku))) &&
 
         (clamp(!filterActive(a.data, KanjiFilters::JLPT) ? -1 : a.data.jlptmin, -1, 5) == clamp(!filterActive(b.data, KanjiFilters::JLPT) ? -1 : b.data.jlptmin, -1, 5) &&
         clamp(!filterActive(a.data, KanjiFilters::JLPT) ? -1 : a.data.jlptmax, -1, 5) == clamp(!filterActive(b.data, KanjiFilters::JLPT) ? -1 : b.data.jlptmax, -1, 5)) &&
@@ -1578,24 +1583,42 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
         if (filterActive(f.data, KanjiFilters::Reading) && !f.data.reading.isEmpty())
         {
             match = false;
-            QString str = hiraganize(f.data.reading);
-            if (f.data.readingon)
+            bool ron = true;
+            bool rkun = true;
+            if (f.data.readingstrict)
             {
-                for (int iy = 0; !match && iy != k->on.size(); ++iy)
+                for (int ix = 0, siz = f.data.reading.size(); (ron || rkun) && ix != siz; ++ix)
+                {
+                    if (KATAKANA(f.data.reading.at(ix).unicode()))
+                        rkun = false;
+                    if (HIRAGANA(f.data.reading.at(ix).unicode()))
+                        ron = false;
+                }
+            }
+
+            QString str = hiraganize(f.data.reading);
+            if (ron)
+            {
+                for (int iy = 0, siz = k->on.size(); !match && iy != siz; ++iy)
                 {
                     QString str1 = hiraganize(k->on[iy].toQString());
+                    if (!f.data.readingafter && str1.size() != str.size())
+                        continue;
                     match = qcharncmp(str1.constData(), str.constData(), str.size()) == 0;
                 }
             }
-            if (!match && f.data.readingkun)
+            if (!match && rkun)
             {
-                for (int iy = 0; !match && iy != k->kun.size(); ++iy)
+                for (int iy = 0, siz = k->kun.size(); !match && iy != siz; ++iy)
                 {
                     QString kunstr = QString::fromRawData(k->kun[iy].data(), qcharlen(k->kun[iy].data()));
                     int p = kunstr.indexOf('.');
                     if (p != -1)
                         kunstr = kunstr.left(p) + (!f.data.readingoku ? QString() : kunstr.right(kunstr.size() - p - 1));
                     kunstr = hiraganize(kunstr);
+
+                    if (!f.data.readingafter && kunstr.size() != str.size())
+                        continue;
 
                     match = qcharncmp(kunstr.constData(), str.constData(), str.size()) == 0;
                 }
@@ -1608,9 +1631,8 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
             }
         }
 
-        // Throw out anything not matching the meaning. There is no tree for kanji
-        // meanings, so the only way is to go through each of them and check for
-        // matches.
+        // Throw out anything not matching the meaning. There is no tree for kanji meanings,
+        // so the only way is to go through each of them and check for matches.
         if (filterActive(f.data, KanjiFilters::Meaning) && !f.data.meaning.isEmpty())
         {
             const int mlen = f.data.meaning.size();
@@ -1621,12 +1643,23 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
             const QString datstr = dict->kanjiMeaning(list[ix]).toLower();
             const QChar *dat = datstr.constData();
             const int datlen = datstr.size();
+
+            // Go through each character one by one. The match is only valid if it's at the
+            // front of the meaning, or it comes after a delimiter. When meaningafter is
+            // false, the match must be directly followed by a delimiter or must tail the
+            // meaning.
             for (int pos = 0; !match && pos <= datlen - mlen; ++pos)
             {
                 if (qcharisdelim(dat[pos]) == QCharKind::Delimiter)
                     continue;
                 if (qcharncmp(dat + pos, mdat, mlen) == 0)
-                    match = true;
+                {
+                    if (!f.data.meaningafter)
+                        match = pos + mlen == datlen || qcharisdelim(dat[pos + mlen]) == QCharKind::Delimiter;
+                    else
+                        match = true;
+                }
+
                 while (pos < datlen - mlen && qcharisdelim(dat[++pos]) != QCharKind::Delimiter)
                     ;
             }
@@ -1837,6 +1870,17 @@ void KanjiSearchWidget::on_allButton_clicked(bool checked)
     showHideAction(checked ? 0 : 1);
 }
 
+void KanjiSearchWidget::on_rOptionsButton_toggled(bool checked)
+{
+    ui->rOptionsWidget->setVisible(checked);
+    ui->rOptionsWidget->updateGeometry();
+    //ui->readingEdit->setVisible(!checked);
+
+    QSizePolicy pol = ui->readingWidget->sizePolicy();
+    pol.setHorizontalPolicy(checked ? QSizePolicy::MinimumExpanding : QSizePolicy::Expanding);
+    ui->readingWidget->setSizePolicy(pol);
+    ui->readingWidget->updateGeometry();
+}
 
 //void KanjiSearchWidget::on_clearButton_clicked()
 //{

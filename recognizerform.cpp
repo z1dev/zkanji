@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -407,7 +407,7 @@ QRectF RecognizerArea::segmentRect(int index, int seg)
     QLineF line = segmentLine(index, seg);
     double w = segmentWidth(index, seg) / 2.;
 
-    
+
     return QRectF(std::min(line.p1().x(), line.p2().x()) - w, std::min(line.p1().y(), line.p2().y()) - w, w * 2 + std::fabs(line.p1().x() - line.p2().x()), w * 2 + std::fabs(line.p1().y() - line.p2().y()));
 }
 
@@ -473,7 +473,7 @@ ZKanaLineEdit *RecognizerForm::edit = nullptr;
 bool RecognizerForm::connected = false;
 RecognizerObject *RecognizerForm::p = nullptr;
 
-RecognizerForm::RecognizerForm(QWidget *parent) : base(parent), ui(new Ui::RecognizerForm)
+RecognizerForm::RecognizerForm(QWidget *parent) : base(parent, Qt::WindowDoesNotAcceptFocus), ui(new Ui::RecognizerForm)
 {
 #ifdef _DEBUG
     if (instance != nullptr)
@@ -484,7 +484,6 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent), ui(new Ui::Recog
     ui->setupUi(this);
     windowInit();
 
-    setAttribute(Qt::WA_ShowWithoutActivating);
     setAttribute(Qt::WA_QuitOnClose, false);
 
     gUI->scaleWidget(this);
@@ -511,6 +510,11 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent), ui(new Ui::Recog
     ui->prevButton->setEnabled(!ui->drawArea->empty());
     ui->nextButton->setEnabled(!ui->drawArea->hasNext());
     ui->clearButton->setEnabled(!ui->drawArea->empty());
+
+#ifdef Q_OS_WIN
+    // This doesn't work on Linux. Only use the Qt::WindowDoesNotAcceptFocus window flag.
+    setAttribute(Qt::WA_ShowWithoutActivating);
+#endif
 }
 
 RecognizerForm::~RecognizerForm()
@@ -540,7 +544,7 @@ void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPo
     edit->installEventFilter(p);
     if (dynamic_cast<ZKanaComboBox*>(edit->parent()) != nullptr)
         edit->parent()->installEventFilter(p);
-        
+
 
     if (edit->isReadOnly() || !edit->isEnabled())
         btn->setEnabled(false);
@@ -569,11 +573,10 @@ void RecognizerForm::popup(QToolButton *btn)
             disconnect(edit, &ZKanaLineEdit::dictionaryChanged, instance, &RecognizerForm::editorDictionaryChanged);
         connected = false;
 
-        button = nullptr;
         edit = nullptr;
+        button = nullptr;
 
         instance->hide();
-        //qApp->processEvents();
 
         if (same)
             return;
@@ -674,7 +677,7 @@ QRect RecognizerForm::resizing(int side, QRect r)
                     rdif = -dif - (r.height() - sh.height());
                 dif = sh.height() - r.height();
             }
-            r.adjust(ldif , -dif, rdif, 0);
+            r.adjust(ldif, -dif, rdif, 0);
         }
         else if (side == (int)GrabSide::Top || side == (int)GrabSide::Bottom)
             r.adjust(0, 0, -dif, 0);
@@ -764,7 +767,7 @@ void RecognizerForm::resizeEvent(QResizeEvent *e)
 
 void RecognizerForm::appFocusChanged(QWidget *lost, QWidget *received)
 {
-    if (!isVisible() || received == this || received == edit || (dynamic_cast<ZKanaComboBox*>(edit->parent()) != nullptr && received == edit->parent()) || (received != nullptr && received->window() == this) || qApp->activeWindow() == this)
+    if (!isVisible() || received == this || received == edit || received == nullptr || (dynamic_cast<ZKanaComboBox*>(edit->parent()) != nullptr && received == edit->parent()) || (received != nullptr && received->window() == this) || qApp->activeWindow() == this)
         return;
     hide();
 }
@@ -837,7 +840,7 @@ bool RecognizerObject::event(QEvent *e)
         RecognizerPosition pos = ((RecognizerPopupEvent*)e)->position();
 
         if (RecognizerForm::instance == nullptr)
-            RecognizerForm::instance = new RecognizerForm;
+            RecognizerForm::instance = new RecognizerForm();
 
         if (RecognizerForm::connected)
         {
@@ -849,16 +852,8 @@ bool RecognizerObject::event(QEvent *e)
         connect(ed, &ZKanaLineEdit::dictionaryChanged, RecognizerForm::instance, &RecognizerForm::editorDictionaryChanged);
         RecognizerForm::connected = true;
 
-        RecognizerForm::instance->setParent(RecognizerForm::button->window()/*, Qt::Tool*/);
+        RecognizerForm::instance->setParent(RecognizerForm::button->window());
         RecognizerForm::instance->ui->candidateScroller->setDictionary(ed != nullptr ? ed->dictionary() : nullptr);
-
-        //QRect dif = RecognizerForm::instance->geometry();
-        //QRect fr = RecognizerForm::instance->frameGeometry();
-
-        // QMainWindow::setGeometry ignores the frame so the window will be larger. Checking
-        // the difference here which will be used when updating the popup position.
-        // Each member of the rect will hold the distance between the geometry and the frame.
-        //dif = QRect(QPoint(dif.left() - fr.left(), dif.top() - fr.top()), QPoint(fr.right() - dif.right(), fr.bottom() - dif.bottom()));
 
         if (!Settings::recognizer.savesize)
             Settings::recognizer.rect.setSize(QSize(220, 220));
@@ -897,7 +892,7 @@ bool RecognizerObject::event(QEvent *e)
 
             // Set the left coordinate. If we fit, place it right where the button is,
             // otherwise move only as much as needed.
-            newleft = std::min(r.right() - siz.width() - 4 /*- dif.left() - dif.right()*/, br.left() /*+ dif.left()*/ );
+            newleft = std::min(r.right() - siz.width() - 4 /*- dif.left() - dif.right()*/, br.left() /*+ dif.left()*/);
 
             if (pos == RecognizerPosition::StartBelow || pos == RecognizerPosition::StartAbove)
                 pos = RecognizerPosition::SavedPos;
@@ -914,19 +909,20 @@ bool RecognizerObject::event(QEvent *e)
     }
     else if (e->type() == RecognizerHiddenEvent::Type() && RecognizerForm::instance != nullptr)
     {
-        RecognizerForm::instance->setParent(nullptr/*, Qt::Tool*/);
+        RecognizerForm::instance->setParent(nullptr);
 
         if (RecognizerForm::button != nullptr)
             RecognizerForm::button->setChecked(false);
 
-    //    // Deletes instance.
-    //    qApp->postEvent(this, new EndEvent);
+        //    // Deletes instance.
+        //    qApp->postEvent(this, new EndEvent);
 
-    //    return true;
-    //}
-    //else if (e->type() == EndEvent::Type())
-    //{
+        //    return true;
+        //}
+        //else if (e->type() == EndEvent::Type())
+        //{
         delete RecognizerForm::instance;
+        RecognizerForm::instance = nullptr;
         return true;
     }
 
@@ -951,18 +947,18 @@ bool RecognizerObject::eventFilter(QObject *obj, QEvent *e)
     /*
     if (RecognizerForm::instance == nullptr || !RecognizerForm::instance->isVisible())
     {
-        // Pop up if space is pressed, ignore everything else.
-        if (e->type() == QEvent::KeyPress)
-        {
-            QKeyEvent *ke = (QKeyEvent*)e;
-            if (ke->key() == Qt::Key_Space)
-            {
-                if (edit != nullptr)
-                    RecognizerForm::popup(RecognizerForm::editforbuttons[edit]);
-            }
-        }
+    // Pop up if space is pressed, ignore everything else.
+    if (e->type() == QEvent::KeyPress)
+    {
+    QKeyEvent *ke = (QKeyEvent*)e;
+    if (ke->key() == Qt::Key_Space)
+    {
+    if (edit != nullptr)
+    RecognizerForm::popup(RecognizerForm::editforbuttons[edit]);
+    }
+    }
 
-        return base::eventFilter(obj, e);
+    return base::eventFilter(obj, e);
     }
     */
 
@@ -999,4 +995,3 @@ void RecognizerObject::buttonDestroyed()
 
 
 //-------------------------------------------------------------
-

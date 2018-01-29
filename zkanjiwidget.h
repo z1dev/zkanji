@@ -149,10 +149,6 @@ private:
     // Pre-render button icons for the mode change button at the top left corner.
     //static void renderButton(QPixmap &dest, const QPixmap &orig);
 
-    // Adds a triangle at the bottom right corner of an image to be displayed on the mode
-    // select button.
-    QPixmap modeTriangleImage(const QPixmap &img);
-
     // Callback for adding word to group.
     //static void wordToGroup(WordGroup *g, int w);
 

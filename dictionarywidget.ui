@@ -262,9 +262,6 @@
                <property name="checkable">
                 <bool>true</bool>
                </property>
-               <property name="autoExclusive">
-                <bool>false</bool>
-               </property>
                <property name="autoRaise">
                 <bool>true</bool>
                </property>
@@ -287,9 +284,6 @@
                </property>
                <property name="checkable">
                 <bool>true</bool>
-               </property>
-               <property name="autoExclusive">
-                <bool>false</bool>
                </property>
                <property name="autoRaise">
                 <bool>true</bool>
@@ -606,8 +600,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ZStatusBar" name="listStatus" native="true">
-    </widget>
+    <widget class="ZStatusBar" name="listStatus" native="true"/>
    </item>
   </layout>
  </widget>
@@ -621,6 +614,12 @@
    <class>ZComboBox</class>
    <extends>QComboBox</extends>
    <header>zcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ZDictionaryListView</class>
@@ -637,12 +636,6 @@
    <class>ZKanaComboBox</class>
    <extends>QComboBox</extends>
    <header>zcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZStatusBar</class>
-   <extends>QWidget</extends>
-   <header>zstatusbar.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

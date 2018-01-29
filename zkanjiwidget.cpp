@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -28,13 +28,6 @@
 #include "zdictionarylistview.h"
 #include "generalsettings.h"
 #include "colorsettings.h"
-
-// Mode button triangle image size.
-static const int _triS = 4;
-// Mode button spacing between icon and triangle horizontally.
-static const int _triPH = -2;
-// Mode button spacing between icon and triangle vertically.
-static const int _triPV = 2;
 
 
 //-------------------------------------------------------------
@@ -101,19 +94,18 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
 
     int _iconW = Settings::scaled(qApp->style()->pixelMetric(QStyle::PM_SmallIconSize));
     int _iconH = _iconW;
-    QSize icosize = QSize(_iconW, _iconH);
 
     QPixmap pix = renderFromSvg(QStringLiteral(":/magnisearch.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
-    dictimg = modeTriangleImage(pix);
+    dictimg = triangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Dictionary search\tCtrl+1"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
     pix = renderFromSvg(QStringLiteral(":/wordgroups.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
-    wgrpimg = modeTriangleImage(pix);
+    wgrpimg = triangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Word groups\tCtrl+2"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
     pix = renderFromSvg(QStringLiteral(":/kanjigroups.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
-    kgrpimg = modeTriangleImage(pix);
+    kgrpimg = triangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Kanji groups\tCtrl+3"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
     pix = renderFromSvg(QStringLiteral(":/kanjisearch.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
-    ksrcimg = modeTriangleImage(pix);
+    ksrcimg = triangleImage(pix);
     connect(modemenu.addAction(QIcon(pix), "Kanji search\tCtrl+4"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
 
     connect(gUI, &GlobalUI::dictionaryAdded, this, &ZKanjiWidget::dictionaryAdded);
@@ -124,21 +116,22 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
     for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
         connect(dictmenu.addAction(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
 
-    ui->dictButton->setIconSize(QSize(_iconW + _triS + _triPH, _iconH + _triPV));
+    QSize s = QSize(_iconW, _iconH);
+    QSize ts = triangleSize(QSize(_iconW, _iconH));
+    ui->dictButton->setIconSize(ts);
     ui->dictButton->setPopupMode(QToolButton::InstantPopup);
     ui->dictButton->setMenu(&dictmenu);
     ui->dictButton->setStyleSheet("QToolButton::menu-indicator { image: none; }");
 
-    QSize s = QSize(ui->dictButton->iconSize());
-    s.setWidth(s.width() - _triS - _triPH);
-    s.setHeight(s.height() - _triPV);
-    ui->dictButton->setIcon(QIcon(modeTriangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
+    //s.setWidth(s.width() - _triS - _triPH);
+    //s.setHeight(s.height() - _triPV);
+    ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
 
     dictmenu.setButton(ui->dictButton);
 
     connect(dockmenu.addAction("Float"), &QAction::triggered, this, &ZKanjiWidget::floatToWindow);
 
-    ui->modeButton->setIconSize(QSize(_iconW + _triS + _triPH, _iconH + _triPV));
+    ui->modeButton->setIconSize(ts);
     ui->modeButton->setPopupMode(QToolButton::InstantPopup);
     ui->modeButton->setMenu(&modemenu);
     ui->modeButton->setStyleSheet("QToolButton::menu-indicator { image: none; }");
@@ -283,10 +276,12 @@ void ZKanjiWidget::setDictionary(int index)
     ui->kanjiSearch->setDictionary(index);
 
     QPixmap pix;
-    QSize s = QSize(ui->dictButton->iconSize());
-    s.setWidth(s.width() - _triS - _triPH);
-    s.setHeight(s.height() - _triPV);
-    ui->dictButton->setIcon(QIcon(modeTriangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
+
+    int _iconW = Settings::scaled(qApp->style()->pixelMetric(QStyle::PM_SmallIconSize));
+    int _iconH = _iconW;
+    QSize s = QSize(_iconW, _iconH);
+
+    ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
 
     if (dynamic_cast<ZKanjiForm*>(window()) == nullptr)
         return;
@@ -681,30 +676,6 @@ void ZKanjiWidget::floatToWindow()
 //    p.drawPixmap(0, 0, orig);
 //    p.end();
 //}
-
-QPixmap ZKanjiWidget::modeTriangleImage(const QPixmap &img)
-{
-    int iconW = img.width();
-    int iconH = img.height();
-
-    int striS = Settings::scaled(_triS);
-    int striPH = Settings::scaled(_triPH);
-    int striPV = Settings::scaled(_triPV);
-
-    //static const QPointF tript[3] = { QPointF(_iconW + _triP + _triS - 2, _iconH - _triS - 1), QPointF(_iconW + _triP + _triS - 2, _iconH - 2), QPointF(_iconW + _triP - 1, _iconH - 2) };
-    static const QPointF tript[3] = { QPointF(iconW + striS + striPH - 0.5, iconH - striS + striPV - 1 /*- 0.5*/), QPointF(iconW + striS + striPH - 0.5, iconH - 0.5 + striPV), QPointF(iconW + striPH - 1 /*0.5*/, iconH + striPV - 0.5) };
-
-    QPixmap copy(iconW + striS + striPH, iconH + striPV);
-    copy.fill(QColor(0, 0, 0, 0));
-    QPainter p(&copy);
-    p.drawPixmap(QPoint(0, 0), img);
-    p.setPen(Settings::textColor(ColorSettings::Text));
-    p.setBrush(QBrush(Settings::textColor(ColorSettings::Text)));
-    p.drawPolygon(tript, 3);
-    p.end();
-
-    return copy;
-}
 
 
 //-------------------------------------------------------------

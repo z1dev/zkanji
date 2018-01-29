@@ -58,7 +58,10 @@ ZExamplePopup::ZExamplePopup(ZExampleStrip *owner) :
     setAttribute(Qt::WA_NoMousePropagation);
     setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_OpaquePaintEvent);
+#ifdef Q_OS_WIN
+    // This doesn't work on Linux. Only use the Qt::WindowDoesNotAcceptFocus window flag.
     setAttribute(Qt::WA_ShowWithoutActivating);
+#endif
 
     // Test if not working right on linux
     //setAttribute(Qt::WA_X11NetWmWindowTypePopupMenu);
@@ -139,7 +142,7 @@ bool ZExamplePopup::event(QEvent *e)
     {
         if (!underMouse() && !owner->underMouse())
         {
-            waittimer.start(100, this);
+            waittimer.start(20, this);
             //deleteLater();
         }
         return true;

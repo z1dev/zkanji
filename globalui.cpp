@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -213,7 +213,7 @@ void GlobalUI::loadXMLKanjiInfo(QXmlStreamReader &reader)
             }
             else
                 delete f;
-        }        
+        }
         else
             reader.skipCurrentElement();
     }
@@ -635,7 +635,7 @@ void GlobalUI::minimizeToTray()
 
     connect(trayicon.get(), &QSystemTrayIcon::activated, this, &GlobalUI::trayActivate);
 
-    QAction *a = traymenu->addAction(tr("Japanese to %1").arg(ZKanji::dictionary(PopupDictionary::dictionaryIndex())->name() ));
+    QAction *a = traymenu->addAction(tr("Japanese to %1").arg(ZKanji::dictionary(PopupDictionary::dictionaryIndex())->name()));
     connect(a, &QAction::triggered, &popupmap, (void (QSignalMapper::*)())&QSignalMapper::map);
     popupmap.setMapping(a, 0);
 
@@ -655,11 +655,11 @@ void GlobalUI::minimizeToTray()
     connect(a, &QAction::triggered, this, &GlobalUI::quit);
 
     trayicon->setContextMenu(traymenu.get());
-//#ifdef Q_OS_WIN
-//    trayicon->setIcon(QIcon(":/program.ico"));
-//#else
+    //#ifdef Q_OS_WIN
+    //    trayicon->setIcon(QIcon(":/program.ico"));
+    //#else
     trayicon->setIcon(QIcon(":/programicon.svg"));
-//#endif
+    //#endif
     trayicon->setToolTip("zkanji");
     trayicon->show();
 }
@@ -1562,7 +1562,7 @@ void GlobalUI::showAbout()
     QString maddr = QString("freem") % "ail.hu";
 
     QMessageBox::about(activeMainForm(), tr("About zkanji"), "zkanji " % QString::fromLatin1(ZKANJI_PROGRAM_VERSION) % "\n\n"
-        % aboutsection % (ZKanji::sentences.creationDate().isValid()  ? ("\n\n" % examplesection) : QString()) % "\n\n" % tr("Contact me via e-mail at: ") % "z-one@" % maddr % "\n" % tr("zkanji development blog: ") % "ht" "tp://zkanji." % "wordpress" % ".com/\n" % "zkanji project home: https://github.com/z1dev/zkanji/");
+        % aboutsection % (ZKanji::sentences.creationDate().isValid() ? ("\n\n" % examplesection) : QString()) % "\n\n" % tr("Contact me via e-mail at: ") % "z-one@" % maddr % "\n" % tr("zkanji development blog: ") % "ht" "tp://zkanji." % "wordpress" % ".com/\n" % "zkanji project home: https://github.com/z1dev/zkanji/");
 }
 
 void GlobalUI::saveBeforeQuit()
@@ -1617,7 +1617,7 @@ void GlobalUI::installShortcuts(bool install)
 
     const QString modifiers[3] = { QStringLiteral("Ctrl+Alt+"), QStringLiteral("Alt+"), QStringLiteral("Ctrl+") };
     const QString shift = QStringLiteral("Shift+");
-   
+
     if (Settings::shortcuts.fromenable && fromPopupDictShortcut == nullptr)
     {
         fromPopupDictShortcut = new QxtGlobalShortcut(this);
@@ -1666,17 +1666,20 @@ void GlobalUI::_scaleLayout(QLayout *l)
     l->getContentsMargins(&ll, &t, &r, &b);
     l->setContentsMargins(Settings::scaled(ll), Settings::scaled(t), Settings::scaled(r), Settings::scaled(b));
 
-    for (int ix = 0, siz = l->count(); ix != siz; ++ix)
+    if (dynamic_cast<QMainWindow*>(l->parent()) == nullptr)
     {
-        QLayoutItem *la = l->itemAt(ix);
-        if (la->isEmpty())
-            continue;
-        QSpacerItem *si = la->spacerItem();
-        if (si != nullptr)
-            _scaleSpacerItem(si);
-        QLayout *ll = la->layout();
-        if (ll != nullptr)
-            _scaleLayout(ll);
+        for (int ix = 0, siz = l->count(); ix != siz; ++ix)
+        {
+            QLayoutItem *la = l->itemAt(ix);
+            if (la->isEmpty())
+                continue;
+            QSpacerItem *si = la->spacerItem();
+            if (si != nullptr)
+                _scaleSpacerItem(si);
+            QLayout *ll = la->layout();
+            if (ll != nullptr)
+                _scaleLayout(ll);
+        }
     }
 
     // Spacing can be inherited so we set it only after the rest is done.
