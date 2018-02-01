@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -161,9 +161,12 @@ public:
     ZKanjiForm* mainForm() const;
 
     // Returns the form to be used as the parent of opened dialog and tool windows. This can
-    // be either the mainForm(), he popup dictionary or kanji search windows, or the topmost
+    // be either the mainForm(), the popup dictionary or kanji search windows, or the topmost
     // modal dialog window, depending on which one is active at the moment.
     QWidget* activeMainForm() const;
+
+    // Raises or restores the application from the tray and activates the active main form.
+    void raiseAndActivate();
 
     // Number of existing forms including the main form with zkanji controls.
     int formCount() const;
@@ -244,6 +247,9 @@ protected:
     virtual void timerEvent(QTimerEvent *e) override;
     virtual bool event(QEvent *e) override;
 public slots:
+#ifndef Q_OS_WIN
+    void secondAppStarted();
+#endif
     void importBaseDict();
     void importExamples();
 

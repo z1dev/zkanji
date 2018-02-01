@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -39,9 +39,13 @@
 
 #ifdef WIN32
 #include <Windows.h>
+#else
+#include <QLocalServer>
+#include <QLocalSocket>
 #endif
 
-extern char ZKANJI_PROGRAM_VERSION[];
+// Version of program as text Must not contain non-latin characters.
+char ZKANJI_PROGRAM_VERSION[] = "v0.0.3-alpha";
 
 int showAndQuit(QString title, QString text)
 {
@@ -772,13 +776,65 @@ int main(int argc, char *argv[])
     try
     {
         std::unique_ptr<QSharedMemory> singleappguard(new QSharedMemory("zkanjiSingleAppGuardSoNoMultipleZKanjiAppsGetOpened", &a));
+#ifdef Q_OS_WIN
         if (singleappguard->attach(QSharedMemory::ReadOnly))
         {
+            if (singleappguard->lock())
+            {
+                QByteArray bb = QByteArray((const char*)singleappguard->data(), singleappguard->size());
+                singleappguard->unlock();
+                // Send a message to the window to restore or raise the application.
+                HWND wnd = FindWindow(nullptr, &QString::fromLatin1(bb).toStdWString()[0]);
+                if (wnd != NULL)
+                    PostMessage(wnd, WM_USER + 999, 0, 0);
+            }
+
+            singleappguard->detach();
+            exit(0);
+        }
+        if (!singleappguard->create(7 + strlen(ZKANJI_PROGRAM_VERSION)) || !singleappguard->lock())
+        {
+            // Some error occurred that prevents creating this shared memory.
+            exit(0);
+        }
+        else
+        {
+            memcpy(singleappguard->data(), "zkanji ", 7);
+            memcpy((byte*)singleappguard->data() + 7, ZKANJI_PROGRAM_VERSION, strlen(ZKANJI_PROGRAM_VERSION));
+            singleappguard->unlock();
+        }
+
+#else
+        QLocalServer server;
+        if (singleappguard->attach(QSharedMemory::ReadOnly))
+            singleappguard->detach();
+        // Attach/detach done twice, because on Linux it seems this removes the shared memory
+        // object if a previous instance of the program crashed and is not holding onto it.
+        if (singleappguard->attach(QSharedMemory::ReadOnly))
+        {
+            QLocalSocket socket;
+            socket.connectToServer("zkanjiSingleAppServer");
+            socket.waitForConnected(1000);
+            socket.disconnectFromServer();
+
             singleappguard->detach();
             exit(0);
         }
         if (!singleappguard->create(1))
+        {
+            // Some error occurred that prevents creating this shared memory.
             exit(0);
+        }
+
+        // TODO: add something specific to the server name for each user, so different users
+        // can run their own instances. Better alternative to include the path where zkanji
+        // will save its data, as that should limit the instances running.
+        QLocalServer::removeServer("zkanjiSingleAppServer");
+        //server.setSocketOptions(); - Use this if the specific user mode is implemented by
+        // setting different name to the server for each user/data save location.
+        server.listen("zkanjiSingleAppServer");
+        gUI->connect(&server, &QLocalServer::newConnection, gUI, &GlobalUI::secondAppStarted);
+#endif
 
         a.setApplicationName("zkanji");
         //a.setOrganizationName("zkanji");

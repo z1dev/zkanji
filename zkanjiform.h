@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -161,6 +161,11 @@ protected:
     //virtual void contextMenuEvent(QContextMenuEvent *e) override;
     virtual void changeEvent(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
+
+#ifdef Q_OS_WIN
+    // Checkes for WM_USER + 999 to wake up when another instance is started
+    virtual bool nativeEvent(const QByteArray &etype, void *msg, long *result) override;
+#endif
 private slots:
     void appFocusChanged(QWidget *prev, QWidget *current);
     void startDockDrag();

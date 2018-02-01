@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -13,6 +13,7 @@
 #include <QXmlStreamReader>
 #include <QSystemTrayIcon>
 #include <QDesktopWidget>
+#include <QStringBuilder>
 
 #include "zkanjiform.h"
 #include "ui_zkanjiform.h"
@@ -25,6 +26,12 @@
 #include "generalsettings.h"
 #include "words.h"
 #include "zui.h"
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#undef max
+#undef min
+#endif
 
 
 //-------------------------------------------------------------
@@ -59,11 +66,16 @@ void ZDockOverlay::paintEvent(QPaintEvent *e)
 //-------------------------------------------------------------
 
 
+extern char ZKANJI_PROGRAM_VERSION[];
+
+
 ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
     : Qt::WindowFlags()), ui(new Ui::ZKanjiForm), mainform(mainform), activewidget(nullptr), //activepage(-1), activedict(nullptr),
     docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
+    setWindowTitle(QStringLiteral("zkanji %1").arg(ZKANJI_PROGRAM_VERSION));
+
     setMouseTracking(true);
 
     if (!mainform)
@@ -1046,6 +1058,23 @@ void ZKanjiForm::closeEvent(QCloseEvent *e)
 
     base::closeEvent(e);
 }
+
+#ifdef Q_OS_WIN
+bool ZKanjiForm::nativeEvent(const QByteArray &etype, void *msg, long *result)
+{
+    if (etype != "windows_generic_MSG")
+        return base::nativeEvent(etype, msg, result);
+
+    MSG *m = (MSG*)msg;
+    if (mainform && m->message == WM_USER + 999)
+    {
+        gUI->raiseAndActivate();
+        return true;
+    }
+    
+    return base::nativeEvent(etype, msg, result);
+}
+#endif
 
 void ZKanjiForm::appFocusChanged(QWidget *prev, QWidget *current)
 {

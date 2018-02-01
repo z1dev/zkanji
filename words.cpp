@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -40,7 +40,7 @@
 
 // WARNING: none of these strings should be longer than 255 bytes.
 
-char ZKANJI_PROGRAM_VERSION[] = "v0.0.3-alpha";
+extern char ZKANJI_PROGRAM_VERSION[];
 
 static char ZKANJI_BASE_FILE_VERSION[] = "002";
 static char ZKANJI_DICTIONARY_FILE_VERSION[] = "001";

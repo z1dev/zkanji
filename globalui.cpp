@@ -369,6 +369,52 @@ QWidget* GlobalUI::activeMainForm() const
     return nullptr;
 }
 
+void GlobalUI::raiseAndActivate()
+{
+    restoreFromTray();
+    qApp->processEvents();
+
+    QWidget *f = activeMainForm();
+
+    if (f == nullptr)
+    {
+        QWindow *w = qApp->modalWindow();
+        if (w != nullptr)
+        {
+            for (QWidget *ww : qApp->topLevelWidgets())
+            {
+                if (ww->windowHandle() == w)
+                {
+                    f = ww;
+                    break;
+                }
+            }
+        }
+
+
+        if (f == nullptr && mainForm()->isVisible() && mainForm()->isEnabled())
+            f = mainForm();
+
+        if (f == nullptr)
+        {
+            for (QWidget *ww : qApp->topLevelWidgets())
+            {
+                if (!ww->isWindow() || !ww->isVisible() || f != nullptr)
+                    continue;
+
+                if (ww->parent() == nullptr)
+                    f = ww;
+            }
+        }
+    }
+
+    if (f == nullptr)
+        return;
+
+    f->raise();
+    f->activateWindow();
+}
+
 int GlobalUI::formCount() const
 {
     return mainforms.size();
@@ -832,6 +878,13 @@ bool GlobalUI::event(QEvent *e)
     }
     return base::event(e);
 }
+
+#ifndef Q_OS_WIN
+void GlobalUI::secondAppStarted()
+{
+    raiseAndActivate();
+}
+#endif
 
 void GlobalUI::importBaseDict()
 {
