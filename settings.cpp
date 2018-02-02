@@ -144,7 +144,7 @@ namespace Settings
         ini.setValue("savewinstates", general.savewinstates);
         ini.setValue("savetoolstates", general.savetoolstates);
         ini.setValue("startstate", (int)general.startstate);
-        ini.setValue("minimizetotray", general.minimizetotray);
+        ini.setValue("minimizebehavior", general.minimizebehavior == GeneralSettings::TrayOnClose ? "closetotray" : general.minimizebehavior == GeneralSettings::TrayOnMinimize ? "minimizetotray" : "default" );
         ini.setValue("scaling", clamp(general.savedscale, 100, 400));
 
         // Font settings
@@ -747,7 +747,14 @@ namespace Settings
         val = ini.value("startstate", 0).toInt(&ok);
         if (ok && val >= 0 && val <= 3)
             general.startstate = (GeneralSettings::StartState)val;
-        general.minimizetotray = ini.value("minimizetotray", false).toBool();
+
+        tmp = ini.value("minimizebehavior", "default").toString();
+        if (tmp == "closetotray")
+            general.minimizebehavior = GeneralSettings::TrayOnClose;
+        else if (tmp == "minimizetotray")
+            general.minimizebehavior = GeneralSettings::TrayOnMinimize;
+        else
+            general.minimizebehavior = GeneralSettings::DefaultMinimize;
 
         // Font settings
 

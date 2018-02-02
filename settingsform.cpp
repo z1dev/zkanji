@@ -306,7 +306,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     gUI->scaleWidget(this);
 
     if (!QSystemTrayIcon::isSystemTrayAvailable())
-        ui->trayBox->setEnabled(false);
+        ui->minimizeCBox->setEnabled(false);
 
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
@@ -490,7 +490,7 @@ void SettingsForm::reset()
     ui->saveToolPosBox->setChecked(Settings::general.savetoolstates);
     ui->startupStateCBox->setCurrentIndex((int)Settings::general.startstate);
     if (QSystemTrayIcon::isSystemTrayAvailable())
-        ui->trayBox->setChecked(Settings::general.minimizetotray);
+        ui->minimizeCBox->setCurrentIndex((int)Settings::general.minimizebehavior);
     on_savePosBox_toggled();
 
     ui->recogSaveBox->setChecked(Settings::recognizer.savesize);
@@ -735,7 +735,7 @@ void SettingsForm::applyClicked()
     Settings::general.savetoolstates = ui->saveToolPosBox->isChecked();
     Settings::general.startstate = (GeneralSettings::StartState)ui->startupStateCBox->currentIndex();
     if (QSystemTrayIcon::isSystemTrayAvailable())
-        Settings::general.minimizetotray = ui->trayBox->isChecked();
+        Settings::general.minimizebehavior = (GeneralSettings::MinimizeBehavior)ui->minimizeCBox->currentIndex();
 
     Settings::recognizer.savesize = ui->recogSaveBox->isChecked();
     Settings::recognizer.saveposition = ui->recogPositionCBox->currentIndex() == 1;

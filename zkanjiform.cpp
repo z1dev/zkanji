@@ -174,7 +174,7 @@ void ZKanjiForm::saveXMLSettings(QXmlStreamWriter &writer) const
 
         if (mainform)
         {
-            if (windowState().testFlag(Qt::WindowMinimized))
+            if (windowState().testFlag(Qt::WindowMinimized) && (Settings::general.minimizebehavior == GeneralSettings::DefaultMinimize || gUI->isInTray()))
                 writer.writeAttribute("state", "minimized");
             else if (windowState().testFlag(Qt::WindowMaximized))
                 writer.writeAttribute("state", "maximized");
@@ -998,9 +998,9 @@ void ZKanjiForm::changeEvent(QEvent *e)
         QWindowStateChangeEvent *se = (QWindowStateChangeEvent*)e;
         if (windowState().testFlag(Qt::WindowMinimized) && !se->oldState().testFlag(Qt::WindowMinimized))
         {
-            totray = Settings::general.minimizetotray && QSystemTrayIcon::isSystemTrayAvailable();
+            totray = Settings::general.minimizebehavior == GeneralSettings::TrayOnMinimize && QSystemTrayIcon::isSystemTrayAvailable();
 
-            emit stateChanged(true);
+            emit stateChanged(totray || Settings::general.minimizebehavior == GeneralSettings::DefaultMinimize);
         }
         else if (!windowState().testFlag(Qt::WindowMinimized))
         {
@@ -1054,7 +1054,24 @@ void ZKanjiForm::closeEvent(QCloseEvent *e)
     // It's necessary to save settings before the main form closes, because the child windows
     // owned by this form would get destroyed before their settings could be saved.
     if (mainform)
+    {
+        if (gUI->dockForm() != nullptr)
+        {
+            gUI->endDockDrag();
+            hideDockOverlay();
+        }
+
+        if (!windowState().testFlag(Qt::WindowMinimized) && isVisible() && Settings::general.minimizebehavior == GeneralSettings::TrayOnClose && QSystemTrayIcon::isSystemTrayAvailable())
+        {
+            emit stateChanged(true);
+            e->ignore();
+            qApp->processEvents();
+            gUI->minimizeToTray();
+            return;
+        }
+
         gUI->saveBeforeQuit();
+    }
 
     base::closeEvent(e);
 }

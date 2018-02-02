@@ -12,6 +12,7 @@ struct GeneralSettings
 {
     enum DateFormat { DayMonthYear, MonthDayYear, YearMonthDay };
     enum StartState { SaveState, AlwaysMinimize, AlwaysMaximize, ForgetState };
+    enum MinimizeBehavior { DefaultMinimize, TrayOnMinimize, TrayOnClose };
 
     DateFormat dateformat = DayMonthYear;
 
@@ -22,7 +23,7 @@ struct GeneralSettings
 
     StartState startstate = SaveState;
 
-    bool minimizetotray = false;
+    MinimizeBehavior minimizebehavior = DefaultMinimize;
 
     // Interface scaling saved from the settings window, but not applied. Values 100-400.
     int savedscale = 100;

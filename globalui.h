@@ -235,6 +235,7 @@ public:
 
     void minimizeToTray();
     void restoreFromTray();
+    bool isInTray() const;
 
     virtual bool eventFilter(QObject *obj, QEvent *e) override;
 

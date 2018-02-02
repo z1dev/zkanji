@@ -121,7 +121,7 @@ GlobalUI* GlobalUI::instance()
     return i;
 }
 
-GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infoblock(0), dockform(nullptr), hiddencounter(0), autosavecounter(0)/*, trayicon(nullptr), traymenu(nullptr)*/
+GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infoblock(0), dockform(nullptr), hiddencounter(0), autosavecounter(0)
 {
     if (i != nullptr)
         throw "Code should only contain a single instance of this.";
@@ -291,7 +291,7 @@ void GlobalUI::createWindow(bool ismain)
 
         // If main form is minimized at this point, it means it might have to be put to the
         // tray instead of showing.
-        if (Settings::general.minimizetotray && QSystemTrayIcon::isSystemTrayAvailable() && minimized)
+        if (Settings::general.minimizebehavior != GeneralSettings::DefaultMinimize && QSystemTrayIcon::isSystemTrayAvailable() && minimized)
         {
             if (!mainforms.at(0)->isVisible())
             {
@@ -735,6 +735,11 @@ void GlobalUI::restoreFromTray()
     appwin.clear();
 
     //emit appWindowsVisibilityChanged(true);
+}
+
+bool GlobalUI::isInTray() const
+{
+    return trayicon != nullptr;
 }
 
 bool GlobalUI::eventFilter(QObject *obj, QEvent *e)

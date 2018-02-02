@@ -51,7 +51,7 @@ struct KanjiFilterData
     bool meaningafter = true;
     QString reading;
     bool readingafter = true;
-    bool readingstrict = true;
+    bool readingstrict = false;
     bool readingoku = true;
     int jlptmin = -1;
     int jlptmax = -1;
