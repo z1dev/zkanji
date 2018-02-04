@@ -117,6 +117,7 @@ protected:
     virtual bool eventFilter(QObject *o, QEvent *e) override;
     //virtual void changeEvent(QEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
+    virtual void closeEvent(QCloseEvent *e) override;
 private:
     // Shows or hides the filter editor while resizing the window.
     void toggleEditor(bool show);

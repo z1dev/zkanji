@@ -498,12 +498,17 @@ FilterListForm::~FilterListForm()
 //    editInitiated(-1);
 //}
 
-void FilterListForm::on_editButton_clicked(bool clicked)
+void FilterListForm::on_editButton_clicked(bool checked)
 {
-    if (clicked)
+    if (checked)
         editInitiated(ui->filterTable->currentRow());
     else
-        toggleEditor(false);
+    {
+        if (filterindex != -1 && ui->buttons->button(QDialogButtonBox::StandardButton::Save)->isEnabled() && QMessageBox::question(this, "zkanji", tr("Your change to the current filter will be lost. Do you wish to discard it?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+            ui->editButton->setChecked(true);
+        else
+            toggleEditor(false);
+    }
 }
 
 void FilterListForm::on_delButton_clicked()
@@ -527,15 +532,10 @@ void FilterListForm::on_downButton_clicked()
 
 void FilterListForm::on_nameEdit_textEdited(const QString &text)
 {
-    filterindex = nameIndex(false);
-    if (filterindex == -1)
-    {
-        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
-        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!ui->nameEdit->text().isEmpty());
-    }
-    else
-        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Save"));
-    ui->filterTable->setCurrentRow(filterindex);
+    filterindex = -1;
+    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
+    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!ui->nameEdit->text().isEmpty() && nameIndex(false) == -1);
+    ui->filterTable->setCurrentRow(-1);
 }
 
 void FilterListForm::editInitiated(int row)
@@ -600,6 +600,14 @@ void FilterListForm::deleteInitiated(int row)
 void FilterListForm::currentRowChanged()
 {
     int curr = ui->filterTable->currentRow();
+    int nameix = nameIndex(false);
+
+    if (filterindex != -1 && curr != nameix && ui->buttons->button(QDialogButtonBox::StandardButton::Save)->isEnabled() && QMessageBox::question(this, "zkanji", tr("Your change to the current filter will be lost. Do you wish to discard it?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+    {
+        ui->filterTable->setCurrentRow(nameix);
+        return;
+    }
+
     ui->delButton->setEnabled(curr >= 0 && curr < ZKanji::wordfilters().size());
 
     ui->upButton->setEnabled(curr > 0 && curr < ZKanji::wordfilters().size());
@@ -610,7 +618,7 @@ void FilterListForm::currentRowChanged()
     //if (ui->editWidget->isVisibleTo(this))
     //    toggleEditor(false);
 
-    if (ui->editWidget->isVisibleTo(this))
+    if (ui->editWidget->isVisibleTo(this) && curr != nameix)
     {
         editInitiated(ui->filterTable->currentRow());
 
@@ -699,14 +707,28 @@ bool FilterListForm::eventFilter(QObject *o, QEvent *e)
 
 void FilterListForm::keyPressEvent(QKeyEvent *e)
 {
-    if (!e->modifiers() && e->key() == Qt::Key_Escape && ui->editWidget->isVisibleTo(this))
-    {
-        discardClicked();
-        ui->editButton->setChecked(false);
-        toggleEditor(false);
-    }
-    else
+    //if (!e->modifiers() && e->key() == Qt::Key_Escape && ui->editWidget->isVisibleTo(this))
+    //{
+    //    discardClicked();
+    //    ui->editButton->setChecked(false);
+    //    toggleEditor(false);
+    //}
+    //else
         return base::keyPressEvent(e);
+}
+
+void FilterListForm::closeEvent(QCloseEvent *e)
+{
+    if (filterindex == -1 || !ui->buttons->button(QDialogButtonBox::StandardButton::Save)->isEnabled())
+    {
+        base::closeEvent(e);
+        return;
+    }
+
+    if (QMessageBox::question(this, "zkanji", tr("Your change to the current filter will be lost. Do you wish to discard it?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+        e->ignore();
+    else
+        base::closeEvent(e);
 }
 
 void FilterListForm::toggleEditor(bool show)
@@ -755,11 +777,11 @@ void FilterListForm::toggleEditor(bool show)
 
 void FilterListForm::filterChanged(int index)
 {
-    if (index != nameIndex(false))
+    if (index != filterindex)
         return;
 
     ui->nameEdit->setText(ZKanji::wordfilters().items(filterindex).name);
-    on_nameEdit_textEdited(ui->nameEdit->text());
+    //on_nameEdit_textEdited(ui->nameEdit->text());
     allowApply();
 }
 
@@ -806,7 +828,7 @@ void FilterListForm::allowApply()
     }
 
     ui->buttons->button(QDialogButtonBox::StandardButton::Discard)->setEnabled(!unchanged || nameIndex(false) == -1);
-    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!unchanged && (nameIndex(false) != -1 || !ui->nameEdit->text().isEmpty()));
+    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!unchanged && nameIndex(false) == filterindex && !ui->nameEdit->text().isEmpty());
 }
 
 
