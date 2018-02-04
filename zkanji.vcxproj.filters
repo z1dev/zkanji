@@ -284,9 +284,6 @@
     <ClCompile Include="wordattribwidget.cpp">
       <Filter>Code\Files with .ui\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="filtereditorform.cpp">
-      <Filter>Code\Files with .ui\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="filterlistform.cpp">
       <Filter>Code\Files with .ui\Source Files</Filter>
     </ClCompile>
@@ -348,12 +345,6 @@
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_examplewidget.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_filtereditorform.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_filtereditorform.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_filterlistform.cpp">
@@ -1162,12 +1153,6 @@
     <CustomBuild Include="wordattribwidget.h">
       <Filter>Code\Files with .ui\Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="filtereditorform.ui">
-      <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="filtereditorform.h">
-      <Filter>Code\Files with .ui\Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="filterlistform.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
@@ -1516,9 +1501,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_wordattribwidget.h">
-      <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_filtereditorform.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_filterlistform.h">

@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QDesktopWidget>
 #include <QPainter>
+#include <QPushButton>
 #include "filterlistform.h"
 #include "ui_filterlistform.h"
 #include "zlistview.h"
@@ -411,7 +412,7 @@ void FilterListModel::filterMoved(int index, int to)
 //-------------------------------------------------------------
 
 
-FilterListForm::FilterListForm(WordFilterConditions *conditions, QWidget *parent) : base(parent), ui(new Ui::FilterListForm), conditions(conditions)
+FilterListForm::FilterListForm(WordFilterConditions *conditions, const QRect &r, QWidget *parent) : base(parent), ui(new Ui::FilterListForm), editwidth(-1), filterindex(-1), conditions(conditions)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -434,19 +435,28 @@ FilterListForm::FilterListForm(WordFilterConditions *conditions, QWidget *parent
     connect(model, &FilterListModel::deleteInitiated, this, &FilterListForm::deleteInitiated);
     connect(ui->filterTable, &ZListView::rowDoubleClicked, this, &FilterListForm::editInitiated);
     connect(ui->filterTable, &ZListView::currentRowChanged, this, &FilterListForm::currentRowChanged);
-}
+    connect(ui->closeButton, &QAbstractButton::clicked, this, &FilterListForm::close);
 
-FilterListForm::~FilterListForm()
-{
-    delete ui;
-}
+    //connect(ui->nameEdit, &ZLineEdit::textEdited, this, &FilterListForm::allowApply);
+    connect(ui->anyButton, &QRadioButton::toggled, this, &FilterListForm::allowApply);
+    connect(ui->allButton, &QRadioButton::toggled, this, &FilterListForm::allowApply);
+    connect(ui->attribWidget, &WordAttribWidget::changed, this, &FilterListForm::allowApply);
+    connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterChanged, this, &FilterListForm::filterChanged);
 
-void FilterListForm::updatePosition(const QRect &r)
-{
+    //connect(ui->buttons->button(QDialogButtonBox::StandardButton::Reset), &QAbstractButton::clicked, this, &FilterListForm::resetClicked);
+    connect(ui->buttons->button(QDialogButtonBox::StandardButton::Discard), &QAbstractButton::clicked, this, &FilterListForm::discardClicked);
+    connect(ui->buttons->button(QDialogButtonBox::StandardButton::Save), &QAbstractButton::clicked, this, &FilterListForm::saveClicked);
+
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
+    updateGeometry();
+    editwidth = ui->editWidget->width();
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    ui->editWidget->installEventFilter(this);
+
+    ui->editWidget->hide();
 
     QRect desk = qApp->desktop()->availableGeometry(QPoint((r.right() + r.left()) / 2, (r.bottom() + r.top()) / 2));
 
@@ -468,37 +478,108 @@ void FilterListForm::updatePosition(const QRect &r)
     else
         left = r.left() + dif.left();
 
-    setGeometry(QRect(left, top, geom.width(), geom.height()));
+    setGeometry(QRect(left, top, geom.width() - ui->editWidget->width() - ui->splitter->handleWidth(), geom.height()));
 }
 
-void FilterListForm::on_addButton_clicked()
+FilterListForm::~FilterListForm()
 {
-    if (ZKanji::wordfilters().size() == 255)
-    {
-        QMessageBox::warning(this, QStringLiteral("zkanji"), tr("The list of filters is full. Can't add more than 255 filters."));
-        return;
-    }
+    delete ui;
+}
 
-    editInitiated(-1);
+//void FilterListForm::on_addButton_clicked()
+//{
+//    if (ZKanji::wordfilters().size() == 255)
+//    {
+//        QMessageBox::warning(this, QStringLiteral("zkanji"), tr("The list of filters is full. Can't add more than 255 filters."));
+//        return;
+//    }
+//
+//    ui->filterTable->setCurrentRow(-1);
+//    editInitiated(-1);
+//}
+
+void FilterListForm::on_editButton_clicked(bool clicked)
+{
+    if (clicked)
+        editInitiated(ui->filterTable->currentRow());
+    else
+        toggleEditor(false);
 }
 
 void FilterListForm::on_delButton_clicked()
 {
     deleteInitiated(ui->filterTable->currentRow());
+    ui->filterTable->setFocus();
+    ui->filterTable->selectRow(ui->filterTable->currentRow());
 }
 
-void FilterListForm::on_editButton_clicked()
+void FilterListForm::on_upButton_clicked()
 {
-    editInitiated(ui->filterTable->currentRow());
+    int curr = ui->filterTable->currentRow();
+    ZKanji::wordfilters().move(curr, curr - 1);
+}
+
+void FilterListForm::on_downButton_clicked()
+{
+    int curr = ui->filterTable->currentRow();
+    ZKanji::wordfilters().move(curr, curr + 2);
+}
+
+void FilterListForm::on_nameEdit_textEdited(const QString &text)
+{
+    filterindex = nameIndex(false);
+    if (filterindex == -1)
+    {
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!ui->nameEdit->text().isEmpty());
+    }
+    else
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Save"));
+    ui->filterTable->setCurrentRow(filterindex);
 }
 
 void FilterListForm::editInitiated(int row)
 {
-    if (row >= ZKanji::wordfilters().size())
-        return;
+    bool toggled = ui->editWidget->isVisibleTo(this);
 
-    ui->addButton->setEnabled(false);
-    editWordFilter(row, this);
+    if (row >= ZKanji::wordfilters().size() || row < 0)
+        row = -1;
+
+    filterindex = row;
+
+    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(false);
+    ui->editButton->setChecked(true);
+
+    if (filterindex != -1)
+    {
+        const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
+        ui->attribWidget->setChecked(filter.attrib, filter.inf, filter.jlpt);
+        if (filter.matchtype == FilterMatchType::AllMustMatch)
+            ui->allButton->setChecked(true);
+        else
+            ui->anyButton->setChecked(true);
+        if (!ui->nameEdit->hasFocus())
+            ui->nameEdit->setText(filter.name);
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Save"));
+    }
+    else
+    {
+        WordDefAttrib dummy;
+        if (!ui->nameEdit->hasFocus())
+            ui->nameEdit->setText(QString());
+        ui->attribWidget->setChecked(dummy, 0, 0);
+        ui->anyButton->setChecked(true);
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
+    }
+
+    toggleEditor(true);
+
+    if (!toggled && filterindex == -1)
+        ui->nameEdit->setFocus();
+    else if (!toggled)
+        ui->attribWidget->setFocus();
+
+    allowApply();
 }
 
 void FilterListForm::deleteInitiated(int row)
@@ -520,20 +601,212 @@ void FilterListForm::currentRowChanged()
 {
     int curr = ui->filterTable->currentRow();
     ui->delButton->setEnabled(curr >= 0 && curr < ZKanji::wordfilters().size());
-    ui->editButton->setEnabled(curr >= 0 && curr < ZKanji::wordfilters().size());
+
+    ui->upButton->setEnabled(curr > 0 && curr < ZKanji::wordfilters().size());
+    ui->downButton->setEnabled(curr != -1 && curr < ZKanji::wordfilters().size() - 1);
+
+    //ui->editButton->setEnabled(curr >= 0 && curr < ZKanji::wordfilters().size());
+
+    //if (ui->editWidget->isVisibleTo(this))
+    //    toggleEditor(false);
+
+    if (ui->editWidget->isVisibleTo(this))
+    {
+        editInitiated(ui->filterTable->currentRow());
+
+        //if (!ui->nameEdit->hasFocus())
+        //{
+        //    if (filterindex != -1)
+        //    {
+        //        const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
+        //        ui->nameEdit->setText(filter.name);
+        //    }
+        //    else
+        //        ui->nameEdit->setText(QString());
+        //}
+    }
 }
 
-void FilterListForm::changeEvent(QEvent *e)
+void FilterListForm::discardClicked()
 {
-    if (e->type() == QEvent::ActivationChange)
+    editInitiated(ui->filterTable->currentRow());
+}
+
+void FilterListForm::saveClicked()
+{
+    if (nameIndex() == 0)
+        return;
+
+    if (filterindex == -1)
     {
-        if (qApp->activeWindow() != this && (qApp->activeWindow() == nullptr || qApp->activeWindow()->parent() != this))
-            deleteLater();
-        else if (qApp->activeWindow() == this)
-            ui->addButton->setEnabled(true);
+        ZKanji::wordfilters().add(ui->nameEdit->text().trimmed(), ui->attribWidget->checkedTypes(), ui->attribWidget->checkedInfo(), ui->attribWidget->checkedJLPT(), ui->allButton->isChecked() ? FilterMatchType::AllMustMatch : FilterMatchType::AnyCanMatch);
+        //toggleEditor(false);
+        return;
     }
 
-    base::changeEvent(e);
+    const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
+
+    ZKanji::wordfilters().rename(filterindex, ui->nameEdit->text().trimmed());
+    ZKanji::wordfilters().update(filterindex, ui->attribWidget->checkedTypes(), ui->attribWidget->checkedInfo(), ui->attribWidget->checkedJLPT(), ui->allButton->isChecked() ? FilterMatchType::AllMustMatch : FilterMatchType::AnyCanMatch);
+
+    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(false);
+
+    //ui->filterTable->setFocus();
+}
+
+//void FilterListForm::resetClicked()
+//{
+//    if (filterindex != -1)
+//    {
+//        const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
+//        ui->attribWidget->setChecked(filter.attrib, filter.inf, filter.jlpt);
+//        if (filter.matchtype == FilterMatchType::AllMustMatch)
+//            ui->allButton->setChecked(true);
+//        else
+//            ui->anyButton->setChecked(true);
+//        ui->nameEdit->setText(filter.name);
+//    }
+//    else
+//    {
+//        WordDefAttrib dummy;
+//        ui->nameEdit->setText(QString());
+//        ui->attribWidget->setChecked(dummy, 0, 0);
+//        ui->anyButton->setChecked(true);
+//    }
+//    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(false);
+//}
+
+bool FilterListForm::eventFilter(QObject *o, QEvent *e)
+{
+    if (o == ui->editWidget && e->type() == QEvent::Resize && ui->editWidget->isVisibleTo(this))
+        editwidth = ui->editWidget->width();
+
+    return base::eventFilter(o, e);
+}
+
+//void FilterListForm::changeEvent(QEvent *e)
+//{
+//    if (e->type() == QEvent::ActivationChange)
+//    {
+//        if (qApp->activeWindow() != this && (qApp->activeWindow() == nullptr || qApp->activeWindow()->parent() != this))
+//            deleteLater();
+//        else if (qApp->activeWindow() == this)
+//            ui->addButton->setEnabled(true);
+//    }
+//
+//    base::changeEvent(e);
+//}
+
+void FilterListForm::keyPressEvent(QKeyEvent *e)
+{
+    if (!e->modifiers() && e->key() == Qt::Key_Escape && ui->editWidget->isVisibleTo(this))
+    {
+        discardClicked();
+        ui->editButton->setChecked(false);
+        toggleEditor(false);
+    }
+    else
+        return base::keyPressEvent(e);
+}
+
+void FilterListForm::toggleEditor(bool show)
+{
+    if (ui->editWidget->isVisibleTo(this) == show)
+        return;
+
+    if (editwidth == -1)
+        editwidth = ui->editWidget->width();
+
+    int oldwidth = editwidth;
+    int leftsize = ui->listWidget->width();
+
+    QSize s = size();
+    if (!show)
+    {
+        ui->editWidget->hide();
+        ui->splitter->refresh();
+        ui->splitter->updateGeometry();
+
+        centralWidget()->layout()->activate();
+        layout()->activate();
+
+        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+        {
+            s.setWidth(s.width() - editwidth - ui->splitter->handleWidth());
+            resize(s);
+        }
+    }
+    else
+    {
+        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+        {
+            s.setWidth(s.width() + ui->splitter->handleWidth() + oldwidth);
+            resize(s);
+        }
+
+        ui->editWidget->updateGeometry();
+        ui->editWidget->show();
+        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+            ui->splitter->setSizes({ leftsize, oldwidth });
+        else
+            ui->splitter->setSizes({ leftsize - oldwidth - ui->splitter->handleWidth(), oldwidth });
+    }
+}
+
+void FilterListForm::filterChanged(int index)
+{
+    if (index != nameIndex(false))
+        return;
+
+    ui->nameEdit->setText(ZKanji::wordfilters().items(filterindex).name);
+    on_nameEdit_textEdited(ui->nameEdit->text());
+    allowApply();
+}
+
+int FilterListForm::nameIndex(bool msgbox)
+{
+    if (ui->nameEdit->text().trimmed().isEmpty())
+    {
+        if (msgbox)
+        {
+            QMessageBox::warning(this, QStringLiteral("zkanji"), tr("Please specify a name for the filter!"), QMessageBox::Ok);
+            return 0;
+        }
+        return -1;
+    }
+
+    int matchingfilter = -1;
+    if ((matchingfilter = ZKanji::wordfilters().itemIndex(ui->nameEdit->text().trimmed())) != -1 && (filterindex == -1 || matchingfilter != filterindex))
+    {
+        if (msgbox)
+        {
+            QMessageBox::warning(this, QStringLiteral("zkanji"), tr("Another filter exists with the same name. Please change the name and try again!"), QMessageBox::Ok);
+            return 0;
+        }
+    }
+
+    if (msgbox)
+        return 1;
+
+    return matchingfilter;
+}
+
+void FilterListForm::allowApply()
+{
+    bool unchanged = false;
+    if (filterindex != -1)
+    {
+        const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
+        unchanged = (ui->attribWidget->checkedTypes() == filter.attrib &&
+            ui->attribWidget->checkedInfo() == filter.inf &&
+            ui->attribWidget->checkedJLPT() == filter.jlpt) &&
+            ((filter.matchtype == FilterMatchType::AllMustMatch) == ui->allButton->isChecked()) &&
+            ((filter.matchtype == FilterMatchType::AnyCanMatch) == ui->anyButton->isChecked());
+
+    }
+
+    ui->buttons->button(QDialogButtonBox::StandardButton::Discard)->setEnabled(!unchanged || nameIndex(false) == -1);
+    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!unchanged && (nameIndex(false) != -1 || !ui->nameEdit->text().isEmpty()));
 }
 
 

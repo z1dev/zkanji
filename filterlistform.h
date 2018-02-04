@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -89,28 +89,54 @@ class FilterListForm : public DialogWindow
 {
     Q_OBJECT
 public:
-    FilterListForm(WordFilterConditions *conditions, QWidget *parent = nullptr);
+    FilterListForm(WordFilterConditions *conditions, const QRect &r, QWidget *parent = nullptr);
     ~FilterListForm();
-
-    void showAt(const QRect &rect);
-
-    void updatePosition(const QRect &r);
 signals:
     // Signaled when the inclusion of a filter has changed from exclude/include or ignore.
     void includeChanged(int index, Inclusion oldinclude);
     // Signaled when the "word in example" or "word in group" condition changes.
     void conditionChanged();
 public slots:
-    void on_addButton_clicked();
+    //void on_addButton_clicked();
+    void on_editButton_clicked(bool checked);
     void on_delButton_clicked();
-    void on_editButton_clicked();
+    void on_upButton_clicked();
+    void on_downButton_clicked();
+
+    void on_nameEdit_textEdited(const QString &text);
 
     void editInitiated(int row);
     void deleteInitiated(int row);
     void currentRowChanged();
+
+    void discardClicked();
+    void saveClicked();
+    //void resetClicked();
+    void filterChanged(int index);
 protected:
-    virtual void changeEvent(QEvent *e) override;
+    virtual bool eventFilter(QObject *o, QEvent *e) override;
+    //virtual void changeEvent(QEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
 private:
+    // Shows or hides the filter editor while resizing the window.
+    void toggleEditor(bool show);
+
+    // Checks whether the name in the edit box has already been specified for a filter, and
+    // returns the index of that filter if found. Returns -1 if the name is empty or doesn't
+    // match any filters.
+    // Set msgbox to true to show a message box when the name is empty or conflicts with
+    // an unselected filter. In this case returns 0 if a message box is shown, otherwise 1.
+    int nameIndex(bool msgbox = true);
+
+    // Called on change to update the enabled state of the apply button.
+    void allowApply();
+
+    // Width of the editor widget used to calculate new window size when it's shown.
+    int editwidth;
+
+    // Index of filter currently being edited.
+    int filterindex;
+
     Ui::FilterListForm *ui;
 
     WordFilterConditions *conditions;

@@ -43,7 +43,6 @@ SOURCES += \
     dictionarytextform.cpp \
     dictionarywidget.cpp \
     examplewidget.cpp \
-    filtereditorform.cpp \
     filterlistform.cpp \
     formstate.cpp \
     furigana.cpp \
@@ -167,7 +166,6 @@ HEADERS += \
     dictionarywidget.h \
     examplewidget.h \
     fastarray.h \
-    filtereditorform.h \
     filterlistform.h \
     fontsettings.h \
     formstate.h \
@@ -285,7 +283,6 @@ FORMS += \
     dictionarytextform.ui \
     dictionarywidget.ui \
     examplewidget.ui \
-    filtereditorform.ui \
     filterlistform.ui \
     groupexportform.ui \
     groupimportform.ui \

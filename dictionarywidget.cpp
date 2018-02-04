@@ -1177,10 +1177,9 @@ void DictionaryWidget::showFilterContext(const QPoint &pos)
             updateWords();
     }
 
-    FilterListForm *form = new FilterListForm(conditions.get(), this);
+    FilterListForm *form = new FilterListForm(conditions.get(), QRect(ui->filterButton->mapToGlobal(QPoint(0, 0)), ui->filterButton->mapToGlobal(QPoint(ui->filterButton->width() - 1, ui->filterButton->height() - 1))), this);
     connect(form, &FilterListForm::includeChanged, this, &DictionaryWidget::filterInclude);
     connect(form, &FilterListForm::conditionChanged, this, &DictionaryWidget::conditionChanged);
-    form->updatePosition(QRect(ui->filterButton->mapToGlobal(QPoint(0, 0)), ui->filterButton->mapToGlobal(QPoint(ui->filterButton->width() - 1, ui->filterButton->height() - 1))));
     form->show();
 
 }

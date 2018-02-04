@@ -6,135 +6,324 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
-    <height>304</height>
+    <width>549</width>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dictionary filters</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="leftMargin">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="spacing">
      <number>4</number>
+    </property>
+    <property name="leftMargin">
+     <number>6</number>
     </property>
     <property name="topMargin">
-     <number>4</number>
+     <number>6</number>
     </property>
     <property name="rightMargin">
-     <number>4</number>
+     <number>6</number>
     </property>
     <property name="bottomMargin">
-     <number>4</number>
+     <number>6</number>
     </property>
-    <property name="spacing">
-     <number>2</number>
-    </property>
-    <item row="1" column="0" colspan="4">
-     <widget class="ZListView" name="filterTable">
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="autoScroll">
-       <bool>false</bool>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="showGrid">
-       <bool>false</bool>
-      </property>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <spacer name="horizontalSpacer">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>185</width>
-        <height>6</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="0">
-     <widget class="QToolButton" name="addButton">
-      <property name="text">
-       <string>Add</string>
-      </property>
-      <property name="icon">
-       <iconset resource="Resources/resources.qrc">
-        <normaloff>:/addmark.svg</normaloff>:/addmark.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>18</width>
-        <height>18</height>
-       </size>
-      </property>
-      <property name="toolButtonStyle">
-       <enum>Qt::ToolButtonTextBesideIcon</enum>
-      </property>
-      <property name="autoRaise">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QToolButton" name="delButton">
-      <property name="enabled">
+      <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <property name="text">
-       <string>Delete</string>
-      </property>
-      <property name="icon">
-       <iconset resource="Resources/resources.qrc">
-        <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>18</width>
-        <height>18</height>
-       </size>
-      </property>
-      <property name="toolButtonStyle">
-       <enum>Qt::ToolButtonTextBesideIcon</enum>
-      </property>
-      <property name="autoRaise">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QToolButton" name="editButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Edit</string>
-      </property>
-      <property name="icon">
-       <iconset resource="Resources/resources.qrc">
-        <normaloff>:/penciledit.svg</normaloff>:/penciledit.svg</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>18</width>
-        <height>18</height>
-       </size>
-      </property>
-      <property name="toolButtonStyle">
-       <enum>Qt::ToolButtonTextBesideIcon</enum>
-      </property>
-      <property name="autoRaise">
-       <bool>true</bool>
-      </property>
+      <widget class="QWidget" name="listWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="horizontalSpacing">
+         <number>0</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>2</number>
+        </property>
+        <item row="1" column="4">
+         <widget class="QToolButton" name="delButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Delete filter</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Resources/resources.qrc">
+            <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="7">
+         <widget class="ZListView" name="filterTable">
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="autoScroll">
+           <bool>false</bool>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QToolButton" name="downButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Delete filter</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Resources/resources.qrc">
+            <normaloff>:/downmark.svg</normaloff>:/downmark.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="autoRepeat">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="2">
+         <widget class="QToolButton" name="upButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Delete filter</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Resources/resources.qrc">
+            <normaloff>:/upmark.svg</normaloff>:/upmark.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="autoRepeat">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QPushButton" name="closeButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Close</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="6">
+         <widget class="QToolButton" name="editButton">
+          <property name="text">
+           <string>Edit filters...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Resources/resources.qrc">
+            <normaloff>:/penciledit.svg</normaloff>:/penciledit.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="editWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Filter name:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="ZLineEdit" name="nameEdit">
+            <property name="placeholderText">
+             <string>Enter a name for the filter</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Filter attributes:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="WordAttribWidget" name="attribWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::TabFocus</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="anyButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Any attribute can match</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="allButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Every attribute must match</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDialogButtonBox" name="buttons">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
+          </property>
+          <property name="centerButtons">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -147,11 +336,19 @@
    <extends>QTableView</extends>
    <header>zlistview.h</header>
   </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WordAttribWidget</class>
+   <extends>QWidget</extends>
+   <header>wordattribwidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>addButton</tabstop>
-  <tabstop>delButton</tabstop>
-  <tabstop>editButton</tabstop>
   <tabstop>filterTable</tabstop>
  </tabstops>
  <resources>
