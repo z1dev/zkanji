@@ -335,12 +335,43 @@ QString DictionaryItemModel::statusText(int statusindex, int labelindex, int row
             }
             last = ix;
 
-            r += (ix != 0 ? QString("%1) ").arg(ix + 1) : QString()) %
-                (Settings::dictionary.showjlpt && jlptn != 0 ? QString("(N%1) ").arg(jlptn) : QString()) %
-                (e->defs[ix].attrib.types != 0 ? Strings::wordTypesTextLong(e->defs[ix].attrib.types) % QStringLiteral(" ") : QString()) %
-                (e->defs[ix].attrib.notes != 0 ? Strings::wordNotesTextLong(e->defs[ix].attrib.notes) % QStringLiteral(" ") : QString()) %
-                (e->defs[ix].attrib.fields != 0 ? Strings::wordFieldsTextLong(e->defs[ix].attrib.fields) % QStringLiteral(" ") : QString()) %
-                (e->defs[ix].attrib.dialects != 0 ? Strings::wordDialectsTextLong(e->defs[ix].attrib.dialects) % QStringLiteral(" ") : QString());
+            r += (ix != 0 ? QString(" %1) ").arg(ix + 1) : QString()) %
+                (Settings::dictionary.showjlpt && jlptn != 0 ? QString("(N%1) ").arg(jlptn) : QString());
+
+            bool needcomma = false;
+            if (e->defs[ix].attrib.types != 0)
+            {
+                QString str = Strings::wordTypesTextLong(e->defs[ix].attrib.types);
+                r += str;
+                needcomma = !str.isEmpty();
+            }
+
+            if (e->defs[ix].attrib.notes != 0)
+            {
+                QString str = Strings::wordNotesTextLong(e->defs[ix].attrib.notes);
+                if (needcomma && !str.isEmpty())
+                    r += ", ";
+                r += str;
+                needcomma = !str.isEmpty();
+            }
+
+            if (e->defs[ix].attrib.fields != 0)
+            {
+                QString str = Strings::wordFieldsTextLong(e->defs[ix].attrib.fields);
+                if (needcomma && !str.isEmpty())
+                    r += ", ";
+                r += str;
+                needcomma = !str.isEmpty();
+            }
+
+            if (e->defs[ix].attrib.dialects != 0)
+            {
+                QString str = Strings::wordDialectsTextLong(e->defs[ix].attrib.dialects);
+                if (needcomma && !str.isEmpty())
+                    r += ", ";
+                r += str;
+                needcomma = !str.isEmpty();
+            }
         }
     }
 
