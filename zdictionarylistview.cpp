@@ -2163,7 +2163,6 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
 
         painter->setFont(fs);
 
-
         if (def.attrib.fields != 0)
         {
             str = Strings::wordFieldsText(def.attrib.fields) + " ";
@@ -2178,7 +2177,7 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
 
         if (def.attrib.dialects != 0)
         {
-            str += " " + Strings::wordDialectsText(def.attrib.dialects);
+            str = Strings::wordDialectsText(def.attrib.dialects) + " ";
 
             if (!selected)
                 painter->setPen(Settings::uiColor(ColorSettings::Dialects));
