@@ -535,7 +535,10 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     connect(&popmap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
 
-    ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
+    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr)
+        ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
+    else
+        ui->kanjiStatus->hide();
 }
 
 KanjiSearchWidget::~KanjiSearchWidget()
@@ -832,6 +835,11 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
 
     ignorefilter = false;
     filterKanji(true);
+}
+
+void KanjiSearchWidget::assignStatusBar(ZStatusBar *bar)
+{
+    ui->kanjiGrid->assignStatusBar(bar);
 }
 
 //void KanjiSearchWidget::makeModeSpace(const QSize &size)

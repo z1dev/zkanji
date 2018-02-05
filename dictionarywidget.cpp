@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -113,7 +113,10 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     
     qApp->postEvent(this, new StartEvent());
 
-    ui->wordsTable->assignStatusBar(ui->listStatus);
+    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr)
+        ui->wordsTable->assignStatusBar(ui->listStatus);
+    else
+        ui->listStatus->hide();
 }
 
 DictionaryWidget::~DictionaryWidget()
@@ -239,6 +242,11 @@ void DictionaryWidget::restoreState(const DictionaryWidgetData &data)
     }
 
     updateWords();
+}
+
+void DictionaryWidget::assignStatusBar(ZStatusBar *bar)
+{
+    ui->wordsTable->assignStatusBar(bar);
 }
 
 bool DictionaryWidget::isSavingColumnData() const

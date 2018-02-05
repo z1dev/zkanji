@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -35,6 +35,7 @@ class ZComboBox;
 class QStringListModel;
 class QSignalMapper;
 class QMenu;
+class ZStatusBar;
 struct DictionaryWidgetData;
 enum class SearchMode : uchar;
 enum class BrowseOrder : uchar;
@@ -82,6 +83,8 @@ public:
 
     void saveState(DictionaryWidgetData &data) const;
     void restoreState(const DictionaryWidgetData &data);
+
+    void assignStatusBar(ZStatusBar *bar);
 
     bool isSavingColumnData() const;
     void setSaveColumnData(bool save);

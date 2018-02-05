@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -18,6 +18,7 @@ class GroupBase;
 class WordGroup;
 class QXmlStreamWriter;
 class QXmlStreamReader;
+class ZStatusBar;
 class WordGroupWidget : public QWidget
 {
     Q_OBJECT
@@ -28,6 +29,8 @@ public:
 
     void saveXMLSettings(QXmlStreamWriter &writer) const;
     void loadXMLSettings(QXmlStreamReader &reader);
+
+    void assignStatusBar(ZStatusBar *bar);
 
     //void makeModeSpace(const QSize &size);
 

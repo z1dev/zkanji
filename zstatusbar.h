@@ -83,9 +83,15 @@ private:
 class ZStatusBar : public QStatusBar
 {
     Q_OBJECT
+signals:
+    void assigned() const;
 public:
     ZStatusBar(QWidget *parent = nullptr);
     ~ZStatusBar();
+
+    // Emits the assigned() signal and clears the status bar. Call if the bar was already used
+    // for another widget, and that widget needs to be notified.
+    void assignTo(QObject *newbuddy);
 
     // Number of widgets added to the status bar.
     int size() const;
@@ -140,6 +146,8 @@ private:
 
     // Widgets added to the status bar.
     std::vector<std::pair<StatusTypes, QWidget*>> list;
+
+    QObject *buddy;
 
     typedef QStatusBar  base;
 };

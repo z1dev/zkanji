@@ -398,6 +398,13 @@ ZStatusBar::~ZStatusBar()
 
 }
 
+void ZStatusBar::assignTo(QObject *newbuddy)
+{
+    emit assigned();
+    clear();
+    buddy = newbuddy;
+}
+
 int ZStatusBar::size() const
 {
     return list.size();

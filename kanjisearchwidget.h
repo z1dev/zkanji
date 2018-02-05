@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -94,6 +94,8 @@ class RadicalForm;
 class ZFlowLayout;
 class QXmlStreamWriter;
 class QXmlStreamReader;
+class ZStatusBar;
+
 enum class CommandCategories;
 class KanjiSearchWidget : public QWidget
 {
@@ -109,6 +111,8 @@ public:
 
     void saveState(KanjiFilterData &data) const;
     void restoreState(const KanjiFilterData &data);
+
+    void assignStatusBar(ZStatusBar *bar);
 
     // Clears the kanji search settings.
     void setDictionary(int index);

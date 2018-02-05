@@ -775,7 +775,11 @@ void ZListView::assignStatusBar(ZStatusBar *bar)
         disconnect(status, nullptr, this, nullptr);
     status = bar;
     if (status != nullptr)
+    {
         connect(status, &QObject::destroyed, this, &ZListView::statusDestroyed);
+        status->assignTo(this);
+        connect(status, &ZStatusBar::assigned, this, &ZListView::statusDestroyed);
+    }
 
     updateStatus();
 }
@@ -2537,7 +2541,6 @@ void ZListView::updateStatus()
         return;
     }
     
-
     int scnt = model()->statusCount();
     if ((scnt == 0 && status->size() != 1) || (scnt != 0 && status->size() != scnt + 1))
     {

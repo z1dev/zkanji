@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -18,6 +18,7 @@
 #include "zkanjigridmodel.h"
 #include "ranges.h"
 #include "generalsettings.h"
+#include "zkanjiform.h"
 
 
 //-------------------------------------------------------------
@@ -37,7 +38,10 @@ KanjiGroupWidget::KanjiGroupWidget(QWidget *parent) : base(parent), ui(new Ui::K
 
     ui->splitter->setSizes({ Settings::scaled(150), Settings::scaled(250) });
 
-    ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
+    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr)
+        ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
+    else
+        ui->kanjiStatus->hide();
 }
 
 KanjiGroupWidget::~KanjiGroupWidget()
@@ -64,6 +68,11 @@ void KanjiGroupWidget::loadXMLSettings(QXmlStreamReader &reader)
             ui->splitter->setSizes(sizes);
     }
     reader.skipCurrentElement();
+}
+
+void KanjiGroupWidget::assignStatusBar(ZStatusBar *bar)
+{
+    ui->kanjiGrid->assignStatusBar(bar);
 }
 
 //void KanjiGroupWidget::makeModeSpace(const QSize &size)

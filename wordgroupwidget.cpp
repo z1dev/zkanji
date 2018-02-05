@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -99,8 +99,6 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
 
     connect(ui->continueButton2, &QPushButton::clicked, this, &WordGroupWidget::on_continueButton_clicked);
     connect(ui->abortButton2, &QPushButton::clicked, this, &WordGroupWidget::on_abortButton_clicked);
-
-    //ui->dictWidget->setInflButtonVisible(false);
 }
 
 WordGroupWidget::~WordGroupWidget()
@@ -137,6 +135,11 @@ void WordGroupWidget::loadXMLSettings(QXmlStreamReader &reader)
         else
             reader.skipCurrentElement();
     }
+}
+
+void WordGroupWidget::assignStatusBar(ZStatusBar *bar)
+{
+    ui->dictWidget->assignStatusBar(bar);
 }
 
 //void WordGroupWidget::makeModeSpace(const QSize &size)

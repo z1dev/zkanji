@@ -500,7 +500,7 @@ void ZKanjiWidget::paintEvent(QPaintEvent *e)
     //p.drawRect(rect().adjusted(1, 1, -1, -1));
 
 
-    //QRect r = QRect(0, rect().bottom() - ui->statusbar->height() * 0.5, ui->modeWidget->width() * 0.5, ui->modeWidget->height() * 0.5);
+    //QRect r = QRect(0, rect().bottom() - ui->statusWidget->height() * 0.5, ui->modeWidget->width() * 0.5, ui->modeWidget->height() * 0.5);
     int siz = ui->modeButton->height();
 
     //QLinearGradient grad(r.bottomLeft(), r.topRight());
@@ -593,6 +593,24 @@ void ZKanjiWidget::on_pagesStack_currentChanged(int index)
     // placed in a splitter.
     pol.setHorizontalStretch(index == 3 ? 0 : 1);
     setSizePolicy(pol);
+
+    switch (index)
+    {
+    case 0: // Dictionary
+        ui->dictionary->assignStatusBar(ui->status);
+        break;
+    case 1: // Word groups
+        ui->wordGroups->assignStatusBar(ui->status);
+        break;
+    case 2: // Kanji groups
+        ui->kanjiGroups->assignStatusBar(ui->status);
+        break;
+    case 3: // Kanji search
+        ui->kanjiSearch->assignStatusBar(ui->status);
+        break;
+    default:
+        break;
+    }
 }
 
 void ZKanjiWidget::dictionaryAdded()

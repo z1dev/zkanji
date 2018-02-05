@@ -507,7 +507,11 @@ void ZKanjiGridView::assignStatusBar(ZStatusBar *bar)
         disconnect(status, nullptr, this, nullptr);
     status = bar;
     if (status != nullptr)
+    {
         connect(status, &QObject::destroyed, this, &ZKanjiGridView::statusDestroyed);
+        status->assignTo(this);
+        connect(status, &ZStatusBar::assigned, this, &ZKanjiGridView::statusDestroyed);
+    }
 
     updateStatus();
 }

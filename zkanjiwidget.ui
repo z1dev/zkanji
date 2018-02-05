@@ -149,7 +149,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="statusbar" native="true">
+    <widget class="QWidget" name="statusWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <property name="spacing">
        <number>0</number>
@@ -211,17 +211,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>529</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
+       <widget class="ZStatusBar" name="status" native="true"/>
       </item>
      </layout>
     </widget>
@@ -257,6 +247,12 @@
    <class>ZStackedWidget</class>
    <extends>QStackedWidget</extends>
    <header>zstackedwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QWidget</extends>
+   <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
