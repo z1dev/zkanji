@@ -129,7 +129,7 @@ GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infobloc
 
     //connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterErased, this, &GlobalUI::wordFilterErased);
 
-    connect(qApp, &QApplication::applicationStateChanged, this, &GlobalUI::appStateChanged);
+    //connect(qApp, &QApplication::applicationStateChanged, this, &GlobalUI::appStateChanged);
     connect(qApp, &QApplication::paletteChanged, this, &GlobalUI::applySettings);
     connect(qApp, &QApplication::focusChanged, this, &GlobalUI::appFocusChanged);
     connect(qApp, &QApplication::aboutToQuit, this, &GlobalUI::saveBeforeQuit);
@@ -372,7 +372,7 @@ QWidget* GlobalUI::activeMainForm() const
 void GlobalUI::raiseAndActivate()
 {
     restoreFromTray();
-    qApp->processEvents();
+    //qApp->processEvents();
 
     QWidget *f = activeMainForm();
 
@@ -411,6 +411,8 @@ void GlobalUI::raiseAndActivate()
     if (f == nullptr)
         return;
 
+    f->setWindowState((f->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+    f->show();
     f->raise();
     f->activateWindow();
 }
@@ -718,14 +720,15 @@ void GlobalUI::restoreFromTray()
     trayicon.reset();
     traymenu.reset();
 
-    for (QWidget *w : appwin)
-        w->show();
+    //for (QWidget *w : appwin)
+    //    w->show();
 
-    qApp->processEvents();
+    //qApp->processEvents();
 
     for (QWidget *w : appwin)
     {
-        w->showNormal();
+        w->setWindowState((w->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+        w->show();
         w->raise();
         w->activateWindow();
         disconnect(w, &QWidget::destroyed, this, &GlobalUI::hiddenWindowDestroyed);
@@ -1406,24 +1409,24 @@ void GlobalUI::kanjiInfoLock(bool locked)
     }
 }
 
-void GlobalUI::appStateChanged(Qt::ApplicationState state)
-{
-    if (mainForm() == nullptr)
-        return;
-
-    // Currently the kanji information windows are only StayOnTop when shown on popup windows.
-    // In that case minimizing and restoring the application is not making sense.
-    //if (!mainForm()->windowState().testFlag(Qt::WindowMinimized))
-    //{
-    //    // Change the stay on top state of the visible info windows.
-    //    const QWidgetList wlist = qApp->topLevelWidgets();
-    //    for (QWidget *w : wlist)
-    //    {
-    //        if (w->isVisible() && dynamic_cast<KanjiInfoForm*>(w) != nullptr)
-    //            ((KanjiInfoForm*)w)->setStayOnTop(state == Qt::ApplicationActive);
-    //    }
-    //}
-}
+//void GlobalUI::appStateChanged(Qt::ApplicationState state)
+//{
+//    if (mainForm() == nullptr)
+//        return;
+//
+//     Currently the kanji information windows are only StayOnTop when shown on popup windows.
+//     In that case minimizing and restoring the application is not making sense.
+//    if (!mainForm()->windowState().testFlag(Qt::WindowMinimized))
+//    {
+//        // Change the stay on top state of the visible info windows.
+//        const QWidgetList wlist = qApp->topLevelWidgets();
+//        for (QWidget *w : wlist)
+//        {
+//            if (w->isVisible() && dynamic_cast<KanjiInfoForm*>(w) != nullptr)
+//                ((KanjiInfoForm*)w)->setStayOnTop(state == Qt::ApplicationActive);
+//        }
+//    }
+//}
 
 void GlobalUI::popupClosing()
 {

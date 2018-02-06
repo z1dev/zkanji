@@ -14,6 +14,7 @@
 #include <QSystemTrayIcon>
 #include <QDesktopWidget>
 #include <QStringBuilder>
+#include <QTimer>
 
 #include "zkanjiform.h"
 #include "ui_zkanjiform.h"
@@ -1021,7 +1022,8 @@ void ZKanjiForm::changeEvent(QEvent *e)
         {
             e->ignore();
             qApp->processEvents();
-            gUI->minimizeToTray();
+            QTimer::singleShot(0, gUI, &GlobalUI::minimizeToTray);
+            //gUI->minimizeToTray();
         }
         else
             base::changeEvent(e);

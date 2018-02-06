@@ -302,7 +302,7 @@ private slots:
 
     void kanjiInfoDestroyed();
     void kanjiInfoLock(bool locked);
-    void appStateChanged(Qt::ApplicationState state);
+    //void appStateChanged(Qt::ApplicationState state);
     void popupClosing();
     void mainStateChanged(bool minimized);
     void appFocusChanged(QWidget *lost, QWidget *received);
