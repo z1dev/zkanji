@@ -175,7 +175,7 @@ void ZKanjiForm::saveXMLSettings(QXmlStreamWriter &writer) const
 
         if (mainform)
         {
-            if (windowState().testFlag(Qt::WindowMinimized) && (Settings::general.minimizebehavior == GeneralSettings::DefaultMinimize || gUI->isInTray()))
+            if ((Settings::general.minimizebehavior == GeneralSettings::DefaultMinimize && windowState().testFlag(Qt::WindowMinimized)) || gUI->isInTray())
                 writer.writeAttribute("state", "minimized");
             else if (windowState().testFlag(Qt::WindowMaximized))
                 writer.writeAttribute("state", "maximized");
