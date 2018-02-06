@@ -52,7 +52,7 @@
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="DictionaryWidget" name="dictionary" native="true">
@@ -81,7 +81,7 @@
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="WordGroupWidget" name="wordGroups" native="true">
@@ -110,7 +110,7 @@
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="KanjiGroupWidget" name="kanjiGroups" native="true">
@@ -139,7 +139,7 @@
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="KanjiSearchWidget" name="kanjiSearch" native="true"/>
@@ -174,12 +174,6 @@
         <property name="text">
          <string/>
         </property>
-        <property name="iconSize">
-         <size>
-          <width>18</width>
-          <height>18</height>
-         </size>
-        </property>
         <property name="checked">
          <bool>false</bool>
         </property>
@@ -195,12 +189,6 @@
        <widget class="QToolButton" name="dictButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>18</width>
-          <height>18</height>
-         </size>
         </property>
         <property name="popupMode">
          <enum>QToolButton::InstantPopup</enum>

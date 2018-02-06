@@ -1360,15 +1360,16 @@ void GlobalUI::quit()
 {
     if (mainforms.empty())
         return;
-    if (!mainforms.at(0)->isVisible())
-    {
-        QCloseEvent ce;
-        qApp->sendEvent(mainforms.at(0), &ce);
-        if (ce.isAccepted())
-            qApp->quit();
+    //if (!mainforms.at(0)->isVisible())
+    //{
+        //QCloseEvent ce;
+        //qApp->sendEvent(mainforms.at(0), &ce);
+        //if (ce.isAccepted())
+        saveBeforeQuit();
+        qApp->quit();
         return;
-    }
-    mainforms.at(0)->close();
+    //}
+    //mainforms.at(0)->close();
 }
 
 void GlobalUI::practiceKana()

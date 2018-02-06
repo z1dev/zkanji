@@ -104,7 +104,7 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &ZKanjiForm::dictionaryRenamed);
 
     updateMainMenu();
-    
+
     // Allowing the ZKanjiWidget to calculate correct sizes.
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
@@ -459,7 +459,8 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             ZKanjiWidget *w = new ZKanjiWidget(this);
             w->setMode(ViewModes::WordSearch);
 
-            w->layout()->setMargin(2);
+            w->layout()->setContentsMargins(Settings::scaled(2), Settings::scaled(2), Settings::scaled(2), Settings::scaled(0));
+            //w->layout()->setMargin(Settings::scaled(2));
 
             splitter->addWidget(w);
 
@@ -1017,16 +1018,13 @@ void ZKanjiForm::changeEvent(QEvent *e)
         }
 
         if (totray)
-            e->ignore();
-        else
-            base::changeEvent(e);
-
-        if (totray)
         {
             e->ignore();
             qApp->processEvents();
             gUI->minimizeToTray();
         }
+        else
+            base::changeEvent(e);
 
         return;
     }
@@ -1061,11 +1059,18 @@ void ZKanjiForm::closeEvent(QCloseEvent *e)
             hideDockOverlay();
         }
 
+#ifdef Q_OS_OSX
+        if (!e->spontaneous() || !isVisible())
+        {
+            base::closeEvent(e);
+            return;
+        }
+#endif
         if (!windowState().testFlag(Qt::WindowMinimized) && isVisible() && Settings::general.minimizebehavior == GeneralSettings::TrayOnClose && QSystemTrayIcon::isSystemTrayAvailable())
         {
             emit stateChanged(true);
             e->ignore();
-            qApp->processEvents();
+            //qApp->processEvents();
             gUI->minimizeToTray();
             return;
         }
@@ -1570,7 +1575,7 @@ void ZKanjiForm::dockAt(QPoint lpos, ZKanjiForm *what)
             throw "Passed form must directly hold a ZKanjiWidget object.";
 #else
         kanjiwidget = (ZKanjiWidget*)what->centralWidget()->layout()->itemAt(0)->widget();
-        kanjiwidget->layout()->setMargin(2);
+        kanjiwidget->layout()->setContentsMargins(Settings::scaled(2), Settings::scaled(2), Settings::scaled(2), Settings::scaled(0));
 #endif
     }
 
@@ -1800,17 +1805,11 @@ void ZKanjiForm::dockAt(QPoint lpos, ZKanjiForm *what)
             if (splitter != nullptr)
                 w = splitter;
             else
-            {
-                //// By default the dock menu is disabled for the only widget on the main form.
-                //// It must be enabled to allow floating the widget.
-                //w->setContextMenuPolicy(Qt::DefaultContextMenu);
-
-                w->layout()->setMargin(2);
-            }
+                w->layout()->setContentsMargins(Settings::scaled(2), Settings::scaled(2), Settings::scaled(2), Settings::scaled(0));
 
             QHBoxLayout *l = (QHBoxLayout*)cw->layout();
             splitter = new QSplitter(cw);
-            //splitter->setHandleWidth(1);
+
             splitter->setHandleWidth(Settings::scaled(splitter->handleWidth() * 0.8));
 
             splitter->setChildrenCollapsible(false);
