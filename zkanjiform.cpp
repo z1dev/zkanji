@@ -253,20 +253,24 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     bool ok = false;
 
     QRect geom;
-    {
-        int x = reader.attributes().value("x").toInt(&ok);
-        int y = (ok ? reader.attributes().value("y").toInt(&ok) : -1);
-        int w = (ok ? reader.attributes().value("width").toInt(&ok) : -1);
-        int h = (ok ? reader.attributes().value("height").toInt(&ok) : -1);
+    geom.setLeft(reader.attributes().value("x").toInt(&ok));
+    geom.setTop((ok ? reader.attributes().value("y").toInt(&ok) : -1));
+    geom.setWidth((ok ? reader.attributes().value("width").toInt(&ok) : -1));
+    geom.setHeight((ok ? reader.attributes().value("height").toInt(&ok) : -1));
 
-        if (ok)
-        {
-            geom = QRect(x, y, w, h);
-            resize(QSize(w, h));
-            move(QPoint(x, y));
-            settingsrect = geom;
-        }
-    }
+    if (!ok)
+        geom = QRect();
+
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+    if (!geom.isEmpty())
+        move(geom.topLeft());
+
+    //if (!geom.isEmpty())
+    //{
+    //    resize(geom.size());
+    //    move(geom.topLeft());
+    //    settingsrect = geom;
+    //}
 
     restoremaximized = false;
 
@@ -341,6 +345,19 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
         if (!reader.hasError())
             updateMainMenu();
+
+        if (!geom.isEmpty())
+        {
+            qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+
+            updateGeometry();
+            layout()->invalidate();
+            layout()->activate();
+
+            resize(geom.size());
+            move(geom.topLeft());
+            settingsrect = geom;
+        }
         return;
     }
 
@@ -399,6 +416,19 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
                 if (!reader.hasError())
                     updateMainMenu();
+
+                if (!geom.isEmpty())
+                {
+                    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+
+                    updateGeometry();
+                    layout()->invalidate();
+                    layout()->activate();
+
+                    resize(geom.size());
+                    move(geom.topLeft());
+                    settingsrect = geom;
+                }
                 return;
             }
             continue;
@@ -416,6 +446,19 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
             w->loadXMLSettings(reader);
             reader.skipCurrentElement();
+
+            if (!geom.isEmpty())
+            {
+                qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+
+                updateGeometry();
+                layout()->invalidate();
+                layout()->activate();
+
+                resize(geom.size());
+                move(geom.topLeft());
+                settingsrect = geom;
+            }
             return;
         }
 
@@ -481,6 +524,19 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
     if (!reader.hasError())
         updateMainMenu();
+
+    if (!geom.isEmpty())
+    {
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+
+        updateGeometry();
+        layout()->invalidate();
+        layout()->activate();
+
+        resize(geom.size());
+        move(geom.topLeft());
+        settingsrect = geom;
+    }
 }
 
 bool ZKanjiForm::mainForm() const
@@ -798,13 +854,14 @@ bool ZKanjiForm::event(QEvent *e)
     else if (e->type() == StartEvent::Type())
     {
         // Sent from GlobalUI::createWindow() after the window is shown.
-        settingsrect = QRect(pos(), size()); //geometry();
+        if (isVisible())
+            settingsrect = QRect(pos(), size()); //geometry();
         return true;
     }
     else if (e->type() == SaveSizeEvent::Type())
     {
         // Sent from move and resize events.
-        if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowMinimized))
+        if (isVisible() && !windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowMinimized))
             settingsrect = QRect(pos(), size()); //geometry();
     }
     else if (e->type() == UpdateDictionaryMenuEvent::Type())
@@ -1015,7 +1072,14 @@ void ZKanjiForm::changeEvent(QEvent *e)
             //    return;
             //}
             if (se->oldState().testFlag(Qt::WindowMinimized))
+            {
                 emit stateChanged(false);
+#ifdef Q_OS_WIN
+                move(settingsrect.topLeft());
+                resize(settingsrect.size());
+                //setGeometry(settingsrect);
+#endif
+            }
         }
 
         if (totray)

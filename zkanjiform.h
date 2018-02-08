@@ -91,6 +91,8 @@ class ZKanjiForm : public QMainWindow
     Q_OBJECT
 signals:
     void activated(ZKanjiForm*, bool active);
+    // Signals minimized/restored window state change. Used in GlobalUI to install shortcuts
+    // and remove/set kanji information window.
     void stateChanged(bool minimized);
 public:
     // Constructs a form with a newly created ZKanjiWidget. Set mainform to true for the first
