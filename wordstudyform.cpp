@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -1195,7 +1195,10 @@ bool WordStudyForm::showNext()
             edit->clear();
             ui->recognizeButton->setVisible((wquestion & (int)WordPartBits::Kanji) != 0);
             if ((wquestion & (int)WordPartBits::Kanji) != 0)
+            {
                 installRecognizer(ui->recognizeButton, ui->kanaAnswerEdit, RecognizerPosition::StartBelow);
+                RecognizerForm::clear();
+            }
             else
                 uninstallRecognizer(ui->recognizeButton, ui->kanaAnswerEdit);
 
@@ -1281,7 +1284,10 @@ bool WordStudyForm::showNext()
                 ui->kanaAnswerEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
                 ui->recognizeButton->setVisible(wquestion == (int)WordPartBits::Kanji);
                 if (wquestion == (int)WordPartBits::Kanji)
+                {
                     installRecognizer(ui->recognizeButton, ui->kanaAnswerEdit, RecognizerPosition::StartBelow);
+                    RecognizerForm::clear();
+                }
                 else
                     uninstallRecognizer(ui->recognizeButton, ui->kanaAnswerEdit);
 

@@ -195,6 +195,10 @@ public:
     static void install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPosition pos = RecognizerPosition::Above);
     static void uninstall(QToolButton *btn);
 
+    // Clears the current drawing from the recognizer area, if the RecognizerForm instance
+    // exists.
+    static void clear();
+
     static void popup(QToolButton *btn);
 
     public slots:
@@ -247,7 +251,7 @@ private:
     // The line edit installed with the pressed button that showed the form.
     static ZKanaLineEdit *edit;
 
-    // Safety flag to know that the editor's dictionaryChange() event is currently donnected
+    // Safety flag to know that the editor's dictionaryChange() event is currently connected
     // to the recognizer or not. Only for error detection.
     static bool connected;
 
