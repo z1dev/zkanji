@@ -251,9 +251,8 @@ private:
     // The line edit installed with the pressed button that showed the form.
     static ZKanaLineEdit *edit;
 
-    // Safety flag to know that the editor's dictionaryChange() event is currently connected
-    // to the recognizer or not. Only for error detection.
-    static bool connected;
+    // The editor which has a dictionary changed slot currently connected to the recognizer.
+    static ZKanaLineEdit *connected;
 
     typedef ZWindow base;
 

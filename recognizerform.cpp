@@ -470,7 +470,7 @@ std::map<ZKanaLineEdit*, QToolButton*> RecognizerForm::editforbuttons;
 CandidateKanjiScrollerModel *RecognizerForm::candidates = nullptr;
 QToolButton *RecognizerForm::button = nullptr;
 ZKanaLineEdit *RecognizerForm::edit = nullptr;
-bool RecognizerForm::connected = false;
+ZKanaLineEdit *RecognizerForm::connected = nullptr;
 RecognizerObject *RecognizerForm::p = nullptr;
 
 RecognizerForm::RecognizerForm(QWidget *parent) : base(parent, Qt::WindowDoesNotAcceptFocus), ui(new Ui::RecognizerForm)
@@ -521,7 +521,7 @@ RecognizerForm::~RecognizerForm()
 {
     delete ui;
     instance = nullptr;
-    RecognizerForm::connected = false;
+    RecognizerForm::connected = nullptr;
 }
 
 void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPosition pos)
@@ -576,9 +576,11 @@ void RecognizerForm::popup(QToolButton *btn)
         if (button != nullptr)
             button->setChecked(false);
 
-        if (connected)
-            disconnect(edit, &ZKanaLineEdit::dictionaryChanged, instance, &RecognizerForm::editorDictionaryChanged);
-        connected = false;
+        if (connected != nullptr && connected != ed)
+        {
+            disconnect(connected, &ZKanaLineEdit::dictionaryChanged, instance, &RecognizerForm::editorDictionaryChanged);
+            connected = nullptr;
+        }
 
         instance->hide();
 
@@ -605,6 +607,9 @@ void RecognizerForm::popup(QToolButton *btn)
     ed->setFocus();
 
     qApp->postEvent(p, new RecognizerPopupEvent(btn, ed, it->second.second));
+
+    if (it->second.second == RecognizerPosition::StartBelow || it->second.second == RecognizerPosition::StartAbove)
+        it->second.second = RecognizerPosition::SavedPos;
 }
 
 void RecognizerForm::on_gridButton_toggled(bool checked)
@@ -730,15 +735,10 @@ void RecognizerForm::hideEvent(QHideEvent *e)
 
         qApp->postEvent(p, new RecognizerHiddenEvent);
 
-        if (connected)
+        if (connected != nullptr)
         {
-            auto it = controls.find(button);
-            if (it == controls.end())
-                return;
-
-            ZKanaLineEdit *ed = it->second.first;
-            disconnect(ed, &ZKanaLineEdit::dictionaryChanged, RecognizerForm::instance, &RecognizerForm::editorDictionaryChanged);
-            connected = false;
+            disconnect(connected, &ZKanaLineEdit::dictionaryChanged, RecognizerForm::instance, &RecognizerForm::editorDictionaryChanged);
+            connected = nullptr;
         }
     }
 }
@@ -823,9 +823,12 @@ void RecognizerForm::douninstall(QToolButton *btn, bool destroyed)
         if (!destroyed && button != nullptr)
             button->setChecked(false);
 
-        if (!destroyed && connected && edit != nullptr)
-            disconnect(edit, &ZKanaLineEdit::dictionaryChanged, instance, &RecognizerForm::editorDictionaryChanged);
-        connected = false;
+        if (!destroyed && connected == it->second.first)
+        {
+            disconnect(connected, &ZKanaLineEdit::dictionaryChanged, instance, &RecognizerForm::editorDictionaryChanged);
+            connected = nullptr;
+        }
+
         button = nullptr;
         edit = nullptr;
     }
@@ -873,7 +876,7 @@ bool RecognizerObject::event(QEvent *e)
         if (RecognizerForm::instance == nullptr)
             RecognizerForm::instance = new RecognizerForm();
 
-        if (RecognizerForm::connected)
+        if (RecognizerForm::connected != nullptr)
         {
             // Qt terminates the program on exceptions in event handlers. If this line is hit
             // it is a bug, so termination is a good idea.
@@ -881,7 +884,7 @@ bool RecognizerObject::event(QEvent *e)
         }
 
         connect(ed, &ZKanaLineEdit::dictionaryChanged, RecognizerForm::instance, &RecognizerForm::editorDictionaryChanged);
-        RecognizerForm::connected = true;
+        RecognizerForm::connected = ed;
 
         RecognizerForm::instance->setParent(btn->window());
         RecognizerForm::instance->ui->candidateScroller->setDictionary(ed != nullptr ? ed->dictionary() : nullptr);
@@ -925,16 +928,16 @@ bool RecognizerObject::event(QEvent *e)
             // otherwise move only as much as needed.
             newleft = std::min(r.right() - siz.width() - 4 /*- dif.left() - dif.right()*/, br.left() /*+ dif.left()*/);
 
-            if (pos == RecognizerPosition::StartBelow || pos == RecognizerPosition::StartAbove)
-                pos = RecognizerPosition::SavedPos;
+            //if (pos == RecognizerPosition::StartBelow || pos == RecognizerPosition::StartAbove)
+            //    pos = RecognizerPosition::SavedPos;
 
             RecognizerForm::instance->setGeometry(QRect(newleft, newtop, siz.width(), siz.height()));
-
-            RecognizerForm::instance->button = btn;
-            RecognizerForm::instance->edit = ed;
         }
         else
             RecognizerForm::instance->setGeometry(RecognizerForm::instance->resizing((int)GrabSide::Bottom, Settings::recognizer.rect));
+
+        RecognizerForm::instance->button = btn;
+        RecognizerForm::instance->edit = ed;
 
         RecognizerForm::instance->show();
 

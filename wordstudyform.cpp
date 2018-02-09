@@ -334,6 +334,8 @@ WordStudyForm::WordStudyForm(QWidget *parent) :
     connect(ui->quitButton, &QPushButton::clicked, this, &WordStudyForm::close);
     connect(ui->pauseButton, &QPushButton::clicked, this, &WordStudyForm::suspend);
     connect(ui->resumeButton, &QPushButton::clicked, this, &WordStudyForm::resume);
+
+    installRecognizer(ui->recognizeButton, ui->kanaAnswerEdit, RecognizerPosition::StartBelow);
 }
 
 WordStudyForm::~WordStudyForm()
@@ -1196,11 +1198,10 @@ bool WordStudyForm::showNext()
             ui->recognizeButton->setVisible((wquestion & (int)WordPartBits::Kanji) != 0);
             if ((wquestion & (int)WordPartBits::Kanji) != 0)
             {
-                installRecognizer(ui->recognizeButton, ui->kanaAnswerEdit, RecognizerPosition::StartBelow);
                 RecognizerForm::clear();
             }
-            else
-                uninstallRecognizer(ui->recognizeButton, ui->kanaAnswerEdit);
+            //else
+            //    uninstallRecognizer(ui->recognizeButton, ui->kanaAnswerEdit);
 
             ui->kanaAnswerEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
             ui->kanaAnswerEdit->setValidator((wquestion & (int)WordPartBits::Kanji) != 0 ? &japaneseValidator() : &kanaValidator());
@@ -1285,11 +1286,11 @@ bool WordStudyForm::showNext()
                 ui->recognizeButton->setVisible(wquestion == (int)WordPartBits::Kanji);
                 if (wquestion == (int)WordPartBits::Kanji)
                 {
-                    installRecognizer(ui->recognizeButton, ui->kanaAnswerEdit, RecognizerPosition::StartBelow);
+                    //installRecognizer(ui->recognizeButton, ui->kanaAnswerEdit, RecognizerPosition::StartBelow);
                     RecognizerForm::clear();
                 }
-                else
-                    uninstallRecognizer(ui->recognizeButton, ui->kanaAnswerEdit);
+                //else
+                //    uninstallRecognizer(ui->recognizeButton, ui->kanaAnswerEdit);
 
                 ui->kanaAnswerEdit->setValidator((wquestion == (int)WordPartBits::Kanji) ? &japaneseValidator() : (wquestion == (int)WordPartBits::Kana) ? &kanaValidator() : nullptr);
                 ui->answerStack->setCurrentWidget(ui->textPage);
