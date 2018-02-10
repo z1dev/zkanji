@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -310,19 +310,11 @@ void PopupDictionary::floatWindow(bool dofloat)
     ignoreresize = true;
     if (!dofloat)
     {
-        //// The native window must be destroyed because Qt incorrectly updates the geometry
-        //// after removing/adding a frame with setWindowFlags().
-        //QWindow *natwin = windowHandle();
-        //if (natwin)
-        //    natwin->destroy();
-
-        //setWindowFlags(Qt::Window |
-        //    // TODO: test on linux to see if this flag is needed, and if so whether it breaks current functionality.
-        //    //Qt::X11BypassWindowManagerHint |
-        //    Qt::FramelessWindowHint | /*Qt::CustomizeWindowHint |*/ Qt::WindowStaysOnTopHint);
+        QWindow *natwin = windowHandle();
+        if (natwin)
+            natwin->destroy();
 
         ui->dictionary->addBackWidget(ui->controlWidget);
-        //ui->captionWidget->setVisible(false);
 
         setBorderStyle(BorderStyle::Docked);
 
@@ -349,15 +341,10 @@ void PopupDictionary::floatWindow(bool dofloat)
     }
     else
     {
-        //// The native window must be destroyed because Qt incorrectly updates the geometry
-        //// after removing/adding a frame with setWindowFlags().
-        //QWindow *natwin = windowHandle();
-        //if (natwin)
-        //    natwin->destroy();
+        QWindow *natwin = windowHandle();
+        if (natwin)
+            natwin->destroy();
 
-        //setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
-
-        //ui->captionWidget->setVisible(true);
         ui->captionLayout->addWidget(ui->controlWidget);
 
         setBorderStyle(BorderStyle::Resizable);
