@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -9,6 +9,8 @@
 #include <QtSvg>
 #include <QSvgRenderer>
 #include <QByteArray>
+#include <QDesktopWidget>
+#include <QApplication>
 
 #include "kanjiinfoform.h"
 #include "ui_kanjiinfoform.h"
@@ -194,6 +196,7 @@ void KanjiInfoForm::saveState(KanjiInfoData &data) const
 {
     data.siz = isMaximized() ? normalGeometry().size() : rect().size();
     data.pos = geometry().topLeft();
+    data.screenpos = qApp->desktop()->screenGeometry(this).topLeft();
 
     int h = data.siz.height();
     if (ui->sodWidget->isVisibleTo(this))
@@ -294,18 +297,12 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     else
         dicth = data.dicth;
 
-    //if (kindex >= 0 && data.words)
-        ui->splitter->setSizes({ data.toph, dicth });
+    ui->splitter->setSizes({ data.toph, dicth });
 
-    if (data.siz.isValid())
+    QRect geom = QRect(data.pos, data.siz);
+    if (geom.size().isValid())
     {
-        //setAttribute(Qt::WA_DontShowOnScreen, true);
-        //show();
-        //hide();
-        //setAttribute(Qt::WA_DontShowOnScreen, false);
-
-        QSize siz = data.siz;
-        int h = siz.height();
+        int h = geom.height();
         if (ui->sodWidget->isVisibleTo(this))
         {
             ui->sodWidget->adjustSize();
@@ -331,11 +328,44 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
             ui->dictWidget->adjustSize();
             h += dicth + ui->splitter->handleWidth();
         }
-        siz.setHeight(h);
-        resize(siz);
+        geom.setHeight(h);
+        //resize(siz);
     }
-    if (!data.pos.isNull())
-        move(data.pos);
+    else
+        geom.setSize(geometry().size());
+
+    int screennum = screenNumber(QRect(data.pos.isNull() ? geometry().topLeft() : data.pos, geom.size()));
+    QRect sg;
+    if (screennum == -1)
+    {
+        screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
+        sg = qApp->desktop()->screenGeometry(screennum);
+        if (!data.screenpos.isNull() && !data.pos.isNull())
+            geom.moveTo(sg.topLeft() + (data.pos - data.screenpos));
+        else
+            geom.moveTo(sg.center() - QPoint(geom.width() / 2, geom.height() / 2));
+    }
+    else
+        sg = qApp->desktop()->screenGeometry(screennum);
+
+    // Geometry might be out of bounds. Move window within bounds.
+
+    if (geom.left() < sg.left())
+        geom.moveLeft(sg.left());
+    else if (geom.left() + geom.width() > sg.left() + sg.width())
+        geom.moveLeft(sg.left() + sg.width() - geom.width());
+    if (geom.top() < sg.top())
+        geom.moveTop(sg.top());
+    else if (geom.top() + geom.height() > sg.top() + sg.height())
+        geom.moveTop(sg.top() + sg.height() - geom.height());
+    if (geom.width() > std::min(sg.width(), sg.height()))
+        geom.setWidth(std::min(sg.width(), sg.height()));
+    if (geom.height() > std::min(sg.height(), sg.height()))
+        geom.setHeight(std::min(sg.height(), sg.height()));
+
+    //move(p);
+    setGeometry(geom);
+    resize(geom.size());
 
     ignoreresize = false;
     _resized(true);

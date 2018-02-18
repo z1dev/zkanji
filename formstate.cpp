@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -9,6 +9,8 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QStringBuilder>
+#include <QDesktopWidget>
+#include <QScreen>
 
 #include "formstate.h"
 #include "settings.h"
@@ -19,6 +21,8 @@
 #include "zstudylistmodel.h"
 #include "kanapracticesettingsform.h"
 #include "wordstudylistform.h"
+#include "zui.h"
+#include "globalui.h"
 
 
 //-------------------------------------------------------------
@@ -36,7 +40,7 @@ namespace FormStates
 
     bool emptyState(const SplitterFormData &data)
     {
-        return data.pos.isNull() && !data.siz.isValid();
+        return data.pos.isNull() && data.screenpos.isNull() && !data.siz.isValid();
     }
 
     bool emptyState(const CollectFormData &data)
@@ -90,6 +94,8 @@ namespace FormStates
     {
         writer.writeAttribute("x", QString::number(data.pos.x()));
         writer.writeAttribute("y", QString::number(data.pos.y()));
+        writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
+        writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
         writer.writeAttribute("width", QString::number(data.siz.width()));
         writer.writeAttribute("height", QString::number(data.siz.height()));
 
@@ -102,11 +108,17 @@ namespace FormStates
         bool ok = false;
         int x;
         int y;
+        int sx;
+        int sy;
         int w;
         int h;
         x = reader.attributes().value("x").toInt(&ok);
         if (ok)
             y = reader.attributes().value("y").toInt(&ok);
+        if (ok)
+            sx = reader.attributes().value("screenx").toInt(&ok);
+        if (ok)
+            sy = reader.attributes().value("screeny").toInt(&ok);
         if (ok)
             w = reader.attributes().value("width").toInt(&ok);
         if (ok)
@@ -115,11 +127,13 @@ namespace FormStates
         if (ok)
         {
             data.pos = QPoint(x, y);
+            data.screenpos = QPoint(sx, sy);
             data.siz = QSize(w, h);
         }
         else
         {
             data.pos = QPoint();
+            data.screenpos = QPoint();
             data.siz = QSize();
         }
 
@@ -472,6 +486,11 @@ namespace FormStates
             writer.writeAttribute("x", QString::number(data.pos.x()));
             writer.writeAttribute("y", QString::number(data.pos.y()));
         }
+        if (!data.screenpos.isNull())
+        {
+            writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
+            writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
+        }
 
         writer.writeAttribute("grid", data.grid ? True : False);
         writer.writeAttribute("sod", data.sod ? True : False);
@@ -543,6 +562,25 @@ namespace FormStates
         }
         if (!ok)
             data.pos = QPoint();
+
+        if (reader.attributes().hasAttribute("screenx"))
+        {
+            val = reader.attributes().value("screenx").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screenpos.setX(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screeny"))
+        {
+            val = reader.attributes().value("screeny").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screenpos.setY(val);
+        }
+        if (!ok)
+            data.screenpos = QPoint();
 
         data.grid = reader.attributes().value("grid") == True;
         data.sod = reader.attributes().value("sod") == True;
@@ -1082,6 +1120,10 @@ namespace FormStates
             data.wsizes[1] = -1;
 
         data.pos = window->pos();
+
+        QRect sg = qApp->desktop()->screenGeometry(window);
+        data.screenpos = sg.topLeft();
+
         data.siz = window->isMaximized() ? window->normalGeometry().size() : window->size();
 
         // Saving the size of widgets in the splitter.
@@ -1109,11 +1151,26 @@ namespace FormStates
             return;
 
         SplitterFormData &data = it->second;
-        if (data.pos.isNull() || !data.siz.isValid())
+        if (data.pos.isNull() || data.screenpos.isNull() || !data.siz.isValid())
+        {
+            // Move window to same screen as the current visible main window.
+            int screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
+            int windownum = qApp->desktop()->screenNumber(window);
+            if (screennum != windownum)
+            {
+                QRect sg = qApp->screens().at(screennum)->geometry();
+                if (windownum != -1)
+                    window->move((window->geometry().topLeft() - qApp->screens().at(windownum)->geometry().topLeft()) + sg.topLeft());
+                else
+                    window->move(window->pos() + (sg.center() - window->geometry().center()) );
+            }
+
             return;
+        }
 
         //QRect r = data.geom;
         QPoint pos = data.pos;
+        QPoint spos = data.screenpos;
         QSize siz = data.siz;
 
         if (splitter->widget(1)->isVisibleTo(window))
@@ -1133,17 +1190,39 @@ namespace FormStates
             else
                 siz.setHeight(siz.height() + splitter->handleWidth() + data.wsizes[1]);
 
-            window->resize(siz);
-            window->move(pos);
-
-            splitter->setSizes({ data.wsizes[0], data.wsizes[1] });
-            return;
         }
 
         window->resize(siz);
+
+        QRect sg;
+
+        int screennum = screenNumber(QRect(pos, siz));
+        if (screennum == -1)
+        {
+            screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
+            sg = qApp->screens().at(screennum)->geometry();
+            pos = (data.pos - data.screenpos) + sg.topLeft();
+        }
+        else
+            sg = qApp->screens().at(screennum)->geometry();
+
+        // Geometry might be out of bounds. Move window within bounds.
+
+        if (pos.x() < sg.left())
+            pos.setX(sg.left());
+        else if (pos.x() + siz.width() > sg.left() + sg.width())
+            pos.setX(sg.left() + sg.width() - siz.width());
+        if (pos.y() < sg.top())
+            pos.setY(sg.top());
+        else if (pos.y() + siz.height() > sg.top() + sg.height())
+            pos.setY(sg.top() + sg.height() - siz.height());
+
         window->move(pos);
 
-        splitter->setSizes({ data.wsizes[0] });
+        if (splitter->widget(1)->isVisibleTo(window))
+            splitter->setSizes({ data.wsizes[0], data.wsizes[1] });
+        else
+            splitter->setSizes({ data.wsizes[0] });
     }
 }
 

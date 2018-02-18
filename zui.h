@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -236,6 +236,10 @@ QPixmap triangleImage(const QPixmap &img);
 // Because that function works with pre-scaled image, siz must be scaled.
 QSize triangleSize(const QSize &siz);
 
+// Index of screen holding r rectangle, or -1 if no screen intersects with r. When multiple
+// screens intersect the rectangle, the first one with the highest intersecting area is
+// returned.
+int screenNumber(const QRect &r);
 
 enum class Flags { FromJapanese, ToJapanese, Flag, Browse };
 namespace ZKanji

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -822,6 +822,29 @@ QSize triangleSize(const QSize &siz)
     int striPH = Settings::scaled(_triPH);
     int striPV = Settings::scaled(_triPV);
     return QSize(siz.width() + striS + striPH, siz.height() + striPV);
+}
+
+int screenNumber(const QRect &r)
+{
+    QList<QScreen*> screens = qApp->screens();
+
+    // Result screen number.
+    int res = -1;
+
+    // Area of intersection between rect r and screen geometry.
+    int area = 0;
+
+    for (int ix = 0, siz = screens.size(); ix != siz; ++ix)
+    {
+        QRect g = screens.at(ix)->geometry().intersected(r);
+        if (area == 0 || g.width() * g.height() > area)
+        {
+            area = g.width() * g.height();
+            res = ix;
+        }
+    }
+
+    return res;
 }
 
 //void renderFromSvg(QPainter &dest, QString svgpath, QRect r)

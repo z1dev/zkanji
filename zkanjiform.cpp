@@ -13,6 +13,7 @@
 #include <QXmlStreamReader>
 #include <QSystemTrayIcon>
 #include <QDesktopWidget>
+#include <QScreen>
 #include <QStringBuilder>
 #include <QTimer>
 
@@ -250,6 +251,11 @@ void ZKanjiForm::saveXMLSettings(QXmlStreamWriter &writer) const
 
 void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 {
+    // Qt incorrectly(?) sends size and move events for a previous size and position after
+    // startup, and never posts events sent right afterwards. We need to process events here,
+    // or the window size and position won't be loaded.
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+
     bool ok = false;
 
     QRect geom;
@@ -261,9 +267,36 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     if (!ok)
         geom = QRect();
 
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
     if (!geom.isEmpty())
+    {
+        setAttribute(Qt::WA_DontShowOnScreen);
+        show();
+
+        QSize framesize = frameGeometry().size() - geometry().size();
+
+        hide();
+        setAttribute(Qt::WA_DontShowOnScreen, false);
+
+        // Find the screen that contains the window.
+
+        int screennum = screenNumber(QRect(geom.topLeft(), geom.size() + framesize));
+        QRect sg = qApp->desktop()->screenGeometry(screennum);
+
+        if (geom.left() + geom.width() + framesize.width() > sg.left() + sg.width())
+            geom.moveLeft(std::max(sg.left(), sg.left() + sg.width() - geom.width() - framesize.width()));
+        else if (geom.left() < sg.left())
+            geom.moveLeft(sg.left());
+        if (geom.top() + geom.height() + framesize.height() > sg.top() + sg.height())
+            geom.moveTop(std::max(sg.top(), sg.top() + sg.height() - geom.height() - framesize.height()));
+        else if (geom.top() < sg.top())
+            geom.moveTop(sg.top());
+        if (geom.width() + framesize.width() > sg.width())
+            geom.setWidth(sg.width() - framesize.width());
+        if (geom.height() + framesize.height() > sg.height())
+            geom.setHeight(sg.height() - framesize.height());
+
         move(geom.topLeft());
+    }
 
     //if (!geom.isEmpty())
     //{

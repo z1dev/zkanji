@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -25,6 +25,8 @@ struct SplitterFormData
 {
     // Top left corner of the window with frame.
     QPoint pos;
+    // Position of window on their screen.
+    QPoint screenpos;
     // Size of the window geometry without frame.
     QSize siz;
     // Splitter widget sizes.
@@ -97,6 +99,9 @@ struct KanjiInfoData
 
     // Position of the window.
     QPoint pos;
+
+    // Position of window on their screen.
+    QPoint screenpos;
 
     bool grid = true;
     bool sod = true;
