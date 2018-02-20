@@ -169,10 +169,15 @@ void ZKanjiForm::saveXMLSettings(QXmlStreamWriter &writer) const
 {
     if (settingsrect.isValid())
     {
+        int snum = screenNumber(settingsrect);
+        QRect sg = qApp->desktop()->screenGeometry(snum);
+
         writer.writeAttribute("x", QString::number(settingsrect.left()));
         writer.writeAttribute("y", QString::number(settingsrect.top()));
         writer.writeAttribute("width", QString::number(settingsrect.width()));
         writer.writeAttribute("height", QString::number(settingsrect.height()));
+        writer.writeAttribute("screenx", QString::number(sg.left()));
+        writer.writeAttribute("screeny", QString::number(sg.top()));
 
         if (mainform)
         {
@@ -264,6 +269,19 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     geom.setWidth((ok ? reader.attributes().value("width").toInt(&ok) : -1));
     geom.setHeight((ok ? reader.attributes().value("height").toInt(&ok) : -1));
 
+    int screenx = -1;
+    int screeny = -1;
+
+    screenx = reader.attributes().value("screenx").toInt(&ok);
+    if (!ok)
+        screenx = -1;
+    else
+    {
+        screeny = reader.attributes().value("screeny").toInt(&ok);
+        if (!ok)
+            screeny = -1;
+    }
+
     if (!ok)
         geom = QRect();
 
@@ -281,6 +299,8 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
         int screennum = screenNumber(QRect(geom.topLeft(), geom.size() + framesize));
         QRect sg = qApp->desktop()->screenGeometry(screennum);
+        if (screennum == -1 && screenx != -1 && screeny != -1)
+            geom.moveTo(sg.topLeft() + QPoint(geom.left() - screenx, geom.top() - screeny));
 
         if (geom.left() + geom.width() + framesize.width() > sg.left() + sg.width())
             geom.moveLeft(std::max(sg.left(), sg.left() + sg.width() - geom.width() - framesize.width()));

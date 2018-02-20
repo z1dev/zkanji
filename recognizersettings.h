@@ -15,10 +15,6 @@ struct RecognizerSettings
     bool savesize = true;
     // Save and restore the last set position of the recognizer window.
     bool saveposition = false;
-
-    // Lasted saved geometry rectangle of the handwriting recognizer. When the recognizer is
-    // shown near the button, only the size of the rectangle is used.
-    QRect rect = QRect();
 };
 
 namespace Settings

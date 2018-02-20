@@ -194,8 +194,9 @@ bool KanjiInfoForm::loadXMLSettings(QXmlStreamReader &reader)
 
 void KanjiInfoForm::saveState(KanjiInfoData &data) const
 {
-    data.siz = isMaximized() ? normalGeometry().size() : rect().size();
-    data.pos = geometry().topLeft();
+    QRect g = geometry();
+    data.siz = isMaximized() ? normalGeometry().size() : g.size();
+    data.pos = g.topLeft();
     data.screenpos = qApp->desktop()->screenGeometry(this).topLeft();
 
     int h = data.siz.height();
@@ -334,7 +335,7 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     else
         geom.setSize(geometry().size());
 
-    int screennum = screenNumber(QRect(data.pos.isNull() ? geometry().topLeft() : data.pos, geom.size()));
+    int screennum = data.pos.isNull() ? -1 : screenNumber(QRect(data.pos, geom.size()));
     QRect sg;
     if (screennum == -1)
     {
@@ -363,8 +364,7 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     if (geom.height() > std::min(sg.height(), sg.height()))
         geom.setHeight(std::min(sg.height(), sg.height()));
 
-    //move(p);
-    setGeometry(geom);
+    move(geom.topLeft());
     resize(geom.size());
 
     ignoreresize = false;

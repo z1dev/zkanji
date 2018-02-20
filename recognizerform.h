@@ -20,6 +20,7 @@ namespace Ui {
 }
 
 class QStylePainter;
+struct RecognizerFormData;
 class RecognizerArea : public QFrame
 {
     Q_OBJECT
@@ -200,8 +201,7 @@ public:
     static void clear();
 
     static void popup(QToolButton *btn);
-
-    public slots:
+public slots:
     void on_gridButton_toggled(bool checked);
     void on_generalButton_toggled(bool checked);
     void on_clearButton_clicked();
@@ -225,6 +225,9 @@ protected:
 private:
     RecognizerForm(QWidget *parent = nullptr);
     ~RecognizerForm();
+
+    void saveState(RecognizerFormData &data);
+    void restoreState(const RecognizerFormData &data);
 
     static void douninstall(QToolButton *btn, bool destroyed);
 

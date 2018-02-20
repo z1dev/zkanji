@@ -27,6 +27,7 @@
 #include "colorsettings.h"
 #include "globalui.h"
 #include "generalsettings.h"
+#include "formstate.h"
 
 
 //-------------------------------------------------------------
@@ -503,6 +504,8 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent, Qt::WindowDoesNot
     connect(qApp, &QApplication::focusChanged, this, &RecognizerForm::appFocusChanged);
     connect(qApp, &QGuiApplication::applicationStateChanged, this, &RecognizerForm::appStateChanged);
 
+    connect(gUI, &GlobalUI::beforeSave, [this]() { saveState(FormStates::recognizer); });
+
     // "Show" once so the window sizes can be retrieved later.
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
@@ -517,13 +520,29 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent, Qt::WindowDoesNot
     // This doesn't work on Linux. Only use the Qt::WindowDoesNotAcceptFocus window flag.
     setAttribute(Qt::WA_ShowWithoutActivating);
 #endif
+
+    restoreState(FormStates::recognizer);
 }
 
 RecognizerForm::~RecognizerForm()
 {
+    saveState(FormStates::recognizer);
+
     delete ui;
     instance = nullptr;
     RecognizerForm::connected = nullptr;
+}
+
+void RecognizerForm::saveState(RecognizerFormData &data)
+{
+    data.showgrid = ui->gridButton->isChecked();
+    data.allresults = ui->generalButton->isChecked();
+}
+
+void RecognizerForm::restoreState(const RecognizerFormData &data)
+{
+    ui->gridButton->setChecked(data.showgrid);
+    ui->generalButton->setChecked(data.allresults);
 }
 
 void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPosition pos)
@@ -860,7 +879,8 @@ void RecognizerForm::savePosition()
     //if (it == controls.end())
     //    return;
 
-    Settings::recognizer.rect = geometry();
+    FormStates::recognizer.rect = geometry();
+    FormStates::recognizer.screenpos = qApp->desktop()->screenGeometry(this).topLeft();
 }
 
 
@@ -890,51 +910,53 @@ bool RecognizerObject::event(QEvent *e)
 
         RecognizerForm::instance->setParent(btn->window());
         RecognizerForm::instance->ui->candidateScroller->setDictionary(ed != nullptr ? ed->dictionary() : nullptr);
+        QRect sg;
 
-        if (!Settings::recognizer.rect.isEmpty() && (Settings::recognizer.saveposition || pos == RecognizerPosition::SavedPos))
+        if (!FormStates::recognizer.rect.isEmpty() && (Settings::recognizer.saveposition || pos == RecognizerPosition::SavedPos))
         {
             if (!Settings::recognizer.savesize)
-                Settings::recognizer.rect.setSize(QSize(Settings::scaled(300), Settings::scaled(300)));
+                FormStates::recognizer.rect.setSize(QSize(Settings::scaled(300), Settings::scaled(300)));
 
-            QRect geom = RecognizerForm::instance->resizing((int)GrabSide::Bottom, Settings::recognizer.rect);
+            QRect geom = RecognizerForm::instance->resizing((int)GrabSide::Bottom, FormStates::recognizer.rect);
             int screennum = screenNumber(geom);
             if (screennum == -1)
-                Settings::recognizer.rect = QRect();
-            else
             {
-                QRect sg = qApp->screens().at(screennum)->geometry();
-
-                // Geometry might be out of bounds. Move window within bounds.
-
-                if (geom.left() < sg.left())
-                    geom.moveLeft(sg.left());
-                else if (geom.left() + geom.width() > sg.left() + sg.width())
-                    geom.moveLeft(sg.left() + sg.width() - geom.width());
-                if (geom.top() < sg.top())
-                    geom.moveTop(sg.top());
-                else if (geom.top() + geom.height() > sg.top() + sg.height())
-                    geom.moveTop(sg.top() + sg.height() - geom.height());
-                if (geom.width() > std::min(sg.width(), sg.height()))
-                    geom.setWidth(std::min(sg.width(), sg.height()));
-                if (geom.height() > std::min(sg.height(), sg.height()))
-                    geom.setHeight(std::min(sg.height(), sg.height()));
-
-                geom = RecognizerForm::instance->resizing((int)GrabSide::Bottom, geom);
-
-                RecognizerForm::instance->setGeometry(geom);
+                sg = qApp->desktop()->screenGeometry(btn->window());
+                geom.moveTo(geom.topLeft() - FormStates::recognizer.screenpos);
             }
+            else
+                sg = qApp->screens().at(screennum)->geometry();
+
+            // Geometry might be out of bounds. Move window within bounds.
+
+            if (geom.left() < sg.left())
+                geom.moveLeft(sg.left());
+            else if (geom.left() + geom.width() > sg.left() + sg.width())
+                geom.moveLeft(sg.left() + sg.width() - geom.width());
+            if (geom.top() < sg.top())
+                geom.moveTop(sg.top());
+            else if (geom.top() + geom.height() > sg.top() + sg.height())
+                geom.moveTop(sg.top() + sg.height() - geom.height());
+            if (geom.width() > std::min(sg.width(), sg.height()))
+                geom.setWidth(std::min(sg.width(), sg.height()));
+            if (geom.height() > std::min(sg.height(), sg.height()))
+                geom.setHeight(std::min(sg.height(), sg.height()));
+
+            geom = RecognizerForm::instance->resizing((int)GrabSide::Bottom, geom);
+
+            RecognizerForm::instance->setGeometry(geom);
         }
 
-        if (Settings::recognizer.rect.isEmpty())
+        if (FormStates::recognizer.rect.isEmpty())
             pos = RecognizerPosition::Above;
 
-        if ((Settings::recognizer.rect.isEmpty() || !Settings::recognizer.saveposition) && (pos == RecognizerPosition::Below || pos == RecognizerPosition::Above || pos == RecognizerPosition::StartBelow || pos == RecognizerPosition::StartAbove))
+        if ((FormStates::recognizer.rect.isEmpty() || !Settings::recognizer.saveposition) && (pos == RecognizerPosition::Below || pos == RecognizerPosition::Above || pos == RecognizerPosition::StartBelow || pos == RecognizerPosition::StartAbove))
         {
             if (!Settings::recognizer.savesize)
-                Settings::recognizer.rect.setSize(QSize(Settings::scaled(300), Settings::scaled(300)));
+                FormStates::recognizer.rect.setSize(QSize(Settings::scaled(300), Settings::scaled(300)));
 
             // Move the window above or below the button.
-            QSize siz = RecognizerForm::instance->resizing((int)GrabSide::Bottom, Settings::recognizer.rect).size();
+            QSize siz = RecognizerForm::instance->resizing((int)GrabSide::Bottom, FormStates::recognizer.rect).size();
 
             QRect r = qApp->desktop()->availableGeometry(btn);
             QRect br = btn->geometry();
@@ -978,7 +1000,10 @@ bool RecognizerObject::event(QEvent *e)
 
         RecognizerForm::instance->show();
 
-        Settings::recognizer.rect = RecognizerForm::instance->geometry();
+        FormStates::recognizer.rect  = RecognizerForm::instance->geometry();
+        if (sg.isEmpty())
+            sg = qApp->desktop()->screenGeometry(RecognizerForm::instance);
+        FormStates::recognizer.screenpos = sg.topLeft();
         return true;
     }
     else if (e->type() == RecognizerHiddenEvent::Type() && RecognizerForm::instance != nullptr)

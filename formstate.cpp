@@ -30,6 +30,9 @@
 
 namespace FormStates
 {
+    const QString True = QStringLiteral("1");
+    const QString False = QStringLiteral("0");
+
     // Saved state of dialog windows with splitter.
     std::map<QString, SplitterFormData> splitter;
 
@@ -37,6 +40,7 @@ namespace FormStates
     CollectFormData collectform;
     KanjiInfoData kanjiinfo;
     WordStudyListFormData wordstudylist;
+    RecognizerFormData recognizer;
 
     bool emptyState(const SplitterFormData &data)
     {
@@ -88,6 +92,11 @@ namespace FormStates
     bool emptyState(const PopupDictData &data)
     {
         return data.floating == false && !data.floatrect.isValid() && !data.normalsize.isValid() && emptyState(data.dict);
+    }
+
+    bool emptyState(const RecognizerFormData &data)
+    {
+        return data.showgrid == true && data.allresults == true && data.rect.isEmpty() && data.screenpos.isNull();
     }
 
     void saveXMLSettings(const SplitterFormData &data, QXmlStreamWriter &writer)
@@ -152,9 +161,6 @@ namespace FormStates
         if (emptyState(data))
             return;
 
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         if (data.kanjinum != "3")
             writer.writeAttribute("kanjistring", data.kanjinum);
         if (data.kanalen != 8)
@@ -178,9 +184,6 @@ namespace FormStates
 
     void loadXMLSettings(CollectFormData &data, QXmlStreamReader &reader)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         if (reader.attributes().hasAttribute("kanjistring"))
             data.kanjinum = reader.attributes().value("kanjistring").toString();
         else
@@ -239,9 +242,6 @@ namespace FormStates
 
     void saveXMLSettings(const DictionaryWidgetData &data, QXmlStreamWriter &writer)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         writer.writeAttribute("mode", data.mode == SearchMode::Browse ? "browse" : data.mode == SearchMode::Japanese ? "from" : "to");
         writer.writeAttribute("multiline", data.multi ? True : False);
         writer.writeAttribute("filtering", data.filter ? True : False);
@@ -321,9 +321,6 @@ namespace FormStates
 
     void loadXMLSettings(DictionaryWidgetData &data, QXmlStreamReader &reader)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         QStringRef modestr = reader.attributes().value("mode");
         if (modestr == "browse")
             data.mode = SearchMode::Browse;
@@ -473,9 +470,6 @@ namespace FormStates
         if (emptyState(data))
             return;
 
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         if (!data.siz.isEmpty())
         {
             writer.writeAttribute("width", QString::number(data.siz.width()));
@@ -519,9 +513,6 @@ namespace FormStates
 
     void loadXMLSettings(KanjiInfoData &data, QXmlStreamReader &reader)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         bool ok = false;
         int val;
         if (reader.attributes().hasAttribute("width"))
@@ -678,9 +669,6 @@ namespace FormStates
         if (emptyState(data))
             return;
 
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         writer.writeAttribute("kanji", data.showkanji ? True : False);
         writer.writeAttribute("kana", data.showkana ? True : False);
         writer.writeAttribute("definition", data.showdef ? True : False);
@@ -757,9 +745,6 @@ namespace FormStates
 
     void loadXMLSettings(WordStudyListFormDataItems &data, QXmlStreamReader &reader)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         bool ok = false;
         int val;
 
@@ -880,9 +865,6 @@ namespace FormStates
 
     void loadXMLSettings(WordStudyListFormData &data, QXmlStreamReader &reader)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         bool ok = false;
         int val;
 
@@ -918,9 +900,6 @@ namespace FormStates
 
     void saveXMLSettings(const PopupDictData &data, QXmlStreamWriter &writer)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         writer.writeAttribute("floating", data.floating ? True : False);
 
         if (!data.floatrect.isEmpty())
@@ -944,9 +923,6 @@ namespace FormStates
 
     void loadXMLSettings(PopupDictData &data, QXmlStreamReader &reader)
     {
-        const QString True = QStringLiteral("1");
-        const QString False = QStringLiteral("0");
-
         data.floating = !reader.attributes().hasAttribute("floating") || reader.attributes().value("floating").toString() != False;
 
         bool ok = false;
@@ -956,7 +932,7 @@ namespace FormStates
         if (reader.attributes().hasAttribute("floatleft"))
         {
             val = reader.attributes().value("floatleft").toInt(&ok);
-            if (val < 0 || val > 999999)
+            if (val < -999999 || val > 999999)
                 ok = false;
             if (ok)
                 data.floatrect.setLeft(val);
@@ -964,7 +940,7 @@ namespace FormStates
         if (ok && reader.attributes().hasAttribute("floattop"))
         {
             val = reader.attributes().value("floattop").toInt(&ok);
-            if (val < 0 || val > 999999)
+            if (val < -999999 || val > 999999)
                 ok = false;
             if (ok)
                 data.floatrect.setTop(val);
@@ -1096,6 +1072,84 @@ namespace FormStates
             else
                 reader.skipCurrentElement();
         }
+    }
+
+    void saveXMLSettings(const RecognizerFormData &data, QXmlStreamWriter &writer)
+    {
+        writer.writeAttribute("grid", data.showgrid ? True : False);
+        writer.writeAttribute("allresults", data.allresults ? True : False);
+
+        writer.writeAttribute("x", QString::number(data.rect.x()));
+        writer.writeAttribute("y", QString::number(data.rect.y()));
+        writer.writeAttribute("width", QString::number(data.rect.width()));
+        writer.writeAttribute("height", QString::number(data.rect.height()));
+        writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
+        writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
+    }
+
+    void loadXMLSettings(RecognizerFormData &data, QXmlStreamReader &reader)
+    {
+        data.showgrid = !reader.attributes().hasAttribute("grid") || reader.attributes().value("grid").toString() != False;
+        data.allresults = !reader.attributes().hasAttribute("allresults") || reader.attributes().value("allresults").toString() != False;
+
+        bool ok;
+        int val;
+        if (reader.attributes().hasAttribute("x"))
+        {
+            val = reader.attributes().value("x").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.rect.setLeft(val);
+        }
+        if (ok && reader.attributes().hasAttribute("y"))
+        {
+            val = reader.attributes().value("y").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.rect.setTop(val);
+        }
+        if (ok && reader.attributes().hasAttribute("width"))
+        {
+            val = reader.attributes().value("width").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.rect.setWidth(val);
+        }
+        if (ok && reader.attributes().hasAttribute("height"))
+        {
+            val = reader.attributes().value("height").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.rect.setHeight(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screenx"))
+        {
+            val = reader.attributes().value("screenx").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screenpos.setX(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screeny"))
+        {
+            val = reader.attributes().value("screeny").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screenpos.setY(val);
+        }
+
+        if (!ok)
+        {
+            data.rect = QRect();
+            data.screenpos = QPoint();
+        }
+
+        reader.skipCurrentElement();
     }
 
     void loadXMLDialogSplitterState(QXmlStreamReader &reader)

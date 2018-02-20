@@ -25,7 +25,7 @@ struct SplitterFormData
 {
     // Top left corner of the window with frame.
     QPoint pos;
-    // Position of window on their screen.
+    // Top left corner of screen that contained the window last.
     QPoint screenpos;
     // Size of the window geometry without frame.
     QSize siz;
@@ -210,6 +210,21 @@ struct KanarPracticeData
     std::vector<uchar> katause;
 };
 
+struct RecognizerFormData
+{
+    // Whether the grid is shown in the handwriting recognizer window.
+    bool showgrid = true;
+    // Whether kana and other characters are accepted in the handwriting recognizer window.
+    bool allresults = true;
+
+    // Saved position and size of the handwriting recognizer.
+    QRect rect;
+
+    // Top left corner of screen that contained the window last.
+    QPoint screenpos;
+};
+
+
 struct KanjiFilterData;
 struct PopupKanjiData;
 
@@ -226,6 +241,7 @@ namespace FormStates
     extern PopupKanjiData popupkanji;
     extern PopupDictData popupdict;
     extern KanarPracticeData kanapractice;
+    extern RecognizerFormData recognizer;
 
     bool emptyState(const SplitterFormData &data);
     bool emptyState(const CollectFormData &data);
@@ -238,6 +254,7 @@ namespace FormStates
     bool emptyState(const KanjiFilterData &data);
     bool emptyState(const PopupKanjiData &data);
     bool emptyState(const PopupDictData &data);
+    bool emptyState(const RecognizerFormData &data);
 
     void saveXMLSettings(const SplitterFormData &data, QXmlStreamWriter &writer);
     void loadXMLSettings(SplitterFormData &data, QXmlStreamReader &reader);
@@ -278,6 +295,8 @@ namespace FormStates
     void saveXMLSettings(const KanarPracticeData &data, QXmlStreamWriter &writer);
     void loadXMLSettings(KanarPracticeData &data, QXmlStreamReader &reader);
 
+    void saveXMLSettings(const RecognizerFormData &data, QXmlStreamWriter &writer);
+    void loadXMLSettings(RecognizerFormData &data, QXmlStreamReader &reader);
 
     void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
     void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);

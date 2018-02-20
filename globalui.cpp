@@ -1318,6 +1318,7 @@ void GlobalUI::loadScalingSetting()
 
 void GlobalUI::saveSettings()
 {
+    emit beforeSave();
     Settings::saveSettingsToFile();
 }
 

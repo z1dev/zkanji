@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -217,7 +217,7 @@ namespace Settings
 
         ini.setValue("recognizer/savesize", recognizer.savesize);
         ini.setValue("recognizer/savepos", recognizer.saveposition);
-        ini.setValue("recognizer/rect", recognizer.rect);
+        //ini.setValue("recognizer/rect", recognizer.rect);
 
         // Color settings
 
@@ -462,6 +462,13 @@ namespace Settings
         writer.writeStartElement("KanaPractice");
         FormStates::saveXMLSettings(FormStates::kanapractice, writer);
         writer.writeEndElement();
+
+        if (!FormStates::emptyState(FormStates::recognizer))
+        {
+            writer.writeStartElement("RecognizerForm");
+            FormStates::saveXMLSettings(FormStates::recognizer, writer);
+            writer.writeEndElement();
+        }
 
         writer.writeEndElement(); /* WindowStates */
 
@@ -863,7 +870,7 @@ namespace Settings
 
         recognizer.savesize = ini.value("recognizer/savesize", true).toBool();
         recognizer.saveposition = ini.value("recognizer/savepos", false).toBool();
-        recognizer.rect = ini.value("recognizer/rect", recognizer.rect).toRect();
+        //recognizer.rect = ini.value("recognizer/rect", recognizer.rect).toRect();
 
         // Color settings
 
@@ -1213,6 +1220,8 @@ namespace Settings
                         FormStates::loadXMLSettings(FormStates::popupdict, reader);
                     else if (reader.name() == "KanaPractice")
                         FormStates::loadXMLSettings(FormStates::kanapractice, reader);
+                    else if (reader.name() == "RecognizerForm")
+                        FormStates::loadXMLSettings(FormStates::recognizer, reader);
                     else
                         reader.skipCurrentElement();
                 }
