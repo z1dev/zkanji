@@ -20,6 +20,9 @@ struct PopupSettings
     // Whether to show the popup dictionary with full screen width when not floating.
     bool widescreen = false;
 
+    // Whether to show the status bar below the dictionary word list.
+    bool statusbar = false;
+
     // What to do with the search input field when the popup window is shown.
     Activation activation = Unchanged;
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>590</width>
-    <height>425</height>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -1107,7 +1107,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Dictionary: from Japanese</string>
+                 <string>From Japanese</string>
                 </property>
                </widget>
               </item>
@@ -1308,7 +1308,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Dictionary: to Japanese</string>
+                 <string>To Japanese</string>
                 </property>
                </widget>
               </item>
@@ -1509,7 +1509,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Kanji search window</string>
+                 <string>Kanji search</string>
                 </property>
                </widget>
               </item>
@@ -1708,6 +1708,19 @@
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0" colspan="2">
+               <widget class="QCheckBox" name="popupStatusBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Show status bar</string>
                 </property>
                </widget>
               </item>
@@ -2641,7 +2654,7 @@
               <item>
                <widget class="QLabel" name="label_47">
                 <property name="text">
-                 <string>&lt;p&gt;Scales everything in the program, including icons and text. The main menu, popup menus and tooltips are unaffected. Any other size setting is applied before this scaling.&lt;br/&gt;
+                 <string>&lt;p&gt;Scales everything in the program, including icons and text. The main menu, popup menus and tooltips are unaffected on some platforms. Any other size setting is applied before this scaling.&lt;br/&gt;
 &lt;br/&gt;&lt;b&gt;The program must be restarted for this setting to take effect.&lt;/b&gt;&lt;/p&gt;</string>
                 </property>
                 <property name="wordWrap">
@@ -5395,6 +5408,11 @@
  <layoutdefault spacing="6" margin="6"/>
  <customwidgets>
   <customwidget>
+   <class>ZListView</class>
+   <extends>QTableView</extends>
+   <header>zlistview.h</header>
+  </customwidget>
+  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
@@ -5409,11 +5427,6 @@
    <class>ZListBox</class>
    <extends>QTableView</extends>
    <header>zlistbox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZListView</class>
-   <extends>QTableView</extends>
-   <header>zlistview.h</header>
   </customwidget>
   <customwidget>
    <class>ZColorComboBox</class>
@@ -5593,8 +5606,8 @@
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

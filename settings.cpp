@@ -203,6 +203,7 @@ namespace Settings
 
         ini.setValue("popup/autohide", popup.autohide);
         ini.setValue("popup/widescreen", popup.widescreen);
+        ini.setValue("popup/statusbar", popup.statusbar);
         //ini.setValue("popup/floating", popup.floating);
         //ini.setValue("popup/floatrect", popup.dictfloatrect);
         //ini.setValue("popup/size", popup.normalsize);
@@ -849,6 +850,7 @@ namespace Settings
 
         popup.autohide = ini.value("popup/autohide", true).toBool();
         popup.widescreen = ini.value("popup/widescreen", false).toBool();
+        popup.statusbar = ini.value("popup/statusbar", false).toBool();
         //popup.floating = ini.value("popup/floating", false).toBool();
         //popup.dictfloatrect = ini.value("popup/floatrect", QRect()).toRect();
         //popup.normalsize = ini.value("popup/size", QSize()).toSize();

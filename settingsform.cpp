@@ -507,6 +507,7 @@ void SettingsForm::reset()
     on_jlptBox_toggled();
 
     ui->popupWidenBox->setChecked(Settings::popup.widescreen);
+    ui->popupStatusBox->setChecked(Settings::popup.statusbar);
     ui->popupHideCBox->setCurrentIndex(Settings::popup.autohide ? 1 : 0);
     ui->popupActivationCBox->setCurrentIndex((int)Settings::popup.activation);
     ui->popupTransparencySlider->setValue(Settings::popup.transparency);
@@ -750,6 +751,7 @@ void SettingsForm::applyClicked()
     Settings::dictionary.jlptcolumn = (DictionarySettings::JlptColumn)ui->jlptPosCBox->currentIndex();
 
     Settings::popup.widescreen = ui->popupWidenBox->isChecked();
+    Settings::popup.statusbar = ui->popupStatusBox->isChecked();
     Settings::popup.autohide = ui->popupHideCBox->currentIndex() == 1;
     Settings::popup.activation = (PopupSettings::Activation)ui->popupActivationCBox->currentIndex();
     Settings::popup.transparency = ui->popupTransparencySlider->value();

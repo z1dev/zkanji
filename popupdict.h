@@ -30,7 +30,6 @@ private:
 
 };
 
-
 class PopupDictionary : public ZWindow
 {
     Q_OBJECT

@@ -28,6 +28,8 @@
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
 #include "fontsettings.h"
+#include "popupdict.h"
+#include "popupsettings.h"
 
 
 //-------------------------------------------------------------
@@ -113,7 +115,7 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     
     qApp->postEvent(this, new StartEvent());
 
-    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr)
+    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr || (dynamic_cast<PopupDictionary*>(window()) != nullptr && Settings::popup.statusbar))
         ui->wordsTable->assignStatusBar(ui->listStatus);
     else
         ui->listStatus->hide();
@@ -1377,6 +1379,12 @@ void DictionaryWidget::searchEdited()
 
 void DictionaryWidget::settingsChanged()
 {
+    if (dynamic_cast<PopupDictionary*>(window()) != nullptr)
+    {
+        ui->listStatus->setVisible(Settings::popup.statusbar);
+        ui->wordsTable->assignStatusBar(Settings::popup.statusbar ? ui->listStatus : nullptr);
+    }
+
     if (browseorder != Settings::dictionary.browseorder)
     {
         browseorder = Settings::dictionary.browseorder;

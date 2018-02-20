@@ -30,6 +30,7 @@
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
 #include "fontsettings.h"
+#include "popupkanjisearch.h"
 
 
 //-------------------------------------------------------------
@@ -535,7 +536,7 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     connect(&popmap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
 
-    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr)
+    if (dynamic_cast<ZKanjiForm*>(window()) != nullptr || dynamic_cast<PopupKanjiSearch*>(window()) != nullptr)
         ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
     else
         ui->kanjiStatus->hide();
