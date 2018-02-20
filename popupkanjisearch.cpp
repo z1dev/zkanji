@@ -192,13 +192,13 @@ void PopupKanjiSearch::doPopup(int screen)
             geom.setHeight(sg.height() - 8);
         geom.moveTo(sg.topLeft() + geom.topLeft());
         if (geom.left() < sg.left())
-            geom.setLeft(sg.left());
+            geom.moveLeft(sg.left());
         else if (geom.left() + geom.width() > sg.left() + sg.width())
-            geom.setLeft(sg.left() + sg.width() - geom.width());
+            geom.moveLeft(sg.left() + sg.width() - geom.width());
         if (geom.top() < sg.top())
-            geom.setTop(sg.top());
+            geom.moveTop(sg.top());
         else if (geom.top() + geom.height() > sg.top() + sg.height())
-            geom.setTop(sg.top() + sg.height() - geom.height());
+            geom.moveTop(sg.top() + sg.height() - geom.height());
 
         setGeometry(geom);
     }
