@@ -51,7 +51,6 @@ protected:
     void doPopup(int screen, bool translatefrom);
 
     virtual QWidget* captionWidget() const override;
-    //virtual QWidget* centralWidget() const override;
     
     virtual void keyPressEvent(QKeyEvent *e) override;
 
@@ -61,8 +60,6 @@ protected:
     virtual bool event(QEvent *e) override;
 
     virtual void closeEvent(QCloseEvent *e) override;
-
-    //virtual bool eventFilter(QObject *obj, QEvent *e) override;
 private slots:
     // Hides the popup window when the application loses the active state.
     void appStateChange(Qt::ApplicationState state);

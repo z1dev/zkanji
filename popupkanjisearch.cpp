@@ -67,7 +67,7 @@ namespace FormStates
         if (reader.attributes().hasAttribute("floatleft"))
         {
             val = reader.attributes().value("floatleft").toInt(&ok);
-            if (val < 0 || val > 999999)
+            if (val < -999999 || val > 999999)
                 ok = false;
             if (ok)
                 data.floatrect.setLeft(val);
@@ -75,7 +75,7 @@ namespace FormStates
         if (ok && reader.attributes().hasAttribute("floattop"))
         {
             val = reader.attributes().value("floattop").toInt(&ok);
-            if (val < 0 || val > 999999)
+            if (val < -999999 || val > 999999)
                 ok = false;
             if (ok)
                 data.floatrect.setTop(val);
@@ -113,7 +113,7 @@ namespace FormStates
 //-------------------------------------------------------------
 
 
-PopupKanjiSearch::PopupKanjiSearch(QWidget *parent) : base(parent), ui(new Ui::PopupKanjiSearch)//, ignoreresize(true)
+PopupKanjiSearch::PopupKanjiSearch(QWidget *parent) : base(parent), ui(new Ui::PopupKanjiSearch), ignoreresize(true)
 {
     ui->setupUi(this);
     windowInit();
@@ -131,13 +131,13 @@ PopupKanjiSearch::PopupKanjiSearch(QWidget *parent) : base(parent), ui(new Ui::P
 
     instance = this;
 
-    if (FormStates::popupkanji.floatrect.isValid())
-        setGeometry(FormStates::popupkanji.floatrect);
-    else
-    {
-        QRect r = qApp->desktop()->availableGeometry(instance);
-        move(r.left() + 32, r.top() + 128);
-    }
+    //if (FormStates::popupkanji.floatrect.isValid())
+    //    setGeometry(FormStates::popupkanji.floatrect);
+    //else
+    //{
+    //    QRect r = qApp->desktop()->availableGeometry(instance);
+    //    move(r.left() + 32, r.top() + 128);
+    //}
 
     ui->kanjiSearch->restoreState(FormStates::popupkanji.filters);
 }
@@ -147,7 +147,7 @@ PopupKanjiSearch::~PopupKanjiSearch()
     delete ui;
 }
 
-void PopupKanjiSearch::popup(bool screen)
+void PopupKanjiSearch::popup(int screen)
 {
     if (instance == nullptr)
     {
@@ -169,15 +169,46 @@ PopupKanjiSearch * const PopupKanjiSearch::getInstance()
     return instance;
 }
 
-void PopupKanjiSearch::doPopup(bool screen)
+void PopupKanjiSearch::doPopup(int screen)
 {
     if (isVisible())
         return;
+
+    qApp->postEvent(this, new EndEvent());
 
     if (Settings::kanji.resetpopupfilters)
         ui->kanjiSearch->reset();
 
     ui->pinButton->setIcon(QIcon(!Settings::popup.kanjiautohide ? ":/closex.svg" : ":/pin.svg"));
+
+    QRect sg = screen != -1 ? qApp->desktop()->screenGeometry(screen) : qApp->desktop()->screenGeometry(instance);
+
+    if (FormStates::popupkanji.floatrect.isValid())
+    {
+        QRect geom = FormStates::popupkanji.floatrect;
+        if (geom.width() > sg.width() - 8)
+            geom.setWidth(sg.width() - 8);
+        if (geom.height() > sg.height() - 8)
+            geom.setHeight(sg.height() - 8);
+        geom.moveTo(sg.topLeft() + geom.topLeft());
+        if (geom.left() < sg.left())
+            geom.setLeft(sg.left());
+        else if (geom.left() + geom.width() > sg.left() + sg.width())
+            geom.setLeft(sg.left() + sg.width() - geom.width());
+        if (geom.top() < sg.top())
+            geom.setTop(sg.top());
+        else if (geom.top() + geom.height() > sg.top() + sg.height())
+            geom.setTop(sg.top() + sg.height() - geom.height());
+
+        setGeometry(geom);
+    }
+    else
+    {
+        QRect ag = screen != -1 ? qApp->desktop()->availableGeometry(screen) : qApp->desktop()->availableGeometry(instance);
+        move(ag.left() + 32, ag.top() + 128);
+    }
+
+
 
     show();
     raise();
@@ -206,20 +237,24 @@ void PopupKanjiSearch::resizeEvent(QResizeEvent *e)
 {
     base::resizeEvent(e);
 
-    if (!isVisible()/* || ignoreresize*/)
+    if (!isVisible() || ignoreresize)
         return;
 
-    FormStates::popupkanji.floatrect = geometry();
+    QRect sg = qApp->desktop()->screenGeometry(instance);
+    QRect r = geometry();
+    FormStates::popupkanji.floatrect = QRect(r.topLeft() - sg.topLeft(), r.size());
 }
 
 void PopupKanjiSearch::moveEvent(QMoveEvent *e)
 {
     base::moveEvent(e);
 
-    if (!isVisible()/* || ignoreresize*/)
+    if (!isVisible() || ignoreresize)
         return;
 
-    FormStates::popupkanji.floatrect = geometry();
+    QRect sg = qApp->desktop()->screenGeometry(instance);
+    QRect r = geometry();
+    FormStates::popupkanji.floatrect = QRect(r.topLeft() - sg.topLeft(), r.size());
 }
 
 void PopupKanjiSearch::closeEvent(QCloseEvent *e)
@@ -232,48 +267,16 @@ void PopupKanjiSearch::closeEvent(QCloseEvent *e)
     base::closeEvent(e);
 }
 
-//bool PopupKanjiSearch::event(QEvent *e)
-//{
-//    if (e->type() == (int)EndEvent::Type())
-//    {
-//        ignoreresize = false;
-//        return true;
-//    }
-//
-//    return base::event(e);
-//}
-//
-//bool PopupKanjiSearch::eventFilter(QObject *obj, QEvent *e)
-//{
-//    if (obj == ui->captionWidget && !beingResized() && (e->type() == QEvent::MouseMove || e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease))
-//    {
-//        QMouseEvent *me = (QMouseEvent*)e;
-//        switch (me->type())
-//        {
-//        case QEvent::MouseMove:
-//            if (grabbing)
-//            {
-//                QRect r = geometry();
-//                move(r.left() + me->pos().x() - grabpos.x(), r.top() + me->pos().y() - grabpos.y());
-//            }
-//            break;
-//        case QEvent::MouseButtonPress:
-//            if (grabbing || me->button() != Qt::LeftButton)
-//                break;
-//            grabbing = true;
-//            grabpos = me->pos();
-//            break;
-//        case QEvent::MouseButtonRelease:
-//            if (!grabbing || me->button() != Qt::LeftButton)
-//                break;
-//            grabbing = false;
-//            break;
-//        }
-//    }
-//
-//    return base::eventFilter(obj, e);
-//}
+bool PopupKanjiSearch::event(QEvent *e)
+{
+    if (e->type() == (int)EndEvent::Type())
+    {
+        ignoreresize = false;
+        return true;
+    }
 
+    return base::event(e);
+}
 
 void PopupKanjiSearch::appStateChange(Qt::ApplicationState state)
 {
