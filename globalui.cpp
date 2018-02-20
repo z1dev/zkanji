@@ -13,6 +13,7 @@
 #include <QStringBuilder>
 #include <QFormLayout>
 #include <QSplitter>
+#include <QDesktopWidget>
 
 #include "globalui.h"
 #include "zui.h"
@@ -1318,7 +1319,6 @@ void GlobalUI::loadScalingSetting()
 
 void GlobalUI::saveSettings()
 {
-    emit beforeSave();
     Settings::saveSettingsToFile();
 }
 
@@ -1337,25 +1337,26 @@ void GlobalUI::checkColorTheme()
 
 void GlobalUI::showPopup(int which)
 {
+    int screennum = qApp->desktop()->screenNumber(QCursor::pos());
     if (which == 0)
     {
         if (PopupDictionary::getInstance() != nullptr)
             disconnect(PopupDictionary::getInstance(), &PopupDictionary::beingClosed, this, &GlobalUI::popupClosing);
-        PopupDictionary::popup(true);
+        PopupDictionary::popup(screennum, true);
         connect(PopupDictionary::getInstance(), &PopupDictionary::beingClosed, this, &GlobalUI::popupClosing);
     }
     else if (which == 1)
     {
         if (PopupDictionary::getInstance() != nullptr)
             disconnect(PopupDictionary::getInstance(), &PopupDictionary::beingClosed, this, &GlobalUI::popupClosing);
-        PopupDictionary::popup(false);
+        PopupDictionary::popup(screennum, false);
         connect(PopupDictionary::getInstance(), &PopupDictionary::beingClosed, this, &GlobalUI::popupClosing);
     }
     else if (which == 2)
     {
         if (PopupKanjiSearch::getInstance() != nullptr)
             disconnect(PopupKanjiSearch::getInstance(), &PopupKanjiSearch::beingClosed, this, &GlobalUI::popupClosing);
-        PopupKanjiSearch::popup();
+        PopupKanjiSearch::popup(screennum);
         connect(PopupKanjiSearch::getInstance(), &PopupKanjiSearch::beingClosed, this, &GlobalUI::popupClosing);
     }
 }

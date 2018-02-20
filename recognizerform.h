@@ -226,9 +226,6 @@ private:
     RecognizerForm(QWidget *parent = nullptr);
     ~RecognizerForm();
 
-    void saveState(RecognizerFormData &data);
-    void restoreState(const RecognizerFormData &data);
-
     static void douninstall(QToolButton *btn, bool destroyed);
 
     void savePosition();

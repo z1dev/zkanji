@@ -194,7 +194,8 @@ struct PopupDictData
 {
     // Position of the popup dictionary. When false, it sits at the bottom of the screen.
     bool floating = false;
-    // Popup dictionary window's position when floating.
+    // Popup dictionary window's position when floating. The top left corner of the rectangle
+    // is relative to the screen the popup dictionary is on.
     QRect floatrect;
     // Popup dictionary window's size when not floating.
     QSize normalsize;

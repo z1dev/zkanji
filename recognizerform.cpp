@@ -504,8 +504,6 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent, Qt::WindowDoesNot
     connect(qApp, &QApplication::focusChanged, this, &RecognizerForm::appFocusChanged);
     connect(qApp, &QGuiApplication::applicationStateChanged, this, &RecognizerForm::appStateChanged);
 
-    connect(gUI, &GlobalUI::beforeSave, [this]() { saveState(FormStates::recognizer); });
-
     // "Show" once so the window sizes can be retrieved later.
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
@@ -521,28 +519,15 @@ RecognizerForm::RecognizerForm(QWidget *parent) : base(parent, Qt::WindowDoesNot
     setAttribute(Qt::WA_ShowWithoutActivating);
 #endif
 
-    restoreState(FormStates::recognizer);
+    ui->gridButton->setChecked(FormStates::recognizer.showgrid);
+    ui->generalButton->setChecked(FormStates::recognizer.allresults);
 }
 
 RecognizerForm::~RecognizerForm()
 {
-    saveState(FormStates::recognizer);
-
     delete ui;
     instance = nullptr;
     RecognizerForm::connected = nullptr;
-}
-
-void RecognizerForm::saveState(RecognizerFormData &data)
-{
-    data.showgrid = ui->gridButton->isChecked();
-    data.allresults = ui->generalButton->isChecked();
-}
-
-void RecognizerForm::restoreState(const RecognizerFormData &data)
-{
-    ui->gridButton->setChecked(data.showgrid);
-    ui->generalButton->setChecked(data.allresults);
 }
 
 void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPosition pos)
@@ -635,11 +620,13 @@ void RecognizerForm::popup(QToolButton *btn)
 
 void RecognizerForm::on_gridButton_toggled(bool checked)
 {
+    FormStates::recognizer.showgrid = checked;
     ui->drawArea->setShowGrid(checked);
 }
 
 void RecognizerForm::on_generalButton_toggled(bool checked)
 {
+    FormStates::recognizer.allresults = checked;
     ui->drawArea->setCharacterMatch(!checked ? (RecognizerArea::Kanji) : (RecognizerArea::Kanji | RecognizerArea::Kana | RecognizerArea::Other));
 }
 

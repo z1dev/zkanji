@@ -62,7 +62,7 @@ PopupDictionary::PopupDictionary(QWidget *parent) : base(parent), ui(new Ui::Pop
 
     instance = this;
 
-    floatWindow(!floating);
+    //floatWindow(!floating);
 }
 
 PopupDictionary::~PopupDictionary()
@@ -70,7 +70,7 @@ PopupDictionary::~PopupDictionary()
     delete ui;
 }
 
-void PopupDictionary::popup(bool translatefrom)
+void PopupDictionary::popup(int screen, bool fromjapanese)
 {
     if (instance == nullptr)
     {
@@ -78,9 +78,7 @@ void PopupDictionary::popup(bool translatefrom)
         instance->setWindowOpacity((10.0 - Settings::popup.transparency / 2.0) / 10.0);
     }
 
-    qApp->postEvent(instance, new ShowPopupEvent(translatefrom));
-
-    //instance->doPopup(translatefrom);
+    qApp->postEvent(instance, new ShowPopupEvent(screen, fromjapanese));
 }
 
 void PopupDictionary::hidePopup()
@@ -102,14 +100,14 @@ int PopupDictionary::dictionaryIndex()
     return instance->dictindex;
 }
 
-void PopupDictionary::doPopup(bool translatefrom)
+void PopupDictionary::doPopup(int screen, bool fromjapanese)
 {
     setDictionary(dictindex);
 
-    floatWindow(FormStates::popupdict.floating);
+    floatWindow(FormStates::popupdict.floating, screen);
     QString str;
 
-    ui->dictionary->setSearchMode(translatefrom ? SearchMode::Japanese : SearchMode::Definition);
+    ui->dictionary->setSearchMode(fromjapanese ? SearchMode::Japanese : SearchMode::Definition);
 
     switch (Settings::popup.activation)
     {
@@ -140,11 +138,6 @@ QWidget* PopupDictionary::captionWidget() const
     return ui->captionWidget;
 }
 
-//QWidget* PopupDictionary::centralWidget() const
-//{
-//    return ui->centralwidget;
-//}
-
 void PopupDictionary::keyPressEvent(QKeyEvent *e)
 {
     base::keyPressEvent(e);
@@ -161,7 +154,11 @@ void PopupDictionary::resizeEvent(QResizeEvent *e)
         return;
 
     if (FormStates::popupdict.floating)
+    {
         FormStates::popupdict.floatrect = geometry();
+        QRect sg = qApp->desktop()->screenGeometry(this);
+        FormStates::popupdict.floatrect.moveTo(FormStates::popupdict.floatrect.topLeft() - sg.topLeft());
+    }
     else
         FormStates::popupdict.normalsize = geometry().size();
 }
@@ -174,6 +171,8 @@ void PopupDictionary::moveEvent(QMoveEvent *e)
         return;
 
     FormStates::popupdict.floatrect = geometry();
+    QRect sg = qApp->desktop()->screenGeometry(this);
+    FormStates::popupdict.floatrect.moveTo(FormStates::popupdict.floatrect.topLeft() - sg.topLeft());
 }
 
 bool PopupDictionary::event(QEvent *e)
@@ -198,7 +197,7 @@ bool PopupDictionary::event(QEvent *e)
     else if (e->type() == (int)ShowPopupEvent::Type())
     {
         ShowPopupEvent *pe = (ShowPopupEvent*)e;
-        doPopup(pe->from());
+        doPopup(pe->screen(), pe->from());
         return true;
     }
 
@@ -211,37 +210,6 @@ void PopupDictionary::closeEvent(QCloseEvent *e)
 
     base::closeEvent(e);
 }
-
-//bool PopupDictionary::eventFilter(QObject *obj, QEvent *e)
-//{
-//    if (obj == ui->captionWidget && !beingResized() && (e->type() == QEvent::MouseMove || e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease))
-//    {
-//        QMouseEvent *me = (QMouseEvent*)e;
-//        switch (me->type())
-//        {
-//        case QEvent::MouseMove:
-//            if (grabbing)
-//            {
-//                QRect r = geometry();
-//                move(r.left() + me->pos().x() - grabpos.x(), r.top() + me->pos().y() - grabpos.y());
-//            }
-//            break;
-//        case QEvent::MouseButtonPress:
-//            if (grabbing || me->button() != Qt::LeftButton)
-//                break;
-//            grabbing = true;
-//            grabpos = me->pos();
-//            break;
-//        case QEvent::MouseButtonRelease:
-//            if (!grabbing || me->button() != Qt::LeftButton)
-//                break;
-//            grabbing = false;
-//            break;
-//        }
-//    }
-//
-//    return base::eventFilter(obj, e);
-//}
 
 void PopupDictionary::on_pinButton_clicked(bool checked)
 {
@@ -292,11 +260,12 @@ void PopupDictionary::dictionaryRemoved(int index)
         --dictindex;
 }
 
-void PopupDictionary::floatWindow(bool dofloat)
+void PopupDictionary::floatWindow(bool dofloat, int screen)
 {
     qApp->postEvent(this, new EndEvent);
+    ignoreresize = true;
 
-    if (floating == dofloat)
+    if (floating == dofloat && (isVisible() || screen == -1))
         return;
 
     bool wasvisible = isVisible();
@@ -305,9 +274,8 @@ void PopupDictionary::floatWindow(bool dofloat)
 
     floating = dofloat;
 
-    QRect r = qApp->desktop()->availableGeometry(instance);
+    QRect ag = (!wasvisible && screen != -1) ? qApp->desktop()->availableGeometry(screen) : qApp->desktop()->availableGeometry(instance);
 
-    ignoreresize = true;
     if (!dofloat)
     {
         QWindow *natwin = windowHandle();
@@ -320,14 +288,14 @@ void PopupDictionary::floatWindow(bool dofloat)
 
         QSize &s = FormStates::popupdict.normalsize;
         if (s.isNull() || !s.isValid())
-            s = QSize(r.width() - 8, 224);
+            s = QSize(ag.width() - 8, 224);
 
-        if (s.width() > r.width() - 4)
-            s.setWidth(r.width() - 8);
-        if (s.height() > r.height() - 4)
-            s.setHeight(r.height() - 8);
+        if (s.width() > ag.width() - 4)
+            s.setWidth(ag.width() - 8);
+        if (s.height() > ag.height() - 4)
+            s.setHeight(ag.height() - 8);
 
-        setGeometry(QRect(r.right() - s.width() - 4, r.bottom() - s.height() - 4, s.width(), s.height()));
+        setGeometry(QRect(ag.right() - s.width() - 4, ag.bottom() - s.height() - 4, s.width(), s.height()));
         resizeToFullWidth();
 
         ui->floatButton->setIcon(QIcon(":/floatwnd.svg"));
@@ -351,22 +319,26 @@ void PopupDictionary::floatWindow(bool dofloat)
 
         QRect &fr = FormStates::popupdict.floatrect;
 
-        if (fr.isNull() || !fr.isValid())
-            fr = QRect(r.left() + r.width() / 2 - r.width() / 8, r.top() + r.height() / 2 - r.height() / 16, r.width() / 4, r.height() / 8);
+        if (fr.isEmpty())
+            fr = QRect(ag.left() + ag.width() / 2 - ag.width() / 8, ag.top() + ag.height() / 2 - ag.height() / 16, ag.width() / 4, ag.height() / 8);
+        else
+        {
+            QRect sg = (!wasvisible && screen != -1) ? qApp->desktop()->screenGeometry(screen) : qApp->desktop()->screenGeometry(instance);
+            fr.moveTo(sg.topLeft() + fr.topLeft());
+        }
 
-        if (fr.width() > r.width())
-            fr.setWidth(r.width() - 8);
-        if (fr.height() > r.height())
-            fr.setHeight(r.height() - 8);
-        if (fr.left() < r.left())
-            fr.moveLeft(r.left());
-        if (fr.top() < r.top())
-            fr.moveTop(r.top());
-
-        //QRect fg = frameGeometry();
-        //QRect g = geometry();
-
-        //fr.adjust(g.left() - fg.left(), g.top() - fg.top(), g.right() - fg.right(), g.bottom() - fg.bottom());
+        if (fr.width() > ag.width())
+            fr.setWidth(ag.width() - 8);
+        if (fr.height() > ag.height())
+            fr.setHeight(ag.height() - 8);
+        if (fr.left() < ag.left())
+            fr.moveLeft(ag.left());
+        else if (fr.left() + fr.width() > ag.left() + ag.width())
+            fr.moveLeft(ag.left() + ag.width() - fr.width());
+        if (fr.top() < ag.top())
+            fr.moveTop(ag.top());
+        else if (fr.top() + fr.height() > ag.top() + ag.height())
+            fr.moveTop(ag.top() + ag.height() - fr.height());
 
         setGeometry(fr);
 
@@ -385,8 +357,6 @@ void PopupDictionary::floatWindow(bool dofloat)
         ui->layout->invalidate();
         ui->layout->activate();
         ui->layout->update();
-
-        //ui->centralwidget->setGeometry(geometry());
     }
 }
 

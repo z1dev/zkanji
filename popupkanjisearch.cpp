@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -147,7 +147,7 @@ PopupKanjiSearch::~PopupKanjiSearch()
     delete ui;
 }
 
-void PopupKanjiSearch::popup()
+void PopupKanjiSearch::popup(bool screen)
 {
     if (instance == nullptr)
     {
@@ -155,7 +155,7 @@ void PopupKanjiSearch::popup()
         instance->setWindowOpacity((10.0 - Settings::popup.transparency / 2.0) / 10.0);
     }
 
-    instance->doPopup();
+    instance->doPopup(screen);
 }
 
 void PopupKanjiSearch::hidePopup()
@@ -169,7 +169,7 @@ PopupKanjiSearch * const PopupKanjiSearch::getInstance()
     return instance;
 }
 
-void PopupKanjiSearch::doPopup()
+void PopupKanjiSearch::doPopup(bool screen)
 {
     if (isVisible())
         return;

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -21,9 +21,11 @@ class ShowPopupEvent : public EventTBase<ShowPopupEvent>
 private:
     typedef EventTBase<ShowPopupEvent>  base;
 public:
-    ShowPopupEvent(bool translatefrom) : base(), val(translatefrom) { ; }
+    ShowPopupEvent(bool screen, bool translatefrom) : base(), scr(screen), val(translatefrom) { ; }
     bool from() { return val; }
+    bool screen() { return scr; }
 private:
+    bool scr;
     bool val;
 
 };
@@ -38,7 +40,7 @@ signals:
 public:
     virtual ~PopupDictionary();
 
-    static void popup(bool translatefrom);
+    static void popup(int screen, bool fromjapanese);
     static void hidePopup();
     static PopupDictionary* const getInstance();
 
@@ -46,7 +48,7 @@ public:
     // or if no instance is present, the dictionary to be set for the instance.
     static int dictionaryIndex();
 protected:
-    void doPopup(bool translatefrom);
+    void doPopup(int screen, bool translatefrom);
 
     virtual QWidget* captionWidget() const override;
     //virtual QWidget* centralWidget() const override;
@@ -73,7 +75,10 @@ private slots:
 private:
     PopupDictionary(QWidget *parent = nullptr);
 
-    void floatWindow(bool dofloat);
+    // Floats or docks the popup form depending on the argument. Pass a screen number, which
+    // will be used to show the popup window on, in case it's not yet visible. A value of -1
+    // leaves the popup on the current window.
+    void floatWindow(bool dofloat, int screen = -1);
     // Changes the width of the window if it should be resized to fit the screen width.
     void resizeToFullWidth();
     // Changes the currently displayed dictionary.
@@ -91,8 +96,7 @@ private:
     // Whether the window is being grabbed by its caption.
     bool grabbing;
 
-    // Set to true while adjusting the window size, to prevent the change saved in the
-    // settings.
+    // True while adjusting the window size, to prevent the change saved in the settings.
     bool ignoreresize;
 
     // Index of the currently displayed dictionary.
