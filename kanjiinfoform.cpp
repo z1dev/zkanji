@@ -335,13 +335,13 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     else
         geom.setSize(geometry().size());
 
-    int screennum = data.pos.isNull() ? -1 : screenNumber(QRect(data.pos, geom.size()));
+    int screennum = !data.siz.isValid() ? -1 : screenNumber(QRect(data.pos, geom.size()));
     QRect sg;
     if (screennum == -1)
     {
         screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
         sg = qApp->desktop()->screenGeometry(screennum);
-        if (!data.screenpos.isNull() && !data.pos.isNull())
+        if (data.siz.isValid())
             geom.moveTo(sg.topLeft() + (data.pos - data.screenpos));
         else
             geom.moveTo(sg.center() - QPoint(geom.width() / 2, geom.height() / 2));

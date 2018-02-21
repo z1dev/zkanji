@@ -49,7 +49,7 @@ namespace FormStates
 
     bool emptyState(const CollectFormData &data)
     {
-        return data.kanjinum == "3" && data.kanalen == 8 && data.minfreq == 1000 && data.strict && data.limit && data.siz.isNull() && emptyState(data.dict);
+        return data.kanjinum == "3" && data.kanalen == 8 && data.minfreq == 1000 && data.strict && data.limit && !data.siz.isValid() && emptyState(data.dict);
     }
 
     bool emptyState(const DictionaryWidgetData &data)
@@ -96,7 +96,7 @@ namespace FormStates
 
     bool emptyState(const RecognizerFormData &data)
     {
-        return data.showgrid == true && data.allresults == true && data.rect.isEmpty() && data.screenpos.isNull();
+        return data.showgrid == true && data.allresults == true && !data.rect.isValid();
     }
 
     void saveXMLSettings(const SplitterFormData &data, QXmlStreamWriter &writer)
@@ -470,7 +470,7 @@ namespace FormStates
         if (emptyState(data))
             return;
 
-        if (!data.siz.isEmpty())
+        if (data.siz.isValid())
         {
             writer.writeAttribute("width", QString::number(data.siz.width()));
             writer.writeAttribute("height", QString::number(data.siz.height()));
@@ -1205,7 +1205,7 @@ namespace FormStates
             return;
 
         SplitterFormData &data = it->second;
-        if (data.pos.isNull() || data.screenpos.isNull() || !data.siz.isValid())
+        if (!data.siz.isValid())
         {
             // Move window to same screen as the current visible main window.
             int screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
