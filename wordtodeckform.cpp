@@ -18,6 +18,7 @@
 #include "wordstudylistform.h"
 #include "globalui.h"
 #include "generalsettings.h"
+#include "formstate.h"
 
 
 //-------------------------------------------------------------
@@ -630,14 +631,17 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
     ui->wordsTable->setSelectionType(ListSelectionType::Extended);
     ui->wordsTable->setStudyDefinitionUsed(true);
 
-    restrictWidgetSize(ui->decksCBox, 16, AdjustedValue::Min);
+    //restrictWidgetSize(ui->decksCBox, 16, AdjustedValue::Min);
 
     okbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
+    okbutton->setText(tr("Add to study deck"));
     cancelbutton = ui->buttonBox->button(QDialogButtonBox::Cancel);
     connect(okbutton, &QPushButton::clicked, this, &WordToDeckForm::okButtonClicked);
     connect(cancelbutton, &QPushButton::clicked, this, &WordToDeckForm::close);
 
     ui->wordsTable->assignStatusBar(ui->listStatus);
+
+    FormStates::restoreDialogSize("WordToDeck", this);
 }
 
 WordToDeckForm::~WordToDeckForm()
@@ -669,28 +673,27 @@ void WordToDeckForm::exec(Dictionary *_dest, WordDeck* _deck, const std::vector<
     }
     dict = _dest;
 
-    if (!dict->wordDecks()->empty())
-    {
-        for (int ix = 0, siz = dict->wordDecks()->size(); ix != siz; ++ix)
-            ui->decksCBox->addItem(dict->wordDecks()->items(ix)->getName());
-        ui->decksCBox->setCurrentIndex(dict->wordDecks()->indexOf(deck));
-    }
-    else
-    {
-        ui->decksCBox->addItem(tr("Deck 1"));
-        ui->decksCBox->setCurrentIndex(0);
-    }
-    ui->decksCBox->setEnabled(!dict->wordDecks()->empty());
+    //if (!dict->wordDecks()->empty())
+    //{
+    //    for (int ix = 0, siz = dict->wordDecks()->size(); ix != siz; ++ix)
+    //        ui->decksCBox->addItem(dict->wordDecks()->items(ix)->getName());
+    //    ui->decksCBox->setCurrentIndex(dict->wordDecks()->indexOf(deck));
+    //}
+    //else
+    //{
+    //    ui->decksCBox->addItem(tr("Deck 1"));
+    //    ui->decksCBox->setCurrentIndex(0);
+    //}
+    //ui->decksCBox->setEnabled(!dict->wordDecks()->empty());
+
+    setWindowTitle("zkanji - " + tr("Destination study deck: %1").arg(deck == nullptr ? tr("Deck 1") : deck->getName()));
 
     model = new WordsToDeckItemModel(dict, deck, indexes, this);
     if (model->rowCount() == 0)
     {
         if (deck == nullptr || deck->dictionary()->wordDecks()->size() == 1)
         {
-            if (deck == nullptr)
-                QMessageBox::information(parentWidget(), "zkanji", tr("No words to add to a deck."), QMessageBox::Ok);
-            else
-                QMessageBox::information(parentWidget(), "zkanji", tr("No new words can be added to this deck."), QMessageBox::Ok);
+            QMessageBox::information(parentWidget(), "zkanji", tr("No new word parts can be added to study."), QMessageBox::Ok);
 
             deleteLater();
             return;
@@ -705,6 +708,12 @@ void WordToDeckForm::exec(Dictionary *_dest, WordDeck* _deck, const std::vector<
     // Warning: if changing from showModal() to show(), make sure word or dictionary changes
     // are handled correctly.
     showModal();
+}
+
+void WordToDeckForm::closeEvent(QCloseEvent *e)
+{
+    FormStates::saveDialogSize("WordToDeck", this);
+    base::closeEvent(e);
 }
 
 void WordToDeckForm::checkStateChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> roles)
@@ -770,27 +779,29 @@ void WordToDeckForm::okButtonClicked(bool)
         dict->wordDecks()->add(tr("Deck 1"));
         deck = dict->wordDecks()->items(0);
     }
-    deck->queueWordItems(words);
+    int r = deck->queueWordItems(words);
     deck->owner()->setLastSelected(deck);
 
-    WordStudyListForm *f = WordStudyListForm::Instance(deck, DeckStudyPages::Items, true);
-    f->showQueue();
+    //WordStudyListForm *f = WordStudyListForm::Instance(deck, DeckStudyPages::Items, true);
+    //f->showQueue();
 
     close();
+
+    QTimer::singleShot(0, [r]() { QMessageBox::information((QWidget*)gUI->mainForm(), "zkanji", tr("%n item(s) added to the study deck", "", r));  });
 }
 
-void WordToDeckForm::on_decksCBox_currentIndexChanged(int index)
-{
-    if (model == nullptr || deck == nullptr)
-        return;
-
-    deck = dict->wordDecks()->items(index);
-    model->deleteLater();
-    model = new WordsToDeckItemModel(dict, deck, indexes, this);
-    ui->wordsTable->setModel(model);
-
-    updateOkButton();
-}
+//void WordToDeckForm::on_decksCBox_currentIndexChanged(int index)
+//{
+//    if (model == nullptr || deck == nullptr)
+//        return;
+//
+//    deck = dict->wordDecks()->items(index);
+//    model->deleteLater();
+//    model = new WordsToDeckItemModel(dict, deck, indexes, this);
+//    ui->wordsTable->setModel(model);
+//
+//    updateOkButton();
+//}
 
 void WordToDeckForm::updateOkButton()
 {

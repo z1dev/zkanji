@@ -423,6 +423,16 @@ namespace Settings
             }
         }
 
+        for (auto &state : FormStates::sizes)
+        {
+            if (state.second.isValid())
+            {
+                writer.writeStartElement(state.first);
+                FormStates::saveXMLDialogSize(state.second, writer);
+                writer.writeEndElement();
+            }
+        }
+
         if (!FormStates::emptyState(FormStates::collectform))
         {
             writer.writeStartElement("CollectWords");
@@ -1208,8 +1218,12 @@ namespace Settings
                     reader.skipCurrentElement();
                 else while (reader.readNextStartElement())
                 {
+                    // To avoid spamming the state file, splitter states and sizes are only
+                    // loaded for currently existing forms.
                     if (reader.name() == "WordEditor" || reader.name() == "WordToGroup" || reader.name() == "WordToDictionary")
                         FormStates::loadXMLDialogSplitterState(reader);
+                    else if (reader.name() == "WordToDeck")
+                        FormStates::loadXMLDialogSize(reader);
                     else if (reader.name() == "CollectWords")
                         FormStates::loadXMLSettings(FormStates::collectform, reader);
                     else if (reader.name() == "KanjiInformation")

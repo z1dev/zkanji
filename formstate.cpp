@@ -36,6 +36,9 @@ namespace FormStates
     // Saved state of dialog windows with splitter.
     std::map<QString, SplitterFormData> splitter;
 
+    // Saved size of dialog windows.
+    std::map<QString, QSize> sizes;
+
     // Saved state of the CollectWordsForm window.
     CollectFormData collectform;
     KanjiInfoData kanjiinfo;
@@ -1152,20 +1155,6 @@ namespace FormStates
         reader.skipCurrentElement();
     }
 
-    void loadXMLDialogSplitterState(QXmlStreamReader &reader)
-    {
-        QString statename = reader.name().toString();
-        if (statename.isEmpty())
-            return;
-
-        bool nodata = FormStates::splitter.find(statename) == FormStates::splitter.end();
-        SplitterFormData &data = FormStates::splitter[statename];
-        if (nodata)
-            data.wsizes[1] = -1;
-
-        loadXMLSettings(data, reader);
-    }
-
     void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter)
     {
         bool nodata = FormStates::splitter.find(statename) == FormStates::splitter.end();
@@ -1278,6 +1267,76 @@ namespace FormStates
         else
             splitter->setSizes({ data.wsizes[0] });
     }
+
+    void loadXMLDialogSplitterState(QXmlStreamReader &reader)
+    {
+        QString statename = reader.name().toString();
+        if (statename.isEmpty())
+            return;
+
+        bool nodata = FormStates::splitter.find(statename) == FormStates::splitter.end();
+        SplitterFormData &data = FormStates::splitter[statename];
+        if (nodata)
+            data.wsizes[1] = -1;
+
+        loadXMLSettings(data, reader);
+    }
+
+    void saveDialogSize(QString sizename, QMainWindow *window)
+    {
+        FormStates::sizes[sizename] = window->size();
+
+    }
+
+    void restoreDialogSize(QString sizename, QMainWindow *window)
+    {
+        if (FormStates::sizes.find(sizename) == FormStates::sizes.end())
+            return;
+        window->resize(FormStates::sizes[sizename]);
+    }
+
+    void saveXMLDialogSize(const QSize size, QXmlStreamWriter &writer)
+    {
+        writer.writeAttribute("width", QString::number(size.width()));
+        writer.writeAttribute("height", QString::number(size.height()));
+    }
+
+    void loadXMLDialogSize(QXmlStreamReader &reader)
+    {
+        QString sizename = reader.name().toString();
+        if (sizename.isEmpty())
+            return;
+
+        bool data = FormStates::sizes.find(sizename) != FormStates::sizes.end();
+        QSize &size = FormStates::sizes[sizename];
+
+        if (data)
+        {
+            bool ok;
+            int val;
+            if (reader.attributes().hasAttribute("width"))
+            {
+                val = reader.attributes().value("width").toInt(&ok);
+                if (val < 0 || val > 999999)
+                    ok = false;
+                if (ok)
+                    size.setWidth(val);
+            }
+            if (ok && reader.attributes().hasAttribute("height"))
+            {
+                val = reader.attributes().value("height").toInt(&ok);
+                if (val < 0 || val > 999999)
+                    ok = false;
+                if (ok)
+                    size.setHeight(val);
+            }
+            if (!ok)
+                size = QSize();
+        }
+
+        reader.skipCurrentElement();
+    }
+
 }
 
 

@@ -119,6 +119,8 @@ public:
     virtual ~WordToDeckForm();
 
     void exec(Dictionary *dict, WordDeck* deck, const std::vector<int> &indexes);
+protected:
+    virtual void closeEvent(QCloseEvent *e) override;
 protected slots:
     // Connected to the model's dataChanged to look for CheckState changes.
     void checkStateChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> roles = QVector<int>());
@@ -127,7 +129,7 @@ protected slots:
 
     void okButtonClicked(bool);
 
-    void on_decksCBox_currentIndexChanged(int index);
+    //void on_decksCBox_currentIndexChanged(int index);
 private:
     // Updates the enabled state of the ok button depending on the check boxes.
     void updateOkButton();

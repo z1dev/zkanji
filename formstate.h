@@ -234,6 +234,9 @@ namespace FormStates
     // Saved state of dialog windows with splitter.
     extern std::map<QString, SplitterFormData> splitter;
 
+    // Saved size of dialog windows.
+    extern std::map<QString, QSize> sizes;
+
     // Saved state of the CollectWordsForm window.
     extern CollectFormData collectform;
 
@@ -303,6 +306,12 @@ namespace FormStates
     void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
 
     void loadXMLDialogSplitterState(QXmlStreamReader &reader);
+
+    void saveDialogSize(QString sizename, QMainWindow *window);
+    void restoreDialogSize(QString sizename, QMainWindow *window);
+
+    void saveXMLDialogSize(const QSize size, QXmlStreamWriter &writer);
+    void loadXMLDialogSize(QXmlStreamReader &reader);
 }
 
 #endif // FORMSTATE_H

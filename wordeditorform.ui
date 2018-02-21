@@ -303,6 +303,9 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
       <widget class="QWidget" name="widget_2" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -343,8 +346,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ZStatusBar" name="listStatus" native="true">
-         </widget>
+         <widget class="ZStatusBar" name="listStatus"/>
         </item>
        </layout>
       </widget>
@@ -414,15 +416,15 @@
    <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZStatusBar</class>
-   <extends>QWidget</extends>
-   <header>zstatusbar.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WordAttribWidget</class>
