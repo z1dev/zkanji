@@ -1310,29 +1310,26 @@ namespace FormStates
         bool data = FormStates::sizes.find(sizename) != FormStates::sizes.end();
         QSize &size = FormStates::sizes[sizename];
 
-        if (data)
+        bool ok;
+        int val;
+        if (reader.attributes().hasAttribute("width"))
         {
-            bool ok;
-            int val;
-            if (reader.attributes().hasAttribute("width"))
-            {
-                val = reader.attributes().value("width").toInt(&ok);
-                if (val < 0 || val > 999999)
-                    ok = false;
-                if (ok)
-                    size.setWidth(val);
-            }
-            if (ok && reader.attributes().hasAttribute("height"))
-            {
-                val = reader.attributes().value("height").toInt(&ok);
-                if (val < 0 || val > 999999)
-                    ok = false;
-                if (ok)
-                    size.setHeight(val);
-            }
-            if (!ok)
-                size = QSize();
+            val = reader.attributes().value("width").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                size.setWidth(val);
         }
+        if (ok && reader.attributes().hasAttribute("height"))
+        {
+            val = reader.attributes().value("height").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                size.setHeight(val);
+        }
+        if (!ok)
+            size = QSize();
 
         reader.skipCurrentElement();
     }
