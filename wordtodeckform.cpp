@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -649,9 +649,9 @@ WordToDeckForm::~WordToDeckForm()
     delete ui;
 }
 
-void WordToDeckForm::exec(Dictionary *_dest, WordDeck* _deck, const std::vector<int> &ind)
+void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std::vector<int> &ind)
 {
-    if (ind.empty())
+    if (ind.empty() || (studydeck == nullptr && dictionary == nullptr))
     {
         deleteLater();
         return;
@@ -662,38 +662,31 @@ void WordToDeckForm::exec(Dictionary *_dest, WordDeck* _deck, const std::vector<
     connect(model, &ZAbstractTableModel::dataChanged, this, &WordToDeckForm::checkStateChanged);
     connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &WordToDeckForm::selChanged);
 
-    deck = _deck;
+    deck = studydeck;
 
-    // TODO: remove before final release if the deck and dest matches
-    if (deck != nullptr && deck->dictionary() != _dest)
+    dict = deck != nullptr ? deck->dictionary() : dictionary;
+
+    if (!dict->wordDecks()->empty())
     {
-        QMessageBox::warning(gUI->activeMainForm(), "zkanji", "Error in program. Invalid call to show word to deck form. Please notify me!");
-        deleteLater();
-        return;
+        for (int ix = 0, siz = dict->wordDecks()->size(); ix != siz; ++ix)
+            ui->decksCBox->addItem(dict->wordDecks()->items(ix)->getName());
+        ui->decksCBox->setCurrentIndex(dict->wordDecks()->indexOf(deck));
     }
-    dict = _dest;
+    else
+    {
+        ui->decksCBox->addItem(tr("Deck 1"));
+        ui->decksCBox->setCurrentIndex(0);
+    }
+    ui->decksCBox->setEnabled(!dict->wordDecks()->empty());
 
-    //if (!dict->wordDecks()->empty())
-    //{
-    //    for (int ix = 0, siz = dict->wordDecks()->size(); ix != siz; ++ix)
-    //        ui->decksCBox->addItem(dict->wordDecks()->items(ix)->getName());
-    //    ui->decksCBox->setCurrentIndex(dict->wordDecks()->indexOf(deck));
-    //}
-    //else
-    //{
-    //    ui->decksCBox->addItem(tr("Deck 1"));
-    //    ui->decksCBox->setCurrentIndex(0);
-    //}
-    //ui->decksCBox->setEnabled(!dict->wordDecks()->empty());
-
-    setWindowTitle("zkanji - " + tr("Destination study deck: %1").arg(deck == nullptr ? tr("Deck 1") : deck->getName()));
+    setWindowTitle(QString("zkanji - %1").arg(tr("Add words to deck")));
 
     model = new WordsToDeckItemModel(dict, deck, indexes, this);
     if (model->rowCount() == 0)
     {
-        if (deck == nullptr || deck->dictionary()->wordDecks()->size() == 1)
+        if (deck->dictionary()->wordDecks()->size() <= 1)
         {
-            QMessageBox::information(parentWidget(), "zkanji", tr("No new word parts can be added to study."), QMessageBox::Ok);
+            QMessageBox::information(parentWidget(), "zkanji", tr("Nothing new to study. All word parts are already in the deck."), QMessageBox::Ok);
 
             deleteLater();
             return;
@@ -714,6 +707,13 @@ void WordToDeckForm::closeEvent(QCloseEvent *e)
 {
     FormStates::saveDialogSize("WordToDeck", this);
     base::closeEvent(e);
+}
+
+void WordToDeckForm::showEvent(QShowEvent *e)
+{
+    base::showEvent(e);
+    if (model->rowCount() == 0)
+        QTimer::singleShot(0, [this]() { QMessageBox::information(window(), "zkanji", tr("Nothing new to study. All word parts are already in the deck.\n\nYou can select another deck if you want to add them."), QMessageBox::Ok); });
 }
 
 void WordToDeckForm::checkStateChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> roles)
@@ -790,18 +790,21 @@ void WordToDeckForm::okButtonClicked(bool)
     QTimer::singleShot(0, [r]() { QMessageBox::information((QWidget*)gUI->mainForm(), "zkanji", tr("%n item(s) added to the study deck", "", r));  });
 }
 
-//void WordToDeckForm::on_decksCBox_currentIndexChanged(int index)
-//{
-//    if (model == nullptr || deck == nullptr)
-//        return;
-//
-//    deck = dict->wordDecks()->items(index);
-//    model->deleteLater();
-//    model = new WordsToDeckItemModel(dict, deck, indexes, this);
-//    ui->wordsTable->setModel(model);
-//
-//    updateOkButton();
-//}
+void WordToDeckForm::on_decksCBox_currentIndexChanged(int index)
+{
+    if (model == nullptr || deck == nullptr)
+        return;
+
+    deck = dict->wordDecks()->items(index);
+    model->deleteLater();
+    model = new WordsToDeckItemModel(dict, deck, indexes, this);
+    ui->wordsTable->setModel(model);
+
+    if (model->rowCount() == 0)
+        QMessageBox::information(window(), "zkanji", tr("Nothing new to study. All word parts are already in the deck.\n\nYou can select another deck if you want to add them."), QMessageBox::Ok);
+
+    updateOkButton();
+}
 
 void WordToDeckForm::updateOkButton()
 {
@@ -811,12 +814,34 @@ void WordToDeckForm::updateOkButton()
 //-------------------------------------------------------------
 
 
-void addWordsToDeck(Dictionary *dict, WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent)
+void addWordsToDeck(WordDeck *deck, const std::vector<int> &indexes, QWidget *dialogParent)
 {
+    if (deck == nullptr)
+#ifdef _DEBUG
+        throw "Error, no deck passed to addWordsToDeck";
+#else
+        return;
+#endif
+
     if (dialogParent == nullptr)
         dialogParent = gUI->activeMainForm();
     WordToDeckForm *frm = new WordToDeckForm(dialogParent);
-    frm->exec(dict, deck, indexes);
+    frm->exec(deck, nullptr, indexes);
+}
+
+void addWordsToDeck(Dictionary *dictionary, const std::vector<int> &indexes, QWidget *dialogParent)
+{
+    if (dictionary == nullptr)
+#ifdef _DEBUG
+        throw "Error, no dictionary passed to addWordsToDeck";
+#else
+        return;
+#endif
+
+    if (dialogParent == nullptr)
+        dialogParent = gUI->activeMainForm();
+    WordToDeckForm *frm = new WordToDeckForm(dialogParent);
+    frm->exec(dictionary->wordDecks()->lastSelected(), dictionary, indexes);
 }
 
 

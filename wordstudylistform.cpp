@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -760,7 +760,7 @@ void WordStudyListForm::startTest()
 
 void WordStudyListForm::addQuestions(const std::vector<int> &wordlist)
 {
-    addWordsToDeck(dict, deck, wordlist, this);
+    addWordsToDeck(deck, wordlist, this);
 }
 
 void WordStudyListForm::removeItems(const std::vector<int> &items, bool queued)

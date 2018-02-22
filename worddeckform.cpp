@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -219,7 +219,7 @@ bool DeckListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         for (int ix = 0; ix != cnt; ++ix, ++dat)
             windexes.push_back(*dat);
 
-        addWordsToDeck(decks->items(parent.row())->dictionary(), decks->items(parent.row()), windexes, WordDeckForm::Instance(false));
+        addWordsToDeck(decks->items(parent.row()), windexes, WordDeckForm::Instance(false));
 
         return true;
     }

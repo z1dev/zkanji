@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -118,9 +118,10 @@ public:
     WordToDeckForm(QWidget *parent = nullptr);
     virtual ~WordToDeckForm();
 
-    void exec(Dictionary *dict, WordDeck* deck, const std::vector<int> &indexes);
+    void exec(WordDeck *studydeck, Dictionary *dictionary, const std::vector<int> &indexes);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
+    virtual void showEvent(QShowEvent *e) override;
 protected slots:
     // Connected to the model's dataChanged to look for CheckState changes.
     void checkStateChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> roles = QVector<int>());
@@ -129,7 +130,7 @@ protected slots:
 
     void okButtonClicked(bool);
 
-    //void on_decksCBox_currentIndexChanged(int index);
+    void on_decksCBox_currentIndexChanged(int index);
 private:
     // Updates the enabled state of the ok button depending on the check boxes.
     void updateOkButton();

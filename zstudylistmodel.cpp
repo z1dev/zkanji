@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -770,7 +770,7 @@ bool StudyListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     for (int ix = 0; ix != cnt; ++ix, ++dat)
         indexes.push_back(*dat);
 
-    addWordsToDeck(dictionary(), deck, indexes, (QWidget*)gUI->activeMainForm());
+    addWordsToDeck(deck, indexes, (QWidget*)gUI->activeMainForm());
 
     return true;
 }
