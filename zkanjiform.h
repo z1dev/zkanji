@@ -120,6 +120,9 @@ public:
     // window.
     void floatWidget(ZKanjiWidget* w);
 
+    // Shows window as maximized instead if restoremaximized is true.
+    virtual void setVisible(bool vis) override;
+
     // Returns the zkanji widget which is active in the window, or the zkanji widget which was
     // last active, if the window is not active. If this is a floating window, returns the
     // sole widget found on it.
@@ -241,12 +244,15 @@ private:
     // the settings.
     QRect settingsrect;
     // The window is either maximized, or was maximized before it got minimized. Used when
-    // zkanji starts minimized, 
+    // zkanji starts minimized.
     bool restoremaximized;
 
     // Set to true if the changeEvent should ignore the window's minimized/maximized state
     // changes.
     bool skipchange;
+
+    // Set to true to prevent updateMainMenu() calls during startup.
+    bool skipmenu;
 
     QMenu *dictmenu;
     QMenu *wordsearchmenu;

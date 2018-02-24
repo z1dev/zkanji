@@ -73,7 +73,7 @@ extern char ZKANJI_PROGRAM_VERSION[];
 
 ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
     : Qt::WindowFlags()), ui(new Ui::ZKanjiForm), mainform(mainform), activewidget(nullptr), //activepage(-1), activedict(nullptr),
-    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
+    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle(QStringLiteral("zkanji %1").arg(ZKANJI_PROGRAM_VERSION));
@@ -123,7 +123,7 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
 ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent)
     : base(parent, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
     ui(new Ui::ZKanjiForm), mainform(false), activewidget(nullptr), //activepage(-1), activedict(nullptr),
-    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
+    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
     setMouseTracking(true);
@@ -261,6 +261,8 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     // or the window size and position won't be loaded.
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
 
+    FlagGuard<bool> menuguard(&skipmenu, true, false);
+
     bool ok = false;
 
     QRect geom;
@@ -351,27 +353,26 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
         if (!reader.hasError())
         {
-            skipchange = true;
+            FlagGuard<bool> guard(&skipchange, true, false);
             if (state != Qt::WindowNoState)
             {
                 restoremaximized = reader.attributes().value("restoremaximized") == "1";
-                if (restoremaximized && state != Qt::WindowMaximized)
-                {
+//                if (restoremaximized && state != Qt::WindowMaximized)
+//                {
                 //    if (!isVisible())
                 //    {
                         //setAttribute(Qt::WA_DontShowOnScreen);
-                        showMaximized();
+//                        showMaximized();
                 //        setWindowState(Qt::WindowMaximized);
-                        qApp->processEvents();
-                        hide();
+//                        qApp->processEvents();
+//                        hide();
                         //setAttribute(Qt::WA_DontShowOnScreen, false);
                 //    }
                 //    else
                 //        setWindowState(Qt::WindowMaximized);
-                }
+//                }
             }
             setWindowState(state);
-            skipchange = false;
         }
     }
 
@@ -397,7 +398,10 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
         }
 
         if (!reader.hasError())
+        {
+            skipchange = false;
             updateMainMenu();
+        }
 
         if (!geom.isEmpty())
         {
@@ -468,7 +472,10 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
                 reader.skipCurrentElement();
 
                 if (!reader.hasError())
+                {
+                    skipchange = false;
                     updateMainMenu();
+                }
 
                 if (!geom.isEmpty())
                 {
@@ -576,7 +583,10 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
         reader.raiseError("EmptyMainWindowState");
 
     if (!reader.hasError())
+    {
+        skipchange = false;
         updateMainMenu();
+    }
 
     if (!geom.isEmpty())
     {
@@ -661,6 +671,30 @@ void ZKanjiForm::floatWidget(ZKanjiWidget* w)
     updateMainMenu();
 }
 
+void ZKanjiForm::setVisible(bool vis)
+{
+    if (vis && restoremaximized && !windowState().testFlag(Qt::WindowMinimized))
+    {
+        restoremaximized = false;
+        
+        show();
+        setWindowState(Qt::WindowMaximized);
+
+        //QTimer::singleShot(0, [this]() { showMaximized(); });
+
+        return;
+    }
+
+    // We must prevent state change events to maximize the window on startup, so the value of
+    // restoremaximized must be set false. The state change event is sent on setVisible().
+    bool oldrestore = restoremaximized;
+    restoremaximized = false;
+
+    base::setVisible(vis);
+
+    restoremaximized = oldrestore;
+}
+
 ZKanjiWidget* ZKanjiForm::activeWidget() const
 {
     //QWidget *w = focusWidget();
@@ -715,6 +749,9 @@ void ZKanjiForm::checkCommand(int command, bool check)
 
 void ZKanjiForm::updateMainMenu()
 {
+    if (skipmenu)
+        return;
+
     // Each ZKanjiWidget will be filled with the widget with the corresponding mode. If
     // multiple widgets are in the same mode, the widget for the mode will be left empty,
     // unless it's the active widget.
@@ -1111,26 +1148,24 @@ void ZKanjiForm::changeEvent(QEvent *e)
         if (windowState().testFlag(Qt::WindowMinimized) && !se->oldState().testFlag(Qt::WindowMinimized))
         {
             totray = Settings::general.minimizebehavior == GeneralSettings::TrayOnMinimize && QSystemTrayIcon::isSystemTrayAvailable();
+            restoremaximized = se->oldState().testFlag(Qt::WindowMaximized);
+
 
             emit stateChanged(totray || Settings::general.minimizebehavior == GeneralSettings::DefaultMinimize);
         }
-        else if (!windowState().testFlag(Qt::WindowMinimized))
+        else if (!windowState().testFlag(Qt::WindowMinimized) && !windowState().testFlag(Qt::WindowMaximized))
         {
-            //bool oldrestore = restoremaximized;
-            restoremaximized = windowState().testFlag(Qt::WindowMaximized);
-            //if (se->oldState().testFlag(Qt::WindowMinimized) && !restoremaximized && oldrestore)
-            //{
-            //    e->ignore();
-            //    showMaximized();
-            //    return;
-            //}
             if (se->oldState().testFlag(Qt::WindowMinimized))
             {
                 emit stateChanged(false);
+                if (restoremaximized)
+                    setWindowState(Qt::WindowMaximized);
 #ifdef Q_OS_WIN
-                move(settingsrect.topLeft());
-                resize(settingsrect.size());
-                //setGeometry(settingsrect);
+                else
+                {
+                    move(settingsrect.topLeft());
+                    resize(settingsrect.size());
+                }
 #endif
             }
         }
@@ -1140,7 +1175,6 @@ void ZKanjiForm::changeEvent(QEvent *e)
             e->ignore();
             qApp->processEvents();
             QTimer::singleShot(0, gUI, &GlobalUI::minimizeToTray);
-            //gUI->minimizeToTray();
         }
         else
             base::changeEvent(e);
@@ -1149,15 +1183,8 @@ void ZKanjiForm::changeEvent(QEvent *e)
     }
     if (e->type() == QEvent::ActivationChange)
     {
-        //if (dockform != nullptr)
-        //{
-        //    hideDockOverlay();
-        //    gUI->endDockDrag();
-        //    dockform = nullptr;
-        //}
-
         emit activated(this, isActiveWindow());
-//#ifdef Q_OS_MAX
+//#ifdef Q_OS_MAC
 //        if (isActiveWindow() && activewidget != nullptr)
 //            activateMenu(activewidget);
 //#endif
@@ -1234,7 +1261,7 @@ void ZKanjiForm::appFocusChanged(QWidget *prev, QWidget *current)
 
     //while (prev && dynamic_cast<ZKanjiWidget*>(prev) == nullptr)
     //    prev = prev->parentWidget();
-    if (current && !current->hasFocus())
+    if (!current->hasFocus())
         return; //current = nullptr;
     while (current && dynamic_cast<ZKanjiWidget*>(current) == nullptr)
         current = current->parentWidget();
