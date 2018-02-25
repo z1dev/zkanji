@@ -60,7 +60,7 @@ private:
     RecognizerPosition pos;
 };
 
-ZEVENT(RecognizerHiddenEvent);
+ZEVENT(RecognizerHiddenEvent)
 
 
 //-------------------------------------------------------------

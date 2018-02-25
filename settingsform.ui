@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -370,7 +370,7 @@
                 </property>
                 <item>
                  <property name="text">
-                  <string>Save and restore last position</string>
+                  <string>Save and restore last state</string>
                  </property>
                 </item>
                 <item>
@@ -385,7 +385,7 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>Don't save position</string>
+                  <string>Don't save state</string>
                  </property>
                 </item>
                </widget>
@@ -5606,8 +5606,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

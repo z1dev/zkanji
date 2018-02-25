@@ -33,7 +33,7 @@
 #include "generalsettings.h"
 
 // Event posted when deferring the resize of controls in the info form.
-ZEVENT(InfoResizeEvent);
+ZEVENT(InfoResizeEvent)
 
 
 //-------------------------------------------------------------

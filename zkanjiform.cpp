@@ -47,6 +47,8 @@ int makeCommand(Commands command, CommandCategories categ)
 
 //-------------------------------------------------------------
 
+bool temptemp = false;
+
 
 ZDockOverlay::ZDockOverlay(QWidget *parent) : base(parent, Qt::Widget | Qt::FramelessWindowHint)
 {
@@ -356,7 +358,8 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             FlagGuard<bool> guard(&skipchange, true, false);
             if (state != Qt::WindowNoState)
             {
-                restoremaximized = reader.attributes().value("restoremaximized") == "1";
+                temptemp = restoremaximized = reader.attributes().value("restoremaximized") == "1";
+                restoremaximized = false;
 //                if (restoremaximized && state != Qt::WindowMaximized)
 //                {
                 //    if (!isVisible())
@@ -687,12 +690,12 @@ void ZKanjiForm::setVisible(bool vis)
 
     // We must prevent state change events to maximize the window on startup, so the value of
     // restoremaximized must be set false. The state change event is sent on setVisible().
-    bool oldrestore = restoremaximized;
-    restoremaximized = false;
+    //bool oldrestore = restoremaximized;
+    //restoremaximized = false;
 
     base::setVisible(vis);
 
-    restoremaximized = oldrestore;
+    //restoremaximized = oldrestore;
 }
 
 ZKanjiWidget* ZKanjiForm::activeWidget() const
@@ -841,7 +844,7 @@ void ZKanjiForm::updateSubMenu(ZKanjiWidget *w, QMenu *menu, int from, int to, C
     }
 }
 
-ZEVENT(UpdateDictionaryMenuEvent);
+ZEVENT(UpdateDictionaryMenuEvent)
 void ZKanjiForm::updateDictionaryMenu(ZKanjiWidget *srcw, ZKanjiWidget *grpw)
 {
     menusearchwidget = srcw;
@@ -1178,6 +1181,12 @@ void ZKanjiForm::changeEvent(QEvent *e)
         }
         else
             base::changeEvent(e);
+
+        if (temptemp)
+        {
+            temptemp = false;
+            restoremaximized = true;
+        }
 
         return;
     }
