@@ -543,18 +543,30 @@ int GlobalUI::activeDictionaryIndex() const
 void GlobalUI::applySettings()
 {
     checkColorTheme();
-    applyStyleSheet();
+    //applyStyleSheet();
     emit settingsChanged();
 }
 
 void GlobalUI::applyStyleSheet()
 {
+    // Changing the qApp style sheet is VERY slow, so we only do it if it actually needs to change.
+
+    static QColor oldbgcol = QColor();
+    QColor bgcol = Settings::colors.lighttheme ? qApp->palette().color(QPalette::Active, QPalette::Base).darker(115) : qApp->palette().color(QPalette::Active, QPalette::Base).lighter(115);
+
+    if (bgcol == oldbgcol)
+        return;
+
+    oldbgcol = bgcol;
+
     int scrollw = qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
     int scrollbtnw = scrollw;
-    qApp->setStyleSheet(QString("QScrollBar:vertical { width: %1px; } QScrollBar:horizontal { height: %1px; } ").arg(Settings::scaled(scrollw)) %
-        QString("QScrollBar::add-line:vertical { height: %1px; } QScrollBar::sub-line:vertical { height: %1px; } QScrollBar::add-line:horizontal { width: %1px; } QScrollBar::sub-line:horizontal { width: %1px; } ").arg(Settings::scaled(scrollbtnw)) %
-        QString("QSplitter::handle { background-color: %1; } ").arg(Settings::colors.lighttheme ? qApp->palette().color(QPalette::Active, QPalette::Base).darker(115).name() : qApp->palette().color(QPalette::Active, QPalette::Base).lighter(115).name()));
+    int scaledscrollw = Settings::scaled(scrollw);
+    int scaledscrollbtnw = Settings::scaled(scrollbtnw);
 
+    qApp->setStyleSheet(QString("QScrollBar:vertical { width: %1px; } QScrollBar:horizontal { height: %1px; } ").arg(scaledscrollw) %
+        QString("QScrollBar::add-line:vertical { height: %1px; } QScrollBar::sub-line:vertical { height: %1px; } QScrollBar::add-line:horizontal { width: %1px; } QScrollBar::sub-line:horizontal { width: %1px; } ").arg(scaledscrollbtnw) %
+        QString("QSplitter::handle { background-color: %1; } ").arg(bgcol.name()));
 }
 
 void GlobalUI::scaleWidget(QWidget *w)
