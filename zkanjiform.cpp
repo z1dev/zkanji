@@ -1541,8 +1541,8 @@ void ZKanjiForm::fillMainMenu()
     kanjisrcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Stroke count filter"), Qt::Key_1, makeCommand(Commands::StrokeFilter, CommandCategories::SearchCateg), true);
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("JLPT filter"), Qt::Key_2, makeCommand(Commands::JLPTFilter, CommandCategories::SearchCateg), true);
-    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Meaning filter"), Qt::Key_4, makeCommand(Commands::MeaningFilter, CommandCategories::SearchCateg), true);
-    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Reading filter"), Qt::Key_5, makeCommand(Commands::ReadingFilter, CommandCategories::SearchCateg), true);
+    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Meaning filter"), Qt::Key_3, makeCommand(Commands::MeaningFilter, CommandCategories::SearchCateg), true);
+    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Reading filter"), Qt::Key_4, makeCommand(Commands::ReadingFilter, CommandCategories::SearchCateg), true);
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Jouyou filter"), Qt::Key_5, makeCommand(Commands::JouyouFilter, CommandCategories::SearchCateg), true);
     kanjisrcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Radicals filter"), Qt::Key_6, makeCommand(Commands::RadicalsFilter, CommandCategories::SearchCateg), true);
