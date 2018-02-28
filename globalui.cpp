@@ -750,6 +750,8 @@ void GlobalUI::restoreFromTray()
     qApp->setQuitOnLastWindowClosed(true);
     appwin.clear();
 
+    mainforms.front()->moveToScreen(qApp->desktop()->screenNumber(QCursor::pos()));
+
     //emit appWindowsVisibilityChanged(true);
 }
 
@@ -1072,7 +1074,7 @@ void GlobalUI::importExamples()
                 tr("\"Retry\" to select another folder with the example sentences file. If you \"Cancel\" the import will be aborted."), {
                     { tr("Retry"), QMessageBox::AcceptRole },
                     { tr("Cancel"), QMessageBox::RejectRole } }) == 1)
-                return;
+                    return;
         }
     } while (path.isEmpty());
 
@@ -1379,12 +1381,12 @@ void GlobalUI::quit()
         return;
     //if (!mainforms.at(0)->isVisible())
     //{
-        //QCloseEvent ce;
-        //qApp->sendEvent(mainforms.at(0), &ce);
-        //if (ce.isAccepted())
-        saveBeforeQuit();
-        qApp->quit();
-        return;
+    //QCloseEvent ce;
+    //qApp->sendEvent(mainforms.at(0), &ce);
+    //if (ce.isAccepted())
+    saveBeforeQuit();
+    qApp->quit();
+    return;
     //}
     //mainforms.at(0)->close();
 }

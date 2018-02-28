@@ -120,6 +120,11 @@ public:
     // window.
     void floatWidget(ZKanjiWidget* w);
 
+    // Updates the position of the window to be placed on screen with the passed number if
+    // possible. Tries to place at the same position as it was on the current screen, but
+    // moves within screen limits.
+    void moveToScreen(int screennum);
+
     // Shows window as maximized instead if restoremaximized is true.
     virtual void setVisible(bool vis) override;
 

@@ -16,6 +16,7 @@
 #include <QScreen>
 #include <QStringBuilder>
 #include <QTimer>
+#include <QWindow>
 
 #include "zkanjiform.h"
 #include "ui_zkanjiform.h"
@@ -360,20 +361,20 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             {
                 temptemp = restoremaximized = reader.attributes().value("restoremaximized") == "1";
                 restoremaximized = false;
-//                if (restoremaximized && state != Qt::WindowMaximized)
-//                {
+                //                if (restoremaximized && state != Qt::WindowMaximized)
+                //                {
                 //    if (!isVisible())
                 //    {
-                        //setAttribute(Qt::WA_DontShowOnScreen);
-//                        showMaximized();
+                //setAttribute(Qt::WA_DontShowOnScreen);
+                //                        showMaximized();
                 //        setWindowState(Qt::WindowMaximized);
-//                        qApp->processEvents();
-//                        hide();
-                        //setAttribute(Qt::WA_DontShowOnScreen, false);
+                //                        qApp->processEvents();
+                //                        hide();
+                //setAttribute(Qt::WA_DontShowOnScreen, false);
                 //    }
                 //    else
                 //        setWindowState(Qt::WindowMaximized);
-//                }
+                //                }
             }
             setWindowState(state);
         }
@@ -674,12 +675,42 @@ void ZKanjiForm::floatWidget(ZKanjiWidget* w)
     updateMainMenu();
 }
 
+void ZKanjiForm::moveToScreen(int screennum)
+{
+    QRect sr = settingsrect;
+
+    int snum = screenNumber(sr);
+    if (snum == screennum)
+        return;
+
+    bool maxed = false;
+    Qt::WindowStates state = windowState();
+    if (windowState().testFlag(Qt::WindowMaximized))
+    {
+        maxed = true;
+        setWindowState(windowState() & ~Qt::WindowMaximized);
+    }
+    QPoint sp = settingsrect.topLeft() - qApp->desktop()->screenGeometry(snum).topLeft();
+    QRect sg = qApp->desktop()->screenGeometry(screennum);
+    sp += sg.topLeft();
+
+    if (settingsrect.width() > sg.width() || settingsrect.height() > sg.height())
+        resize(std::min(settingsrect.width(), sg.width()), std::min(settingsrect.height(), sg.height()));
+
+    move(QPoint(std::min(std::max(sg.left(), sp.x()), sg.left() + sg.width() - sr.width()), std::min(std::max(sg.top(), sp.y()), sg.top() + sg.height() - sr.height())));
+
+    windowHandle()->setScreen(qApp->screens().at(screennum));
+
+    if (maxed)
+        setWindowState(state);
+}
+
 void ZKanjiForm::setVisible(bool vis)
 {
     if (vis && restoremaximized && !windowState().testFlag(Qt::WindowMinimized))
     {
         restoremaximized = false;
-        
+
         show();
         setWindowState(Qt::WindowMaximized);
 
@@ -1193,10 +1224,10 @@ void ZKanjiForm::changeEvent(QEvent *e)
     if (e->type() == QEvent::ActivationChange)
     {
         emit activated(this, isActiveWindow());
-//#ifdef Q_OS_MAC
-//        if (isActiveWindow() && activewidget != nullptr)
-//            activateMenu(activewidget);
-//#endif
+        //#ifdef Q_OS_MAC
+        //        if (isActiveWindow() && activewidget != nullptr)
+        //            activateMenu(activewidget);
+        //#endif
     }
 
     base::changeEvent(e);
@@ -1248,7 +1279,7 @@ bool ZKanjiForm::nativeEvent(const QByteArray &etype, void *msg, long *result)
         gUI->raiseAndActivate();
         return true;
     }
-    
+
     return base::nativeEvent(etype, msg, result);
 }
 #endif
@@ -1386,7 +1417,7 @@ void ZKanjiForm::dictionaryRenamed(int index, int orderindex)
 //    connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, w, &ZKanjiWidget::setMode);
 //    for (int ix = 0; ix != 4; ++ix)
 //        addCommandShortcut(map, Qt::CTRL + (Qt::Key_1 + ix), ix);
-//   
+//
 //}
 //
 //void ZKanjiForm::addCommandShortcut(QSignalMapper *map, const QKeySequence &keyseq, int command)
