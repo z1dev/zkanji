@@ -114,9 +114,12 @@ bool ImportFileHandler::open(QString fname, const char *codec)
     if (!f->exists() || !f->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         delete f;
+        f = nullptr;
         fail = true;
         return false;
     }
+
+    fail = false;
 
     stream.setDevice(f);
     if (codec == nullptr)
@@ -140,6 +143,8 @@ void ImportFileHandler::setFile(QFile &file, const char *codec)
     ownfile = false;
     f = &file;
 
+    fail = false;
+
     stream.setDevice(f);
     if (codec == nullptr)
         stream.setCodec("UTF-8");
@@ -157,10 +162,9 @@ void ImportFileHandler::close()
 
     f->close();
     if (ownfile)
-    {
         delete f;
-        f = nullptr;
-    }
+
+    f = nullptr;
 
     fail = false;
     linenum = 0;
@@ -496,7 +500,7 @@ bool DictImport::event(QEvent *e)
 
                 QString s1 = tr("Import finished.");
                 QString s2 = tr("Press \"%1\" to close the importer and continue starting the program.").arg(tr("Finish"));
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
+                ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Dictionary import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -517,7 +521,7 @@ bool DictImport::event(QEvent *e)
             {
                 QString s1 = tr("Import finished.");
                 QString s2 = tr("Press \"%1\" to close the importer.").arg(tr("Finish"));
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
+                ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Dictionary import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -538,7 +542,7 @@ bool DictImport::event(QEvent *e)
             {
                 QString s1 = tr("Import finished.");
                 QString s2 = tr("Press \"%1\" to close the importer.").arg(tr("Finish"));
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
+                ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Dictionary import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -558,7 +562,7 @@ bool DictImport::event(QEvent *e)
             {
                 QString s1 = tr("Import finished.");
                 QString s2 = tr("Press \"%1\" to close the importer and continue starting the program.").arg(tr("Finish"));
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
+                ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("Example database import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -579,7 +583,7 @@ bool DictImport::event(QEvent *e)
             {
                 QString s1 = tr("Import finished.");
                 QString s2 = tr("Press \"%1\" to close the importer.").arg(tr("Finish"));
-                ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
+                ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
                 ui->infoEdit->appendPlainText(tr("User data import done."));
                 ui->finishButton->setText(tr("Finish"));
                 ui->finishButton->setEnabled(true);
@@ -1111,11 +1115,11 @@ bool DictImport::doImportDict()
 {
     if (fullimport)
     {
-        if (!QFileInfo::exists(path + "/JLPTNData.txt") || !QFileInfo::exists(path + "/JMdict") || !QFileInfo::exists(path + "/kanjidic") || !QFileInfo::exists(path + "/kanjiorder.txt") ||
+        if (!QFileInfo::exists(path + "/JLPTNData.txt") || (!QFileInfo::exists(path + "/JMdict") && !QFileInfo::exists(path + "/JMdict_e")) || !QFileInfo::exists(path + "/kanjidic") || !QFileInfo::exists(path + "/kanjiorder.txt") ||
             !QFileInfo::exists(path + "/radkelement.txt") || !QFileInfo::exists(path + "/radkfile") || !QFileInfo::exists(path + "/zradfile.txt"))
         {
             setErrorText("Required file missing to complete full dictionary import. Make sure you have each of the following:\n\n"
-                "JLPTNData.txt\n" "JMdict\n" "kanjidic\n" "kanjiorder.txt\n" "radkelement.txt\n" "radkfile\n" "zradfile.txt");
+                "JLPTNData.txt\n" "JMdict OR JMdict_e\n" "kanjidic\n" "kanjiorder.txt\n" "radkelement.txt\n" "radkfile\n" "zradfile.txt");
             return false;
         }
 
