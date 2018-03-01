@@ -343,12 +343,12 @@
    <header>dictionarywidget.h</header>
    <container>1</container>
   </customwidget>
-   <customwidget>
-     <class>ZStatusBar</class>
-     <extends>QStatusBar</extends>
-     <header>zstatusbar.h</header>
-     <container>1</container>
-   </customwidget>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>undoButton</tabstop>
