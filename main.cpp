@@ -45,7 +45,7 @@
 #endif
 
 // Version of program as text Must not contain non-latin characters.
-char ZKANJI_PROGRAM_VERSION[] = "v0.0.3-alpha";
+char ZKANJI_PROGRAM_VERSION[] = "v0.0.4-alpha";
 
 int showAndQuit(QString title, QString text)
 {
