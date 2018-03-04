@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -90,7 +90,8 @@ public:
     // the layout.
     void addControlWidget(QWidget *widget);
 protected:
-    void keyPressEvent(QKeyEvent *e);
+    virtual void keyPressEvent(QKeyEvent *e) override;
+    virtual void contextMenuEvent(QContextMenuEvent *e) override;
 private:
     // Resets the groups tree view after a dictionary or display mode change, to show the
     // groups for the appropriate mode.

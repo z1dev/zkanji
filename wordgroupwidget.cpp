@@ -44,6 +44,7 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
     studyButton->setIcon(testsettingsico);
     studyButton->setAutoRaise(true);
     studyButton->setEnabled(false);
+    studyButton->setToolTip(tr("Study with group..."));
     connect(studyButton, &QToolButton::clicked, this, &WordGroupWidget::studyButtonClicked);
 
     printButton = new QToolButton(this);
@@ -51,6 +52,7 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
     printButton->setIcon(QIcon(QStringLiteral(":/print.svg")));
     printButton->setAutoRaise(true);
     printButton->setEnabled(false);
+    printButton->setToolTip(tr("Print preview..."));
     connect(printButton, &QToolButton::clicked, this, &WordGroupWidget::printButtonClicked);
 
     ui->groupWidget->addButtonWidget(studyButton);

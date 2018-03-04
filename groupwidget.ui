@@ -41,6 +41,9 @@
        </property>
        <item>
         <widget class="QToolButton" name="btnAddCateg">
+         <property name="toolTip">
+          <string>Create new group category...</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/addcateg.svg</normaloff>:/addcateg.svg</iconset>
@@ -58,6 +61,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="btnAddGroup">
+         <property name="toolTip">
+          <string>Create new group...</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/addmark.svg</normaloff>:/addmark.svg</iconset>
@@ -75,6 +81,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="btnDelGroup">
+         <property name="toolTip">
+          <string>Delete group...</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>

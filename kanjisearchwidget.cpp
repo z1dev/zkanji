@@ -1111,7 +1111,10 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
     connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
     popmap.setMapping(a, 9);
 
-    ZKanjiWidget::getZParent(this)->addDockAction(&popup);
+    ZKanjiWidget *w = ZKanjiWidget::getZParent(this);
+    if (w != nullptr)
+        w->addDockAction(&popup);
+
 
     popup.popup(e->globalPos());
     e->accept();

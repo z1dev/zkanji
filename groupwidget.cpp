@@ -1,18 +1,19 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
 
 #include <QMessageBox>
 #include <QItemSelectionModel>
+
 #include "groupwidget.h"
-//#include "zui.h"
 #include "zkanjimain.h"
 #include "groups.h"
 #include "ui_groupwidget.h"
 #include "zgrouptreemodel.h"
 #include "words.h"
+#include "zkanjiwidget.h"
 
 
 //-------------------------------------------------------------
@@ -155,6 +156,48 @@ void GroupWidget::keyPressEvent(QKeyEvent *e)
         return;
     }
     base::keyPressEvent(e);
+}
+
+void GroupWidget::contextMenuEvent(QContextMenuEvent *e)
+{
+    QMenu popup;
+
+    QAction *a;
+    a = popup.addAction(ui->btnAddCateg->toolTip());
+    connect(a, &QAction::triggered, this, &GroupWidget::on_btnAddCateg_clicked);
+    a->setEnabled(ui->btnAddCateg->isEnabled());
+
+    a = popup.addAction(ui->btnAddGroup->toolTip());
+    connect(a, &QAction::triggered, this, &GroupWidget::on_btnAddGroup_clicked);
+    a->setEnabled(ui->btnAddGroup->isEnabled());
+
+    a = popup.addAction(ui->btnDelGroup->toolTip());
+    connect(a, &QAction::triggered, this, &GroupWidget::on_btnDelGroup_clicked);
+    a->setEnabled(ui->btnDelGroup->isEnabled());
+
+    if (ui->buttonLayout->count() > 3)
+    {
+        popup.addSeparator();
+
+        for (int ix = 3, siz = ui->buttonLayout->count(); ix != siz; ++ix)
+        {
+            QAbstractButton *btn = dynamic_cast<QAbstractButton*>(ui->buttonLayout->itemAt(ix)->widget());
+            if (btn == nullptr)
+                continue;
+
+            a = popup.addAction(btn->toolTip());
+            connect(a, &QAction::triggered, btn, &QAbstractButton::clicked);
+            a->setEnabled(btn->isEnabled());
+
+        }
+    }
+
+    ZKanjiWidget *w = ZKanjiWidget::getZParent(this);
+    if (w != nullptr)
+        w->addDockAction(&popup);
+
+    popup.exec(e->globalPos());
+    e->accept();
 }
 
 void GroupWidget::updateGroups()
