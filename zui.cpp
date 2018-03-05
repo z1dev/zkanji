@@ -686,7 +686,7 @@ namespace {
     {
         int w;
         int h;
-        QImage *img;
+        std::unique_ptr<QImage> img;
     };
 
     std::map<QString, std::map<int, _SvgImgT>> _svgimagemap;
@@ -708,9 +708,7 @@ QImage imageFromSvg(QString svgpath, int width, int height, int version)
         {
             if (mit->second.w == width && mit->second.h == height)
                 return *mit->second.img;
-            delete mit->second.img;
-            //it->second.erase(mit);
-            //mit = it->second.end();
+            mit->second.img.reset();
         }
     }
 
@@ -726,11 +724,12 @@ QImage imageFromSvg(QString svgpath, int width, int height, int version)
     if (it == _svgimagemap.end())
     {
         std::map<int, _SvgImgT> versionmap;
+
         _SvgImgT imgt;
         imgt.w = width;
         imgt.h = height;
-        imgt.img = img;
-        versionmap[version] = imgt;
+        imgt.img.reset(img);
+        versionmap[version] = std::move(imgt);
 
         _svgimagemap.insert(std::make_pair(svgpath, std::move(versionmap)));
     }
@@ -741,14 +740,14 @@ QImage imageFromSvg(QString svgpath, int width, int height, int version)
             _SvgImgT imgt;
             imgt.w = width;
             imgt.h = height;
-            imgt.img = img;
-            it->second[version] = imgt;
+            imgt.img.reset(img);
+            it->second[version] = std::move(imgt);
         }
         else
         {
             mit->second.w = width;
             mit->second.h = height;
-            mit->second.img = img;
+            mit->second.img.reset(img);
         }
     }
 
@@ -1009,14 +1008,14 @@ void deleteSvgImageCache(QString svgpath, int version)
         if (mit == it->second.end())
             return;
 
-        delete mit->second.img;
+        mit->second.img.reset();
 
         it->second.erase(mit);
         return;
     }
 
     for (auto &m : it->second)
-        delete m.second.img;
+        m.second.img.reset();
 
     _svgimagemap.erase(it);
 

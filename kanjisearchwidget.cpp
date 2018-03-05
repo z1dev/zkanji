@@ -1882,17 +1882,17 @@ void KanjiSearchWidget::on_allButton_clicked(bool checked)
     showHideAction(checked ? 0 : 1);
 }
 
-void KanjiSearchWidget::on_rOptionsButton_toggled(bool checked)
-{
-    ui->rOptionsWidget->setVisible(checked);
-    ui->rOptionsWidget->updateGeometry();
-    //ui->readingEdit->setVisible(!checked);
-
-    QSizePolicy pol = ui->readingWidget->sizePolicy();
-    pol.setHorizontalPolicy(checked ? QSizePolicy::MinimumExpanding : QSizePolicy::Expanding);
-    ui->readingWidget->setSizePolicy(pol);
-    ui->readingWidget->updateGeometry();
-}
+//void KanjiSearchWidget::on_rOptionsButton_toggled(bool checked)
+//{
+//    ui->rOptionsWidget->setVisible(checked);
+//    ui->rOptionsWidget->updateGeometry();
+//    //ui->readingEdit->setVisible(!checked);
+//
+//    QSizePolicy pol = ui->readingWidget->sizePolicy();
+//    pol.setHorizontalPolicy(checked ? QSizePolicy::MinimumExpanding : QSizePolicy::Expanding);
+//    ui->readingWidget->setSizePolicy(pol);
+//    ui->readingWidget->updateGeometry();
+//}
 
 //void KanjiSearchWidget::on_clearButton_clicked()
 //{

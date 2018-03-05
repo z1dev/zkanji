@@ -44,8 +44,16 @@
 #include <QLocalSocket>
 #endif
 
-// Version of program as text Must not contain non-latin characters.
-char ZKANJI_PROGRAM_VERSION[] = "v0.0.4-alpha";
+// Version of program as ansi-text. Must not contain non-latin characters.
+//
+// Versioning while in alpha: v0.0.Apre-alpha where A is the next alpha release OR v0.0.Aalpha
+// when it's the actual release uploaded to github releases.
+//
+// Beta versions are numbered: v0.Bpre-beta for work in progress, and v0.Bbeta for uploaded
+// versions.
+//
+// Future versioning after v1.0 is not yet determined.
+char ZKANJI_PROGRAM_VERSION[] = "v0.0.5pre-alpha";
 
 int showAndQuit(QString title, QString text)
 {
@@ -773,8 +781,8 @@ int main(int argc, char *argv[])
     a.setWindowIcon(prgico);
 #endif
 
-    try
-    {
+    //try
+    //{
         std::unique_ptr<QSharedMemory> singleappguard(new QSharedMemory("zkanjiSingleAppGuardSoNoMultipleZKanjiAppsGetOpened", &a));
 #ifdef Q_OS_WIN
         if (singleappguard->attach(QSharedMemory::ReadOnly))
@@ -953,12 +961,12 @@ int main(int argc, char *argv[])
         a.postEvent(gUI, new StartEvent, INT_MIN);
         int result = a.exec();
         return result;
-    }
-    catch (...)
-    {
-        showSimpleDialog("zkanji", a.tr("An unexpected error occurred. The program will terminate."));
-        return 1;
-    }
+    //}
+    //catch (...)
+    //{
+    //    showSimpleDialog("zkanji", a.tr("An unexpected error occurred. The program will terminate."));
+    //    return 1;
+    //}
 
     return -1;
 }

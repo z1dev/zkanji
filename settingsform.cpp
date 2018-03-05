@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -153,14 +153,18 @@ KanjiRefListModel::~KanjiRefListModel()
 
 void KanjiRefListModel::reset()
 {
-    memcpy(showref, Settings::kanji.showref, sizeof(bool) * ZKanji::kanjiReferenceCount());
-    memcpy(reforder, Settings::kanji.reforder, sizeof(int) * ZKanji::kanjiReferenceCount());
+    //memcpy(showref, Settings::kanji.showref, sizeof(bool) * ZKanji::kanjiReferenceCount());
+    //memcpy(reforder, Settings::kanji.reforder, sizeof(int) * ZKanji::kanjiReferenceCount());
+    showref = Settings::kanji.showref;
+    reforder = Settings::kanji.reforder;
 }
 
 void KanjiRefListModel::apply()
 {
-    memcpy(Settings::kanji.showref, showref, sizeof(bool) * ZKanji::kanjiReferenceCount());
-    memcpy(Settings::kanji.reforder, reforder, sizeof(int) * ZKanji::kanjiReferenceCount());
+    //memcpy(Settings::kanji.showref, showref, sizeof(bool) * ZKanji::kanjiReferenceCount());
+    //memcpy(Settings::kanji.reforder, reforder, sizeof(int) * ZKanji::kanjiReferenceCount());
+    Settings::kanji.showref = showref;
+    Settings::kanji.reforder = reforder;
 }
 
 void KanjiRefListModel::moveUp(int currpos, const std::vector<int> &indexes)
@@ -173,11 +177,7 @@ void KanjiRefListModel::moveUp(int currpos, const std::vector<int> &indexes)
         currpos = std::max(0, ranges[rix]->first - 1);
     else
         currpos = std::max(0, currpos);
-    _moveRanges(ranges, currpos, reforder
-#ifdef _DEBUG
-        , ZKanji::kanjiReferenceCount()
-#endif
-        );
+    _moveRanges(ranges, currpos, reforder);
 
     signalRowsMoved(ranges, currpos);
 }
@@ -192,11 +192,7 @@ void KanjiRefListModel::moveDown(int currpos, const std::vector<int> &indexes)
         currpos = std::min(ZKanji::kanjiReferenceCount(), ranges[rix]->last + 2);
     else
         currpos = std::min(ZKanji::kanjiReferenceCount(), currpos + 1);
-    _moveRanges(ranges, currpos, reforder
-#ifdef _DEBUG
-        , ZKanji::kanjiReferenceCount()
-#endif
-        );
+    _moveRanges(ranges, currpos, reforder);
 
     signalRowsMoved(ranges, currpos);
 }
@@ -265,11 +261,7 @@ bool KanjiRefListModel::dropMimeData(const QMimeData *data, Qt::DropAction actio
     smartvector<Range> ranges;
     _rangeFromIndexes(rows, arr.size() / sizeof(int), ranges);
 
-    _moveRanges(ranges, row, reforder
-#ifdef _DEBUG
-        , ZKanji::kanjiReferenceCount()
-#endif
-        );
+    _moveRanges(ranges, row, reforder);
 
     signalRowsMoved(ranges, row);
 

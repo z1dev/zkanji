@@ -311,7 +311,7 @@ namespace Settings
         ini.setValue("kanji/hidetooltip", kanji.hidetooltip);
         ini.setValue("kanji/tooltipdelay", kanji.tooltipdelay);
 
-        for (int ix = 0; ix != 33; ++ix)
+        for (int ix = 0, siz = kanji.showref.size(); ix != siz; ++ix)
         {
             ini.setValue("kanji/showref" + QString::number(ix), kanji.showref[ix]);
             ini.setValue("kanji/reforder" + QString::number(ix), kanji.reforder[ix]);
@@ -739,12 +739,6 @@ namespace Settings
 
     void loadIniFile()
     {
-        const int kanjirefcnt = ZKanji::kanjiReferenceCount();
-
-        memset(kanji.showref, true, sizeof(bool) * kanjirefcnt);
-        for (int ix = 0, siz = kanjirefcnt; ix != siz; ++ix)
-            kanji.reforder[ix] = ix;
-
         QSettings ini(ZKanji::userFolder() + "/zkanji.ini", QSettings::IniFormat);
 
         QString tmp;
@@ -850,7 +844,6 @@ namespace Settings
         val = ini.value("print/sizeid", -1).toInt(&ok);
         if (ok && val >= -1)
             print.pagesizeid = val;
-
 
         // Dialog settings
 
@@ -1001,6 +994,8 @@ namespace Settings
 
         // Kanji settings
 
+        const int kanjirefcnt = ZKanji::kanjiReferenceCount();
+
         kanji.savefilters = ini.value("kanji/savefilters", true).toBool();
         kanji.resetpopupfilters = ini.value("kanji/popupreset", false).toBool();
         val = ini.value("kanji/ref1", 3).toInt(&ok);
@@ -1022,25 +1017,47 @@ namespace Settings
         if (ok && val >= 1 && val <= 9999)
             kanji.tooltipdelay = val;
 
+#define VecX 1
+
+        kanji.showref.resize(kanjirefcnt);
+        kanji.reforder.resize(kanjirefcnt);
+
         QSet<int> foundrefs;
         bool brokenorder = false;
-        for (int ix = 0; ix != kanjirefcnt; ++ix)
+        for (int ix = 0; ix != kanjirefcnt && !brokenorder; ++ix)
         {
-            kanji.showref[ix] = ini.value("kanji/showref" + QString::number(ix), true).toBool();
-            val = ini.value("kanji/reforder" + QString::number(ix), ix).toInt(&ok);
-            if (ok && val >= 0 && val < kanjirefcnt)
+#ifdef VecX
+            kanji.showref.at(ix) = ini.value(QString("kanji/showref%1").arg(ix), true).toBool();
+#else
+            kanji.showref[ix] = ini.value(QString("kanji/showref%1").arg(ix), true).toBool();
+#endif
+            val = ini.value(QString("kanji/reforder%1").arg(ix), kanjirefcnt).toInt(&ok);
+            if (ok && val >= 0 && val < kanjirefcnt && !foundrefs.contains(val))
             {
-                if (!foundrefs.contains(val))
-                    kanji.reforder[ix] = val;
-                else
-                    brokenorder = true;
+                foundrefs.insert(val);
+#ifdef VecX
+                kanji.reforder.at(ix) = val;
+#else
+                kanji.reforder[ix] = val;
+#endif
             }
             else
                 brokenorder = true;
         }
+
         if (brokenorder)
+        {
             for (int ix = 0; ix != kanjirefcnt; ++ix)
+            {
+#ifdef VecX
+                kanji.showref.at(ix) = true;
+                kanji.reforder.at(ix) = ix;
+#else
+                kanji.showref[ix] = true;
                 kanji.reforder[ix] = ix;
+#endif
+            }
+        }
 
         // Study settings
 
@@ -1719,7 +1736,4 @@ namespace Settings
     }
 
 }
-
-
-
 

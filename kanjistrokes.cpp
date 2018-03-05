@@ -2549,7 +2549,7 @@ void KanjiElementList::loadRepos(QDataStream &stream)
 
     for (int ix = 0; ix != cnt; ++ix)
     {
-        ElementRepo *repo = new ElementRepo;
+        std::unique_ptr<ElementRepo> repo(new ElementRepo);
 
         stream >> make_zstr(repo->name, ZStrFormat::Byte);
 

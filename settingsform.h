@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -10,6 +10,7 @@
 #include <QtCore>
 #include <QMainWindow>
 #include <QFrame>
+#include "fastarray.h"
 #include "dialogwindow.h"
 #include "zlistboxmodel.h"
 
@@ -73,8 +74,8 @@ public:
 
     virtual QMimeData* mimeData(const QModelIndexList &indexes) const override;
 private:
-    bool showref[33];
-    int reforder[33];
+    std::vector<char> showref;
+    std::vector<int> reforder;
 
     typedef ZAbstractListBoxModel   base;
 };

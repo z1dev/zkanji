@@ -666,6 +666,9 @@ void QCharString::resize(int length)
 
     int oldsize = size();
 
+    if (oldsize == length)
+        return;
+
     QChar *tmp = arr;
     arr = new QChar[length + 1];
     arr[length] = QChar(0);
@@ -681,6 +684,8 @@ void QCharString::resize(int length)
 
 uint QCharString::size() const
 {
+    // When debugging, siz holds the length of the string, but it is only used for error
+    // checking. It cannot be returned here as sometimes the size is changed AFTER siz is set.
     return arr == nullptr ? 0 : qcharlen(arr);
 }
 
@@ -701,7 +706,11 @@ void QCharString::clear()
 int QCharString::compare(const QCharString &other) const
 {
     if (arr == nullptr || other.arr == nullptr)
+    {
+        if (arr == other.arr)
+            return 0;
         return arr == nullptr ? -1 : 1;
+    }
     return qcharcmp(arr, other.arr);
 }
 
