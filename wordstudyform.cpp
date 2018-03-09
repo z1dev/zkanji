@@ -457,7 +457,6 @@ void WordStudyForm::exec(WordStudy *s)
     // this round.
     if (s->studySettings().method == WordStudyMethod::Gradual)
     {
-        QLabel *roundLabel;
         ui->status->add(tr("Round") + ":", 0, QString::number(s->currentRound() + 1), 4, true);
         ui->status->add(tr("Due") + ":", 0, "0", 5, "(0)", 7);
     }

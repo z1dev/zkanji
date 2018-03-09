@@ -56,7 +56,8 @@
 // Documentation for QxtGlobalShortcut: http://libqxt.bitbucket.org/doc/tip/qxtglobalshortcut.html
 
 #include "Qxt/qxtglobalshortcut.h"
-namespace {
+namespace
+{
     QxtGlobalShortcut *fromPopupDictShortcut = nullptr;
     QxtGlobalShortcut *toPopupDictShortcut = nullptr;
     QxtGlobalShortcut *kanjiPopupShortcut = nullptr;

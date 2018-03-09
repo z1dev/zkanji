@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -1949,7 +1949,7 @@ void ZListView::dragEnterEvent(QDragEnterEvent *e)
     //bool supported = true;
     const QMimeData *mdat = e->mimeData();
 
-    if (((int)e->possibleActions() & (int)model()->supportedDropActions(e->source() == this, mdat) == 0))
+    if (((int)e->possibleActions() & (int)model()->supportedDropActions(e->source() == this, mdat)) == 0)
     {
         //if (e->source() != this)
         //    QMessageBox::information(parentWidget(), "zkanji", QString("%1, %2").arg(e->possibleActions()).arg(model()->supportedDropActions(e->source() == this, mdat->formats())), QMessageBox::Ok);

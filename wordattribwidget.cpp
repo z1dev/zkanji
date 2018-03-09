@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -14,156 +14,159 @@
 //-------------------------------------------------------------
 
 
-// Mapping for strings when calling wordTypeLong (0xL0NN), wordNoteLong (0xL1NN),
-// wordFieldLong (0xL2NN), wordDialectLong (0xL3NN), wordInfoLong (0xL4NN), 
-// wordJLPTLevel (0xL5NN) and wordAttrib (0xLFNN) (Where NN is the index in the strings, L is
-// the level in the tree.)
-static const int attribMap[] = {
-    0x0F00 +  0, // -WordType
-    0x1000 +  0, //     Noun
-    0x1F00 +  1, //     -Verb
-    0x2000 +  1, //         IchidanVerb
-    0x2000 +  2, //         GodanVerb
-    0x2000 +  3, //         TakesSuru
-    0x2000 +  4, //         SuruVerb
-    0x2000 +  5, //         AruVerb
-    0x2000 +  6, //         KuruVerb
-    0x2000 +  7, //         IkuVerb
-    0x2000 +  8, //         RiVerb
-    0x2000 +  9, //         ZuruVerb
-    0x2000 + 10, //         Transitive
-    0x2000 + 11, //         Intransitive
-    0x1F00 +  2, //     -Adjective
-    0x2000 + 12, //         TrueAdj
-    0x2000 + 13, //         NaAdj
-    0x2000 + 14, //         Taru
-    0x2000 + 15, //         PrenounAdj
-    0x1000 + 16, //     MayTakeNo
-    0x1000 + 17, //     Adverb
-    0x1000 + 18, //     Aux
-    0x1000 + 19, //     Prefix
-    0x1000 + 20, //     Suffix
-    0x1000 + 21, //     Conjunction
-    0x1000 + 22, //     Interjection
-    0x1000 + 23, //     Expression
-    0x1000 + 24, //     Pronoun
-    0x1000 + 25, //     Particle
-    0x1000 + 26, //     Counter
-    0x1000 + 27, //     CopulaDa
-    0x1F00 +  3, //     -Archaic
-    0x2000 + 28, //         ArchaicVerb
-    0x2000 + 29, //         ArchaicAdj
-    0x2000 + 30, //         ArchaicNa
-    0x0F00 +  4, // -WordNote
-    0x1100 +  0, //     KanaOnly
-    0x1100 +  1, //     Abbrev
-    0x1100 +  2, //     FourCharIdiom
-    0x1100 +  3, //     Idiomatic
-    0x1100 +  4, //     Obscure
-    0x1100 +  5, //     Obsolete
-    0x1100 +  6, //     Onomatopoeia
-    0x1100 +  7, //     Proverb
-    0x1100 +  8, //     Rare
-    0x1100 +  9, //     Sensitive
-    0x1F00 +  5, //     -Relation
-    0x2100 + 10, //         Colloquial
-    0x2100 + 11, //         Familiar
-    0x2100 + 12, //         Honorific
-    0x2100 + 13, //         Humble
-    0x2100 + 14, //         Polite
-    0x1F00 +  6, //     -Style
-    0x2100 + 15, //         Archaic
-    0x2100 + 16, //         Poetical
-    0x2100 + 17, //         ChildLang
-    0x2100 + 18, //         Male
-    0x2100 + 19, //         Female
-    0x2100 + 20, //         Joking
-    0x2100 + 21, //         Slang
-    0x2100 + 22, //         MangaSlang
-    0x2100 + 23, //         Derogatory
-    0x2100 + 24, //         Vulgar
-    0x0F00 +  7, // -WordField
-    0x1200 +  0, //     Architecture
-    0x1200 +  1, //     Business
-    0x1200 +  2, //     Computing
-    0x1200 +  3, //     Economics
-    0x1200 +  4, //     Engineering
-    0x1200 +  5, //     Finance
-    0x1200 +  6, //     Food
-    0x1200 +  7, //     Law
-    0x1200 +  8, //     Military
-    0x1200 +  9, //     Music
-    0x1F00 +  8, //     -Science
-    0x2200 + 10, //         Anatomy
-    0x2200 + 11, //         Astronomy
-    0x2200 + 12, //         Biology
-    0x2200 + 13, //         Botany
-    0x2200 + 14, //         Chemistry
-    0x2200 + 15, //         Geology
-    0x2200 + 16, //         Geometry
-    0x2200 + 17, //         Linguistics
-    0x2200 + 18, //         Math
-    0x2200 + 19, //         Medicine
-    0x2200 + 20, //         Physics
-    0x2200 + 21, //         Zoology
-    0x1F00 +  9, //     -Religion
-    0x2200 + 22, //         Buddhism
-    0x2200 + 23, //         Shinto
-    0x1F00 + 10, //     -Sport
-    0x2200 + 24, //         Baseball
-    0x2200 + 25, //         Mahjong
-    0x2200 + 26, //         MartialArts
-    0x2200 + 27, //         Shogi
-    0x2200 + 28, //         Sports
-    0x2200 + 29, //         Sumo
-    0x0F00 + 11, // -WordDialect
-    0x1300 +  0, //     HokkaidouBen
-    0x1300 +  1, //     KansaiBen
-    0x1300 +  2, //     KantouBen
-    0x1300 +  3, //     KyotoBen
-    0x1300 +  4, //     KyuushuuBen
-    0x1300 +  5, //     NaganoBen
-    0x1300 +  6, //     OsakaBen
-    0x1300 +  7, //     RyuukyuuBen
-    0x1300 +  8, //     TosaBen
-    0x1300 +  9, //     TouhokuBen
-    0x1300 + 10, //     TsugaruBen
-    0x0F00 + 12, // -WordInfo
-    0x1400 +  0, //     Ateji
-    0x1400 +  1, //     Gikun
-    0x1400 +  2, //     IrregKanji
-    0x1400 +  3, //     IrregKana
-    0x1400 +  4, //     IrregOku
-    0x1400 +  5, //     OutdatedKanji
-    0x1400 +  6, //     OutdatedKana
-    0x0F00 + 13, // -WordJLPT
-    0x1500 +  0, //     N5
-    0x1500 +  1, //     N4
-    0x1500 +  2, //     N3
-    0x1500 +  3, //     N2
-    0x1500 +  4  //     N1
-};
-
-static QString attribStringAt(int index)
+namespace
 {
-    switch (attribMap[index] & 0x0f00)
+    // Mapping for strings when calling wordTypeLong (0xL0NN), wordNoteLong (0xL1NN),
+    // wordFieldLong (0xL2NN), wordDialectLong (0xL3NN), wordInfoLong (0xL4NN), 
+    // wordJLPTLevel (0xL5NN) and wordAttrib (0xLFNN) (Where NN is the index in the strings, L is
+    // the level in the tree.)
+    const int attribMap[] = {
+        0x0F00 + 0, // -WordType
+        0x1000 + 0, //     Noun
+        0x1F00 + 1, //     -Verb
+        0x2000 + 1, //         IchidanVerb
+        0x2000 + 2, //         GodanVerb
+        0x2000 + 3, //         TakesSuru
+        0x2000 + 4, //         SuruVerb
+        0x2000 + 5, //         AruVerb
+        0x2000 + 6, //         KuruVerb
+        0x2000 + 7, //         IkuVerb
+        0x2000 + 8, //         RiVerb
+        0x2000 + 9, //         ZuruVerb
+        0x2000 + 10, //         Transitive
+        0x2000 + 11, //         Intransitive
+        0x1F00 + 2, //     -Adjective
+        0x2000 + 12, //         TrueAdj
+        0x2000 + 13, //         NaAdj
+        0x2000 + 14, //         Taru
+        0x2000 + 15, //         PrenounAdj
+        0x1000 + 16, //     MayTakeNo
+        0x1000 + 17, //     Adverb
+        0x1000 + 18, //     Aux
+        0x1000 + 19, //     Prefix
+        0x1000 + 20, //     Suffix
+        0x1000 + 21, //     Conjunction
+        0x1000 + 22, //     Interjection
+        0x1000 + 23, //     Expression
+        0x1000 + 24, //     Pronoun
+        0x1000 + 25, //     Particle
+        0x1000 + 26, //     Counter
+        0x1000 + 27, //     CopulaDa
+        0x1F00 + 3, //     -Archaic
+        0x2000 + 28, //         ArchaicVerb
+        0x2000 + 29, //         ArchaicAdj
+        0x2000 + 30, //         ArchaicNa
+        0x0F00 + 4, // -WordNote
+        0x1100 + 0, //     KanaOnly
+        0x1100 + 1, //     Abbrev
+        0x1100 + 2, //     FourCharIdiom
+        0x1100 + 3, //     Idiomatic
+        0x1100 + 4, //     Obscure
+        0x1100 + 5, //     Obsolete
+        0x1100 + 6, //     Onomatopoeia
+        0x1100 + 7, //     Proverb
+        0x1100 + 8, //     Rare
+        0x1100 + 9, //     Sensitive
+        0x1F00 + 5, //     -Relation
+        0x2100 + 10, //         Colloquial
+        0x2100 + 11, //         Familiar
+        0x2100 + 12, //         Honorific
+        0x2100 + 13, //         Humble
+        0x2100 + 14, //         Polite
+        0x1F00 + 6, //     -Style
+        0x2100 + 15, //         Archaic
+        0x2100 + 16, //         Poetical
+        0x2100 + 17, //         ChildLang
+        0x2100 + 18, //         Male
+        0x2100 + 19, //         Female
+        0x2100 + 20, //         Joking
+        0x2100 + 21, //         Slang
+        0x2100 + 22, //         MangaSlang
+        0x2100 + 23, //         Derogatory
+        0x2100 + 24, //         Vulgar
+        0x0F00 + 7, // -WordField
+        0x1200 + 0, //     Architecture
+        0x1200 + 1, //     Business
+        0x1200 + 2, //     Computing
+        0x1200 + 3, //     Economics
+        0x1200 + 4, //     Engineering
+        0x1200 + 5, //     Finance
+        0x1200 + 6, //     Food
+        0x1200 + 7, //     Law
+        0x1200 + 8, //     Military
+        0x1200 + 9, //     Music
+        0x1F00 + 8, //     -Science
+        0x2200 + 10, //         Anatomy
+        0x2200 + 11, //         Astronomy
+        0x2200 + 12, //         Biology
+        0x2200 + 13, //         Botany
+        0x2200 + 14, //         Chemistry
+        0x2200 + 15, //         Geology
+        0x2200 + 16, //         Geometry
+        0x2200 + 17, //         Linguistics
+        0x2200 + 18, //         Math
+        0x2200 + 19, //         Medicine
+        0x2200 + 20, //         Physics
+        0x2200 + 21, //         Zoology
+        0x1F00 + 9, //     -Religion
+        0x2200 + 22, //         Buddhism
+        0x2200 + 23, //         Shinto
+        0x1F00 + 10, //     -Sport
+        0x2200 + 24, //         Baseball
+        0x2200 + 25, //         Mahjong
+        0x2200 + 26, //         MartialArts
+        0x2200 + 27, //         Shogi
+        0x2200 + 28, //         Sports
+        0x2200 + 29, //         Sumo
+        0x0F00 + 11, // -WordDialect
+        0x1300 + 0, //     HokkaidouBen
+        0x1300 + 1, //     KansaiBen
+        0x1300 + 2, //     KantouBen
+        0x1300 + 3, //     KyotoBen
+        0x1300 + 4, //     KyuushuuBen
+        0x1300 + 5, //     NaganoBen
+        0x1300 + 6, //     OsakaBen
+        0x1300 + 7, //     RyuukyuuBen
+        0x1300 + 8, //     TosaBen
+        0x1300 + 9, //     TouhokuBen
+        0x1300 + 10, //     TsugaruBen
+        0x0F00 + 12, // -WordInfo
+        0x1400 + 0, //     Ateji
+        0x1400 + 1, //     Gikun
+        0x1400 + 2, //     IrregKanji
+        0x1400 + 3, //     IrregKana
+        0x1400 + 4, //     IrregOku
+        0x1400 + 5, //     OutdatedKanji
+        0x1400 + 6, //     OutdatedKana
+        0x0F00 + 13, // -WordJLPT
+        0x1500 + 0, //     N5
+        0x1500 + 1, //     N4
+        0x1500 + 2, //     N3
+        0x1500 + 3, //     N2
+        0x1500 + 4  //     N1
+    };
+
+    QString attribStringAt(int index)
     {
-    case 0x0000:
-        return Strings::wordTypeLong(attribMap[index] & 0xff);
-    case 0x0100:
-        return Strings::wordNoteLong(attribMap[index] & 0xff);
-    case 0x0200:
-        return Strings::wordFieldLong(attribMap[index] & 0xff);
-    case 0x0300:
-        return Strings::wordDialectLong(attribMap[index] & 0xff);
-    case 0x0400:
-        return Strings::wordInfoLong(attribMap[index] & 0xff);
-    case 0x0500:
-        return Strings::wordJLPTLevel(attribMap[index] & 0xff);
-    case 0x0F00:
-        return Strings::wordAttrib(attribMap[index] & 0xff);
-    default:
-        return QString();
+        switch (attribMap[index] & 0x0f00)
+        {
+        case 0x0000:
+            return Strings::wordTypeLong(attribMap[index] & 0xff);
+        case 0x0100:
+            return Strings::wordNoteLong(attribMap[index] & 0xff);
+        case 0x0200:
+            return Strings::wordFieldLong(attribMap[index] & 0xff);
+        case 0x0300:
+            return Strings::wordDialectLong(attribMap[index] & 0xff);
+        case 0x0400:
+            return Strings::wordInfoLong(attribMap[index] & 0xff);
+        case 0x0500:
+            return Strings::wordJLPTLevel(attribMap[index] & 0xff);
+        case 0x0F00:
+            return Strings::wordAttrib(attribMap[index] & 0xff);
+        default:
+            return QString();
+        }
     }
 }
 

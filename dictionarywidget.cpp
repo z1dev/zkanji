@@ -7,7 +7,7 @@
 #include <QMenu>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
-#include <QStringListModel>
+
 #include "dictionarywidget.h"
 #include "ui_dictionarywidget.h"
 #include "words.h"
@@ -35,8 +35,8 @@
 //-------------------------------------------------------------
 
 
-static QStringListModel jpsearches;
-static QStringListModel ensearches;
+QStringListModel DictionaryWidget::jpsearches;
+QStringListModel DictionaryWidget::ensearches;
 
 //-------------------------------------------------------------
 

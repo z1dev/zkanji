@@ -48,8 +48,11 @@ int makeCommand(Commands command, CommandCategories categ)
 
 //-------------------------------------------------------------
 
-bool temptemp = false;
-
+namespace
+{
+    // Whether the main window should be maximized right after load when restoring from the taskbar.
+    bool loadrestoremaximized = false;
+}
 
 ZDockOverlay::ZDockOverlay(QWidget *parent) : base(parent, Qt::Widget | Qt::FramelessWindowHint)
 {
@@ -359,7 +362,7 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             FlagGuard<bool> guard(&skipchange, true, false);
             if (state != Qt::WindowNoState)
             {
-                temptemp = restoremaximized = reader.attributes().value("restoremaximized") == "1";
+                loadrestoremaximized = restoremaximized = reader.attributes().value("restoremaximized") == "1";
                 restoremaximized = false;
                 //                if (restoremaximized && state != Qt::WindowMaximized)
                 //                {
@@ -1213,9 +1216,9 @@ void ZKanjiForm::changeEvent(QEvent *e)
         else
             base::changeEvent(e);
 
-        if (temptemp)
+        if (loadrestoremaximized)
         {
-            temptemp = false;
+            loadrestoremaximized = false;
             restoremaximized = true;
         }
 

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -1071,7 +1071,7 @@ int WordStudyGradual::correctCount() const
 {
     int cnt = 0;
     for (int ix = 0; ix != pos; ++ix)
-         cnt += testitems[ix].correct ? 1 : 0;
+        cnt += testitems[ix].correct ? 1 : 0;
     return cnt;
 }
 
@@ -1312,7 +1312,7 @@ bool WordStudySingle::nextFailed(int indexcnt) const
 
 namespace ZKanji
 {
-    static WordStudySettings defwset{ 
+    static WordStudySettings defwset{
             (int)WordStudyQuestion::Definition, 0, false, false, WordStudyAnswering::CorrectWrong, WordStudyMethod::Gradual,
             false, 15, false, 15, false, 50, true, WordStudyGradualSettings{ 5, 3, 5, false }, WordStudySingleSettings{ true, false } };
     const WordStudySettings& defaultWordStudySettings()

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -55,7 +55,7 @@
 // removed as well. If all lines in sub-nodes of a node fall below the full
 // limit, those are not moved back to the node.
 
-class TextNode;
+struct TextNode;
 class TextNodeList
 {
 public:

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -459,7 +459,7 @@ void ZKanjiDiagram::resizeEvent(QResizeEvent *e)
 namespace ZKanji
 {
     // Same as the radsymbols in ZRadicalGrid, without the added stroke count.
-    extern QChar radsymbols[231];
+    extern QChar radsymbols[214];
 }
 
 void ZKanjiDiagram::paintEvent(QPaintEvent *e)

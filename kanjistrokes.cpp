@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -1443,7 +1443,7 @@ void KanjiElementList::compareToModels(const Stroke &stroke, RecognizerCompariso
     result.setSize(models.size() + cmodels.size());
     for (int ix = 0; ix != models.size(); ++ix)
     {
-        RecognizerComparison cmp;
+        //RecognizerComparison cmp;
         result[ix].index = ix;
         result[ix].distance = models[ix].compare(stroke);
     }
@@ -1451,7 +1451,7 @@ void KanjiElementList::compareToModels(const Stroke &stroke, RecognizerCompariso
     int s = models.size();
     for (int ix = 0; ix != cmodels.size(); ++ix)
     {
-        RecognizerComparison cmp;
+        //RecognizerComparison cmp;
         result[s + ix].index = s + ix;
         result[s + ix].distance = cmodels[ix].compare(stroke);
     }

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -13,15 +13,17 @@
 #include "zui.h"
 #include "studysettings.h"
 
-static char ZKANJI_PROFILE_FILE_VERSION[] = "001";
+namespace
+{
+    const char  ZKANJI_PROFILE_FILE_VERSION[] = "001";
 
+    //static const quint64 ms_1_minute = 60 * 1000;
+    //static const quint64 ms_1_day = 24 * 60 * 60 * 1000;
+    //static const quint64 ms_1_month = ms_1_day * 30.5;
 
-//static const quint64 ms_1_minute = 60 * 1000;
-//static const quint64 ms_1_day = 24 * 60 * 60 * 1000;
-//static const quint64 ms_1_month = ms_1_day * 30.5;
-
-static const quint32 s_1_day = 24 * 60 * 60;
-static const quint32 s_1_month = s_1_day * 30.5;
+    const quint32 s_1_day = 24 * 60 * 60;
+    const quint32 s_1_month = s_1_day * 30.5;
+}
 
 //-------------------------------------------------------------
 
@@ -1361,14 +1363,13 @@ QDateTime StudyDeck::cardTestDate(CardId *cardid) const
     return card->testdate;
 }
 
-static StudyCardStat emptystat;
-const StudyCardStat& StudyDeck::cardFirstStats(CardId *cardid) const
+QDate StudyDeck::cardFirstStatDate(CardId *cardid) const
 {
     const StudyCard *card = fromId(cardid);
     if (card == nullptr || card->stats.empty())
-        return emptystat;
+        return QDate();
 
-    return card->stats[0];
+    return card->stats[0].day;
 }
 
 QDateTime StudyDeck::cardItemDate(CardId *cardid) const
@@ -2046,7 +2047,7 @@ void StudyDeck::fixCardSpacing(const StudyCard *card, QDateTime cardtestdate, uc
         QDateTime posfirst = posdue.addMSecs(-posdiff);
         QDateTime poslast = posdue.addMSecs(+posdiff);
         if (ltDay(posfirst) == ltDay(posdue))
-            posfirst = posfirst.addSecs(-s_1_day);
+            posfirst = posfirst.addSecs(-(qint64)s_1_day);
         if (ltDay(poslast) == ltDay(posdue))
             poslast = poslast.addSecs(s_1_day);
 

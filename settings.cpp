@@ -1017,8 +1017,6 @@ namespace Settings
         if (ok && val >= 1 && val <= 9999)
             kanji.tooltipdelay = val;
 
-#define VecX 1
-
         kanji.showref.resize(kanjirefcnt);
         kanji.reforder.resize(kanjirefcnt);
 
@@ -1026,20 +1024,13 @@ namespace Settings
         bool brokenorder = false;
         for (int ix = 0; ix != kanjirefcnt && !brokenorder; ++ix)
         {
-#ifdef VecX
-            kanji.showref.at(ix) = ini.value(QString("kanji/showref%1").arg(ix), true).toBool();
-#else
             kanji.showref[ix] = ini.value(QString("kanji/showref%1").arg(ix), true).toBool();
-#endif
+
             val = ini.value(QString("kanji/reforder%1").arg(ix), kanjirefcnt).toInt(&ok);
             if (ok && val >= 0 && val < kanjirefcnt && !foundrefs.contains(val))
             {
                 foundrefs.insert(val);
-#ifdef VecX
-                kanji.reforder.at(ix) = val;
-#else
                 kanji.reforder[ix] = val;
-#endif
             }
             else
                 brokenorder = true;
@@ -1047,16 +1038,9 @@ namespace Settings
 
         if (brokenorder)
         {
-            for (int ix = 0; ix != kanjirefcnt; ++ix)
-            {
-#ifdef VecX
-                kanji.showref.at(ix) = true;
-                kanji.reforder.at(ix) = ix;
-#else
-                kanji.showref[ix] = true;
-                kanji.reforder[ix] = ix;
-#endif
-            }
+            kanji.showref.swap(std::vector<char>(kanjirefcnt, (const char)1));
+            //kanji.reforder.resize(kanjirefcnt);
+            std::iota(kanji.reforder.begin(), kanji.reforder.end(), 0);
         }
 
         // Study settings

@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -24,7 +24,7 @@
 namespace ZKanji
 {
     // Same as the radsymbols in ZRadicalGrid, without the added stroke count.
-    QChar radsymbols[231] = {
+    QChar radsymbols[214] = {
         //1,
         0x4e00, 0x4e28, 0x4e36, 0x4e3f, 0x4e59, 0x4e85,
         //2,

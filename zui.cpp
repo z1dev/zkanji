@@ -51,11 +51,14 @@ class ZKanaLineEdit;
 // Model for the tree views showing the kanji groups.
 //static std::map<Dictionary*, GroupTreeModel*> kanjigroupmodels;
 
-static MainKanjiListModel mainkanjimodel;
-static RadicalFiltersModel radicalfiltersmodel;
+namespace
+{
+    MainKanjiListModel mainkanjimodel;
+    RadicalFiltersModel radicalfiltersmodel;
 
-static JapaneseValidator japanesevalidator(true, true);
-static JapaneseValidator kanavalidator(false, false);
+    JapaneseValidator japanesevalidator(true, true);
+    JapaneseValidator kanavalidator(false, false);
+}
 
 //void generateStore(Dictionary *d)
 //{
@@ -681,7 +684,8 @@ QDate ltDay(const QDateTime &d)
 //    return img;
 //}
 
-namespace {
+namespace
+{
     struct _SvgImgT
     {
         int w;

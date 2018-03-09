@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -500,7 +500,7 @@ void CollectWordsForm::on_generateButton_clicked()
     {
         int windex = words[ix];
         const WordEntry *e = dict->wordEntry(windex);
-        WordCommons *cm;
+        //WordCommons *cm;
         if (e->freq < minfreq || (maxklen > 0 && e->kana.size() > maxklen) /*|| 
             ((minjlpt != 6 || maxjlpt != -1) && ((cm = ZKanji::commons.findWord(e->kanji.data(), e->kana.data(), e->romaji.data())) == nullptr || cm->jlptn < maxjlpt || cm->jlptn > minjlpt))*/)
             words[ix] = -1;

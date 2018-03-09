@@ -397,7 +397,7 @@ bool KanjiInfoForm::restoreState(const KanjiInfoFormData &data)
 namespace ZKanji
 {
     // Same as the radsymbols in ZRadicalGrid, without the added stroke count.
-    extern QChar radsymbols[231];
+    extern QChar radsymbols[214];
 }
 
 void KanjiInfoForm::setKanji(Dictionary *d, int kindex)

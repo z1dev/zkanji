@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -539,9 +539,9 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
 
     words.reserve(cnt);
 
-    quint8 u8;
-    quint16 u16;
-    quint32 u32;
+    //quint8 u8;
+    //quint16 u16;
+    //quint32 u32;
 
     qint32 i;
     quint8 f;
@@ -609,7 +609,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
         stream.skipRawData(cnt * sizeof(qint32));
     }
 
-    bool incode;
+    //bool incode;
 
     for (auto ix = 0; ix != words.size(); ++ix)
     {
@@ -761,7 +761,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
     abcde.resize(words.size());
     aiueo.resize(words.size());
 
-    qint32 i32;
+    //qint32 i32;
 
     // Can't trust alphabetic ordering of old version, which might have
     // ordered the words differently.

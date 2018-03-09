@@ -315,8 +315,8 @@ bool StudyListModel::sortOrder(int column, int rowa, int rowb)
         }
         case (int)DeckColumnTypes::FirstDate:
         {
-            QDate daya = study->cardFirstStats(itema->cardid).day;
-            QDate dayb = study->cardFirstStats(itemb->cardid).day;
+            QDate daya = study->cardFirstStatDate(itema->cardid);
+            QDate dayb = study->cardFirstStatDate(itemb->cardid);
             if (daya != dayb)
                 return daya < dayb;
             // To the next case:
@@ -664,7 +664,7 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
         case (int)DeckColumnTypes::Tries:
             return QString::number(int(study->cardInclusion(item->cardid)));
         case (int)DeckColumnTypes::FirstDate:
-            return formatDate(study->cardFirstStats(item->cardid).day, tr("Never"));
+            return formatDate(study->cardFirstStatDate(item->cardid), tr("Never"));
             //return ZKanji::student()->getDeck(deck->deckId())->cards(item->cardid)->stats[0].day;
         case (int)DeckColumnTypes::LastDate:
             return fixFormatPastDate(study->cardTestDate(item->cardid));

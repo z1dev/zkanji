@@ -1828,7 +1828,7 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
                 continue;
         }
 
-        int klen;
+        //int klen;
 
         word = sameform ? w->kana.data() : w->romaji.data();
         wlen = qcharlen(word);
@@ -2689,7 +2689,7 @@ void Dictionary::loadBaseFile(const QString &filename)
     if (!good || version < 1)
         throw ZException("Invalid base file version.");
 
-    int dversion;
+    //int dversion;
     if (version == 1)
         loadBaseLegacy(stream, version);
     else
@@ -2711,7 +2711,7 @@ void Dictionary::loadBase(QDataStream &stream)
     //bool kreload = !ZKanji::kanjis.empty();
 
     KanjiEntry *k;
-    uchar b;
+    //uchar b;
 
     quint8 rcnt = 0; // Count of readings for kanji.
     QChar *rtmp = nullptr; // Temporary array for reading in old format kanji readings.
@@ -2996,7 +2996,7 @@ void Dictionary::load(QDataStream &stream)
 
     quint16 kfirst;
     quint16 kcnt;
-    KanjiDictData *kd;
+    //KanjiDictData *kd;
 
     kanjidata.clear();
     kanjidata.resize(ZKanji::kanjis.size(), KanjiDictData());

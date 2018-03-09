@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -568,7 +568,7 @@ void ZRadicalGrid::init()
 
     int lastsize = -1;
 
-    float radh = 0.72;
+    float radh = 0.72f;
     radfontsize = int(heights * radh);
     QFont radfont = Settings::radicalFont();
     //ss = QFont::StyleStrategy(radfont.styleStrategy() | QFont::NoSubpixelAntialias);
@@ -582,7 +582,7 @@ void ZRadicalGrid::init()
         lastsize = fi.pointSize();
 
         do {
-            radh -= 0.03;
+            radh -= 0.03f;
         } while (radh > 0 && radfontsize == int(heights * radh));
 
         radfontsize = int(heights * radh);
@@ -596,7 +596,7 @@ void ZRadicalGrid::init()
         radfontsize = lastsize;
     lastsize = -1;
 
-    float nameh = 0.4;
+    float nameh = 0.4f;
     namefontsize = int(heights * nameh);
     QFont namefont;
 
@@ -613,7 +613,7 @@ void ZRadicalGrid::init()
         lastsize = fi.pointSize();
 
         do {
-            nameh -= 0.03;
+            nameh -= 0.03f;
         } while (nameh >= 0 && namefontsize == int(heights * nameh));
 
         namefontsize = int(heights * nameh);
@@ -627,7 +627,7 @@ void ZRadicalGrid::init()
         namefontsize = lastsize;
     lastsize = -1;
 
-    float infoh = 0.24;
+    float infoh = 0.24f;
     notesfontsize = int(heights * infoh);
     QFont notesfont { Settings::fonts.info, notesfontsize };
     QFontMetrics nfmet(notesfont);
@@ -637,7 +637,7 @@ void ZRadicalGrid::init()
         lastsize = fi.pointSize();
 
         do {
-            infoh -= 0.03;
+            infoh -= 0.03f;
         } while (infoh >= 0 && notesfontsize == int(heights * infoh));
 
         notesfontsize = int(heights * infoh);

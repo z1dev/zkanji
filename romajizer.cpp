@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -208,90 +208,89 @@ const ushort kanaoutput[][3] =
 
 namespace
 {
-    static const int kanaalen = 1;
-    static const int kanaapos = 0;
+    const int kanaalen = 1;
+    const int kanaapos = 0;
 
-    static const int kanailen = 1;
-    static const int kanaipos = 1;
+    const int kanailen = 1;
+    const int kanaipos = 1;
 
-    static const int kanaulen = 1;
-    static const int kanaupos = 2;
+    const int kanaulen = 1;
+    const int kanaupos = 2;
 
-    static const int kanaelen = 1;
-    static const int kanaepos = 3;
+    const int kanaelen = 1;
+    const int kanaepos = 3;
 
-    static const int kanaolen = 1;
-    static const int kanaopos = 4;
+    const int kanaolen = 1;
+    const int kanaopos = 4;
 
-    static const int kanaylen = 5;
-    static const int kanaypos = kanaopos + kanaolen;
+    const int kanaylen = 5;
+    const int kanaypos = kanaopos + kanaolen;
 
-    static const int kanawlen = 10;
-    static const int kanawpos = kanaypos + kanaylen;
+    const int kanawlen = 10;
+    const int kanawpos = kanaypos + kanaylen;
 
-    static const int kanallen = 15;
-    static const int kanalpos = kanawpos + kanawlen;
+    const int kanallen = 15;
+    const int kanalpos = kanawpos + kanawlen;
 
-    static const int kanaxlen = 16;
-    static const int kanaxpos = kanalpos + kanallen;
+    const int kanaxlen = 16;
+    const int kanaxpos = kanalpos + kanallen;
 
-    static const int kanavlen = 10;
-    static const int kanavpos = kanaxpos + kanaxlen;
+    const int kanavlen = 10;
+    const int kanavpos = kanaxpos + kanaxlen;
 
-    static const int kanaclen = 15;
-    static const int kanacpos = kanavpos + kanavlen;
+    const int kanaclen = 15;
+    const int kanacpos = kanavpos + kanavlen;
 
-    static const int kanaqlen = 10;
-    static const int kanaqpos = kanacpos + kanaclen;
+    const int kanaqlen = 10;
+    const int kanaqpos = kanacpos + kanaclen;
 
-    static const int kanaklen = 10;
-    static const int kanakpos = kanaqpos + kanaqlen;
+    const int kanaklen = 10;
+    const int kanakpos = kanaqpos + kanaqlen;
 
-    static const int kanaglen = 15;
-    static const int kanagpos = kanakpos + kanaklen;
+    const int kanaglen = 15;
+    const int kanagpos = kanakpos + kanaklen;
 
-    static const int kanaslen = 18;
-    static const int kanaspos = kanagpos + kanaglen;
+    const int kanaslen = 18;
+    const int kanaspos = kanagpos + kanaglen;
 
-    static const int kanazlen = 10;
-    static const int kanazpos = kanaspos + kanaslen;
+    const int kanazlen = 10;
+    const int kanazpos = kanaspos + kanaslen;
 
-    static const int kanajlen = 10;
-    static const int kanajpos = kanazpos + kanazlen;
+    const int kanajlen = 10;
+    const int kanajpos = kanazpos + kanazlen;
 
-    static const int kanatlen = 23;
-    static const int kanatpos = kanajpos + kanajlen;
+    const int kanatlen = 23;
+    const int kanatpos = kanajpos + kanajlen;
 
-    static const int kanadlen = 17;
-    static const int kanadpos = kanatpos + kanatlen;
+    const int kanadlen = 17;
+    const int kanadpos = kanatpos + kanatlen;
 
-    static const int kananlen = 12;
-    static const int kananpos = kanadpos + kanadlen;
+    const int kananlen = 12;
+    const int kananpos = kanadpos + kanadlen;
 
-    static const int kanahlen = 10;
-    static const int kanahpos = kananpos + kananlen;
+    const int kanahlen = 10;
+    const int kanahpos = kananpos + kananlen;
 
-    static const int kanablen = 10;
-    static const int kanabpos = kanahpos + kanahlen;
+    const int kanablen = 10;
+    const int kanabpos = kanahpos + kanahlen;
 
-    static const int kanaflen = 10;
-    static const int kanafpos = kanabpos + kanablen;
+    const int kanaflen = 10;
+    const int kanafpos = kanabpos + kanablen;
 
-    static const int kanaplen = 10;
-    static const int kanappos = kanafpos + kanaflen;
+    const int kanaplen = 10;
+    const int kanappos = kanafpos + kanaflen;
 
-    static const int kanamlen = 10;
-    static const int kanampos = kanappos + kanaplen;
+    const int kanamlen = 10;
+    const int kanampos = kanappos + kanaplen;
 
-    static const int kanarlen = 10;
-    static const int kanarpos = kanampos + kanamlen;
+    const int kanarlen = 10;
+    const int kanarpos = kanampos + kanamlen;
 
-    static const int kanadashlen = 1;
-    static const int kanadashpos = kanarpos + kanarlen;
+    const int kanadashlen = 1;
+    const int kanadashpos = kanarpos + kanarlen;
 
-    static const int kanadotlen = 1;
-    static const int kanadotpos = kanadashpos + kanadashlen;
-
+    const int kanadotlen = 1;
+    const int kanadotpos = kanadashpos + kanadashlen;
 
 
     const char *kanatable[86] =

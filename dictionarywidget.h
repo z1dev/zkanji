@@ -9,6 +9,8 @@
 
 #include <QWidget>
 #include <QBasicTimer>
+#include <QStringListModel>
+
 #include <memory>
 #include <functional>
 
@@ -25,7 +27,7 @@ class DictionaryBrowseItemModel;
 class DictionarySearchResultItemModel;
 class DictionarySearchFilterProxyModel;
 class MultiLineDictionaryItemModel;
-class WordEntry;
+struct WordEntry;
 class WordGroup;
 class ZAbstractTableModel;
 class QXmlStreamWriter;
@@ -367,6 +369,9 @@ private:
     //int browseIndex(const QString &search) const;
 
     void storeLastSearch(ZComboBox *box);
+
+    static QStringListModel jpsearches;
+    static QStringListModel ensearches;
 
     // Returns a command category when the widget is visible, it's on a ZKanjiWidget, and that
     // widget it either active, or is the sole widget on the form in the given category. The

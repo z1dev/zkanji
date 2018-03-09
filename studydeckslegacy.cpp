@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -16,7 +16,7 @@ static const quint32 s_1_day = 24 * 60 * 60;
 void DeckTimeStatList::loadLegacy(QDataStream &stream, int version)
 {
     double d;
-    qint32 val;
+    //qint32 val;
     quint8 b;
 
     qint32 cnt;
@@ -211,7 +211,7 @@ void StudyDeck::loadLegacy(QDataStream &stream, int version)
                 //if (prev.level + 1 < stat.level)
                 //    multipl += 0.15;
                 /*else*/ if (prev.level < stat.level)
-                    multipl += 0.1;
+                    multipl += 0.1f;
                 else if (prev.level > stat.level + 1 && prev.day.daysTo(stat.day) > 1)
                 {
                     // Wrong answer

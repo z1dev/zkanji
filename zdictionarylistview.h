@@ -17,7 +17,7 @@ class Dictionary;
 class WordGroup;
 class MultiLineDictionaryItemModel;
 class RangeSelection;
-class WordEntry;
+struct WordEntry;
 class DictionaryItemModel;
 class Dictionary;
 class DictionaryListDelegate;

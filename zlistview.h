@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -371,9 +371,6 @@ protected:
     // Skips some handling in the base class that would create persistent indexes, and handles
     // leave events.
     virtual bool viewportEvent(QEvent *e) override;
-protected slots:
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) { ; }
-//    void curSelRowChanged(const QModelIndex &current, const QModelIndex &previous);
 private:
     // Moved here from protected to hide it from derived classes, that should handle the
     // requestingContextMenu signal.
@@ -520,6 +517,10 @@ private:
     using QTableView::selectionMode;
 
     typedef QTableView  base;
+
+protected slots:
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) { ; }
+    //    void curSelRowChanged(const QModelIndex &current, const QModelIndex &previous);
 };
 
 

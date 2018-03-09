@@ -11,7 +11,7 @@
 #include "zdictionarymodel.h"
 
 class WordDeck;
-class WordDeckItem;
+struct WordDeckItem;
 
 enum class StatusTypes : int;
 

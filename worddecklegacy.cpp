@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -136,7 +136,7 @@ void SkipTreeInStream::skipNode(QDataStream &stream) const
     }
 
     //nodes.reserve(cnt);
-    for (int ix = 0; ix < cnt; ++ix)
+    for (quint32 ix = 0; ix != cnt; ++ix)
     {
         //TextNode *n = new TextNode(this);
         //nodes.addNode(n, false);
@@ -334,7 +334,7 @@ void WordDeck::loadLegacy(QDataStream &stream)
     name = qApp->translate(0, "Deck %1").arg(1);
 
     double d;
-    quint32 uval;
+    //quint32 uval;
     qint32 val;
     QString def;
 

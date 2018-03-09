@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -205,7 +205,7 @@ void WordStudyGradual::loadLegacy(QDataStream &stream, int version)
 {
     // Skips all data of old format suspended tests.
 
-    quint8 b;
+    //quint8 b;
     quint32 val;
 
     stream >> val;

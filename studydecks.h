@@ -1,5 +1,5 @@
 /*
-** Copyright 2007-2013, 2017 Sólyom Zoltán
+** Copyright 2007-2013, 2017-2018 Sólyom Zoltán
 ** This file is part of zkanji, a free software released under the terms of the
 ** GNU General Public License version 3. See the file LICENSE for details.
 **/
@@ -578,7 +578,7 @@ public:
     // Study card's date of the last test.
     QDateTime cardTestDate(CardId *cardid) const;
     // Statistics of a card when it was first tested.
-    const StudyCardStat& cardFirstStats(CardId *cardid) const;
+    QDate cardFirstStatDate(CardId *cardid) const;
 
     // Returns the date of the card when it was last answered.
     QDateTime cardItemDate(CardId *cardid) const;
