@@ -39,6 +39,12 @@ public:
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::DisplayRole) override;
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     virtual bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::DisplayRole) override;
+
+    //virtual void removeAt(int index) override;
+protected:
+    //virtual void orderChanged(const std::vector<int> &ordering) override;
+    //virtual bool addNewEntry(int windex, int &position) override;
+    //virtual void entryAddedPosition(int pos) override;
 protected slots:
     virtual void entryChanged(int windex, bool studydef) override;
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;

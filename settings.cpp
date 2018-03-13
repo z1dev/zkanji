@@ -273,6 +273,7 @@ namespace Settings
 
         ini.setValue("dict/autosize", dictionary.autosize);
         ini.setValue("dict/inflection", (int)dictionary.inflection);
+        ini.setValue("dict/resultorder", dictionary.resultorder == ResultOrder::Relevance ? "relevance" : dictionary.resultorder == ResultOrder::Frequency ? "frequency" : dictionary.resultorder == ResultOrder::JLPTfrom1 ? "JLPTfrom1" : "JLPTfrom5");
         ini.setValue("dict/browseorder", dictionary.browseorder == BrowseOrder::ABCDE ? "abcde" : "aiueo");
         ini.setValue("dict/showgroup", dictionary.showingroup);
         ini.setValue("dict/showjlpt", dictionary.showjlpt);
@@ -747,8 +748,8 @@ namespace Settings
 
         // General settings
 
-        tmp = ini.value("dateformat", "DayMonthYear").toString();
-        general.dateformat = tmp == "YearMonthDay" ? GeneralSettings::YearMonthDay : tmp == "MonthDayYear" ? GeneralSettings::MonthDayYear : GeneralSettings::DayMonthYear;
+        tmp = ini.value("dateformat", "daymonthyear").toString().toLower();
+        general.dateformat = tmp == "yearmonthday" ? GeneralSettings::YearMonthDay : tmp == "monthdayyear" ? GeneralSettings::MonthDayYear : GeneralSettings::DayMonthYear;
 
         //val = ini.value("settingspage", 0).toInt(&ok);
         //if (val >= 0 && val <= 999)
@@ -778,8 +779,8 @@ namespace Settings
         fonts.kana = ini.value("fonts/kana", QString()).toString();
         fonts.main = ini.value("fonts/main", qApp->font().family()).toString();
         fonts.info = ini.value("fonts/notes", qApp->font().family()).toString();
-        tmp = ini.value("fonts/notesstyle", "Normal").toString();
-        fonts.infostyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
+        tmp = ini.value("fonts/notesstyle", "normal").toString().toLower();
+        fonts.infostyle = (tmp == "bold") ? FontSettings::Bold : (tmp == "italic") ? FontSettings::Italic : (tmp == "bolditalic") ? FontSettings::BoldItalic : FontSettings::Normal;
         //fonts.extra = ini.value("fonts/extra", qApp->font().family()).toString();
         //tmp = ini.value("fonts/extrastyle", "Bold").toString();
         //fonts.extrastyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
@@ -787,8 +788,8 @@ namespace Settings
         fonts.printkana = ini.value("fonts/printkana", QString()).toString();
         fonts.printdefinition = ini.value("fonts/printdefinition", qApp->font().family()).toString();
         fonts.printinfo = ini.value("fonts/printinfo", qApp->font().family()).toString();
-        tmp = ini.value("fonts/printinfostyle", "Italic").toString();
-        fonts.printinfostyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
+        tmp = ini.value("fonts/printinfostyle", "italic").toString().toLower();
+        fonts.printinfostyle = (tmp == "bold") ? FontSettings::Bold : (tmp == "normal") ? FontSettings::Normal : (tmp == "bolditalic") ? FontSettings::BoldItalic : FontSettings::Italic;
 
         val = ini.value("fonts/mainsize", 1).toInt(&ok);
         if (ok && val >= 0 && val <= 3)
@@ -936,8 +937,13 @@ namespace Settings
         val = ini.value("dict/inflection", 1).toInt(&ok);
         if (ok && val >= 0 && val <= 2)
             dictionary.inflection = (DictionarySettings::InflectionShow)val;
-        tmp = ini.value("dict/browseorder", (int)BrowseOrder::ABCDE).toString();
-        dictionary.browseorder = tmp == "abcde" ? BrowseOrder::ABCDE : BrowseOrder::AIUEO;
+
+        tmp = ini.value("dict/resultorder", "relevance").toString().toLower();
+        dictionary.resultorder = tmp == "frequency" ? ResultOrder::Frequency : tmp == "jlptfrom1" ? ResultOrder::JLPTfrom1 : tmp == "jlptfrom5" ? ResultOrder::JLPTfrom5 : ResultOrder::Relevance;
+
+        tmp = ini.value("dict/browseorder", "abcde").toString().toLower();
+        dictionary.browseorder = tmp == "aiueo" ? BrowseOrder::AIUEO: BrowseOrder::ABCDE;
+
         dictionary.showingroup = ini.value("dict/showgroup", false).toBool();
         dictionary.showjlpt = ini.value("dict/showjlpt", true).toBool();
         val = ini.value("dict/jlptcol", 0).toInt(&ok);
@@ -954,10 +960,10 @@ namespace Settings
         // Shortcut settings
 
         shortcuts.fromenable = ini.value("shortcuts/from", false).toBool();
-        tmp = ini.value("shortcuts/frommod", "AltControl").toString();
-        shortcuts.frommodifier = tmp == "Alt" ? ShortcutSettings::Alt : tmp == "Control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
+        tmp = ini.value("shortcuts/frommod", "altcontrol").toString().toLower();
+        shortcuts.frommodifier = tmp == "alt" ? ShortcutSettings::Alt : tmp == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
         shortcuts.fromshift = ini.value("shortcuts/fromshift", false).toBool();
-        tmp = ini.value("shortcuts/fromkey", "J").toString();
+        tmp = ini.value("shortcuts/fromkey", "J").toString().toUpper();
         if (tmp.size() == 1)
             shortcuts.fromkey = tmp.at(0);
         if (shortcuts.fromkey.unicode() == 0 || shortcuts.fromkey < 'A' || shortcuts.fromkey > 'Z')
@@ -967,10 +973,10 @@ namespace Settings
         }
 
         shortcuts.toenable = ini.value("shortcuts/to", false).toBool();
-        tmp = ini.value("shortcuts/tomod", "AltControl").toString();
-        shortcuts.tomodifier = tmp == "Alt" ? ShortcutSettings::Alt : tmp == "Control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
+        tmp = ini.value("shortcuts/tomod", "altcontrol").toString().toLower();
+        shortcuts.tomodifier = tmp == "alt" ? ShortcutSettings::Alt : tmp == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
         shortcuts.toshift = ini.value("shortcuts/toshift", false).toBool();
-        tmp = ini.value("shortcuts/tokey", "E").toString();
+        tmp = ini.value("shortcuts/tokey", "E").toString().toUpper();
         if (tmp.size() == 1)
             shortcuts.tokey = tmp.at(0);
         if (shortcuts.tokey < 'A' || shortcuts.tokey > 'Z' || (shortcuts.fromenable && shortcuts.tokey == shortcuts.fromkey))
@@ -980,10 +986,10 @@ namespace Settings
         }
 
         shortcuts.kanjienable = ini.value("shortcuts/kanji", false).toBool();
-        tmp = ini.value("shortcuts/kanjimod", "AltControl").toString();
-        shortcuts.kanjimodifier = tmp == "Alt" ? ShortcutSettings::Alt : tmp == "Control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
+        tmp = ini.value("shortcuts/kanjimod", "altcontrol").toString().toLower();
+        shortcuts.kanjimodifier = tmp == "alt" ? ShortcutSettings::Alt : tmp == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
         shortcuts.kanjishift = ini.value("shortcuts/kanjishift", false).toBool();
-        tmp = ini.value("shortcuts/kanjikey", "K").toString();
+        tmp = ini.value("shortcuts/kanjikey", "K").toString().toUpper();
         if (tmp.size() == 1)
             shortcuts.kanjikey = tmp.at(0);
         if (shortcuts.kanjikey < 'A' || shortcuts.kanjikey > 'Z' || (shortcuts.fromenable && shortcuts.kanjikey == shortcuts.fromkey) || (shortcuts.toenable && shortcuts.kanjikey == shortcuts.tokey))

@@ -43,6 +43,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
         simmodel(new SimilarKanjiScrollerModel), partsmodel(new KanjiScrollerModel), partofmodel(new KanjiScrollerModel)
 {
     ui->setupUi(this);
+    ui->dictWidget->showStatusBar();
+
     windowInit();
 
     gUI->preventWidgetScale(ui->countLabel);

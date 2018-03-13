@@ -48,7 +48,7 @@ public:
     // Sets the preferred width of this line edit in number of characters. Only works in
     // layouts that use the sizeHint() function to determine the width of widgets. The
     // function must be called after the font changes to accomodate its character sizes.
-    void setCharacterSize(int chsiz);
+    void setCharacterSize(double chsiz);
 
     virtual QSize sizeHint() const override;
 public slots:

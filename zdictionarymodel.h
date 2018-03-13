@@ -68,6 +68,7 @@ class WordGroup;
 struct WordEntry;
 class Dictionary;
 class QDragEnterEvent;
+enum class ResultOrder : uchar;
 
 struct DictColumnData
 {
@@ -170,7 +171,10 @@ protected:
 
 // Manages data about a word list in a given dictionary. Use setWordList() to change contents.
 // Only use it for lists without a specific function. For group etc. listing use a different
-// derived class of DictionaryItemModel.
+// derived class of DictionaryItemModel. When deriving a model from this class that will be
+// used for displaying a default ordered list of words, make sure that reordering of the model
+// due to sorting change or other reason is handled, by overriding the orderChanged()
+// function. If inclusion of new entries in an ordered list should
 // This model does not support drag and drop.
 class DictionaryWordListItemModel : public DictionaryItemModel
 {
@@ -179,11 +183,14 @@ public:
     DictionaryWordListItemModel(QObject *parent = nullptr);
     virtual ~DictionaryWordListItemModel();
 
-    // Sets a list of words to be provided by this model.
-    void setWordList(Dictionary *d, const std::vector<int> &wordlist);
+    // Sets a list of words to be provided by this model. Set ordered to true to keep the
+    // items of the model in the order specified in the dictionary settings. The list will be
+    // ordered by the model automatically.
+    void setWordList(Dictionary *d, const std::vector<int> &wordlist, bool ordered = false);
     // Sets a list of words to be provided by this model. The list is moved from the passed
-    // argument.
-    void setWordList(Dictionary *d, std::vector<int> &&wordlist);
+    // argument. Set ordered to true to keep theitems of the model in the order specified in
+    // the dictionary settings. The list will be ordered by the model automatically.
+    void setWordList(Dictionary *d, std::vector<int> &&wordlist, bool ordered = false);
     const std::vector<int>& getWordList() const;
 
     // Returns the dictionary the model shows items for.
@@ -195,15 +202,41 @@ public:
 
     virtual Qt::DropActions supportedDragActions() const override;
     virtual Qt::DropActions supportedDropActions(bool samesource, const QMimeData *mime) const override;
+
+    // Returns the row of a given word index or -1 if not found. Calling this function is slow
+    // if the model is not sorted.
+    int wordRow(int windex) const;
+
+    // Removes a row at index position from the word list and signals the change.
+    virtual void removeAt(int index);
+protected:
+    // Old index for every new index of the contained words. I.e. if the word originally at
+    // position 5 is now at position 0, then ordering[0] will be 5. Derived classes should
+    // reorder any list they have that corresponds for the word listing. Default view signals
+    // are handled by the base model.
+    virtual void orderChanged(const std::vector<int> &ordering);
+    // Derived classes should check whether the word entry in the dictionary should be listed
+    // in the model and set the insert position. If the insert position is left at the default
+    // value, the new word will be added at the end of the model's list. When showing an
+    // ordered word list, the position value is ignored.
+    virtual bool addNewEntry(int windex, int &position);
+    // Returns the position of a new entry added, when includeNewEntry() returned true for it.
+    // The position can be the same as the passed position argument in that function, but if
+    // automatic ordering is enabled, the return value can be different.
+    virtual void entryAddedPosition(int pos);
 protected slots:
-    //virtual void entryAboutToBeRemoved(int windex) override;
+    void settingsChanged();
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
     virtual void entryChanged(int windex, bool studydef) override;
     virtual void entryAdded(int windex) override;
-    //virtual void dictionaryReset() override;
 private:
+    void sortList();
+
     Dictionary *dict;
     std::vector<int> list;
+
+    bool ordered;
+    ResultOrder order;
 
     typedef DictionaryItemModel base;
 };
@@ -274,6 +307,7 @@ public:
     virtual Qt::DropActions supportedDragActions() const override;
     virtual Qt::DropActions supportedDropActions(bool samesource, const QMimeData *mime) const override;
 protected slots:
+    void settingsChanged();
     //virtual void entryAboutToBeRemoved(int windex) override;
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
     virtual void entryChanged(int windex, bool studydef) override;
@@ -293,6 +327,8 @@ private:
     bool sstrict;
     bool sinflections;
     bool sstudydefs;
+
+    ResultOrder order;
 
     typedef DictionaryItemModel base;
 };
@@ -493,6 +529,8 @@ private:
 //};
 
 // Lists words with written forms containing a given kanji.
+
+/*
 class KanjiWordsItemModel : public DictionaryItemModel
 {
     Q_OBJECT
@@ -521,6 +559,9 @@ protected slots:
     void kanjiExampleAdded(int kindex, int windex);
     //void kanjiExampleAboutToBeRemoved(int kindex, int windex);
     void kanjiExampleRemoved(int kindex, int windex);
+
+    // Change sorting of items in the model when a settings change require it.
+    void settingsChanged();
 private:
     //std::function<bool(int, int)> sortFunc() const;
 
@@ -530,6 +571,9 @@ private:
     void fillList();
 
     Dictionary *dict;
+
+    // Current ordering of the word list.
+    ResultOrder order;
 
     // Index of kanji.
     int kix;
@@ -545,6 +589,49 @@ private:
     bool onlyex;
 
     typedef DictionaryItemModel base;
+};
+*/
+
+class KanjiWordsItemModel : public DictionaryWordListItemModel
+{
+    Q_OBJECT
+public:
+    KanjiWordsItemModel(QObject *parent = nullptr);
+    virtual ~KanjiWordsItemModel();
+
+    // Changes the list to display a kanji at kindex and limit the list to words where the
+    // kanji appears with the passed reading index.
+    void setKanji(Dictionary *d, int kindex, int reading = -1);
+
+    bool showOnlyExamples() const;
+    void setShowOnlyExamples(bool val);
+
+    //virtual int indexes(int pos) const override;
+    //virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+protected slots:
+    void kanjiExampleAdded(int kindex, int windex);
+    void kanjiExampleRemoved(int kindex, int windex);
+protected:
+    virtual void orderChanged(const std::vector<int> &ordering) override;
+    virtual bool addNewEntry(int windex, int &position) override;
+    virtual void entryAddedPosition(int pos) override;
+private:
+    //std::function<bool(int, int)> sortFunc() const;
+
+    void fillList(Dictionary *d);
+
+    // Index of kanji.
+    int kix;
+    // Index of kanji "reading" that must be in words to be listed.
+    // -1 = no reading, 0 = irregulars, 1-... = ON readings, the rest = KUN
+    int rix;
+
+    // When set, only example words are listed.
+    bool onlyex;
+
+    typedef DictionaryWordListItemModel base;
 };
 
 

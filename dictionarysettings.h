@@ -9,6 +9,7 @@
 
 
 enum class BrowseOrder : uchar { ABCDE, AIUEO };
+enum class ResultOrder : uchar { Relevance, Frequency, JLPTfrom1, JLPTfrom5 };
 
 struct DictionarySettings
 {
@@ -17,6 +18,7 @@ struct DictionarySettings
 
     bool autosize = false;
     InflectionShow inflection = CurrentRow;
+    ResultOrder resultorder = ResultOrder::Relevance;
     BrowseOrder browseorder = BrowseOrder::ABCDE;
 
     bool showingroup = false;

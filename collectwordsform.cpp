@@ -146,7 +146,7 @@ void CollectedWordListModel::setWordList(Dictionary *d, std::vector<int> &&wordl
     checks.resize(wordlist.size());
     memset(checks.data(), true, checks.size());
     checkedcnt = checks.size();
-    base::setWordList(d, std::move(wordlist));
+    base::setWordList(d, std::move(wordlist), true);
 }
 
 bool CollectedWordListModel::hasCheckedWord() const
@@ -184,6 +184,7 @@ bool CollectedWordListModel::setData(const QModelIndex &index, const QVariant &v
         checks[row] = (value.toInt() != Qt::Unchecked ? 1 : 0);
         checkedcnt += (value.toInt() != Qt::Unchecked ? 1 : -1);
         emit checkStateChanged();
+        emit statusChanged();
     }
 
     return changed;
@@ -194,6 +195,77 @@ Qt::ItemFlags CollectedWordListModel::flags(const QModelIndex &index) const
     if (headerData(index.column(), Qt::Horizontal, (int)DictColumnRoles::Type).toInt() != (int)CollectedColumnTypes::Checked)
         return base::flags(index);
     return base::flags(index) | Qt::ItemIsUserCheckable;
+}
+
+void CollectedWordListModel::removeAt(int index)
+{
+    if (checks[index] == 1)
+        --checkedcnt;
+    checks.erase(checks.begin() + index);
+
+    base::removeAt(index);
+}
+
+int CollectedWordListModel::statusCount() const
+{
+    return base::statusCount() + 1;
+}
+
+StatusTypes CollectedWordListModel::statusType(int statusindex) const
+{
+    if (statusindex > 0)
+        return base::statusType(statusindex - 1);
+    return StatusTypes::TitleValue;
+
+}
+
+QString CollectedWordListModel::statusText(int statusindex, int labelindex, int rowpos) const
+{
+    if (statusindex > 0)
+        return base::statusText(statusindex - 1, labelindex, rowpos);
+    if (labelindex < 0)
+        return "Checked:";
+
+    return QString::number(checkedcnt);
+}
+
+int CollectedWordListModel::statusSize(int statusindex, int labelindex) const
+{
+    if (statusindex > 0)
+        return base::statusSize(statusindex - 1, labelindex);
+
+    if (labelindex < 0)
+        return 0;
+
+    return 8;
+}
+
+bool CollectedWordListModel::statusAlignRight(int statusindex) const
+{
+    if (statusindex > 0)
+        return base::statusAlignRight(statusindex - 1);
+
+    return false;
+}
+
+void CollectedWordListModel::orderChanged(const std::vector<int> &ordering)
+{
+    std::vector<char> tmp;
+    tmp.swap(checks);
+    checks.resize(tmp.size());
+    for (int ix = 0, siz = tmp.size(); ix != siz; ++ix)
+        checks[ix] = tmp[ordering[ix]];
+}
+
+bool CollectedWordListModel::addNewEntry(int windex, int &position)
+{
+    return false;
+}
+
+void CollectedWordListModel::entryAddedPosition(int pos)
+{
+    // addNewEntry() returns false so we never get here.
+    ;
 }
 
 void CollectedWordListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
@@ -222,13 +294,15 @@ void CollectedWordListModel::entryRemoved(int windex, int abcdeindex, int aiueoi
 CollectWordsForm::CollectWordsForm(QWidget *parent) : base(parent), ui(new Ui::CollectWordsForm), dict(nullptr), kmodel(nullptr), wmodel(nullptr), readingsmodel(nullptr)
 {
     ui->setupUi(this);
+    ui->dictWidget->showStatusBar();
     setAttribute(Qt::WA_DeleteOnClose);
 
     gUI->scaleWidget(this);
 
-    ui->readingsView->setFontSizeHint(26, 12);
     ui->readingsView->setSelectionType(ListSelectionType::Extended);
     ui->readingsView->setCheckBoxColumn(0);
+
+    ui->readingsView->setFontSizeHint(26, 12);
 
     ui->kanjiNumEdit->setCharacterSize(6);
     ui->kanaLenEdit->setCharacterSize(6);

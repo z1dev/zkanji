@@ -106,9 +106,14 @@ class ZAbstractTableModel : public QAbstractTableModel
     Q_OBJECT
 signals:
     // Signal replacements for models. Similar to rowsRemoved, rowsInserted and rowsMoved.
+
     void rowsWereRemoved(const smartvector<Range> &ranges);
     void rowsWereInserted(const smartvector<Interval> &intervals);
     void rowsWereMoved(const smartvector<Range> &ranges, int pos);
+
+    // Notifies the view that has an assigned status bar that it should update the status
+    // label texts.
+    void statusChanged();
 public:
     ZAbstractTableModel(QObject *parent = nullptr);
     virtual ~ZAbstractTableModel();

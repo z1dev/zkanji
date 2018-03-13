@@ -447,17 +447,21 @@ void DictionaryItemModel::dictionaryToBeRemoved(int index, int orderindex, Dicti
 //-------------------------------------------------------------
 
 
-DictionaryWordListItemModel::DictionaryWordListItemModel(QObject *parent) : base(parent), dict(nullptr)
+DictionaryWordListItemModel::DictionaryWordListItemModel(QObject *parent) : base(parent), dict(nullptr), ordered(false)
 {
-
+    connect(gUI, &GlobalUI::settingsChanged, this, &DictionaryWordListItemModel::settingsChanged);
 }
 
 DictionaryWordListItemModel::~DictionaryWordListItemModel()
 {
 }
 
-void DictionaryWordListItemModel::setWordList(Dictionary *d, const std::vector<int> &wordlist)
+void DictionaryWordListItemModel::setWordList(Dictionary *d, const std::vector<int> &wordlist, bool useorder)
 {
+    if (useorder)
+        order = Settings::dictionary.resultorder;
+    ordered = useorder;
+
     beginResetModel();
     if (dict != nullptr)
         disconnect();
@@ -465,20 +469,30 @@ void DictionaryWordListItemModel::setWordList(Dictionary *d, const std::vector<i
     dict = d;
     list = wordlist;
 
+    if (ordered)
+        sortList();
+
     if (dict != nullptr)
         connect();
 
     endResetModel();
 }
 
-void DictionaryWordListItemModel::setWordList(Dictionary *d, std::vector<int> &&wordlist)
+void DictionaryWordListItemModel::setWordList(Dictionary *d, std::vector<int> &&wordlist, bool useorder)
 {
+    if (useorder)
+        order = Settings::dictionary.resultorder;
+    ordered = useorder;
+
     beginResetModel();
     if (dict != nullptr)
         disconnect();
 
     dict = d;
     list.swap(wordlist);
+
+    if (ordered)
+        sortList();
 
     if (dict != nullptr)
         connect();
@@ -508,8 +522,6 @@ int DictionaryWordListItemModel::rowCount(const QModelIndex & parent) const
     if (parent.isValid())
         return 0;
 
-    if (list.empty())
-        return 0;
     return list.size();
 }
 
@@ -523,20 +535,141 @@ Qt::DropActions DictionaryWordListItemModel::supportedDropActions(bool samesourc
     return 0;
 }
 
-//void DictionaryWordListItemModel::entryAboutToBeRemoved(int windex)
-//{
-//    for (int ix = 0; ix != list.size(); ++ix)
-//        if (list[ix] == windex)
-//        {
-//            beginRemoveRows(QModelIndex(), ix, ix);
-//            break;
-//        }
-//}
+int DictionaryWordListItemModel::wordRow(int windex) const
+{
+    if (!ordered)
+    {
+        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+            if (list[ix] == windex)
+                return ix;
+        return -1;
+    }
+
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
+    auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[ax].w == nullptr)
+            sortlist[ax] = Dictionary::jpSortDataGen(dict->wordEntry(list[ax]), nullptr);
+        return Dictionary::jpSortFunc(sortlist[ax], wdata);
+    });
+
+    int pos = it - indexlist.begin();
+    while (it != indexlist.end() && list[pos] != windex && !Dictionary::jpSortFunc(wdata, Dictionary::jpSortDataGen(dict->wordEntry(list[pos]), nullptr)))
+        ++pos, ++it;
+
+    if (it == indexlist.end() || list[pos] != windex)
+        return -1;
+
+    return pos;
+}
+
+void DictionaryWordListItemModel::removeAt(int index)
+{
+    list.erase(list.begin() + index);
+    signalRowsRemoved({ { index, index } });
+}
+
+void DictionaryWordListItemModel::orderChanged(const std::vector<int> &ordering)
+{
+    ;
+}
+
+bool DictionaryWordListItemModel::addNewEntry(int windex, int &position)
+{
+    return false;
+}
+
+void DictionaryWordListItemModel::entryAddedPosition(int pos)
+{
+    ;
+}
+
+void DictionaryWordListItemModel::settingsChanged()
+{
+    if (!ordered || order == Settings::dictionary.resultorder)
+        return;
+
+    order = Settings::dictionary.resultorder;
+
+    // Sort the words according to the current settings.
+
+    emit layoutAboutToBeChanged(QList<QPersistentModelIndex>(), QAbstractItemModel::VerticalSortHint);
+
+    // Indexes with a persistent index.
+    QModelIndexList pfrom = persistentIndexList();
+
+    // Word indexes at the pre-sorted list positions.
+    std::vector<int> windexes;
+    windexes.resize(pfrom.size());
+    for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
+        windexes[ix] = list[pfrom.at(ix).row()];
+
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(list[ix]), nullptr);
+    // The new ordering of list.
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    std::sort(indexlist.begin(), indexlist.end(), [this, &sortlist](int ax, int bx) {
+        return Dictionary::jpSortFunc(sortlist[ax], sortlist[bx]);
+    });
+
+    std::vector<int> tmp;
+    tmp.swap(list);
+    list.resize(indexlist.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    {
+        // Applying sort order from indexlist.
+        list[ix] = tmp[indexlist[ix]];
+
+        // Zeroing out sortlist for the searches below.
+        sortlist[ix].w = nullptr;
+    }
+
+    orderChanged(indexlist);
+
+    // New index list for permanent indexes.
+    QModelIndexList pto;
+    pto.reserve(pfrom.size());
+
+    // Building the new permanent indexes by binary searching with the current sort order.
+
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+    for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
+    {
+        Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windexes[ix]), nullptr);
+        auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+            if (sortlist[ax].w == nullptr)
+                sortlist[ax] = Dictionary::jpSortDataGen(dict->wordEntry(list[ax]), nullptr);
+            return Dictionary::jpSortFunc(sortlist[ax], wdata);
+        });
+
+        int pos = it - indexlist.begin();
+        while (it != indexlist.end() && list[pos] != windexes[ix] && !Dictionary::jpSortFunc(wdata, Dictionary::jpSortDataGen(dict->wordEntry(list[pos]), nullptr)))
+            ++pos, ++it;
+
+        pto.push_back(createIndex(pos, pfrom.at(ix).column(), nullptr));
+    }
+
+    changePersistentIndexList(pfrom, pto);
+
+    emit layoutChanged();
+}
 
 void DictionaryWordListItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
 {
     int wpos = -1;
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
     {
         if (list[ix] == windex)
             wpos = ix;
@@ -544,27 +677,131 @@ void DictionaryWordListItemModel::entryRemoved(int windex, int abcdeindex, int a
             --list[ix];
     }
 
-    if (wpos != -1)
-    {
-        list.erase(list.begin() + wpos);
-        signalRowsRemoved({ { wpos, wpos } }); //endRemoveRows();
-    }
+    if (wpos == -1)
+        return;
+
+    list.erase(list.begin() + wpos);
+    signalRowsRemoved({ { wpos, wpos } }); //endRemoveRows();
 }
 
 void DictionaryWordListItemModel::entryChanged(int windex, bool studydef)
 {
-    for (int ix = 0; ix != list.size(); ++ix)
+    int pos = -1;
+    for (int ix = 0, siz = list.size(); ix != siz && pos == -1; ++ix)
         if (list[ix] == windex)
-        {
-            emit dataChanged(index(ix, 0), index(ix, columnCount() - 1));
-            break;
-        }
+            pos = ix;
+
+    if (pos == -1)
+        return;
+
+    emit dataChanged(index(pos, 0), index(pos, columnCount() - 1));
+
+    if (!ordered)
+        return;
+
+    // When list is ordered, the word's position might have changed. Erase it from the list
+    // and check where it should go next. If the same position is kept, no signal is emited.
+
+    list.erase(list.begin() + pos);
+
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[bx].w == nullptr)
+            sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
+        return Dictionary::jpSortFunc(wdata, sortlist[bx]);
+    });
+
+    int newpos = (it - indexlist.begin());
+    list.insert(list.begin() + newpos, windex);
+
+    if (newpos > pos)
+        ++newpos;
+
+    if (pos != newpos)
+        signalRowsMoved({ { pos, pos } }, newpos);
 }
 
 void DictionaryWordListItemModel::entryAdded(int windex)
 {
+    // Warning: it's possible that a derived class will call this function to add existing
+    // dictionary words to the model, but only if the word list doesn't already contain the
+    // specific windex. When changing this function, make sure they can still do so.
 
+    int pos = -1;
+    if (!addNewEntry(windex, pos))
+        return;
+
+    if (!ordered)
+    {
+        if (pos < 0 || pos > list.size())
+            pos = list.size();
+        list.insert(list.begin() + pos, windex);
+
+        entryAddedPosition(pos);
+        return;
+    }
+
+    // Find ordered position of added word.
+
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    // The new ordering of list.
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[bx].w == nullptr)
+            sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
+        return Dictionary::jpSortFunc(wdata, sortlist[bx]);
+    });
+
+    pos = it - indexlist.begin();
+    while (it != indexlist.end() && list[pos] != windex && !Dictionary::jpSortFunc(wdata, Dictionary::jpSortDataGen(dict->wordEntry(list[pos]), nullptr)))
+        ++pos, ++it;
+
+    list.insert(list.begin() + pos, windex);
+    entryAddedPosition(pos);
+
+    signalRowsInserted({ {pos, 1 } });
 }
+
+void DictionaryWordListItemModel::sortList()
+{
+    if (!ordered)
+        return;
+
+    // TODO: Make a dictionary function that sorts a list of word indexes with no inflection.
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(list[ix]), nullptr);
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    std::sort(indexlist.begin(), indexlist.end(), [&sortlist](int a, int b) {
+        return Dictionary::jpSortFunc(sortlist[a], sortlist[b]);
+    });
+
+    std::vector<int> tmp;
+    tmp.swap(list);
+    list.resize(indexlist.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        list[ix] = tmp[indexlist[ix]];
+}
+
 
 
 //-------------------------------------------------------------
@@ -652,6 +889,7 @@ void DictionaryDefinitionListItemModel::entryAdded(int windex)
 DictionarySearchResultItemModel::DictionarySearchResultItemModel(QObject *parent) : base(parent), sdict(nullptr)
 {
     connect(&ZKanji::wordfilters(), &WordAttributeFilterList::filterMoved, this, &DictionarySearchResultItemModel::filterMoved);
+    connect(gUI, &GlobalUI::settingsChanged, this, &DictionarySearchResultItemModel::settingsChanged);
 }
 
 DictionarySearchResultItemModel::~DictionarySearchResultItemModel()
@@ -691,10 +929,16 @@ void DictionarySearchResultItemModel::search(SearchMode mode, Dictionary *dict, 
 
     ssearchstr = searchstr;
 
+    order = Settings::dictionary.resultorder;
+
     list.reset(new WordResultList(dict));
 
     beginResetModel();
-    sdict->findWords(std::move(*list), mode, searchstr, wildcards, strict, inflections, studydefs, nullptr, cond);
+    sdict->findWords(*list, mode, searchstr, wildcards, strict, inflections, studydefs, nullptr, cond);
+    if (smode == SearchMode::Japanese)
+        list->jpSort();
+    else if (smode == SearchMode::Definition)
+        list->defSort(ssearchstr);
     endResetModel();
 
 }
@@ -753,16 +997,42 @@ Qt::DropActions DictionarySearchResultItemModel::supportedDropActions(bool sames
     return 0;
 }
 
-//void DictionarySearchResultItemModel::entryAboutToBeRemoved(int windex)
-//{
-//    auto &ind = list->getIndexes();
-//    for (int ix = 0; ix != list->size(); ++ix)
-//        if (ind[ix] == windex)
-//        {
-//            beginRemoveRows(QModelIndex(), ix, ix);
-//            break;
-//        }
-//}
+void DictionarySearchResultItemModel::settingsChanged()
+{
+    if (order == Settings::dictionary.resultorder || sdict == nullptr)
+        return;
+
+    order = Settings::dictionary.resultorder;
+
+    // Sort the words according to the current settings.
+
+    emit layoutAboutToBeChanged(QList<QPersistentModelIndex>(), QAbstractItemModel::VerticalSortHint);
+
+    // Indexes with a persistent index.
+    QModelIndexList pfrom = persistentIndexList();
+
+    // Row indexes of persistent indexes..
+    std::vector<int> prows;
+    prows.resize(pfrom.size());
+    for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
+        prows[ix] = pfrom.at(ix).row();
+
+    if (smode == SearchMode::Japanese)
+        list->jpSort(&prows);
+    else if (smode == SearchMode::Definition)
+        list->defSort(ssearchstr, &prows);
+
+    // New index list for permanent indexes.
+    QModelIndexList pto;
+    pto.reserve(prows.size());
+    for (int ix = 0, siz = prows.size(); ix != siz; ++ix)
+        pto.push_back(index(prows[ix], pfrom.at(ix).column()));
+
+    changePersistentIndexList(pfrom, pto);
+
+    emit layoutChanged();
+
+}
 
 void DictionarySearchResultItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
 {
@@ -2009,9 +2279,10 @@ void DictionaryGroupItemModel::itemsMoved(GroupBase *parent, const smartvector<R
 
 //-------------------------------------------------------------
 
-
-KanjiWordsItemModel::KanjiWordsItemModel(QObject *parent) : base(parent), dict(nullptr), kix(-1), rix(-1), onlyex(false)
+/*
+KanjiWordsItemModel::KanjiWordsItemModel(QObject *parent) : base(parent), dict(nullptr), order(Settings::dictionary.resultorder), kix(-1), rix(-1), onlyex(false)
 {
+    connect(gUI, &GlobalUI::settingsChanged, this, &KanjiWordsItemModel::settingsChanged);
 }
 
 KanjiWordsItemModel::~KanjiWordsItemModel()
@@ -2116,8 +2387,6 @@ void KanjiWordsItemModel::entryRemoved(int windex, int abcdeindex, int aiueoinde
         return;
 
     list.erase(list.begin() + pos);
-
-    //endRemoveRows();
     signalRowsRemoved({ { pos, pos } });
 }
 
@@ -2132,6 +2401,32 @@ void KanjiWordsItemModel::entryChanged(int windex, bool studydef)
         return;
 
     emit dataChanged(index(pos, 0), index(pos, columnCount() - 1));
+
+    list.erase(list.begin() + pos);
+
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[bx].w == nullptr)
+            sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
+        return Dictionary::jpSortFunc(wdata, sortlist[bx]);
+    });
+
+    int newpos = (it - indexlist.begin());
+    list.insert(list.begin() + newpos, windex);
+
+    if (newpos > pos)
+        ++newpos;
+
+    if (pos != newpos)
+        signalRowsMoved({ { pos, pos } }, newpos);
 }
 
 void KanjiWordsItemModel::entryAdded(int windex)
@@ -2145,19 +2440,28 @@ void KanjiWordsItemModel::entryAdded(int windex)
     // No work to do if the word doesn't have the kanji in it or it's not displayed for other
     // reasons.
 
-    //const KanjiDictData *dat = dict->kanjiData(kix);
-    //std::find(dat->ex.begin(), dat->ex.end(), windex) == dat->ex.end()
     if (e->kanji.find(ZKanji::kanjis[kix]->ch) == -1 || (rix != -1 && !matchKanjiReading(e->kanji, e->kana, k, rix)) || (onlyex && !dict->isKanjiExample(kix, windex)))
         return;
 
-    auto it = std::upper_bound(list.begin(), list.end(), windex, [this](int ax, int bx) {
-        return Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(ax), nullptr), std::make_pair(dict->wordEntry(bx), nullptr));
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(e, nullptr);
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[bx].w == nullptr)
+            sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
+        return Dictionary::jpSortFunc(wdata, sortlist[bx]);
     });
 
-    int pos = it - list.begin();
+    int pos = it - indexlist.begin();
 
     //beginInsertRows(QModelIndex(), pos, pos);
-    list.insert(it, windex);
+    list.insert(list.begin() + pos, windex);
     //endInsertRows();
     signalRowsInserted({ { pos, 1 } });
 }
@@ -2180,34 +2484,28 @@ void KanjiWordsItemModel::kanjiExampleAdded(int kindex, int windex)
     if (rix != -1 && !matchKanjiReading(e->kanji, e->kana, k, rix))
         return;
 
-    auto it = std::upper_bound(list.begin(), list.end(), windex, [this](int ax, int bx) {
-        return Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(ax), nullptr), std::make_pair(dict->wordEntry(bx), nullptr));
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(e, nullptr);
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[bx].w == nullptr)
+            sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
+        return Dictionary::jpSortFunc(wdata, sortlist[bx]);
     });
 
-    int row = it - list.begin();
-    //beginInsertRows(QModelIndex(), row, row);
-    list.insert(it, windex);
-    //endInsertRows();
-    signalRowsInserted({ { row, 1 } });
-}
+    int pos = it - indexlist.begin();
 
-//void KanjiWordsItemModel::kanjiExampleAboutToBeRemoved(int kindex, int windex)
-//{
-//    if (kix != kindex || !onlyex)
-//        return;
-//
-//    int row = wordRow(windex);
-//    if (row == -1)
-//        return;
-//
-//    //if (!onlyex)
-//    //{
-//    //    emit dataChanged(index(it - list.begin(), 0), index(it - list.begin(), columnCount() - 1));
-//    //    return;
-//    //}
-//
-//    beginRemoveRows(QModelIndex(), row, row);
-//}
+    //beginInsertRows(QModelIndex(), pos, pos);
+    list.insert(list.begin() + pos, windex);
+    //endInsertRows();
+    signalRowsInserted({ { pos, 1 } });
+}
 
 void KanjiWordsItemModel::kanjiExampleRemoved(int kindex, int windex)
 {
@@ -2230,115 +2528,112 @@ void KanjiWordsItemModel::kanjiExampleRemoved(int kindex, int windex)
     signalRowsRemoved({ { row, row } });
 }
 
-int KanjiWordsItemModel::wordRow(int windex) const
+void KanjiWordsItemModel::settingsChanged()
 {
-    auto it = std::lower_bound(list.begin(), list.end(), windex, [this](int ax, int bx) {
-        return Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(ax), nullptr), std::make_pair(dict->wordEntry(bx), nullptr));
+    if (order == Settings::dictionary.resultorder)
+        return;
+
+    order = Settings::dictionary.resultorder;
+
+    // Sort the words according to the current settings.
+
+    emit layoutAboutToBeChanged(QList<QPersistentModelIndex>(), QAbstractItemModel::VerticalSortHint);
+
+    // Indexes with a persistent index.
+    QModelIndexList pfrom = persistentIndexList();
+
+    // Word indexes at the pre-sorted list positions.
+    std::vector<int> windexes;
+    windexes.resize(pfrom.size());
+    for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
+        windexes[ix] = list[pfrom.at(ix).row()];
+
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(list[ix]), nullptr);
+    // The new ordering of list.
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    std::sort(indexlist.begin(), indexlist.end(), [this, &sortlist](int ax, int bx) {
+        return Dictionary::jpSortFunc(sortlist[ax], sortlist[bx]);
     });
 
-    while (it != list.end() && *it != windex && !Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(windex), nullptr), std::make_pair(dict->wordEntry(*it), nullptr)))
-        ++it;
+    std::vector<int> tmp;
+    tmp.swap(list);
+    list.resize(indexlist.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    {
+        // Applying sort order from indexlist.
+        list[ix] = tmp[indexlist[ix]];
 
-    if (it == list.end() || *it != windex)
-        return -1;
+        // Zeroing out sortlist for the searches below.
+        sortlist[ix].w = nullptr;
+    }
 
-    return it - list.begin();
+    // New index list for permanent indexes.
+    QModelIndexList pto;
+    pto.reserve(pfrom.size());
+
+    // Building the new permanent indexes by binary searching with the current sort order.
+
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+    for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
+    {
+        Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windexes[ix]), nullptr);
+        auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+            if (sortlist[ax].w == nullptr)
+                sortlist[ax] = Dictionary::jpSortDataGen(dict->wordEntry(list[ax]), nullptr);
+            return Dictionary::jpSortFunc(sortlist[ax], wdata);
+        });
+
+        int pos = it - indexlist.begin();
+        pto.push_back(createIndex(pos, pfrom.at(ix).column(), nullptr));
+    }
+
+    changePersistentIndexList(pfrom, pto);
+
+    emit layoutChanged();
 }
 
-//std::function<bool(int, int)> KanjiWordsItemModel::sortFunc() const
-//{
-//    //return [this](int a, int b)
-//    //{
-//    //    const WordEntry *aw = dict->wordEntry(a);
-//    //    const WordEntry *bw = dict->wordEntry(b);
-//
-//    //    int afreq = aw->freq;
-//    //    int bfreq = bw->freq;
-//
-//    //    //if (abs(afreq - bfreq) > 1500 || (abs(afreq - bfreq) > 500 && afreq + bfreq < 2400))
-//    //    //    return afreq > bfreq;
-//
-//    //    int afreqdiv = afreq / 700;
-//    //    int bfreqdiv = bfreq / 700;
-//
-//    //    if (std::abs(afreqdiv - bfreqdiv) > 1)
-//    //        return afreqdiv > bfreqdiv;
-//
-//    //    int alen = aw->kana.size();
-//    //    int blen = bw->kana.size();
-//
-//    //    bool ako = (aw->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
-//    //    bool bko = (bw->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
-//
-//    //    if (ako)
-//    //        afreq += 440;
-//    //    if (bko)
-//    //        bfreq += 440;
-//    //    afreq += (26 - std::min(alen, 25)) * 10;
-//    //    bfreq += (26 - std::min(blen, 25)) * 10;
-//
-//    //    afreqdiv = afreq / 250;
-//    //    bfreqdiv = bfreq / 250;
-//
-//    //    if (std::abs(afreqdiv - bfreqdiv) > 1)
-//    //        return afreqdiv > bfreqdiv;
-//
-//    //    //if ((ako && !bko && alen < blen) || (bko && !ako && blen < alen))
-//    //    //    return alen < blen;
-//
-//    //    int akanjicnt = 0;
-//    //    int avalidcnt = 0;
-//    //    int aklen = aw->kanji.size();
-//    //    for (int ix = 0; ix < aklen; ++ix)
-//    //        if (KANJI(aw->kanji[ix].unicode()))
-//    //            ++akanjicnt;
-//    //        else if (VALIDCODE(aw->kanji[ix].unicode()))
-//    //            ++avalidcnt;
-//
-//    //    int bkanjicnt = 0;
-//    //    int bvalidcnt = 0;
-//    //    int bklen = bw->kanji.size();
-//    //    for (int ix = 0; ix < bklen; ++ix)
-//    //        if (KANJI(bw->kanji[ix].unicode()))
-//    //            ++bkanjicnt;
-//    //        else if (VALIDCODE(bw->kanji[ix].unicode()))
-//    //            ++bvalidcnt;
-//
-//    //    afreq += (21 - std::min(akanjicnt + avalidcnt, 20)) * 12;
-//    //    bfreq += (21 - std::min(bkanjicnt + bvalidcnt, 20)) * 12;
-//
-//    //    afreqdiv = afreq / 20;
-//    //    bfreqdiv = bfreq / 20;
-//
-//    //    if (std::abs(afreqdiv - bfreqdiv) > 1)
-//    //        return afreqdiv > bfreqdiv;
-//
-//    //    //if (akanjicnt < bkanjicnt && alen - 2 < blen)
-//    //    //    return true;
-//    //    //if (bkanjicnt <= akanjicnt && blen - 2 <= alen)
-//    //    //    return false;
-//
-//    //    afreq += 20 - std::min(aklen, 19);
-//    //    bfreq += 20 - std::min(bklen, 19);
-//
-//    //    return afreq > bfreq;
-//
-//    //    //if (afreq != bfreq)
-//    //    //    return afreq < bfreq;
-//
-//    //    //if (alen != blen)
-//    //    //    return alen < blen;
-//
-//    //    //if (aklen != bklen)
-//    //    //    return aklen < bklen;
-//
-//    //    //int r = qcharcmp(aw->kana.data(), bw->kana.data());
-//    //    //if (r)
-//    //    //    return r < 0;
-//    //    //return qcharcmp(aw->kanji.data(), bw->kanji.data()) < 0;
-//
-//    //};
-//}
+int KanjiWordsItemModel::wordRow(int windex) const
+{
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix].w = nullptr;
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
+
+    Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        if (sortlist[bx].w == nullptr)
+            sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
+        return Dictionary::jpSortFunc(wdata, sortlist[bx]);
+    });
+
+    //auto it = std::lower_bound(list.begin(), list.end(), windex, [this](int ax, int bx) {
+    //    return Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(ax), nullptr), std::make_pair(dict->wordEntry(bx), nullptr));
+    //});
+
+    int pos = it - indexlist.begin();
+    while (it != indexlist.end() && list[pos] != windex && !Dictionary::jpSortFunc(wdata, Dictionary::jpSortDataGen(dict->wordEntry(list[pos]), nullptr)))
+        ++pos, ++it;
+
+    //while (it != list.end() && *it != windex && !Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(windex), nullptr), std::make_pair(dict->wordEntry(*it), nullptr)))
+    //    ++it;
+
+    if (it == indexlist.end() || list[pos] != windex)
+        return -1;
+
+    //if (it == list.end() || *it != windex)
+    //    return -1;
+
+    return pos;
+}
 
 void KanjiWordsItemModel::fillList()
 {
@@ -2352,21 +2647,171 @@ void KanjiWordsItemModel::fillList()
     {
         KanjiEntry *k = ZKanji::kanjis[kix];
         int siz = dict->kanjiWordCount(kix);
-        for (int ix = 0; ix != siz /*dat->words.size()*/; ++ix)
+        for (int ix = 0; ix != siz /*dat->words.size()*-/; ++ix)
         {
             int wix = dict->kanjiWordAt(kix, ix); //dat->words[ix];
             WordEntry *e = dict->wordEntry(wix);
-            if ((rix == -1 || matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || dict->isKanjiExample(kix, wix) /*std::find(dat->ex.begin(), dat->ex.end(), wix) != dat->ex.end()*/ ))
+            if ((rix == -1 || matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || dict->isKanjiExample(kix, wix) /*std::find(dat->ex.begin(), dat->ex.end(), wix) != dat->ex.end()*-/ ))
                 list.push_back(wix);
         }
     }
 
+    // TODO: Make a dictionary function that sorts a list of word indexes with no inflection.
+    std::vector<Dictionary::JPResultSortData> sortlist;
+    sortlist.resize(list.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        sortlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(list[ix]), nullptr);
+    std::vector<int> indexlist;
+    indexlist.resize(list.size());
+    std::iota(indexlist.begin(), indexlist.end(), 0);
 
-    std::sort(list.begin(), list.end(), [this](int ax, int bx) {
-        return Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(ax), nullptr), std::make_pair(dict->wordEntry(bx), nullptr));
+    std::sort(indexlist.begin(), indexlist.end(), [this, &sortlist](int ax, int bx) {
+        return Dictionary::jpSortFunc(sortlist[ax], sortlist[bx]);
+        //return Dictionary::jpSortFunc(std::make_pair(dict->wordEntry(ax), nullptr), std::make_pair(dict->wordEntry(bx), nullptr));
     });
+
+    std::vector<int> tmp;
+    tmp.swap(list);
+    list.resize(indexlist.size());
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        list[ix] = tmp[indexlist[ix]];
 }
+*/
 
 
 //-------------------------------------------------------------
 
+
+KanjiWordsItemModel::KanjiWordsItemModel(QObject *parent) : base(parent), kix(-1), rix(-1), onlyex(false)
+{
+    //connect(gUI, &GlobalUI::settingsChanged, this, &KanjiWordsItemModel::settingsChanged);
+}
+
+KanjiWordsItemModel::~KanjiWordsItemModel()
+{
+}
+
+void KanjiWordsItemModel::setKanji(Dictionary *d, int kindex, int reading)
+{
+    if (dictionary() == d && kix == kindex && rix == reading)
+        return;
+
+    kix = kindex;
+    rix = reading;
+
+    fillList(d);
+}
+
+bool KanjiWordsItemModel::showOnlyExamples() const
+{
+    return onlyex;
+}
+
+void KanjiWordsItemModel::setShowOnlyExamples(bool val)
+{
+    if (onlyex == val)
+        return;
+
+    onlyex = val;
+    fillList(dictionary());
+}
+
+QVariant KanjiWordsItemModel::data(const QModelIndex &index, int role) const
+{
+    if (dictionary() != nullptr && index.isValid() && role == (int)CellRoles::CellColor)
+    {
+        if (onlyex || dictionary()->isKanjiExample(kix, indexes(index.row())))
+            return QVariant(Settings::uiColor(ColorSettings::KanjiExBg));
+    }
+
+    return base::data(index, role);
+}
+
+void KanjiWordsItemModel::kanjiExampleAdded(int kindex, int windex)
+{
+    if (kix != kindex)
+        return;
+
+    if (!onlyex)
+    {
+        int row = wordRow(windex);
+        if (row != -1)
+            emit dataChanged(index(row, 0), index(row, columnCount() - 1));
+        return;
+    }
+
+    entryAdded(windex);
+}
+
+void KanjiWordsItemModel::kanjiExampleRemoved(int kindex, int windex)
+{
+    if (kix != kindex)
+        return;
+
+    int row = wordRow(windex);
+    if (row == -1)
+        return;
+
+    if (!onlyex)
+    {
+        emit dataChanged(index(row, 0), index(row, columnCount() - 1));
+        return;
+    }
+
+    removeAt(row);
+}
+
+void KanjiWordsItemModel::orderChanged(const std::vector<int> &ordering)
+{
+    ;
+}
+
+bool KanjiWordsItemModel::addNewEntry(int windex, int &position)
+{
+    KanjiEntry *k = ZKanji::kanjis[kix];
+    WordEntry *e = dictionary()->wordEntry(windex);
+
+    return (e->kanji.find(ZKanji::kanjis[kix]->ch) != -1 && (rix == -1 || !matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || dictionary()->isKanjiExample(kix, windex)));
+}
+
+void KanjiWordsItemModel::entryAddedPosition(int pos)
+{
+    ;
+}
+
+void KanjiWordsItemModel::fillList(Dictionary *d)
+{
+    std::vector<int> list;
+
+    if (rix == -1 && !onlyex)
+        d->getKanjiWords(kix, list);
+    else
+    {
+        KanjiEntry *k = ZKanji::kanjis[kix];
+        int siz = d->kanjiWordCount(kix);
+        for (int ix = 0; ix != siz; ++ix)
+        {
+            int wix = d->kanjiWordAt(kix, ix);
+            WordEntry *e = d->wordEntry(wix);
+            if ((rix == -1 || matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || d->isKanjiExample(kix, wix)))
+                list.push_back(wix);
+        }
+    }
+
+    if (dictionary() != nullptr)
+    {
+        disconnect(dictionary(), &Dictionary::kanjiExampleAdded, this, &KanjiWordsItemModel::kanjiExampleAdded);
+        disconnect(dictionary(), &Dictionary::kanjiExampleRemoved, this, &KanjiWordsItemModel::kanjiExampleRemoved);
+    }
+
+    setWordList(d, list, true);
+
+    if (dictionary() != nullptr)
+    {
+        connect(dictionary(), &Dictionary::kanjiExampleAdded, this, &KanjiWordsItemModel::kanjiExampleAdded);
+        connect(dictionary(), &Dictionary::kanjiExampleRemoved, this, &KanjiWordsItemModel::kanjiExampleRemoved);
+    }
+}
+
+
+//-------------------------------------------------------------

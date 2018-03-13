@@ -297,12 +297,12 @@ public:
     WordResultList(const WordResultList&) = delete;
     WordResultList& operator=(const WordResultList&) = delete;
 
-    // Sets the word indexes stored in this results list to the new list. The
-    // inflections list is cleared.
+    // Sets the word indexes stored in this results list to the new list. The inflections list
+    // is cleared.
     void set(const std::vector<int> &wordindexes);
 
-    // Sets the word indexes stored in this results list to the new list. The
-    // inflections list is cleared.
+    // Sets the word indexes stored in this results list to the new list. The inflections list
+    // is cleared.
     void set(std::vector<int> &&wordindexes);
 
     Dictionary* dictionary();
@@ -328,25 +328,26 @@ public:
     //WordEntry* operator[](int ix);
     //const WordEntry* operator[](int ix) const;
 
-    // Sorts indexes and infs to match the order of list. The list must have
-    // the same size as indexes with each number in (0, indexes.size()].
+    // Sorts indexes and infs to match the order of list. The list must have the same size as
+    // indexes with each number in (0, indexes.size()].
     void sortByList(const std::vector<int> &list);
 
     // Sorts indexes by value. The corresponding elements in infs will be sorted the same way.
     void sortByIndex();
 
-    // Sort list of results using the words' kanji, kana and frequency.
-    void jpSort(); 
+    // Sort list of results using the words' kanji, kana and frequency. Pass a vector with
+    // indexes, and the indexes will be converted to their new sorted position.
+    void jpSort(std::vector<int> *pindexes = nullptr); 
     // Returns the insert position of windex with the passed inflections using the same
     // conditions as jpSort(). If passed, the value of oldpos is updated to the current
     // position of the word, or -1 if it's not already in the list. The insert position is
     // computed with windex removed from the list.
     int jpInsertPos(int windex, const std::vector<InfTypes> &winfs, int *oldpos);
 
-    // Sort list of results according to the words' definitions. The search
-    // string is used in the sort to prioritize results which have a higher
-    // probability of being relevant.
-    void defSort(QString searchstr); 
+    // Sort list of results according to the words' definitions. The search string is used in
+    // the sort to prioritize results which have a higher probability of being relevant. Pass
+    // a vector with indexes, and the indexes will be converted to their new sorted position.
+    void defSort(QString searchstr, std::vector<int> *pindexes = nullptr);
 
     // Returns the insert position of windex when it was looked up with searchstr using the
     // same conditions as defSort(). If passed, the value of oldpos is updated to the current
@@ -393,14 +394,12 @@ public:
     using TextSearchTreeBase::load;
     using TextSearchTreeBase::save;
 
-    // The search string should be in Japanese form for kana trees, and not
-    // reversed.
-    // Returns a list of words starting with the search string. If exact is true,
-    // the word can't be longer than the romanized search. If sameform is true,
-    // the kana/kanji or lower/upper case of the original search must match the word.
-    // Pass a list for the results in result. The same (updated) list is returned for convenience.
-    // Pass a list of word indexes in wordpool to limit the possible results to the words
-    // in that list. This list must be sorted.
+    // Returns a list of words starting with the search string. If exact is true, the word
+    // can't be longer than the romanized search. If sameform is true, the kana/kanji or
+    // lower/upper case of the original search must match the word.
+    // The search string should be in Japanese form for kana trees, and not reversed.
+    // Pass a list for the results in result. Pass a list of word indexes in wordpool to limit
+    // the possible results to the words in that list. This list must be sorted.
     void findWords(std::vector<int> &result, QString search, bool exact, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize = 0);
     // Returns whether the result of findWords() would hold windex with the passed arguments.
     // Filter conditions and word filtering list are not supported. This function can be fast
@@ -856,7 +855,7 @@ public:
     // Fills a list with every word that contains the given kanji.
     void getKanjiWords(short kindex, std::vector<int> &dest) const;
     // Fills a list with every word that contains the given kanji. Each word only appears
-    // once in the result which will be sorted by value..
+    // once in the result which will be sorted by value.
     void getKanjiWords(const std::vector<ushort> &kanji, std::vector<int> &dest) const;
     // Returns the number of words that contain a given kanji.
     int kanjiWordCount(short kindex) const;
@@ -896,19 +895,19 @@ public:
     // This can be a slow operation.
     //WordResultList&& browseWords(WordResultList &&result, BrowseOrder order, const WordFilterConditions *conditions) const;
 
-    // Calls the other find**Words functions that return a list of words that match the search
-    // conditions. Set sameform to true if the results must contain the search string exactly
-    // as it was entered. The result list receives the words. The same (updated) list is
-    // returned for convenience. Pass a list of word indexes in wordpool to limit the
-    // possible results to the words in that list. Pass a list of inclusion/exclusion in
-    // filters to limit the possible results by word attributes. Set sort to false if the
-    // resulting list is not directly for display and order will be disregarded.
+    // Calls the other find**Words functions that return a list of unsorted words that match
+    // the search conditions in `result`. (The result can be sorted with jpSort() or defSort()
+    // afterwards, depending on the searchmode if necessary.) Set sameform to true if the
+    // results must contain the search string exactly as it was entered. Pass a list of word
+    // indexes in wordpool to limit the possible results to the words in that list. Pass a
+    // list of/ inclusion/exclusion in filters to limit the possible results by word
+    // attributes.
     // When studydefs is true, and the search mode is Definition, the search string is matched
     // with the user defined word definitiones first. If a word has a user word definition its
     // dictionary version is not checked.
-    // WARNING: Passing a search string made with QString::fromRawData() might not be null terminated,
-    // or the null might come too late. In that case this function can fail.
-    WordResultList&& findWords(WordResultList &&result, SearchMode searchmode, QString search, SearchWildcards wildcards, bool sameform, bool inflections, bool studydefs, const std::vector<int> *wordpool, const WordFilterConditions *conditions, bool sort = true);
+    // WARNING: Passing a search string made with QString::fromRawData() might not be null
+    // terminated, or the null might come too late. In that case this function can fail.
+    void findWords(WordResultList &result, SearchMode searchmode, QString search, SearchWildcards wildcards, bool sameform, bool inflections, bool studydefs, const std::vector<int> *wordpool, const WordFilterConditions *conditions);
 
     // Determines whether the passed word index would be listed in the result of findWords(),
     // if searching with the same parameters. Fills inftypes with the inflections affecting
@@ -974,16 +973,32 @@ public:
     // In the ABCDE order, the passed strings are ignored.
     std::function<bool(int, int, const QChar *astr, const QChar *bstr)> browseOrderCompareIndexFunc(BrowseOrder order) const;
 
+    // Helper struct holding data about a single word for sorting word results by kanji/kana
+    // with jpSortFunc().
+    struct JPResultSortData
+    {
+        //The word.
+        WordEntry *w;
+        const std::vector<InfTypes> *inf;
+        uchar jlpt;
+    };
+
+    // Generates data used for speeding up sorting of words with jpSortFunc() found in a
+    // dictionary search.
+    static JPResultSortData jpSortDataGen(WordEntry *entry, const std::vector<InfTypes> *inf);
+
     // Returns a function for sorting words displayed in a dictionary listing in a user
     // friendly order. The function's arguments are 2 pairs of word entry and inflection
     // types to be compared. The function returns true if the first pair should be listed
     // first. If The inflection type list can be null.
-    static bool jpSortFunc(const std::pair<WordEntry*, const std::vector<InfTypes>*> &ap, const std::pair<WordEntry*, const std::vector<InfTypes>*> &bp);
+    static bool jpSortFunc(const JPResultSortData &a, const JPResultSortData &b);
 
     // Helper struct holding data about a single word for sorting word results by definition
     // with defSortFunc().
-    struct WordResultSortData
+    struct DefResultSortData
     {
+        //The word.
+        WordEntry *w;
         // Number of characters after the search string before the word end or a comma is
         // encountered, not counting the part in parentheses where possible.
         int len;
@@ -994,12 +1009,15 @@ public:
         uchar defpos;
         // The length of the whole definition.
         int deflen;
+
+        // JLPT level of word. Only used when sorting by JLPT in the settings.
+        uchar jlpt;
     };
 
     // Generates data used for speeding up sorting of words with defSortFunc() found in a
     // dictionary definition search. Calculating this data takes time so it should be stored
     // for every word taking part in a sort. The searchstr should be in lower case.
-    static WordResultSortData defSortDataGen(QString searchstr, WordEntry *entry);
+    static DefResultSortData defSortDataGen(QString searchstr, WordEntry *entry);
 
     // Returns a function for sorting words displayed in a dictionary listing in a user
     // friendly order, when searching the dictionary for translated definition parts. The
@@ -1007,7 +1025,7 @@ public:
     // be created with the defSortDataGen() function. The function returns true if the first
     // pair should be listed first. To speed up comparison, the word result sort data should
     // be created and stored before sorting.
-    static bool defSortFunc(const std::pair<const WordEntry*, WordResultSortData> &a, const std::pair<const WordEntry*, WordResultSortData> &b);
+    static bool defSortFunc(const DefResultSortData &a, const DefResultSortData &b);
 
     // Returns the index of the word that either matches or starts with the passed kana
     // string, or, if no such word is found, the index returned is the position where such

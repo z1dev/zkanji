@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
+    <width>742</width>
     <height>417</height>
    </rect>
   </property>
@@ -38,7 +38,7 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,0">
        <property name="spacing">
         <number>4</number>
        </property>
@@ -56,6 +56,12 @@
        </property>
        <item>
         <widget class="QWidget" name="widget_2" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <layout class="QFormLayout" name="formLayout">
           <property name="horizontalSpacing">
            <number>10</number>
@@ -75,6 +81,52 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
+          <item row="1" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Destination:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="ZDictionaryComboBox" name="dictCBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_2">
             <property name="sizePolicy">
@@ -90,6 +142,12 @@
           </item>
           <item row="3" column="1">
            <widget class="ZLineEdit" name="kanjiNumEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>3</string>
             </property>
@@ -113,6 +171,12 @@
           </item>
           <item row="4" column="1">
            <widget class="ZLineEdit" name="kanaLenEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>8</string>
             </property>
@@ -136,6 +200,12 @@
           </item>
           <item row="5" column="1">
            <widget class="ZLineEdit" name="freqEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>1000</string>
             </property>
@@ -146,6 +216,12 @@
           </item>
           <item row="6" column="0" colspan="2">
            <widget class="QCheckBox" name="strictBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Strict position and reading</string>
             </property>
@@ -170,38 +246,21 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
-           <widget class="Line" name="line">
+          <item row="2" column="0">
+           <spacer name="verticalSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <property name="spacing">
-             <number>4</number>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
-            <property name="topMargin">
-             <number>0</number>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>13</height>
+             </size>
             </property>
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Destination:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ZDictionaryComboBox" name="dictCBox"/>
-            </item>
-           </layout>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -246,6 +305,12 @@
          </item>
          <item>
           <widget class="QComboBox" name="posCBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <item>
             <property name="text">
              <string>Anywhere</string>
@@ -291,7 +356,14 @@
           </widget>
          </item>
          <item>
-          <widget class="ZListBox" name="readingsView"/>
+          <widget class="ZListBox" name="readingsView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

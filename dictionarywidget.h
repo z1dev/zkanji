@@ -86,7 +86,11 @@ public:
     void saveState(DictionaryWidgetData &data) const;
     void restoreState(const DictionaryWidgetData &data);
 
+    // Pass a statusbar to use it to display data about the listed words.
     void assignStatusBar(ZStatusBar *bar);
+    // The statusbar is only shown on the main window and the popup dictionary by default.
+    // Restores the hidden status bar and assigns it to the dictionary widget.
+    void showStatusBar();
 
     bool isSavingColumnData() const;
     void setSaveColumnData(bool save);

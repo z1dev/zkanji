@@ -169,11 +169,7 @@ void KanjiDefinitionForm::updateDictionary()
     else
         ui->origText->clear();
 
-    std::sort(words.begin(), words.end(), [d](int a, int b) {
-        return Dictionary::jpSortFunc(std::pair<WordEntry*, const std::vector<InfTypes>*>(d->wordEntry(a), nullptr), std::pair<WordEntry*, const std::vector<InfTypes>*>(d->wordEntry(b), nullptr));
-    });
-
-    model->setWordList(d, std::move(words));
+    model->setWordList(d, std::move(words), true);
     if (d != nullptr)
         connect(d, &Dictionary::dictionaryReset, this, &KanjiDefinitionForm::updateDictionary);
 }

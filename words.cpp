@@ -1260,17 +1260,23 @@ void WordResultList::sortByList(const std::vector<int> &list)
     std::vector<std::vector<InfTypes>*> inftmp;
     indexes.swap(indextmp);
     infs.swap(inftmp);
-    indexes.reserve(list.size());
-    for (int ix = 0; ix != list.size(); ++ix)
+    indexes.resize(list.size());
+    int maxinf = -1;
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
     {
-        indexes.push_back(indextmp[list[ix]]);
-        if (inftmp.size() > list[ix])
-        {
-            while (infs.size() != indexes.size() - 1)
-                infs.push_back(nullptr);
-            infs.push_back(inftmp[list[ix]]);
-        }
+        indexes[ix] = indextmp[list[ix]];
+
+        if (maxinf < ix && inftmp.size() > list[ix])
+            maxinf = ix;
     }
+
+    if (maxinf == -1)
+        return;
+
+    infs.resizeAddNull(maxinf + 1);
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        if (inftmp.size() > list[ix])
+            infs[ix] = inftmp[list[ix]];
 }
 
 void WordResultList::sortByIndex()
@@ -1288,13 +1294,13 @@ void WordResultList::sortByIndex()
     std::vector<std::vector<InfTypes>*> inftmp;
     infs.swap(inftmp);
     std::vector<int>().swap(indexes);
-    indexes.reserve(siz);
+    indexes.resize(siz);
 
     int infsiz = inftmp.size();
     for (int ix = 0; ix != siz; ++ix)
     {
         auto &p = ordered[ix];
-        indexes.push_back(p.second);
+        indexes[ix] = p.second;
         if (infsiz > p.first && inftmp[p.first] != nullptr)
         {
             infs.reserve(ix + 1);
@@ -1305,77 +1311,59 @@ void WordResultList::sortByIndex()
     }
 }
 
-void WordResultList::jpSort()
+void WordResultList::jpSort(std::vector<int> *pindexes)
 {
     // When changing, also change jpInsertPos().
 
     std::vector<int> list;
-    std::vector<std::pair<WordEntry*, std::vector<InfTypes>*>> pairlist;
-    pairlist.reserve(indexes.size());
-    list.reserve(indexes.size());
+    std::vector<Dictionary::JPResultSortData> pairlist;
+    pairlist.resize(indexes.size());
+    list.resize(indexes.size());
+    std::iota(list.begin(), list.end(), 0);
 
-    for (int ix = 0, siz = indexes.size(); ix != siz; ++ix)
+    std::vector<Dictionary::JPResultSortData> psortdata;
+    if (pindexes != nullptr)
     {
-        list.push_back(ix);
-        pairlist.push_back(std::make_pair(dict->wordEntry(indexes[ix]), infs.size() > ix ? infs[ix] : nullptr));
+        psortdata.resize(pindexes->size());
+        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        {
+            int index = pindexes->operator[](ix);
+            psortdata[ix] = Dictionary::jpSortDataGen(dict->wordEntry(indexes[index]), infs.size() > index ? infs[index] : nullptr);
+        }
     }
 
-    std::sort(list.begin(), list.end(), [this, &pairlist](int aix, int bix) {
+    for (int ix = 0, siz = indexes.size(); ix != siz; ++ix)
+        pairlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(indexes[ix]), infs.size() > ix ? infs[ix] : nullptr);
+
+    std::sort(list.begin(), list.end(), [&pairlist](int aix, int bix) {
         return Dictionary::jpSortFunc(pairlist[aix], pairlist[bix]);
     });
 
-    //[this](int aix, int bix)
-    //{
-    //    const WordEntry *aw = dict->wordEntry(indexes[aix]);
-    //    const WordEntry *bw = dict->wordEntry(indexes[bix]);
-
-    //    int afreq = aw->freq;
-    //    int bfreq = bw->freq;
-
-    //    if (abs(afreq - bfreq) > 1500 || (abs(afreq - bfreq) > 500 && afreq + bfreq < 2400))
-    //        return afreq > bfreq;
-
-    //    int alen = aw->kana.size();
-    //    int blen = bw->kana.size();
-
-    //    bool ako = (aw->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
-    //    bool bko = (bw->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
-
-    //    if ((ako && !bko && alen < blen) || (bko && !ako && blen < alen))
-    //        return alen < blen;
-
-    //    int akanjicnt = 0;
-    //    int bkanjicnt = 0;
-
-    //    int aklen = aw->kanji.size();
-    //    int bklen = bw->kanji.size();
-    //    for (int ix = 0; ix < aklen; ++ix)
-    //        if (KANJI(aw->kanji[ix].unicode()))
-    //            ++akanjicnt;
-    //    for (int ix = 0; ix < bklen; ++ix)
-    //        if (KANJI(bw->kanji[ix].unicode()))
-    //            ++bkanjicnt;
-
-    //    if (akanjicnt < bkanjicnt && alen - 1 <= blen)
-    //        return true;
-    //    if (bkanjicnt < akanjicnt && blen - 1 <= alen)
-    //        return false;
-
-    //    if (alen == blen)
-    //    {
-    //        if ((infs.size() <= aix || infs.null(aix) || infs[aix]->empty()) != (infs.size() <= bix || infs.null(bix) || infs[bix]->empty()))
-    //            return (infs.size() <= aix || infs.null(aix) || infs[aix]->empty());
-    //    }
-
-    //    return alen < blen;
-    //});
-
     sortByList(list);
+
+    if (pindexes != nullptr)
+    {
+        // Sort pairlist with list too, and use that to look up word indexes in pindexes.
+
+        std::vector<Dictionary::JPResultSortData> pairtmp;
+        pairtmp.swap(pairlist);
+        pairlist.resize(pairtmp.size());
+        for (int ix = 0, siz = pairtmp.size(); ix != siz; ++ix)
+            pairlist[ix] = pairtmp[list[ix]];
+        
+        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        {
+            int pos = std::lower_bound(pairlist.begin(), pairlist.end(), psortdata[ix], [](Dictionary::JPResultSortData apair, Dictionary::JPResultSortData bpair) {
+                return Dictionary::jpSortFunc(apair, bpair);
+            }) - pairlist.begin();
+            pindexes->operator[](ix) = pos;
+        }
+    }
 }
 
 int WordResultList::jpInsertPos(int windex, const std::vector<InfTypes> &winfs, int *oldpos)
 {
-    std::vector<std::pair<WordEntry*, const std::vector<InfTypes>*>> list;
+    std::vector<Dictionary::JPResultSortData> list;
 
     int wpos = -1;
     for (int ix = 0, siz = indexes.size(); ix != siz && wpos == -1; ++ix)
@@ -1394,26 +1382,39 @@ int WordResultList::jpInsertPos(int windex, const std::vector<InfTypes> &winfs, 
     // the dictionary index of windex is not included.
 
     list.resize(indexes.size() - (wpos == -1 ? 0 : 1));
-    std::pair<WordEntry*, const std::vector<InfTypes>*> *data = list.data();
+    Dictionary::JPResultSortData *data = list.data();
 
-    for (int ix = 0, ix2 = 0, siz = list.size(); ix != siz; ++ix, ++ix2)
+    int ix = 0;
+    int siz = list.size();
+    for (; ix != siz; ++ix)
     {
         if (ix == wpos)
-            ++ix2;
-        data[ix] = std::make_pair(dict->wordEntry(indexes[ix2]), infs.size() > (ix2) ? infs[ix2] : nullptr);
+        {
+            ++ix;
+            break;
+        }
+
+        WordEntry *w = dict->wordEntry(indexes[ix]);
+        data[ix] = Dictionary::jpSortDataGen(w, infs.size() > ix ? infs[ix] : nullptr);
+    }
+
+    for (; ix != siz; ++ix)
+    {
+        WordEntry *w = dict->wordEntry(indexes[ix]);
+        data[ix - 1] = Dictionary::jpSortDataGen(w, infs.size() > ix ? infs[ix] : nullptr);
     }
 
     WordEntry *w = dict->wordEntry(windex);
 
     // Finding the insert position for windex.
-    auto it = std::lower_bound(list.begin(), list.end(), std::make_pair(w, &winfs), &Dictionary::jpSortFunc);
+    auto it = std::lower_bound(list.begin(), list.end(), Dictionary::jpSortDataGen(w, &winfs), &Dictionary::jpSortFunc);
 
     int pos = it == list.end() ? list.size() : it - list.begin();
 
     return pos;
 }
 
-void WordResultList::defSort(QString searchstr)
+void WordResultList::defSort(QString searchstr, std::vector<int> *pindexes)
 {
     // When changing, also change defInsertPos().
 
@@ -1421,52 +1422,56 @@ void WordResultList::defSort(QString searchstr)
     // and cached till the end of the sort to speed the sort up.
     searchstr = searchstr.toLower();
 
-    std::vector<std::pair<const WordEntry*, Dictionary::WordResultSortData>> sortlist;
-    sortlist.reserve(indexes.size());
-
-    while (sortlist.size() != indexes.size())
-    {
-        WordEntry *w = dict->wordEntry(indexes[sortlist.size()]);
-        sortlist.push_back(std::make_pair(w, Dictionary::defSortDataGen(searchstr, w)));
-    }
-
+    std::vector<Dictionary::DefResultSortData> sortlist;
+    sortlist.resize(indexes.size());
     std::vector<int> list;
     list.resize(indexes.size());
+    std::iota(list.begin(), list.end(), 0);
 
-    int *data = list.data();
-    for (int ix = list.size() - 1; ix != -1; --ix)
-        data[ix] = ix;
+    std::vector<Dictionary::DefResultSortData> psortdata;
+    if (pindexes != nullptr)
+    {
+        psortdata.resize(pindexes->size());
+        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        {
+            int index = pindexes->operator[](ix);
+            psortdata[ix] = Dictionary::defSortDataGen(searchstr, dict->wordEntry(indexes[index]));
+        }
+    }
 
-    //std::sort(list.begin(), list.end(), [this, &sortlist](int aix, int bix /*const WordResultSortData &a, const WordResultSortData &b*/)
-    //{
-    //    int afreq = dict->wordEntry(indexes[aix])->freq;
-    //    int bfreq = dict->wordEntry(indexes[bix])->freq;
-
-    //    if ((std::min(afreq, bfreq) < 3000 && abs(afreq - bfreq) > 1500) || 
-    //        (std::min(afreq, bfreq) >= 3000 && abs(afreq - bfreq) > 2400) ||
-    //        (abs(afreq - bfreq) > 500 && afreq + bfreq < 2400))
-    //        return afreq > bfreq;
-    //    //if (bfreq <= 1400 && afreq > 1700)
-    //    //    return true;
-    //    //if (bfreq > 1700 && afreq <= 1400)
-    //    //    return false;
-    //    //if (abs(bfreq - afreq) > 2400)
-    //    //    return afreq < bfreq;
-
-    //    return (bfreq - afreq + (sortlist[aix].defpos - sortlist[bix].defpos) * 500 + ((sortlist[aix].len + sortlist[aix].pos) - (sortlist[bix].len + sortlist[bix].pos)) * 500 + (sortlist[aix].pos - sortlist[bix].pos) * 50) < 0;
-    //});
+    for (int ix = 0, siz = indexes.size(); ix != siz; ++ix)
+        sortlist[ix] = Dictionary::defSortDataGen(searchstr, dict->wordEntry(indexes[ix]));
 
     std::sort(list.begin(), list.end(), [this, &sortlist](int ax, int bx) {
         return Dictionary::defSortFunc(sortlist[ax], sortlist[bx]);
     });
 
     sortByList(list);
+
+    if (pindexes != nullptr)
+    {
+        // Sort pairlist with list too, and use that to look up word indexes in pindexes.
+
+        std::vector<Dictionary::DefResultSortData> sorttmp;
+        sorttmp.swap(sortlist);
+        sortlist.resize(sorttmp.size());
+        for (int ix = 0, siz = sorttmp.size(); ix != siz; ++ix)
+            sortlist[ix] = sorttmp[list[ix]];
+
+        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        {
+            int pos = std::lower_bound(sortlist.begin(), sortlist.end(), psortdata[ix], [](Dictionary::DefResultSortData apair, Dictionary::DefResultSortData bpair) {
+                return Dictionary::defSortFunc(apair, bpair);
+            }) - sortlist.begin();
+            pindexes->operator[](ix) = pos;
+        }
+    }
 }
 
 int WordResultList::defInsertPos(QString searchstr, int windex, int *oldpos)
 {
     int wpos = -1;
-    for (int ix = 0; ix != indexes.size() && wpos == -1; ++ix)
+    for (int ix = 0; ix != indexes.size(); ++ix)
     {
         if (windex == indexes[ix])
         {
@@ -1484,26 +1489,30 @@ int WordResultList::defInsertPos(QString searchstr, int windex, int *oldpos)
     // and cached till the end of the sort to speed the sort up.
     searchstr = searchstr.toLower();
 
-    std::vector<std::pair<const WordEntry*, Dictionary::WordResultSortData>> sortlist;
-    sortlist.reserve(siz);
+    std::vector<Dictionary::DefResultSortData> sortlist;
+    sortlist.resize(siz);
 
-    for (int ix = 0; ix != indexes.size(); ++ix)
+    int ix = 0;
+    for (; ix != indexes.size(); ++ix)
     {
         if (ix == wpos)
         {
             ++ix;
-            if (ix == indexes.size())
-                break;
+            break;
         }
         WordEntry *w = dict->wordEntry(indexes[ix]);
-
-        sortlist.push_back(std::make_pair(w, Dictionary::defSortDataGen(searchstr, w)));
+        sortlist[ix] = Dictionary::defSortDataGen(searchstr, w);
+    }
+    for (; ix != indexes.size(); ++ix)
+    {
+        WordEntry *w = dict->wordEntry(indexes[ix]);
+        sortlist[ix - 1] = Dictionary::defSortDataGen(searchstr, w);
     }
 
     const WordEntry *w = dict->wordEntry(windex);
-    Dictionary::WordResultSortData wdata = Dictionary::defSortDataGen(searchstr, dict->wordEntry(windex));
+    Dictionary::DefResultSortData wdata = Dictionary::defSortDataGen(searchstr, dict->wordEntry(windex));
 
-    auto it = std::lower_bound(sortlist.begin(), sortlist.end(), std::make_pair(w, wdata), &Dictionary::defSortFunc);
+    auto it = std::lower_bound(sortlist.begin(), sortlist.end(), wdata, &Dictionary::defSortFunc);
 
     int pos = it == sortlist.end() ? sortlist.size() : it - sortlist.begin();
 
@@ -4887,7 +4896,7 @@ void Dictionary::setKanjiMeaning(short ix, QStringList &list)
 //    return std::move(result);
 //}
 
-WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searchmode, QString search, SearchWildcards wildcards, bool sameform, bool inflections, bool studydefs, const std::vector<int> *wordpool, const WordFilterConditions *conditions, bool sort)
+void Dictionary::findWords(WordResultList &result, SearchMode searchmode, QString search, SearchWildcards wildcards, bool sameform, bool inflections, bool studydefs, const std::vector<int> *wordpool, const WordFilterConditions *conditions)
 {
 #ifdef _DEBUG
     if (searchmode == SearchMode::Browse)
@@ -4895,7 +4904,7 @@ WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searc
 #endif
 
     if (search.isEmpty())
-        return std::move(result);
+        return;
 
     std::vector<int> wpool;
     if (wordpool != nullptr)
@@ -4914,7 +4923,7 @@ WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searc
                 search.remove(ix, 1);
 
         if (search.isEmpty())
-            return std::move(result);
+            return;
 
         bool kanjisearch = false;
         // Look for kanji or other non-kana character in the search string.
@@ -4942,9 +4951,9 @@ WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searc
         result.set(lines);
         if (deinfs.empty())
         {
-            if (sort)
-                result.jpSort();
-            return std::move(result);
+            //if (sort)
+            //    result.jpSort();
+            return;
         }
 
         for (int ix = 0; ix != deinfs.size(); ++ix)
@@ -4986,9 +4995,9 @@ WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searc
             }
         }
 
-        if (sort)
-            result.jpSort();
-        return std::move(result);
+        //if (sort)
+        //    result.jpSort();
+        return;
     }
 
     if (searchmode == SearchMode::Definition)
@@ -5055,12 +5064,10 @@ WordResultList&& Dictionary::findWords(WordResultList &&result, SearchMode searc
         }
 
         result.set(lines);
-        if (sort)
-            result.defSort(search);
-        return std::move(result);
+        //if (sort)
+        //    result.defSort(search);
+        return;
     }
-
-    return std::move(result);
 }
 
 bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, SearchWildcards wildcards, bool sameform, bool inflections, bool studydefs, const WordFilterConditions *conditions, std::vector<InfTypes> *inftypes)
@@ -5070,11 +5077,13 @@ bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, 
         throw "Browse mode doesn't support normal search with wildcards etc.";
 #endif
 
-    if (search.isEmpty())
+    //if (search.isEmpty())
+    //    return false;
+
+    if (search.isEmpty() && conditions != nullptr && !ZKanji::wordfilters().match(words[windex], conditions))
         return false;
 
-    if (conditions != nullptr && !ZKanji::wordfilters().match(words[windex], conditions))
-        return false;
+
 
     if (searchmode == SearchMode::Japanese)
     {
@@ -5085,7 +5094,7 @@ bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, 
                 search.remove(ix, 1);
 
         if (search.isEmpty())
-            return false;
+            return true;
 
         bool kanjisearch = false;
         // Look for kanji or other non-kana character in the search string.
@@ -5171,9 +5180,11 @@ bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, 
 
         //result.jpSort();
     }
-
-    if (searchmode == SearchMode::Definition)
+    else if (searchmode == SearchMode::Definition)
     {
+        if (search.isEmpty())
+            return true;
+
         if (studydefs)
         {
             bool found = false;
@@ -5626,24 +5637,48 @@ std::function<bool(int, int, const QChar*, const QChar*)> Dictionary::browseOrde
     };
 }
 
+Dictionary::JPResultSortData Dictionary::jpSortDataGen(WordEntry *w, const std::vector<InfTypes> *inf)
+{
+    JPResultSortData data;
+    data.w = w;
+    data.inf = inf;
+    if (Settings::dictionary.resultorder == ResultOrder::JLPTfrom1 || Settings::dictionary.resultorder == ResultOrder::JLPTfrom5)
+    {
+        WordCommons *aw = ZKanji::commons.findWord(w->kanji.data(), w->kana.data(), w->romaji.data());
+        data.jlpt = aw == nullptr ? 0 : aw->jlptn;
+    }
+
+    return data;
+}
+
 namespace {
     int jpSortFuncKanaLenInc[] = { 60, 45, 35, 26, 20, 17, 15, 13, 11 };
     int jpSortFuncKanjiCntInc[] = { 60, 45, 35, 26, 20, 17, 15, 13, 11 };
 }
-bool Dictionary::jpSortFunc(const std::pair<WordEntry*, const std::vector<InfTypes>*> &ap, const std::pair<WordEntry*, const std::vector<InfTypes>*> &bp)
+bool Dictionary::jpSortFunc(const JPResultSortData &a, const JPResultSortData &b)
 {
-    // Returns a sorting order between two word entries. The base of the calculation is the
-    // word frequencies. They're gradually increased depending on the properties of the word
-    // entries and compared at each step. If the difference between the two values is larger
-    // than a limit, the following comparisons are skipped and a result is returned.
-    // The sum of maximum changes of the following comparisons to the frequency number must be
-    // lower than the limit.
+    // Returns a transitive and stable sorting order between two word entries. The base of the
+    // calculation is the word frequencies. The base values are gradually increased depending
+    // on the properties of the word entries and compared at each step. If the difference
+    // between the two values is above the limit of the specific step, the following
+    // comparisons are skipped and a result is returned.
 
-    const WordEntry *aw = ap.first;
-    const WordEntry *bw = bp.first;
+    if (Settings::dictionary.resultorder == ResultOrder::JLPTfrom1 || Settings::dictionary.resultorder == ResultOrder::JLPTfrom5)
+    {
+        if (a.jlpt != b.jlpt)
+        {
+            if (Settings::dictionary.resultorder == ResultOrder::JLPTfrom1)
+                return a.jlpt != 0 && (b.jlpt == 0 || a.jlpt < b.jlpt);
+            else
+                return a.jlpt > b.jlpt;
+        }
+    }
 
-    int afreq = aw->freq;
-    int bfreq = bw->freq;
+    int afreq = a.w->freq;
+    int bfreq = b.w->freq;
+
+    if ((Settings::dictionary.resultorder == ResultOrder::Frequency || Settings::dictionary.resultorder == ResultOrder::JLPTfrom1 || Settings::dictionary.resultorder == ResultOrder::JLPTfrom5) && afreq != bfreq)
+        return afreq > bfreq;
 
     // Making less frequent words' frequency count even less, to make sure they have smaller
     // chance to get ahead of the frequent words.
@@ -5651,31 +5686,11 @@ bool Dictionary::jpSortFunc(const std::pair<WordEntry*, const std::vector<InfTyp
     afreq /= 100;
     bfreq /= 100;
 
-    //if (afreq < 1500)
-    //    afreq = afreq * 0.3;
-    //else if (afreq < 3000)
-    //    afreq = afreq * 0.4;
-    //else
-    //    afreq = afreq * 0.6;
+    int alen = a.w->kana.size();
+    int blen = b.w->kana.size();
 
-    //if (bfreq < 1500)
-    //    bfreq = bfreq * 0.3;
-    //else if (bfreq < 3000)
-    //    bfreq = bfreq * 0.4;
-    //else
-    //    bfreq = bfreq * 0.6;
-
-    //if (abs(afreq - bfreq) > 1500 || (abs(afreq - bfreq) > 500 && afreq + bfreq < 2400))
-    //    return afreq > bfreq;
-
-    //if (std::abs(afreq - bfreq) > 20)
-    //    return afreq > bfreq;
-
-    int alen = aw->kana.size();
-    int blen = bw->kana.size();
-
-    bool ako = (aw->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
-    bool bko = (bw->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
+    bool ako = (a.w->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
+    bool bko = (b.w->defs[0].attrib.notes & (1 << (int)WordNotes::KanaOnly)) != 0;
 
     if (!ako)
         afreq += 20;
@@ -5688,25 +5703,22 @@ bool Dictionary::jpSortFunc(const std::pair<WordEntry*, const std::vector<InfTyp
     if (std::abs(afreq - bfreq) > 70)
         return afreq > bfreq;
 
-    //if ((ako && !bko && alen < blen) || (bko && !ako && blen < alen))
-    //    return alen < blen;
-
     int akanjicnt = 0;
     int avalidcnt = 0;
-    int aklen = aw->kanji.size();
+    int aklen = a.w->kanji.size();
     for (int ix = 0; ix < aklen; ++ix)
-        if (KANJI(aw->kanji[ix].unicode()))
+        if (KANJI(a.w->kanji[ix].unicode()))
             ++akanjicnt;
-        else if (VALIDCODE(aw->kanji[ix].unicode()))
+        else if (VALIDCODE(a.w->kanji[ix].unicode()))
             ++avalidcnt;
 
     int bkanjicnt = 0;
     int bvalidcnt = 0;
-    int bklen = bw->kanji.size();
+    int bklen = b.w->kanji.size();
     for (int ix = 0; ix < bklen; ++ix)
-        if (KANJI(bw->kanji[ix].unicode()))
+        if (KANJI(b.w->kanji[ix].unicode()))
             ++bkanjicnt;
-        else if (VALIDCODE(bw->kanji[ix].unicode()))
+        else if (VALIDCODE(b.w->kanji[ix].unicode()))
             ++bvalidcnt;
 
     afreq += jpSortFuncKanjiCntInc[std::min(akanjicnt + (avalidcnt / 2), 8)]; //(20 - std::min(akanjicnt + (avalidcnt / 3), 20)) * 20;
@@ -5718,25 +5730,38 @@ bool Dictionary::jpSortFunc(const std::pair<WordEntry*, const std::vector<InfTyp
     afreq += (10 - std::min(aklen, 9));
     bfreq += (10 - std::min(bklen, 9));
 
-    if (ap.second == nullptr || ap.second->empty())
+    if (a.inf == nullptr || a.inf->empty())
         ++afreq;
-    if (bp.second == nullptr || bp.second->empty())
+    if (b.inf == nullptr || b.inf->empty())
         ++bfreq;
 
-    return afreq > bfreq;
+    if (afreq != bfreq || a.w == b.w)
+        return afreq > bfreq;
+
+    int cmp = qcharcmp(a.w->kana.data(), b.w->kana.data());
+    if (cmp != 0)
+        return cmp < 0;
+    return qcharcmp(a.w->kanji.data(), b.w->kanji.data()) < 0;
 }
 
-Dictionary::WordResultSortData Dictionary::defSortDataGen(QString searchstr, WordEntry *w)
+Dictionary::DefResultSortData Dictionary::defSortDataGen(QString searchstr, WordEntry *w)
 {
     // TODO: (later) Some languages might not use the parenthesis or comma for the same task.
     // Make this translatable somehow.
 
-    WordResultSortData data;
+    DefResultSortData data;
 
+    data.w = w;
     data.len = 1000;
     data.pos = 1000;
     data.defpos = 255;
     data.deflen = 0;
+
+    if (Settings::dictionary.resultorder == ResultOrder::JLPTfrom1 || Settings::dictionary.resultorder == ResultOrder::JLPTfrom5)
+    {
+        WordCommons *aw = ZKanji::commons.findWord(w->kanji.data(), w->kana.data(), w->romaji.data());
+        data.jlpt = aw == nullptr ? 0 : aw->jlptn;
+    }
 
     int indexof = -1;
     QString def;
@@ -5815,17 +5840,31 @@ Dictionary::WordResultSortData Dictionary::defSortDataGen(QString searchstr, Wor
     return data;
 }
 
-bool Dictionary::defSortFunc(const std::pair<const WordEntry*, WordResultSortData> &as, const std::pair<const WordEntry*, WordResultSortData> &bs)
+bool Dictionary::defSortFunc(const DefResultSortData &a, const DefResultSortData &b)
 {
-    int afreq = as.first->freq;
-    int bfreq = bs.first->freq;
+    if (Settings::dictionary.resultorder == ResultOrder::JLPTfrom1 || Settings::dictionary.resultorder == ResultOrder::JLPTfrom5)
+    {
+        if (a.jlpt != b.jlpt)
+        {
+            if (Settings::dictionary.resultorder == ResultOrder::JLPTfrom1)
+                return a.jlpt != 0 && (b.jlpt == 0 || a.jlpt < b.jlpt);
+            else
+                return a.jlpt > b.jlpt;
+        }
+    }
+
+    int afreq = a.w->freq;
+    int bfreq = b.w->freq;
+
+    if ((Settings::dictionary.resultorder == ResultOrder::Frequency || Settings::dictionary.resultorder == ResultOrder::JLPTfrom1 || Settings::dictionary.resultorder == ResultOrder::JLPTfrom5) && afreq != bfreq)
+        return afreq > bfreq;
 
     // Old way of calculation:
     //if ((std::min(afreq, bfreq) < 3000 && abs(afreq - bfreq) > 1500) ||
     //    (std::min(afreq, bfreq) >= 3000 && abs(afreq - bfreq) > 2400) ||
     //    (abs(afreq - bfreq) > 500 && afreq + bfreq < 2400))
     //    return afreq > bfreq;
-    //return (bfreq - afreq + (as.second.defpos - bs.second.defpos) * 500 + ((as.second.len + as.second.pos) - (bs.second.len + bs.second.pos)) * 500 + (as.second.pos - bs.second.pos) * 50) < 0;
+    //return (bfreq - afreq + (as.defpos - bs.defpos) * 500 + ((as.len + as.pos) - (bs.len + bs.pos)) * 500 + (as.pos - bs.pos) * 50) < 0;
 
     // Making less frequent words frequency count even less, to make sure they have smaller
     // chance to get ahead of the frequent words.
@@ -5844,20 +5883,25 @@ bool Dictionary::defSortFunc(const std::pair<const WordEntry*, WordResultSortDat
     else
         bfreq = bfreq * 0.8;
 
-    afreq += (5 - std::min<int>(as.second.defpos, 5)) * 150;
-    bfreq += (5 - std::min<int>(bs.second.defpos, 5)) * 150;
+    afreq += (5 - std::min<int>(a.defpos, 5)) * 150;
+    bfreq += (5 - std::min<int>(b.defpos, 5)) * 150;
 
-    afreq += (20 - std::min<int>(as.second.len + as.second.pos, 20)) * 350;
-    bfreq += (20 - std::min<int>(bs.second.len + bs.second.pos, 20)) * 350;
+    afreq += (20 - std::min<int>(a.len + a.pos, 20)) * 350;
+    bfreq += (20 - std::min<int>(b.len + b.pos, 20)) * 350;
 
-    afreq += (10 - std::min<int>(as.second.pos, 10)) * 100;
-    bfreq += (10 - std::min<int>(bs.second.pos, 10)) * 100;
+    afreq += (10 - std::min<int>(a.pos, 10)) * 100;
+    bfreq += (10 - std::min<int>(b.pos, 10)) * 100;
 
-    afreq += (20 - std::min<int>(as.second.deflen, 20)) * 100;
-    bfreq += (20 - std::min<int>(bs.second.deflen, 20)) * 100;
+    afreq += (20 - std::min<int>(a.deflen, 20)) * 100;
+    bfreq += (20 - std::min<int>(b.deflen, 20)) * 100;
 
-    return afreq > bfreq;
+    if (afreq != bfreq || a.w == b.w)
+        return afreq > bfreq;
 
+    int cmp = qcharcmp(a.w->kana.data(), b.w->kana.data());
+    if (cmp != 0)
+        return cmp < 0;
+    return qcharcmp(a.w->kanji.data(), b.w->kanji.data()) < 0;
 }
 
 //int Dictionary::browseIndex(QString r, BrowseOrder order, const std::vector<int> *wordlist)

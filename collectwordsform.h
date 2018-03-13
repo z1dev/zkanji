@@ -69,6 +69,18 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     virtual Qt::ItemFlags flags(const QModelIndex &index = QModelIndex()) const override;
+
+    virtual void removeAt(int index) override;
+
+    virtual int statusCount() const override;
+    virtual StatusTypes statusType(int statusindex) const override;
+    virtual QString statusText(int statusindex, int labelindex, int rowpos) const override;
+    virtual int statusSize(int statusindex, int labelindex) const override;
+    virtual bool statusAlignRight(int statusindex) const override;
+protected:
+    virtual void orderChanged(const std::vector<int> &ordering) override;
+    virtual bool addNewEntry(int windex, int &position) override;
+    virtual void entryAddedPosition(int pos) override;
 protected slots:
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
 private:
@@ -88,7 +100,7 @@ public:
     void exec(Dictionary *d, const std::vector<ushort> &kanjis);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
-private slots:
+protected slots:
     //void on_groupButton_clicked();
     //void groupDeleted(GroupCategoryBase *parent, int index, void *oldaddress);
     void kanjiInserted(const smartvector<Interval> &intervals);

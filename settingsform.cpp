@@ -492,6 +492,7 @@ void SettingsForm::reset()
 
     ui->autoSizeBox->setChecked((int)Settings::dictionary.autosize);
     ui->inflectionCBox->setCurrentIndex((int)Settings::dictionary.inflection);
+    ui->resultOrderCBox->setCurrentIndex((int)Settings::dictionary.resultorder);
     ui->browseOrderCBox->setCurrentIndex((int)Settings::dictionary.browseorder);
     ui->wordGroupBox->setChecked(Settings::dictionary.showingroup);
     ui->jlptBox->setChecked(Settings::dictionary.showjlpt);
@@ -737,6 +738,7 @@ void SettingsForm::applyClicked()
 
     Settings::dictionary.autosize = ui->autoSizeBox->isChecked();
     Settings::dictionary.inflection = (DictionarySettings::InflectionShow)ui->inflectionCBox->currentIndex();
+    Settings::dictionary.resultorder = (ResultOrder)ui->resultOrderCBox->currentIndex();
     Settings::dictionary.browseorder = (BrowseOrder)ui->browseOrderCBox->currentIndex();
     Settings::dictionary.showingroup = ui->wordGroupBox->isChecked();
     Settings::dictionary.showjlpt = ui->jlptBox->isChecked();

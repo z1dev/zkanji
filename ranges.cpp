@@ -1109,7 +1109,7 @@ void _moveDelta(const smartvector<Range> &list, int pos, std::vector<int> &delta
     for (int iy = ix, siz = list.size(); iy != siz; ++iy)
     {
         const Range *r = list[iy];
-        delta[iy] = r->first - movepos;
+        delta[iy] = movepos - r->first;
         movepos += r->last - r->first + 1;
     }
 
@@ -1134,7 +1134,6 @@ void _moveDelta(const smartvector<Range> &list, int pos, std::vector<int> &delta
         movepos -= r->last - r->first + 1;
     }
 }
-
 
 
 //-------------------------------------------------------------

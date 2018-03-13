@@ -74,7 +74,7 @@ bool ZLineEdit::hasAcceptableInput() const
     return validInput();
 }
 
-void ZLineEdit::setCharacterSize(int chsiz)
+void ZLineEdit::setCharacterSize(double chsiz)
 {
     QFontMetrics fm(font());
     int w = fm.averageCharWidth();

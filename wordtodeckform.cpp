@@ -107,6 +107,7 @@ WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, con
 
     indexes.resize(std::remove(indexes.begin(), indexes.end(), -1) - indexes.begin());
 
+    // Must be unordered because orderChanged() etc. functions are not implemented.
     setWordList(dict, indexes);
 }
 

@@ -251,6 +251,15 @@ void DictionaryWidget::assignStatusBar(ZStatusBar *bar)
     ui->wordsTable->assignStatusBar(bar);
 }
 
+void DictionaryWidget::showStatusBar()
+{
+    if (ui->listStatus->isVisibleTo(this))
+        return;
+
+    ui->listStatus->setVisible(true);
+    assignStatusBar(ui->listStatus);
+}
+
 bool DictionaryWidget::isSavingColumnData() const
 {
     return savecolumndata;
@@ -489,21 +498,6 @@ void DictionaryWidget::commandState(int command, bool &enabled, bool &checked, b
         break;
     }
 }
-
-//BrowseOrder DictionaryWidget::browseOrder() const
-//{
-//    return browseorder;
-//}
-//
-//void DictionaryWidget::setBrowseOrder(BrowseOrder bo)
-//{
-//    if (bo == browseorder)
-//        return;
-//    browseorder = bo;
-//
-//    if (listmode == DictSearch && mode == SearchMode::Browse)
-//        updateWords();
-//}
 
 DictionaryWidget::ListMode DictionaryWidget::listMode() const
 {
@@ -1679,7 +1673,7 @@ void DictionaryWidget::updateWords()
         strict = ui->enStrictButton->isChecked();
     }
 
-    WordResultList result(dictionary());
+    //WordResultList result(dictionary());
 
     if (listmode == DictSearch)
     {
@@ -1777,18 +1771,10 @@ void DictionaryWidget::updateMultiline()
     if (categ != CommandCategories::NoCateg)
         ((ZKanjiForm*)window())->checkCommand(makeCommand(Commands::ToggleMultiline, categ), ui->multilineButton->isChecked());
 
-    //if (model == nullptr)
-    //    return;
-
     if (ui->multilineButton->isChecked() == ui->wordsTable->isMultiLine())
         return;
 
-    //auto oldselmodel = ui->wordsTable->selectionModel();
-
     ui->wordsTable->setMultiLine(ui->multilineButton->isChecked());
-
-    //if (ui->wordsTable->selectionModel() != oldselmodel)
-    //    connect(ui->wordsTable->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &DictionaryWidget::tableRowChanged);
 }
 
 void DictionaryWidget::setTableModel(ZAbstractTableModel *newmodel)
@@ -1796,31 +1782,8 @@ void DictionaryWidget::setTableModel(ZAbstractTableModel *newmodel)
     if (ui->wordsTable->model() == newmodel)
         return;
 
-    //auto oldselmodel = ui->wordsTable->selectionModel();
-
     ui->wordsTable->setModel(newmodel);
-
-    //if (ui->wordsTable->selectionModel() != oldselmodel)
-    //    connect(ui->wordsTable->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &DictionaryWidget::tableRowChanged);
 }
-
-//void DictionaryWidget::resetBrowseModel()
-//{
-//    if (model == browsemodel)
-//        model = nullptr;
-//    else if (mode == SearchMode::Browse && model != nullptr)
-//    {
-//        WordResultList result(dictionary());
-//        result.set(browseList(false));
-//        ((DictionaryWordListItemModel*)model)->setWordResults(std::move(result));
-//    }
-//
-//    if (browsemodel != nullptr)
-//    {
-//        browsemodel->deleteLater();
-//        browsemodel = nullptr;
-//    }
-//}
 
 bool DictionaryWidget::conditionsEmpty() const
 {
@@ -1860,53 +1823,6 @@ void DictionaryWidget::storeLastSearch(ZComboBox *box)
     box->view()->setCurrentIndex(box->view()->model()->index(0, 0));
     box->setCurrentIndex(0);
 }
-
-//std::vector<int> DictionaryWidget::browseList(bool fil) const
-//{
-//    if (!fil)
-//    {
-//        std::vector<int> result;
-//        result = dictionary()->wordOrdering(browseorder);
-//        return result;
-//    }
-//
-//    const std::vector<int> &wordlist = dictionary()->wordOrdering(browseorder);
-//    std::vector<int> result;
-//    for (int ix = 0; ix != wordlist.size(); ++ix)
-//    {
-//        if (ZKanji::wordfilters().match(dictionary()->wordEntry(wordlist[ix]), conditions))
-//            result.push_back(wordlist[ix]);
-//    }
-//
-//    return result;
-//}
-
-//int DictionaryWidget::browseIndex(const QString &search) const
-//{
-//    const std::vector<int> *wordlist;
-//    if (conditionsEmpty())
-//        wordlist = &dictionary()->wordOrdering(browseorder);
-//    else
-//        wordlist = &browsemodel->getWords()->getIndexes();
-//
-//    QString str = search;
-//
-//    if (browseorder == BrowseOrder::AIUEO)
-//    {
-//        str = hiraganize(str);
-//        // Remove non-kana.
-//        for (int ix = str.size() - 1; ix != -1; --ix)
-//            if (!KANA(str.at(ix).unicode()))
-//                str[ix] = QChar('*');
-//        str.remove(QChar('*'));
-//    }
-//
-//    auto it = std::lower_bound(wordlist->begin(), wordlist->end(), str.constData(), dictionary()->browseOrderCompareFunc(browseorder));
-//
-//    if (it == wordlist->end())
-//        return wordlist->size() - 1;
-//    return it - wordlist->begin();
-//}
 
 
 //-------------------------------------------------------------

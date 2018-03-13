@@ -99,6 +99,8 @@ private slots:
     void sourceLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &parents = QList<QPersistentModelIndex>(), QAbstractItemModel::LayoutChangeHint hint = QAbstractItemModel::NoLayoutChangeHint);
     void sourceLayoutChanged(const QList<QPersistentModelIndex> &parents = QList<QPersistentModelIndex>(), QAbstractItemModel::LayoutChangeHint hint = QAbstractItemModel::NoLayoutChangeHint);
 
+    void sourceStatusChanged();
+
     virtual void filterMoved(int index, int to);
 private:
     typedef std::vector<InfTypes>   InfVector;
@@ -239,8 +241,13 @@ private:
     // perceivable inner change of the model. If invalid, it's recomputed.
     mutable int cachepos;
 
+    // Persistent indexes saved at the beginning of a layout change to be passed to
+    // changePersistentIndexList() as first parameter.
     QModelIndexList persistentsource;
-    std::vector<QPersistentModelIndex> persistentdest;
+    // persistent index of source model, row of this model relative to original model].
+    // Used when mapping persistent local indexes to persistent source model indexes. The
+    // second value is the row position inside the multiple rows of the local indexes.
+    std::vector<std::pair<QPersistentModelIndex, int>> persistentdest;
 
     typedef ZAbstractProxyTableModel base;
 };

@@ -714,6 +714,7 @@ void ZListView::setModel(ZAbstractTableModel *newmodel)
         disconnect(m, &ZAbstractTableModel::layoutAboutToBeChanged, this, &ZListView::layoutAboutToBeChanged);
         disconnect(m, &ZAbstractTableModel::layoutChanged, this, &ZListView::layoutChanged);
         disconnect(m, &ZAbstractTableModel::modelAboutToBeReset, this, &ZListView::aboutToBeReset);
+        disconnect(m, &ZAbstractTableModel::statusChanged, this, &ZListView::updateStatus);
     }
 
     bool selchange = !selection->empty() || (selpivot != -1 && currentrow != -1);
@@ -735,6 +736,7 @@ void ZListView::setModel(ZAbstractTableModel *newmodel)
         connect(newmodel, &ZAbstractTableModel::layoutAboutToBeChanged, this, &ZListView::layoutAboutToBeChanged);
         connect(newmodel, &ZAbstractTableModel::layoutChanged, this, &ZListView::layoutChanged);
         connect(newmodel, &ZAbstractTableModel::modelAboutToBeReset, this, &ZListView::aboutToBeReset);
+        connect(newmodel, &ZAbstractTableModel::statusChanged, this, &ZListView::updateStatus);
     }
 
     hover = false;
@@ -772,7 +774,11 @@ void ZListView::assignStatusBar(ZStatusBar *bar)
     if (bar == status)
         return;
     if (status != nullptr)
-        disconnect(status, nullptr, this, nullptr);
+    {
+        disconnect(status, &QObject::destroyed, this, &ZListView::statusDestroyed);
+        disconnect(status, &ZStatusBar::assigned, this, &ZListView::statusDestroyed);
+    }
+
     status = bar;
     if (status != nullptr)
     {
