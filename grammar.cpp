@@ -245,12 +245,12 @@ const char *nuinfromaji[]
     "nimasu", "nimashita", "nimasen'", "nimashou",
         "nanai", "naserareru", "nareru", "naseru",
         "ni", "nitai", "nitagaru", "nisou",
-        "nde", "nda", "ndara", "ndari",
+        "n'de", "n'da", "n'dara", "n'dari",
         "neba", "neru", "ne", "nou",
-        "nderu", "ndeiru", "nanakuya", "nanakya",
-        "njau", "nanaide", "nazu", "nanu",
-        "nasareru", "njimau", "ndenasai", "ndeoku",
-        "ndoku"
+        "n'deru", "n'deiru", "nanakuya", "nanakya",
+        "n'jau", "nanaide", "nazu", "nanu",
+        "nasareru", "n'jimau", "n'denasai", "n'deoku",
+        "n'doku"
 };
 QCharStringList nuinf;
 
@@ -272,12 +272,12 @@ const char *buinfromaji[]
     "bimasu", "bimashita", "bimasen'", "bimashou",
         "banai", "baserareru", "bareru", "baseru",
         "bi", "bitai", "bitagaru", "bisou",
-        "nde", "nda", "ndara", "ndari",
+        "n'de", "n'da", "n'dara", "n'dari",
         "beba", "beru", "be", "‚Úu",
-        "nderu", "ndeiru", "banakuya", "banakya",
-        "njau", "banaide", "bazu", "banu",
-        "basareru", "njimau", "ndenasai", "ndeoku",
-        "ndoku"
+        "n'deru", "n'deiru", "banakuya", "banakya",
+        "n'jau", "banaide", "bazu", "banu",
+        "basareru", "n'jimau", "n'denasai", "n'deoku",
+        "n'doku"
 };
 QCharStringList buinf;
 
@@ -299,12 +299,12 @@ const char *muinfromaji[]
     "mimasu", "mimashita", "mimasen'", "mimashou",
         "manai", "maserareru", "mareru", "maseru",
         "mi", "mitai", "mitagaru", "misou",
-        "nde", "nda", "ndara", "ndari",
+        "n'de", "n'da", "n'dara", "n'dari",
         "meba", "meru", "me", "mou",
-        "nderu", "ndeiru", "manakuya", "manakya",
-        "njau", "manaide", "mazu", "manu",
-        "masareru", "njimau", "ndenasai", "ndeoku",
-        "ndoku"
+        "n'deru", "n'deiru", "manakuya", "manakya",
+        "n'jau", "manaide", "mazu", "manu",
+        "masareru", "n'jimau", "n'denasai", "n'deoku",
+        "n'doku"
 };
 QCharStringList muinf;
 
