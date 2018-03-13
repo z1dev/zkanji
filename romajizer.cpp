@@ -17,7 +17,6 @@
                           x == 'v' || x == 'f')
 
 
-//const char* kanavowelinput[] = 
 const char* kanainput[] =
 {
     "a",
@@ -81,7 +80,7 @@ const char* kanainput[] =
 
     "na", "ni", "nu", "ne", "no",
     "nya", "nyu", "nyo",
-    "nyi", "nye", "nn", "n'",
+    "nyi", "nye", "nn", "n'", "n",
 
     "ha", "hi", "hu", "he", "ho",
     "hya", "hyu", "hyo",
@@ -112,7 +111,6 @@ const char* kanainput[] =
     "/"
 };
 
-//const ushort kanavoweloutput[][3] =
 const ushort kanaoutput[][3] =
 {
     { 0x3042, 0 }, /* a */
@@ -176,7 +174,7 @@ const ushort kanaoutput[][3] =
     // n
     { 0x306a, 0 }, { 0x306b, 0 }, { 0x306c, 0 }, { 0x306d, 0 }, { 0x306e, 0 },
     { 0x306b, 0x3083, 0 }, { 0x306b, 0x3085, 0 }, { 0x306b, 0x3087, 0 },
-    { 0x306b, 0x3043, 0 }, { 0x306b, 0x3047, 0 }, { 0x3093, 0 }, { 0x3093, 0 },
+    { 0x306b, 0x3043, 0 }, { 0x306b, 0x3047, 0 }, { 0x3093, 0 }, { 0x3093, 0 }, { 0x3093, 0 },
     // h
     { 0x306f, 0 }, { 0x3072, 0 }, { 0x3075, 0 }, { 0x3078, 0 }, { 0x307b, 0 },
     { 0x3072, 0x3083, 0 }, { 0x3072, 0x3085, 0 }, { 0x3072, 0x3087, 0 },
@@ -265,7 +263,7 @@ namespace
     const int kanadlen = 17;
     const int kanadpos = kanatpos + kanatlen;
 
-    const int kananlen = 12;
+    const int kananlen = 13;
     const int kananpos = kanadpos + kanadlen;
 
     const int kanahlen = 10;
@@ -911,27 +909,27 @@ namespace
             switch (ch.unicode())
             {
                 case 'a':
-                    result += QChar(0x3042);
+                    result += !isupper ? QChar(0x3042) : QChar(0x30A2);
                     ++str;
                     --len;
                     continue;
                 case 'i':
-                    result += QChar(0x3044);
+                    result += !isupper ? QChar(0x3044) : QChar(0x30A4);
                     ++str;
                     --len;
                     continue;
                 case 'u':
-                    result += QChar(0x3046);
+                    result += !isupper ? QChar(0x3046) : QChar(0x30A6);
                     ++str;
                     --len;
                     continue;
                 case 'e':
-                    result += QChar(0x3048);
+                    result += !isupper ? QChar(0x3048) : QChar(0x30A8);
                     ++str;
                     --len;
                     continue;
                 case 'o':
-                    result += QChar(0x304A);
+                    result += !isupper ? QChar(0x304A) : QChar(0x30AA);
                     ++str;
                     --len;
                     continue;
@@ -960,10 +958,14 @@ namespace
             --len;
 
             if (len == 0)
+            {
+                if (ch == QChar('n'))
+                    result += !isupper ? QString::fromUtf16(kanaoutput[apos + asize - 1]) : toKatakana(QString::fromUtf16(kanaoutput[apos + asize - 1]));
                 break;
+            }
 
             bool isupper2;
-            if (_toKanaPicker(str, -1, uppertokata, isupper) == _toKanaPicker(str, 0, uppertokata, isupper2))
+            if (_toKanaPicker(str, -1, uppertokata, isupper) == _toKanaPicker(str, 0, uppertokata, isupper2) && ch != QChar('n'))
             {
                 kata = kata || isupper || isupper2;
                 if (result.isEmpty() || result.at(result.size() - 1) != QChar(MINITSU))
@@ -974,16 +976,16 @@ namespace
             for (int ix = apos; ix != apos + asize; ++ix)
             {
 
-                int pos;
-                for (pos = 1; len != pos - 1 && kanainput[ix][pos] != 0 && kanainput[ix][pos] == _toKanaPicker(str, pos - 1, uppertokata, isupper); ++pos)
+                int pos = 0;
+                for (; pos != len && kanainput[ix][pos + 1] != 0 && kanainput[ix][pos + 1] == _toKanaPicker(str, pos, uppertokata, isupper); ++pos)
                     kata = kata || isupper;
-                if (kanainput[ix][pos] == 0)
+                if (kanainput[ix][pos + 1] == 0)
                 {
                     result += !kata ? QString::fromUtf16(kanaoutput[ix]) : toKatakana(QString::fromUtf16(kanaoutput[ix]));
                     
                     kata = false;
-                    str += pos - 1;
-                    len -= pos - 1;
+                    str += pos;
+                    len -= pos;
                     break;
                 }
             }
