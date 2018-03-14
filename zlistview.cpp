@@ -55,6 +55,8 @@ ZListView::ZListView(QWidget *parent) : base(parent), selection(new RangeSelecti
     //qApp->postEvent(this, new ConstructedEvent);
 
     setItemDelegate(new ZListViewItemDelegate(this));
+
+    //connect(horizontalHeader(), &QHeaderView::sectionResized, this, &ZListView::sectionResized);
 }
 
 ZListView::~ZListView()
@@ -928,6 +930,14 @@ void ZListView::settingsChanged()
     autoResizeColumns(true);
 }
 
+//void ZListView::sectionResized(int ix, int oldsiz, int newsiz)
+//{
+//    if (ix != 0)
+//        return;
+//    if (oldsiz != newsiz)
+//        oldsiz = newsiz;
+//}
+
 void ZListView::aboutToBeReset()
 {
     saveColumnData();
@@ -1073,12 +1083,15 @@ void ZListView::layoutAboutToBeChanged(const QList<QPersistentModelIndex> &paren
     }
     perix << QPersistentModelIndex(m->index(currentrow, 0));
     selection->clear();
+
+    // After the layout change, the header view will reset the column data to the built in
+    // nonsense defaults. The columns are saved to be restored after the change.
+    saveColumnData();
 }
 
 void ZListView::layoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
 {
     // Rebuilding the selection from persistent indexes.
-
     currentrow = perix.last().isValid() ? perix.last().row() : -1;
     perix.pop_back();
 
@@ -1100,6 +1113,9 @@ void ZListView::layoutChanged(const QList<QPersistentModelIndex> &parents, QAbst
     updateStatus();
 
     viewport()->update();
+
+    // Restores column data from before the layout change.
+    resetColumnData();
 }
 
 void ZListView::selRemoved(const smartvector<Range> &ranges)

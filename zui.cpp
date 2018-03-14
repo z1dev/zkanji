@@ -1254,8 +1254,8 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
         {
             // Add a small tsu character if the first consonant is doubled.
             if (inputpos != 0 && input.at(inputpos - 1).toLower().toLatin1() == kanainput[cindex][0] &&
-                kanainput[cindex][0] != 'a' && kanainput[cindex][0] != 'i' && kanainput[cindex][0] != 'u' &&
-                kanainput[cindex][0] != 'e' && kanainput[cindex][0] != 'o' && kanainput[cindex][0] != 'x' && kanainput[cindex][0] != 'l')
+                kanainput[cindex][0] != 'a' && kanainput[cindex][0] != 'i' && kanainput[cindex][0] != 'u' && kanainput[cindex][0] != 'e' &&
+                kanainput[cindex][0] != 'o' && kanainput[cindex][0] != 'n' && kanainput[cindex][0] != 'x' && kanainput[cindex][0] != 'l')
             {
                 input.insert(inputpos, !kata ? QChar(MINITSU) : QChar(MINITSUKATA));
                 ++inputpos;
@@ -1324,6 +1324,9 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
             clen = strlen(kanainput[cindex]);
             if (clen > pos - inputpos)
                 continue;
+
+            if (clen == 1)
+                break;
 
             int j = 1;
             for (; j != cpos + 1; ++j)

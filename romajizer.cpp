@@ -80,7 +80,7 @@ const char* kanainput[] =
 
     "na", "ni", "nu", "ne", "no",
     "nya", "nyu", "nyo",
-    "nyi", "nye", "nn", "n'", "n",
+    "nyi", "nye", "n'", "n",
 
     "ha", "hi", "hu", "he", "ho",
     "hya", "hyu", "hyo",
@@ -174,7 +174,7 @@ const ushort kanaoutput[][3] =
     // n
     { 0x306a, 0 }, { 0x306b, 0 }, { 0x306c, 0 }, { 0x306d, 0 }, { 0x306e, 0 },
     { 0x306b, 0x3083, 0 }, { 0x306b, 0x3085, 0 }, { 0x306b, 0x3087, 0 },
-    { 0x306b, 0x3043, 0 }, { 0x306b, 0x3047, 0 }, { 0x3093, 0 }, { 0x3093, 0 }, { 0x3093, 0 },
+    { 0x306b, 0x3043, 0 }, { 0x306b, 0x3047, 0 }, { 0x3093, 0 }, { 0x3093, 0 },
     // h
     { 0x306f, 0 }, { 0x3072, 0 }, { 0x3075, 0 }, { 0x3078, 0 }, { 0x307b, 0 },
     { 0x3072, 0x3083, 0 }, { 0x3072, 0x3085, 0 }, { 0x3072, 0x3087, 0 },
@@ -263,7 +263,7 @@ namespace
     const int kanadlen = 17;
     const int kanadpos = kanatpos + kanatlen;
 
-    const int kananlen = 13;
+    const int kananlen = 12;
     const int kananpos = kanadpos + kanadlen;
 
     const int kanahlen = 10;

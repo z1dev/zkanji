@@ -34,7 +34,7 @@
 DictionaryItemModel::DictionaryItemModel(QObject *parent) : base(parent), connected(false)
 {
     setColumns({ 
-        { (int)DictColumnTypes::Frequency, Qt::AlignHCenter, ColumnAutoSize::Stretched, false, -1, QString() },
+        { (int)DictColumnTypes::Frequency, Qt::AlignHCenter, ColumnAutoSize::NoAuto, false, -1, QString() },
 #if SHOWDEBUGCOLUMN
         { (int)ColumnTypes::DEBUGIndex, Qt::AlignLeft, false, true, 61, QString() },
 #endif
@@ -1011,7 +1011,7 @@ void DictionarySearchResultItemModel::settingsChanged()
     // Indexes with a persistent index.
     QModelIndexList pfrom = persistentIndexList();
 
-    // Row indexes of persistent indexes..
+    // Row indexes of persistent indexes.
     std::vector<int> prows;
     prows.resize(pfrom.size());
     for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
@@ -1031,7 +1031,6 @@ void DictionarySearchResultItemModel::settingsChanged()
     changePersistentIndexList(pfrom, pto);
 
     emit layoutChanged();
-
 }
 
 void DictionarySearchResultItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)

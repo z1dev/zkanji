@@ -253,6 +253,8 @@ public:
 public slots:
     virtual void settingsChanged();
 
+    //void sectionResized(int ix, int oldsiz, int newsiz);
+
     virtual void aboutToBeReset(); /* Not declared in base class, no override */
     virtual void reset() override;
     virtual void selectAll() override;

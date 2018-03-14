@@ -226,13 +226,6 @@ void DictionarySearchFilterProxyModel::setSourceModel(DictionaryItemModel *model
     connect(model, &DictionaryItemModel::layoutAboutToBeChanged, this, &DictionarySearchFilterProxyModel::sourceLayoutAboutToBeChanged);
     connect(model, &DictionaryItemModel::layoutChanged, this, &DictionarySearchFilterProxyModel::sourceLayoutChanged);
     connect(model, &DictionaryItemModel::statusChanged, this, &DictionarySearchFilterProxyModel::sourceStatusChanged);
-
-    //connect(model, &DictionaryItemModel::dataChanged, this, &DictionarySearchFilterProxyModel::groupModelChanged);
-    //connect(model, &DictionaryItemModel::modelReset, this, &DictionarySearchFilterProxyModel::groupModelChanged);
-    //connect(model, &DictionaryItemModel::rowsInserted, this, &DictionarySearchFilterProxyModel::groupModelChanged);
-    //connect(model, &DictionaryItemModel::rowsMoved, this, &DictionarySearchFilterProxyModel::groupModelChanged);
-    //connect(model, &DictionaryItemModel::rowsRemoved, this, &DictionarySearchFilterProxyModel::groupModelChanged);
-
 }
 
 QModelIndexList DictionarySearchFilterProxyModel::mapListToSource(const QModelIndexList &indexes)
