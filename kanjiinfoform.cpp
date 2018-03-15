@@ -557,6 +557,34 @@ bool KanjiInfoForm::locked() const
     return ui->lockButton->isChecked();
 }
 
+void KanjiInfoForm::copy() const
+{
+    if (ui->kanjiView->kanjiIndex() < 0)
+        return;
+    gUI->clipCopy(ZKanji::kanjis[ui->kanjiView->kanjiIndex()]->ch);
+}
+
+void KanjiInfoForm::append() const
+{
+    if (ui->kanjiView->kanjiIndex() < 0)
+        return;
+    gUI->clipAppend(ZKanji::kanjis[ui->kanjiView->kanjiIndex()]->ch);
+}
+
+void KanjiInfoForm::copyData() const
+{
+    if (ui->kanjiView->kanjiIndex() < 0)
+        return;
+    gUI->clipCopy(QString("%1\n\n").arg(ZKanji::kanjis[ui->kanjiView->kanjiIndex()]->ch) + ui->infoText->toPlainText());
+}
+
+//void KanjiInfoForm::appendData() const
+//{
+//    if (ui->kanjiView->kanjiIndex() < 0)
+//        return;
+//    gUI->clipAppend(ui->infoText->toPlainText());
+//}
+
 QRect KanjiInfoForm::resizing(int side, QRect r)
 {
     if (ui->dictWidget->isVisibleTo(this) || (side != (int)GrabSide::Top && side != (int)GrabSide::Bottom))
@@ -591,6 +619,11 @@ bool KanjiInfoForm::event(QEvent *e)
     }
 
     return base::event(e);
+}
+
+void KanjiInfoForm::contextMenuEvent(QContextMenuEvent *e)
+{
+    showContextMenu(e->globalPos());
 }
 
 void KanjiInfoForm::resizeEvent(QResizeEvent *e)
@@ -1110,6 +1143,147 @@ void KanjiInfoForm::loadColorIcon(QAbstractButton *w, QString name, QColor col)
     
     QIcon ico(QPixmap::fromImage(img));
     w->setIcon(ico);
+}
+
+void KanjiInfoForm::showContextMenu(QPoint pos)
+{
+    QMenu menu;
+    QAction *a;
+    a = menu.addAction(tr("Copy kanji"));
+    connect(a, &QAction::triggered, this, &KanjiInfoForm::copy);
+    a = menu.addAction(tr("Append kanji"));
+    connect(a, &QAction::triggered, this, &KanjiInfoForm::append);
+    menu.addSeparator();
+    a = menu.addAction(tr("Copy kanji data"));
+    connect(a, &QAction::triggered, this, &KanjiInfoForm::copyData);
+    //a = menu.addAction(tr("Append kanji data"));
+    //connect(a, &QAction::triggered, this, &KanjiInfoForm::appendData);
+    menu.addSeparator();
+    a = menu.addAction(tr("Background grid"));
+    a->setCheckable(true);
+    a->setChecked(ui->gridButton->isChecked());
+    connect(a, &QAction::triggered, this, [this]() {
+        ui->gridButton->toggle();
+        on_gridButton_clicked(ui->gridButton->isChecked());
+    });
+    a = menu.addAction(tr("Stroke order diagram"));
+    a->setCheckable(true);
+    a->setChecked(ui->sodButton->isChecked());
+    a->setEnabled(ui->sodButton->isEnabled());
+    if (a->isEnabled())
+    {
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->sodButton->toggle();
+            on_sodButton_clicked(ui->sodButton->isChecked());
+        });
+        if (ui->sodButton->isChecked())
+        {
+            menu.addSeparator();
+            QMenu *sub = menu.addMenu("Diagram options");
+            a = sub->addAction(tr("Indicator shadows"));
+            a->setCheckable(true);
+            a->setChecked(ui->shadowButton->isChecked());
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->shadowButton->toggle();
+                on_shadowButton_clicked(ui->shadowButton->isChecked());
+            });
+
+            a = sub->addAction(tr("Order numbers"));
+            a->setCheckable(true);
+            a->setChecked(ui->numberButton->isChecked());
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->numberButton->toggle();
+                on_numberButton_clicked(ui->numberButton->isChecked());
+            });
+
+            a = sub->addAction(tr("Starting points"));
+            a->setCheckable(true);
+            a->setChecked(ui->dirButton->isChecked());
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->dirButton->toggle();
+                on_dirButton_clicked(ui->dirButton->isChecked());
+            });
+
+            sub->addSeparator();
+            //sub = menu.addMenu("Stroke drawing speed");
+            a = sub->addAction(tr("Slow"));
+            a->setCheckable(true);
+            a->setChecked(ui->speedSlider->value() == 1);
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->speedSlider->setValue(1);
+                on_speedSlider_valueChanged(1);
+            });
+            a = sub->addAction(tr("Normal"));
+            a->setCheckable(true);
+            a->setChecked(ui->speedSlider->value() == 2);
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->speedSlider->setValue(2);
+                on_speedSlider_valueChanged(2);
+            });
+            a = sub->addAction(tr("Fast"));
+            a->setCheckable(true);
+            a->setChecked(ui->speedSlider->value() == 3);
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->speedSlider->setValue(3);
+                on_speedSlider_valueChanged(3);
+            });
+            a = sub->addAction(tr("Fastest"));
+            a->setCheckable(true);
+            a->setChecked(ui->speedSlider->value() == 4);
+            connect(a, &QAction::triggered, this, [this]() {
+                ui->speedSlider->setValue(4);
+                on_speedSlider_valueChanged(4);
+            });
+        }
+    }
+    menu.addSeparator();
+    a = menu.addAction(tr("Words"));
+    a->setCheckable(true);
+    a->setChecked(ui->wordsButton->isChecked());
+    connect(a, &QAction::triggered, this, [this]() {
+        ui->wordsButton->toggle();
+        on_wordsButton_clicked(ui->wordsButton->isChecked());
+    });
+
+    menu.addSeparator();
+    a = menu.addAction(tr("Similar kanji"));
+    a->setCheckable(true);
+    a->setEnabled(!ui->wordsButton->isChecked());
+    if (a->isEnabled())
+    {
+        a->setCheckable(true);
+        a->setChecked(ui->simButton->isChecked());
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->simButton->toggle();
+            on_simButton_clicked(ui->simButton->isChecked());
+        });
+    }
+    a = menu.addAction(tr("Kanji parts"));
+    a->setCheckable(true);
+    a->setEnabled(!ui->wordsButton->isChecked());
+    if (a->isEnabled())
+    {
+        a->setCheckable(true);
+        a->setChecked(ui->partsButton->isChecked());
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->partsButton->toggle();
+            on_partsButton_clicked(ui->partsButton->isChecked());
+        });
+    }
+    a = menu.addAction(tr("Part of"));
+    a->setCheckable(true);
+    a->setEnabled(!ui->wordsButton->isChecked());
+    if (a->isEnabled())
+    {
+        a->setCheckable(true);
+        a->setChecked(ui->partofButton->isChecked());
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->partofButton->toggle();
+            on_partofButton_clicked(ui->partofButton->isChecked());
+        });
+    }
+
+    menu.exec(pos);
 }
 
 

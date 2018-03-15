@@ -58,9 +58,15 @@ public:
     virtual QWidget* captionWidget() const override;
 
     bool locked() const;
+
+    void copy() const;
+    void append() const;
+    void copyData() const;
+    //void appendData() const;
 protected:
     virtual bool event(QEvent *e) override;
 
+    virtual void contextMenuEvent(QContextMenuEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void hideEvent(QHideEvent *e) override;
@@ -120,6 +126,9 @@ private:
     // Reads an SVG image file as text, replacing the black color (#000000) with the current
     // text color, and setting the result as icon for the passed widget.
     void loadColorIcon(QAbstractButton *w, QString name, QColor col);
+
+    // Displays the form's context menu at the specified global position.
+    void showContextMenu(QPoint pos);
 
     Ui::KanjiInfoForm *ui;
 

@@ -210,6 +210,9 @@
        </property>
        <item>
         <widget class="QToolButton" name="gridButton">
+         <property name="toolTip">
+          <string>Background grid</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/grid.svg</normaloff>:/grid.svg</iconset>
@@ -237,6 +240,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="sodButton">
+         <property name="toolTip">
+          <string>Stroke order diagram</string>
+         </property>
          <property name="text">
           <string>S.O.D.</string>
          </property>
@@ -257,6 +263,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="wordsButton">
+         <property name="toolTip">
+          <string>Words containing this kanji</string>
+         </property>
          <property name="text">
           <string>Words</string>
          </property>
@@ -279,6 +288,9 @@
          </property>
          <item>
           <widget class="QToolButton" name="simButton">
+           <property name="toolTip">
+            <string>List of similar looking kanji</string>
+           </property>
            <property name="text">
             <string>Similar</string>
            </property>
@@ -289,6 +301,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="partsButton">
+           <property name="toolTip">
+            <string>List of parts making up this kanji</string>
+           </property>
            <property name="text">
             <string>Parts</string>
            </property>
@@ -299,6 +314,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="partofButton">
+           <property name="toolTip">
+            <string>List of kanji where this kanji appears as a part</string>
+           </property>
            <property name="text">
             <string>Part of</string>
            </property>
@@ -715,6 +733,9 @@
              </property>
              <item>
               <widget class="QToolButton" name="shadowButton">
+               <property name="toolTip">
+                <string>Stroke indicator shadows</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/shadow.svg</normaloff>:/shadow.svg</iconset>
@@ -735,6 +756,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="numberButton">
+               <property name="toolTip">
+                <string>Stroke order numbers</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/strokenumber.svg</normaloff>:/strokenumber.svg</iconset>
@@ -755,6 +779,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="dirButton">
+               <property name="toolTip">
+                <string>Stroke starting points</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/strokedir.svg</normaloff>:/strokedir.svg</iconset>
