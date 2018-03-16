@@ -899,7 +899,7 @@ namespace
         int asize;
 
         bool kata;
-
+        bool found;
 
         while (len != 0)
         {
@@ -908,64 +908,60 @@ namespace
 
             switch (ch.unicode())
             {
-                case 'a':
-                    result += !isupper ? QChar(0x3042) : QChar(0x30A2);
-                    ++str;
-                    --len;
-                    continue;
-                case 'i':
-                    result += !isupper ? QChar(0x3044) : QChar(0x30A4);
-                    ++str;
-                    --len;
-                    continue;
-                case 'u':
-                    result += !isupper ? QChar(0x3046) : QChar(0x30A6);
-                    ++str;
-                    --len;
-                    continue;
-                case 'e':
-                    result += !isupper ? QChar(0x3048) : QChar(0x30A8);
-                    ++str;
-                    --len;
-                    continue;
-                case 'o':
-                    result += !isupper ? QChar(0x304A) : QChar(0x30AA);
-                    ++str;
-                    --len;
-                    continue;
-                case '-':
-                    result += QChar(KDASH);
-                    ++str;
-                    --len;
-                    continue;
-                case '/':
-                    result += QChar(MIDDLEDOT);
-                    ++str;
-                    --len;
-                    continue;
-            }
-
-            findKanaArrays(ch, apos, asize);
-
-            if (asize == 0)
-            {
+            case 'a':
+                result += !isupper ? QChar(0x3042) : QChar(0x30A2);
+                ++str;
+                --len;
+                continue;
+            case 'i':
+                result += !isupper ? QChar(0x3044) : QChar(0x30A4);
+                ++str;
+                --len;
+                continue;
+            case 'u':
+                result += !isupper ? QChar(0x3046) : QChar(0x30A6);
+                ++str;
+                --len;
+                continue;
+            case 'e':
+                result += !isupper ? QChar(0x3048) : QChar(0x30A8);
+                ++str;
+                --len;
+                continue;
+            case 'o':
+                result += !isupper ? QChar(0x304A) : QChar(0x30AA);
+                ++str;
+                --len;
+                continue;
+            case '-':
+                result += QChar(KDASH);
+                ++str;
+                --len;
+                continue;
+            case '/':
+                result += QChar(MIDDLEDOT);
                 ++str;
                 --len;
                 continue;
             }
 
+            findKanaArrays(ch, apos, asize);
+
             ++str;
             --len;
 
+            if (asize == 0)
+                continue;
+
             if (len == 0)
             {
-                if (ch == QChar('n'))
-                    result += !isupper ? QString::fromUtf16(kanaoutput[apos + asize - 1]) : toKatakana(QString::fromUtf16(kanaoutput[apos + asize - 1]));
+                //if (ch.unicode() == 'n')
+                //    result += !isupper ? QString::fromUtf16(kanaoutput[apos + asize - 1]) : toKatakana(QString::fromUtf16(kanaoutput[apos + asize - 1]));
                 break;
             }
 
             bool isupper2;
-            if (_toKanaPicker(str, -1, uppertokata, isupper) == _toKanaPicker(str, 0, uppertokata, isupper2) && ch != QChar('n'))
+            if (_toKanaPicker(str, -1, uppertokata, isupper) == _toKanaPicker(str, 0, uppertokata, isupper2) && ch.unicode() != 'n')
             {
                 kata = kata || isupper || isupper2;
                 if (result.isEmpty() || result.at(result.size() - 1) != QChar(MINITSU))
@@ -973,6 +969,7 @@ namespace
                 continue;
             }
 
+            found = false;
             for (int ix = apos; ix != apos + asize; ++ix)
             {
 
@@ -981,13 +978,21 @@ namespace
                     kata = kata || isupper;
                 if (kanainput[ix][pos + 1] == 0)
                 {
+                    found = true;
+
                     result += !kata ? QString::fromUtf16(kanaoutput[ix]) : toKatakana(QString::fromUtf16(kanaoutput[ix]));
                     
-                    kata = false;
+                    //kata = false;
                     str += pos;
                     len -= pos;
                     break;
                 }
+            }
+            if (!found && ch.unicode() == 'n')
+            {
+                ++str;
+                --len;
+                result += !isupper ? QString::fromUtf16(kanaoutput[apos + asize - 1]) : toKatakana(QString::fromUtf16(kanaoutput[apos + asize - 1]));
             }
         }
         return result;
