@@ -25,7 +25,7 @@
 //-------------------------------------------------------------
 
 
-KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent), ui(new Ui::KanaReadingPracticeForm)
+KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent, false), ui(new Ui::KanaReadingPracticeForm)
 {
     ui->setupUi(this);
 
@@ -116,6 +116,7 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent)
 
 KanaReadingPracticeForm::~KanaReadingPracticeForm()
 {
+    stopTimer(false);
     delete ui;
 
     gUI->showAppWindows();
@@ -174,21 +175,16 @@ void KanaReadingPracticeForm::keyPressEvent(QKeyEvent *e)
 
     // Updating the entered string and checking for the correct answer.
 
-    //QLabel *labels[]{ ui->text1Label, ui->text2Label, ui->text3Label, ui->text4Label };
-
     if (backspace)
     {
         if (!entered.isEmpty())
             entered.resize(entered.size() - 1);
         setTextLabels();
-        //labels[entered.size()]->setText("_");
 
         return;
     }
 
     entered += e->text();
-    //QLabel *lb = labels[entered.size() - 1];
-    //lb->setText(e->text());
     setTextLabels();
 
     int strpos = list[pos];

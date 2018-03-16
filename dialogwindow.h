@@ -27,7 +27,7 @@ signals:
     // If no result was given, this defaults to QModalResult::Cancel.
     void finished(ModalResult result);
 public:
-    DialogWindow(QWidget *parent = nullptr);
+    DialogWindow(QWidget *parent = nullptr, bool resizing = true);
     virtual ~DialogWindow();
 
     ModalResult showModal();

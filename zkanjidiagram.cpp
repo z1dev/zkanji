@@ -42,7 +42,7 @@ ZKanjiDiagram::ZKanjiDiagram(QWidget *parent) : base(parent), kindex(INT_MIN), s
 
 ZKanjiDiagram::~ZKanjiDiagram()
 {
-
+    timer.stop();
 }
 
 void ZKanjiDiagram::setKanjiIndex(int newindex)

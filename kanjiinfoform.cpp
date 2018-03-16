@@ -1123,25 +1123,7 @@ void KanjiInfoForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary 
 
 void KanjiInfoForm::loadColorIcon(QAbstractButton *w, QString name, QColor col)
 {
-    QFile file(name);
-    file.open(QIODevice::ReadOnly);
-    QTextStream stream(&file);
-    QString str = stream.readAll();
-    file.close();
-    str.replace(QLatin1String("#000000"), QString("%1").arg(col.name()));
-
-    QSvgRenderer r;
-    r.load(str.toUtf8());
-
-    QImage img = QImage(w->iconSize().width(), w->iconSize().height(), QImage::Format_ARGB32_Premultiplied);
-    img.fill(qRgba(0, 0, 0, 0));
-
-    QPainter p(&img);
-    r.render(&p, QRect(0, 0, w->iconSize().width(), w->iconSize().height()));
-    p.end();
-
-    
-    QIcon ico(QPixmap::fromImage(img));
+    QIcon ico(QPixmap::fromImage(loadColorSVG(name, w->iconSize(), qRgb(0, 0, 0), col)));
     w->setIcon(ico);
 }
 

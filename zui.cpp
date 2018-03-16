@@ -850,6 +850,28 @@ int screenNumber(const QRect &r)
     return res;
 }
 
+QImage loadColorSVG(QString name, QSize size, QColor ori, QColor col)
+{
+    QFile file(name);
+    file.open(QIODevice::ReadOnly);
+    QTextStream stream(&file);
+    QString str = stream.readAll();
+    file.close();
+    str.replace(QString("%1").arg(ori.name()), QString("%1").arg(col.name()));
+
+    QSvgRenderer r;
+    r.load(str.toUtf8());
+
+    QImage img = QImage(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
+    img.fill(qRgba(0, 0, 0, 0));
+
+    QPainter p(&img);
+    r.render(&p, QRect(0, 0, size.width(), size.height()));
+    p.end();
+
+    return img;
+}
+
 //void renderFromSvg(QPainter &dest, QString svgpath, QRect r)
 //{
 //    QSvgRenderer sr;

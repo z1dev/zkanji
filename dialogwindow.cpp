@@ -16,9 +16,9 @@
 //-------------------------------------------------------------
 
 
-DialogWindow::DialogWindow(QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint |
+DialogWindow::DialogWindow(QWidget *parent, bool resizing) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | (resizing ? Qt::WindowMinMaxButtonsHint : Qt::Widget) | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint |
     (!parent->windowFlags().testFlag(Qt::WindowStaysOnTopHint) ? (Qt::WindowType)0 : Qt::WindowStaysOnTopHint)
-    : Qt::WindowFlags()), loop(nullptr), res(ModalResult::Cancel)
+    : resizing ? Qt::WindowFlags() : (Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint)), loop(nullptr), res(ModalResult::Cancel)
 {
     setAttribute(Qt::WA_QuitOnClose, false);
     setWindowModality(Qt::NonModal);
@@ -54,8 +54,10 @@ void DialogWindow::show()
     if (windowModality() == Qt::NonModal || loop != nullptr)
         return;
 
-    loop = new QEventLoop(this);
-    loop->exec();
+    QTimer::singleShot(0, [this]() {
+        loop = new QEventLoop(this);
+        loop->exec();
+    });
 }
 
 void DialogWindow::modalClose(ModalResult result)

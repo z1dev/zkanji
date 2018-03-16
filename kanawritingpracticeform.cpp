@@ -25,27 +25,34 @@
 //-------------------------------------------------------------
 
 
-KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent), ui(new Ui::KanaWritingPracticeForm), t(nullptr)
+KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent, false), ui(new Ui::KanaWritingPracticeForm), t(nullptr)
 {
     ui->setupUi(this);
 
     gUI->scaleWidget(this);
 
+    stopico = QIcon(QPixmap::fromImage(loadColorSVG(":/playstopbtn.svg", ui->revealButton->iconSize(), qRgb(0, 0, 0), qApp->palette().color(QPalette::Text))));
+    playico = QIcon(QPixmap::fromImage(loadColorSVG(":/playbtn.svg", ui->revealButton->iconSize(), qRgb(0, 0, 0), qApp->palette().color(QPalette::Text))));
+
+    QSizePolicy sp = ui->titleLabel->sizePolicy();
+    sp.setRetainSizeWhenHidden(true);
+    ui->titleLabel->setSizePolicy(sp);
+
     QFont f = ui->kanaLabel->font();
     f.setFamily(Settings::fonts.main);
     ui->kanaLabel->setFont(f);
 
-    ui->questionLabel->font();
+    f = ui->questionLabel->font();
     f.setFamily(Settings::fonts.main);
     ui->questionLabel->setFont(f);
 
-    ui->text1Label->font();
+    f = ui->text1Label->font();
     f.setFamily(Settings::fonts.kana);
     ui->text1Label->setFont(f);
-    ui->text2Label->font();
+    f = ui->text2Label->font();
     f.setFamily(Settings::fonts.kana);
     ui->text2Label->setFont(f);
-    ui->text3Label->font();
+    f = ui->text3Label->font();
     f.setFamily(Settings::fonts.kana);
     ui->text3Label->setFont(f);
 
@@ -91,20 +98,26 @@ KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent)
     fixWrapLabelsHeight(this, -1);
     adjustSize();
     setFixedSize(size());
+
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 
+    ui->titleLabel->hide();
     ui->resultLabel->setText(QString());
+
+    ui->kanjiView->installEventFilter(this);
 }
 
 KanaWritingPracticeForm::~KanaWritingPracticeForm()
 {
+    stopTimer(false);
     delete ui;
 
     delete t;
     t = nullptr;
+
     gUI->showAppWindows();
     setupKanaPractice();
 }
@@ -147,6 +160,8 @@ void KanaWritingPracticeForm::candidatesChanged(const std::vector<int> &l)
     ui->text2Label->setStyleSheet(QString());
     ui->text3Label->setStyleSheet(QString());
 
+    ui->titleLabel->setVisible(!entered.isEmpty());
+
     if (entered.size() > 0)
         ui->text1Label->setText(entered.at(0));
     else
@@ -178,6 +193,8 @@ void KanaWritingPracticeForm::candidateClicked(int index)
     ui->text3Label->setStyleSheet(QString());
 
     ui->text1Label->setText(entered.at(0));
+    ui->titleLabel->setVisible(!entered.isEmpty());
+
     if (entered.size() > 1)
         ui->text2Label->setText(entered.at(1));
     else
@@ -191,6 +208,8 @@ void KanaWritingPracticeForm::candidateClicked(int index)
         answered(false);
     else if (answer == entered)
         answered(true);
+    else
+        ui->drawArea->clear();
 }
 
 void KanaWritingPracticeForm::on_gridButton_toggled(bool checked)
@@ -221,7 +240,7 @@ void KanaWritingPracticeForm::on_revealButton_clicked()
 
     if (ui->stack->currentIndex() == 0)
     {
-        ui->revealButton->setIcon(QIcon(":/playstopbtn.svg"));
+        ui->revealButton->setIcon(stopico);
 
         ui->drawArea->clear();
 
@@ -239,7 +258,7 @@ void KanaWritingPracticeForm::on_revealButton_clicked()
         t = nullptr;
         disconnect(ui->kanjiView, &ZKanjiDiagram::strokeChanged, this, &KanaWritingPracticeForm::animateNext);
 
-        ui->revealButton->setIcon(QIcon(":/playbtn.svg"));
+        ui->revealButton->setIcon(playico);
         ui->stack->setCurrentIndex(0);
         ui->kanjiView->stop();
     }
@@ -260,6 +279,19 @@ bool KanaWritingPracticeForm::event(QEvent *e)
     }
 
     return base::event(e);
+}
+
+bool KanaWritingPracticeForm::eventFilter(QObject *o, QEvent *e)
+{
+    if (o == ui->kanjiView)
+    {
+        if (e->type() == QEvent::MouseButtonPress)
+        {
+            ui->revealButton->click();
+        }
+    }
+
+    return base::eventFilter(o, e);
 }
 
 void KanaWritingPracticeForm::reset()
@@ -298,6 +330,7 @@ void KanaWritingPracticeForm::reset()
     ui->text1Label->setText(" ");
     ui->text2Label->setText(" ");
     ui->text3Label->setText(" ");
+    ui->titleLabel->hide();
 
     next();
 }
@@ -310,7 +343,7 @@ void KanaWritingPracticeForm::next()
     delete t;
     t = nullptr;
     disconnect(ui->kanjiView, &ZKanjiDiagram::strokeChanged, this, &KanaWritingPracticeForm::animateNext);
-    ui->revealButton->setIcon(QIcon(":/playbtn.svg"));
+    ui->revealButton->setIcon(playico);
     ui->stack->setCurrentIndex(0);
     ui->kanjiView->stop();
 
@@ -349,6 +382,7 @@ void KanaWritingPracticeForm::next()
     //ui->text3Label->setText(" ");
 
     ui->kanaLabel->setText(list[pos] < (int)KanaSounds::Count ? tr("Hiragana") : tr("Katakana"));
+    ui->kanaLabel->setStyleSheet(QString("background-color: %1; color: %2;").arg(list[pos] < (int)KanaSounds::Count ? Settings::uiColor(ColorSettings::HiraBg).name() : Settings::uiColor(ColorSettings::KataBg).name()).arg(Settings::textColor(ColorSettings::Text).name()));
     ui->questionLabel->setText(list[pos] < (int)KanaSounds::Count ? kanaStrings[list[pos]] : kanaStrings[list[pos] - (int)KanaSounds::Count].toUpper());
 }
 
@@ -373,6 +407,8 @@ void KanaWritingPracticeForm::answered(bool correct)
                 answer = toKatakana(answer);
 
             next();
+
+            ui->titleLabel->setVisible(!answer.isEmpty());
 
             ui->text1Label->setText(answer.at(0));
             if (answer.size() > 1)

@@ -7,6 +7,8 @@
 #ifndef KANAWRITINGPRACTICEFORM_H
 #define KANAWRITINGPRACTICEFORM_H
 
+#include <QIcon>
+#include <memory>
 #include "dialogwindow.h"
 #include "zitemscroller.h"
 
@@ -37,6 +39,7 @@ public slots:
     void on_revealButton_clicked();
 protected:
     virtual bool event(QEvent *e) override;
+    virtual bool eventFilter(QObject *o, QEvent *e) override;
 private:
     // Generates a list of syllables to be shown and restarts the test.
     void reset();
@@ -80,19 +83,13 @@ private:
 
     QString entered;
 
-    // Label showing number of items due to be tested.
-    //QLabel *dueLabel;
-
-    // Label showing number of items that were retried twice and failed.
-    //QLabel *wrongLabel;
-
-    // Label showing passed time.
-    //QLabel *timeLabel;
-
     // Timer used to show passed time.
     QBasicTimer timer;
     // Timer used in stroke animation to delay next kana.
     QTimer *t;
+
+    QIcon playico;
+    QIcon stopico;
 
     typedef DialogWindow    base;
 };

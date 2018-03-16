@@ -241,6 +241,12 @@ QSize triangleSize(const QSize &siz);
 // returned.
 int screenNumber(const QRect &r);
 
+// Loads an SVG image and renders it as a QImage at the given size, returning the picture.
+// Set ori to the color used originally in the SVG image and col to the replacement color.
+// Only works on SVG images where the textual representation of the 'ori' color is found.
+QImage loadColorSVG(QString name, QSize size, QColor ori, QColor col);
+
+
 enum class Flags { FromJapanese, ToJapanese, Flag, Browse };
 namespace ZKanji
 {

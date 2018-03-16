@@ -26,7 +26,7 @@ signals:
     void strokeChanged(int index, bool ended);
 public:
     ZKanjiDiagram(QWidget *parent = nullptr);
-    ~ZKanjiDiagram();
+    virtual ~ZKanjiDiagram();
 
     void setKanjiIndex(int newindex);
     // Index of currently displayed kanji or element. When displaying elements, this value is

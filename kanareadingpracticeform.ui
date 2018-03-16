@@ -344,16 +344,20 @@
     </item>
    </layout>
   </widget>
-  <widget class="ZStatusBar" name="status"/>
+  <widget class="ZStatusBar" name="status">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
  </widget>
-  <customwidgets>
-    <customwidget>
-      <class>ZStatusBar</class>
-      <extends>QStatusBar</extends>
-      <header>zstatusbar.h</header>
-      <container>1</container>
-    </customwidget>
-  </customwidgets>
-  <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
  <connections/>
 </ui>
