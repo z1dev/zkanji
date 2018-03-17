@@ -118,8 +118,10 @@ KanaWritingPracticeForm::~KanaWritingPracticeForm()
     delete t;
     t = nullptr;
 
-    gUI->showAppWindows();
-    setupKanaPractice();
+    QTimer::singleShot(0, []() {
+        gUI->showAppWindows();
+        setupKanaPractice();
+    });
 }
 
 void KanaWritingPracticeForm::exec()

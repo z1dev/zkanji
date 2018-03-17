@@ -119,8 +119,10 @@ KanaReadingPracticeForm::~KanaReadingPracticeForm()
     stopTimer(false);
     delete ui;
 
-    gUI->showAppWindows();
-    setupKanaPractice();
+    QTimer::singleShot(0, []() {
+        gUI->showAppWindows();
+        setupKanaPractice();
+    });
 }
 
 void KanaReadingPracticeForm::exec()
@@ -151,7 +153,6 @@ bool KanaReadingPracticeForm::event(QEvent *e)
             stopTimer(true);
         else
             ui->status->setValue(0, DateTimeFunctions::formatPassedTime(passed, false));
-        //timeLabel->setText(DateTimeFunctions::formatPassedTime(passed, false));
     }
 
     return base::event(e);

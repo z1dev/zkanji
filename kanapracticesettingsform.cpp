@@ -240,8 +240,10 @@ void KanaPracticeSettingsForm::on_test1Button_clicked()
     saveState(FormStates::kanapractice);
     close();
 
-    KanaReadingPracticeForm *form = new KanaReadingPracticeForm();
-    form->exec();
+    QTimer::singleShot(0, []() {
+        KanaReadingPracticeForm *form = new KanaReadingPracticeForm();
+        form->exec();
+    });
 }
 
 void KanaPracticeSettingsForm::on_test2Button_clicked()
@@ -249,8 +251,10 @@ void KanaPracticeSettingsForm::on_test2Button_clicked()
     saveState(FormStates::kanapractice);
     close();
 
-    KanaWritingPracticeForm *form = new KanaWritingPracticeForm();
-    form->exec();
+    QTimer::singleShot(0, []() {
+        KanaWritingPracticeForm *form = new KanaWritingPracticeForm();
+        form->exec();
+    });
 }
 
 void KanaPracticeSettingsForm::saveState(KanarPracticeData &data)

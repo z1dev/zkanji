@@ -54,10 +54,8 @@ void DialogWindow::show()
     if (windowModality() == Qt::NonModal || loop != nullptr)
         return;
 
-    QTimer::singleShot(0, [this]() {
-        loop = new QEventLoop(this);
-        loop->exec();
-    });
+    loop = new QEventLoop(this);
+    loop->exec();
 }
 
 void DialogWindow::modalClose(ModalResult result)
