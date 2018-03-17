@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Collect words</string>
+   <string>zkanji - Collect words</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -287,7 +287,7 @@
           </widget>
          </item>
          <item>
-          <widget class="ZStatusBar" name="kanjiStatus" native="true"/>
+          <widget class="ZStatusBar" name="kanjiStatus"/>
          </item>
         </layout>
        </item>
@@ -443,6 +443,18 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DictionaryWidget</class>
+   <extends>QWidget</extends>
+   <header>dictionarywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
@@ -454,12 +466,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DictionaryWidget</class>
-   <extends>QWidget</extends>
-   <header>dictionarywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZDictionaryComboBox</class>
    <extends>QComboBox</extends>
    <header>zdictionarycombobox.h</header>
@@ -468,12 +474,6 @@
    <class>ZListBox</class>
    <extends>QTableView</extends>
    <header>zlistbox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZStatusBar</class>
-   <extends>QWidget</extends>
-   <header>zstatusbar.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Edit word</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -411,11 +411,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
@@ -425,6 +420,11 @@
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
    <class>WordAttribWidget</class>

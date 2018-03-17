@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Add word to dictionary</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -100,8 +100,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ZStatusBar" name="wordsStatus" native="true">
-         </widget>
+         <widget class="ZStatusBar" name="wordsStatus"/>
         </item>
        </layout>
       </widget>
@@ -154,8 +153,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ZStatusBar" name="meaningsStatus" native="true">
-         </widget>
+         <widget class="ZStatusBar" name="meaningsStatus"/>
         </item>
        </layout>
       </widget>
@@ -213,15 +211,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZDictionaryListView</class>
    <extends>QTableView</extends>
    <header>zdictionarylistview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZStatusBar</class>
-   <extends>QWidget</extends>
-   <header>zstatusbar.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

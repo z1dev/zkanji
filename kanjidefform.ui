@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Edit kanji definitions</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,1,0">
@@ -225,15 +225,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DictionaryWidget</class>
-   <extends>QWidget</extends>
-   <header>dictionarywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZKanjiDiagram</class>
    <extends>QWidget</extends>
    <header>zkanjidiagram.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DictionaryWidget</class>
+   <extends>QWidget</extends>
+   <header>dictionarywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

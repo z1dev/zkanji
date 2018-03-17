@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Kanji reading test</string>
+   <string>zkanji - Kanji reading test</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -281,9 +281,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ZDictionaryListView</class>
@@ -291,10 +292,9 @@
    <header>zdictionarylistview.h</header>
   </customwidget>
   <customwidget>
-   <class>ZStatusBar</class>
-   <extends>QStatusBar</extends>
-   <header>zstatusbar.h</header>
-   <container>1</container>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

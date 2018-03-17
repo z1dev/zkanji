@@ -428,7 +428,7 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     // Scaling would break these fonts.
     //ui->readingEdit->setFont(Settings::kanaFont(false));
 
-    restrictWidgetSize(ui->strokeEdit, 8, AdjustedValue::MinMax);
+    restrictWidgetSize(ui->strokeEdit, 6, AdjustedValue::MinMax);
     restrictWidgetSize(ui->jlptEdit, 6, AdjustedValue::MinMax);
     restrictWidgetSize(ui->skip1Edit, 4, AdjustedValue::MinMax);
     restrictWidgetSize(ui->skip2Edit, 4, AdjustedValue::MinMax);
@@ -436,9 +436,9 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     ui->meaningEdit->setCharacterSize(8);
     ui->readingEdit->setCharacterSize(6);
-    ui->indexEdit->setCharacterSize(8);
+    ui->indexEdit->setCharacterSize(6);
 
-    ui->radicalsCBox->setCharacterSize(20);
+    ui->radicalsCBox->setCharacterSize(15);
 
     //ui->kanjiGrid->setCellSize(std::ceil(Settings::fonts.kanjifontsize / 0.7));
 
@@ -531,8 +531,9 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     connect(&m, &RadicalFiltersModel::filterRemoved, this, &KanjiSearchWidget::radsRemoved);
     connect(&m, &RadicalFiltersModel::filterMoved, this, &KanjiSearchWidget::radsMoved);
     connect(&m, &RadicalFiltersModel::cleared, this, &KanjiSearchWidget::radsCleared);
-    while (ui->radicalsCBox->count() != m.size() + 2)
-        ui->radicalsCBox->insertItem(ui->radicalsCBox->count() - 1, m.filterText(ui->radicalsCBox->count() - 2));
+    while (ui->radicalsCBox->count() != m.size() + 1)
+        ui->radicalsCBox->addItem(m.filterText(ui->radicalsCBox->count() - 1));
+    ui->radicalsCBox->setEnabled(ui->radicalsCBox->count() > 1);
 
     connect(&popmap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
 
@@ -723,7 +724,7 @@ void KanjiSearchWidget::saveState(KanjiFilterData &data) const
     //    else
     //   {
 
-    if (ui->radicalsCBox->currentIndex() > 0 && ui->radicalsCBox->currentIndex() < ui->radicalsCBox->count() - 1)
+    if (ui->radicalsCBox->currentIndex() > 0 /*&& ui->radicalsCBox->currentIndex() < ui->radicalsCBox->count()*/)
         data.rads = radicalFiltersModel().filters(ui->radicalsCBox->currentIndex() - 1);
     else
         data.rads = RadicalFilter();
@@ -1935,6 +1936,22 @@ void KanjiSearchWidget::on_allButton_clicked(bool checked)
 //    }
 //}
 
+void KanjiSearchWidget::on_radicalsButton_clicked()
+{
+    ui->radicalsCBox->setEnabled(false);
+    ui->radicalsButton->setEnabled(false);
+    radform = new RadicalForm(this);
+    connect(radform, &RadicalForm::selectionChanged, this, &KanjiSearchWidget::radicalsChanged);
+    connect(radform, &RadicalForm::groupingChanged, this, &KanjiSearchWidget::radicalGroupingChanged);
+    connect(radform, &RadicalForm::resultIsOk, this, &KanjiSearchWidget::radicalsOk);
+    connect(radform, &RadicalForm::destroyed, this, &KanjiSearchWidget::radicalsClosed);
+    radform->setFromModel(ui->kanjiGrid->model());
+    if (radindex != 0)
+        radform->setFilter(radindex - 1);
+    radform->show();
+    filterKanji();
+}
+
 void KanjiSearchWidget::showHideAction(int index)
 {
     switch (index)
@@ -2046,7 +2063,7 @@ void KanjiSearchWidget::sortKanji()
 
 void KanjiSearchWidget::radicalsBoxChanged(int ix)
 {
-    if (ix == ui->radicalsCBox->count() - 1)
+    /*if (ix == ui->radicalsCBox->count() - 1)
     {
         ui->radicalsCBox->setEnabled(false);
         radform = new RadicalForm(this);
@@ -2060,7 +2077,8 @@ void KanjiSearchWidget::radicalsBoxChanged(int ix)
         radform->show();
         filterKanji();
     }
-    else if (radindex != ix)
+    else*/
+    if (radindex != ix)
     {
         radindex = ix;
         filterKanji();
@@ -2094,13 +2112,14 @@ void KanjiSearchWidget::radicalsClosed()
         ui->radicalsCBox->setCurrentIndex(radindex);
     }
     filterKanji();
-    ui->radicalsCBox->setEnabled(true);
+    ui->radicalsCBox->setEnabled(ui->radicalsCBox->count() > 1);
+    ui->radicalsButton->setEnabled(true);
 }
 
 void KanjiSearchWidget::radsAdded()
 {
     RadicalFiltersModel &m = radicalFiltersModel();
-    ui->radicalsCBox->insertItem(ui->radicalsCBox->count() - 1, m.filterText(m.size() - 1));
+    ui->radicalsCBox->addItem(m.filterText(m.size() - 1));
 }
 
 void KanjiSearchWidget::radsRemoved(int index)
@@ -2128,7 +2147,7 @@ void KanjiSearchWidget::radsMoved(int index, bool up)
 void KanjiSearchWidget::radsCleared()
 {
     ui->radicalsCBox->setUpdatesEnabled(false);
-    while (ui->radicalsCBox->count() != 2)
+    while (ui->radicalsCBox->count() != 1)
         ui->radicalsCBox->removeItem(1);
     ui->radicalsCBox->setUpdatesEnabled(true);
     radindex = 0;

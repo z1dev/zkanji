@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Kana practice settings</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -1069,15 +1069,15 @@
    </property>
   </widget>
  </widget>
-  <customwidgets>
-    <customwidget>
-      <class>ZStatusBar</class>
-      <extends>QStatusBar</extends>
-      <header>zstatusbar.h</header>
-      <container>1</container>
-    </customwidget>
-  </customwidgets>
-  <resources>
+ <customwidgets>
+  <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
   <include location="Resources/resources.qrc"/>
  </resources>
  <connections/>

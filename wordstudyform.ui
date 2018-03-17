@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Long-term study</string>
+   <string>zkanji - Long-term study</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1574,9 +1574,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ZLineEdit</class>
@@ -1584,18 +1585,17 @@
    <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>DefinitionLabel</class>
    <extends>QLabel</extends>
    <header>wordstudyform.h</header>
   </customwidget>
-    <customwidget>
-      <class>ZStatusBar</class>
-      <extends>QStatusBar</extends>
-      <header>zstatusbar.h</header>
-      <container>1</container>
-    </customwidget>
-  </customwidgets>
-  <resources>
+ </customwidgets>
+ <resources>
   <include location="Resources/resources.qrc"/>
  </resources>
  <connections/>

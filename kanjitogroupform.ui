@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Select kanji group</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
@@ -80,8 +80,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ZStatusBar" name="kanjiStatus" native="true">
-         </widget>
+         <widget class="ZStatusBar" name="kanjiStatus"/>
         </item>
        </layout>
       </widget>
@@ -99,14 +98,8 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanjiGridView</class>
-   <extends>QWidget</extends>
-   <header>zkanjigridview.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
-   <extends>QWidget</extends>
+   <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>
@@ -114,6 +107,12 @@
    <class>GroupWidget</class>
    <extends>QWidget</extends>
    <header>groupwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZKanjiGridView</class>
+   <extends>QWidget</extends>
+   <header>zkanjigridview.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

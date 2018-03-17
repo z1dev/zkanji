@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Word test results</string>
+   <string>zkanji - Word study results</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -50,8 +50,7 @@
        </widget>
       </item>
       <item>
-       <widget class="ZStatusBar" name="status" native="true">
-       </widget>
+       <widget class="ZStatusBar" name="status"/>
       </item>
      </layout>
     </item>
@@ -71,7 +70,7 @@
  <customwidgets>
   <customwidget>
    <class>ZStatusBar</class>
-   <extends>QWidget</extends>
+   <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>

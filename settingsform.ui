@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji settings</string>
+   <string>zkanji - Settings</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -5445,25 +5445,25 @@
  <layoutdefault spacing="6" margin="6"/>
  <customwidgets>
   <customwidget>
-   <class>ZListView</class>
-   <extends>QTableView</extends>
-   <header>zlistview.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZListBox</class>
+   <extends>QTableView</extends>
+   <header>zlistbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZListView</class>
+   <extends>QTableView</extends>
+   <header>zlistview.h</header>
   </customwidget>
   <customwidget>
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>
    <header>dialogwindow.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZListBox</class>
-   <extends>QTableView</extends>
-   <header>zlistbox.h</header>
   </customwidget>
   <customwidget>
    <class>ZColorComboBox</class>
@@ -5645,8 +5645,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

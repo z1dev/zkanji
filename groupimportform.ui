@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>zkanji - Group import options</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -178,15 +178,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZDictionaryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zdictionarycombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>GroupWidget</class>
    <extends>QWidget</extends>
    <header>groupwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

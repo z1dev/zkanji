@@ -716,6 +716,13 @@
          </property>
          <item>
           <widget class="QLabel" name="radicalsLabel">
+           <property name="text">
+            <string>Radicals:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="radicalsButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -723,26 +730,30 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Radicals:</string>
+            <string>Select...</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="ZComboBox" name="radicalsCBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="editable">
+            <bool>false</bool>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+           </property>
            <item>
             <property name="text">
              <string>None</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Select...</string>
             </property>
            </item>
           </widget>

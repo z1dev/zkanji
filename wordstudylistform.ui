@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Study list</string>
+   <string>zkanji - Long-term study items and statistics</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -1027,15 +1027,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DialogWindow</class>
-   <extends>QMainWindow</extends>
-   <header>dialogwindow.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>DictionaryWidget</class>
    <extends>QWidget</extends>
    <header>dictionarywidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DialogWindow</class>
+   <extends>QMainWindow</extends>
+   <header>dialogwindow.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

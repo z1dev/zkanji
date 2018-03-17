@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Select word group</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
@@ -114,8 +114,7 @@
          </widget>
         </item>
         <item>
-         <widget class="ZStatusBar" name="listStatus" native="true">
-         </widget>
+         <widget class="ZStatusBar" name="listStatus"/>
         </item>
        </layout>
       </widget>
@@ -133,13 +132,8 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZDictionaryListView</class>
-   <extends>QTableView</extends>
-   <header>zdictionarylistview.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
-   <extends>QWidget</extends>
+   <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>
@@ -148,6 +142,11 @@
    <extends>QWidget</extends>
    <header>groupwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZDictionaryListView</class>
+   <extends>QTableView</extends>
+   <header>zdictionarylistview.h</header>
   </customwidget>
   <customwidget>
    <class>DialogWindow</class>

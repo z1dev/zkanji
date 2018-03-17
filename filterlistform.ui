@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dictionary filters</string>
+   <string>zkanji - Dictionary filters</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -339,14 +339,14 @@
  <layoutdefault spacing="2" margin="4"/>
  <customwidgets>
   <customwidget>
-   <class>ZListView</class>
-   <extends>QTableView</extends>
-   <header>zlistview.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZListView</class>
+   <extends>QTableView</extends>
+   <header>zlistview.h</header>
   </customwidget>
   <customwidget>
    <class>WordAttribWidget</class>

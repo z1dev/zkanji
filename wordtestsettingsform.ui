@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Word test settings</string>
+   <string>zkanji - Word test settings</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1364,15 +1364,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>DictionaryWidget</class>
    <extends>QWidget</extends>
    <header>dictionarywidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>DefinitionWidget</class>

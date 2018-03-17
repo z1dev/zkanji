@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Kana writing practice</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">

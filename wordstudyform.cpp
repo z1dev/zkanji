@@ -483,6 +483,8 @@ void WordStudyForm::exec(WordStudy *s)
 
     gUI->hideAppWindows();
 
+    setWindowTitle(tr("zkanji - Study words"));
+
     lasttime = idletime = starttime = QDateTime::currentDateTimeUtc();
     qApp->installEventFilter(this);
     timer.start(50, this);

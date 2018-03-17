@@ -189,6 +189,8 @@ private slots:
 
     //void on_rOptionsButton_toggled(bool checked);
 
+    void on_radicalsButton_clicked();
+
     // Checks or unchecks the checkbox next to a filter widget depending on its state.
     //void updateCheckbox();
 

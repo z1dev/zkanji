@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Select substitute</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -66,8 +66,7 @@
          <widget class="ZDictionaryListView" name="missingTable"/>
         </item>
         <item>
-         <widget class="ZStatusBar" name="status" native="true">
-         </widget>
+         <widget class="ZStatusBar" name="status"/>
         </item>
        </layout>
       </item>
@@ -147,7 +146,7 @@
  <customwidgets>
   <customwidget>
    <class>ZStatusBar</class>
-   <extends>QWidget</extends>
+   <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>
