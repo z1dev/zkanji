@@ -280,7 +280,7 @@ void ImportFileHandler::guardClose(ImportFileHandlerGuard *guard)
 //-------------------------------------------------------------
 
 
-DictImport::DictImport(QWidget *parent) : base(parent), ui(new Ui::DictImport), modified(false), stepcnt(0), step(1), kcurrent(nullptr), rcurrent(nullptr), scurrent(nullptr),
+DictImport::DictImport(QWidget *parent) : base(parent, false), ui(new Ui::DictImport), modified(false), stepcnt(0), step(1), kcurrent(nullptr), rcurrent(nullptr), scurrent(nullptr),
         /*entryr(0), entrys(0),*/ counter(0)
 {
     ui->setupUi(this);

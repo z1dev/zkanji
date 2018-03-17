@@ -52,12 +52,9 @@ const QString kanaStrings[]
 };
 
 
-KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(parent), ui(new Ui::KanaPracticeSettingsForm), updating(false), hiracheckcnt(0), katacheckcnt(0)
+KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(parent, false), ui(new Ui::KanaPracticeSettingsForm), updating(false), hiracheckcnt(0), katacheckcnt(0)
 {
     ui->setupUi(this);
-
-    Qt::WindowFlags flags = windowFlags();
-    setWindowFlags(flags & (~Qt::WindowMinMaxButtonsHint) | Qt::MSWindowsFixedSizeDialogHint);
 
     gUI->scaleWidget(this);
 

@@ -16,9 +16,9 @@
 //-------------------------------------------------------------
 
 
-DialogWindow::DialogWindow(QWidget *parent, bool resizing) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | (resizing ? Qt::WindowMinMaxButtonsHint : Qt::Widget) | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint |
+DialogWindow::DialogWindow(QWidget *parent, bool resizing) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | (resizing ? Qt::WindowMinMaxButtonsHint : Qt::MSWindowsFixedSizeDialogHint) | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint |
     (!parent->windowFlags().testFlag(Qt::WindowStaysOnTopHint) ? (Qt::WindowType)0 : Qt::WindowStaysOnTopHint)
-    : resizing ? Qt::WindowFlags() : (Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint)), loop(nullptr), res(ModalResult::Cancel)
+    : resizing ? Qt::WindowFlags() : (Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint)), loop(nullptr), res(ModalResult::Cancel)
 {
     setAttribute(Qt::WA_QuitOnClose, false);
     setWindowModality(Qt::NonModal);
