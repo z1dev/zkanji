@@ -51,13 +51,20 @@ private:
     void saveState(KanarPracticeData &data);
     void restoreState(const KanarPracticeData &data);
 
+    // Create checkboxes and place them on the form.
     void setupBoxes(QSignalMapper *map, QGridLayout *g, std::vector<QCheckBox*> &boxes);
+
+    // Change status bar text to reflect current state.
+    void updateStatus();
+
     Ui::KanaPracticeSettingsForm *ui;
 
     // True when programmatically changing kana use so the checkbox signals should be ignored.
     bool updating;
-    // Number of boxes checked.
-    int checkcnt;
+    // Number of hiragana boxes checked.
+    int hiracheckcnt;
+    // Number of katakana boxes checked.
+    int katacheckcnt;
 
     QSignalMapper *hiramap;
     QSignalMapper *katamap;

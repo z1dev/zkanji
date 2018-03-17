@@ -52,7 +52,7 @@ const QString kanaStrings[]
 };
 
 
-KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(parent), ui(new Ui::KanaPracticeSettingsForm), updating(false), checkcnt(0)
+KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(parent), ui(new Ui::KanaPracticeSettingsForm), updating(false), hiracheckcnt(0), katacheckcnt(0)
 {
     ui->setupUi(this);
 
@@ -67,6 +67,9 @@ KanaPracticeSettingsForm::KanaPracticeSettingsForm(QWidget *parent) : base(paren
 
     hirause.resize((int)KanaSounds::Count, 0);
     katause.resize((int)KanaSounds::Count, 0);
+
+    ui->status->add(tr("Hiragana: "), 0, "0", 4, true);
+    ui->status->add(tr("Katakana: "), 0, "0", 4, true);
 
     setAttribute(Qt::WA_DontShowOnScreen);
     show();
@@ -177,21 +180,26 @@ void KanaPracticeSettingsForm::boxToggled(int index)
     if (updating)
         return;
 
-    std::vector<uchar> &vec = sender() == hiramap ? hirause : katause;
-    std::vector<QCheckBox*> &boxes = sender() == hiramap ? hiraboxes : kataboxes;
+    bool hiragana = sender() == hiramap;
+    std::vector<uchar> &vec = hiragana ? hirause : katause;
+    std::vector<QCheckBox*> &boxes = hiragana ? hiraboxes : kataboxes;
+    int &checkcnt = hiragana ? hiracheckcnt : katacheckcnt;
 
     if ((vec[index] == 1) != boxes[index]->isChecked())
     {
         checkcnt += boxes[index]->isChecked() ? 1 : -1;
-        ui->test1Button->setEnabled(checkcnt >= 5);
-        ui->test2Button->setEnabled(checkcnt >= 5);
+        ui->test1Button->setEnabled(hiracheckcnt + katacheckcnt >= 5);
+        ui->test2Button->setEnabled(hiracheckcnt + katacheckcnt >= 5);
     }
 
     vec[index] = boxes[index]->isChecked() ? 1 : 0;
 
 
     if ((qApp->keyboardModifiers() & Qt::ControlModifier) == 0)
+    {
+        updateStatus();
         return;
+    }
 
     QCheckBox *ch = boxes[index];
     int pos = 0;
@@ -210,6 +218,7 @@ void KanaPracticeSettingsForm::boxToggled(int index)
         }
         sum += groupsiz;
     }
+    updateStatus();
 }
 
 void KanaPracticeSettingsForm::on_checkButton_clicked()
@@ -261,13 +270,14 @@ void KanaPracticeSettingsForm::restoreState(const KanarPracticeData &data)
     hirause.resize((int)KanaSounds::Count, 0);
     katause.resize((int)KanaSounds::Count, 0);
 
-    checkcnt = 0;
+    hiracheckcnt = 0;
+    katacheckcnt = 0;
 
     for (int ix = 0, siz = hirause.size(); ix != siz; ++ix)
     {
         if (hirause[ix] == 1)
         {
-            ++checkcnt;
+            ++hiracheckcnt;
             hiraboxes[ix]->setChecked(true);
         }
         else
@@ -277,17 +287,19 @@ void KanaPracticeSettingsForm::restoreState(const KanarPracticeData &data)
     {
         if (katause[ix] == 1)
         {
-            ++checkcnt;
+            ++katacheckcnt;
             kataboxes[ix]->setChecked(true);
         }
         else
             kataboxes[ix]->setChecked(false);
     }
 
-    ui->test1Button->setEnabled(checkcnt >= 5);
-    ui->test2Button->setEnabled(checkcnt >= 5);
+    ui->test1Button->setEnabled(hiracheckcnt + katacheckcnt >= 5);
+    ui->test2Button->setEnabled(hiracheckcnt + katacheckcnt >= 5);
 
     updating = false;
+
+    updateStatus();
 }
 
 void KanaPracticeSettingsForm::setupBoxes(QSignalMapper *map, QGridLayout *g, std::vector<QCheckBox*> &boxes)
@@ -338,6 +350,12 @@ void KanaPracticeSettingsForm::setupBoxes(QSignalMapper *map, QGridLayout *g, st
         else if (ix <= (int)KanaSounds::pyo)
             g->addWidget(w, 8 + ((ix - (int)KanaSounds::gya) % 3), 14 + (ix - (int)KanaSounds::gya) / 3);
     }
+}
+
+void KanaPracticeSettingsForm::updateStatus()
+{
+    ui->status->setValue(0, QString::number(hiracheckcnt));
+    ui->status->setValue(1, QString::number(katacheckcnt));
 }
 
 

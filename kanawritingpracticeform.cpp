@@ -183,7 +183,7 @@ void KanaWritingPracticeForm::candidateClicked(int index)
 
     QChar ch = ZKanji::elements()->itemUnicode(-candidates->items(index) - 1);
     QString answer = toKana(kanaStrings[list[pos] % (int)KanaSounds::Count]);
-    if (list[pos] > (int)KanaSounds::Count)
+    if (list[pos] >= (int)KanaSounds::Count)
         answer = toKatakana(answer);
 
     entered.append(ch);
@@ -484,7 +484,7 @@ void KanaWritingPracticeForm::animateNext(int index, bool ended)
 
         ++animatepos;
         QString answer = toKana(kanaStrings[list[pos] % (int)KanaSounds::Count]);
-        if (list[pos] > (int)KanaSounds::Count)
+        if (list[pos] >= (int)KanaSounds::Count)
             answer = toKatakana(answer);
         if (animatepos >= answer.size())
             animatepos = 0;
