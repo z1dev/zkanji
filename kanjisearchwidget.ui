@@ -716,13 +716,6 @@
          </property>
          <item>
           <widget class="QLabel" name="radicalsLabel">
-           <property name="text">
-            <string>Radicals:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="radicalsButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -730,32 +723,29 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Select...</string>
+            <string>Radicals:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="ZComboBox" name="radicalsCBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
+          <widget class="ZRadicalsButton" name="radicalsButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="editable">
-            <bool>false</bool>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
            </property>
-           <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
            </property>
-           <item>
-            <property name="text">
-             <string>None</string>
-            </property>
-           </item>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextOnly</enum>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1444,11 +1434,6 @@
    <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>ZComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
@@ -1464,6 +1449,11 @@
    <extends>QWidget</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZRadicalsButton</class>
+   <extends>QToolButton</extends>
+   <header>kanjisearchwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

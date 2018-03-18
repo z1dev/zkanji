@@ -9,6 +9,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QStringBuilder>
+#include <QStylePainter>
 #include <QMenu>
 
 #include "kanjisearchwidget.h"
@@ -33,6 +34,48 @@
 #include "popupkanjisearch.h"
 
 
+//-------------------------------------------------------------
+
+
+ZRadicalsButton::ZRadicalsButton(QWidget *parent) : base(parent), radindex(0)
+{
+}
+
+ZRadicalsButton::~ZRadicalsButton()
+{
+    ;
+}
+
+void ZRadicalsButton::setIndex(int index)
+{
+    if (radindex == index)
+        return;
+    radindex = index;
+    update();
+}
+
+int ZRadicalsButton::index() const
+{
+    return radindex;
+}
+
+void ZRadicalsButton::paintEvent(QPaintEvent *e)
+{
+    base::paintEvent(e);
+
+    QString str = radindex == 0 ? tr("Select...") : radicalFiltersModel().filterText(radindex - 1);
+    QStylePainter p(this);
+
+    p.setFont(font());
+    QStyleOptionToolButton toolbutton;
+    toolbutton.initFrom(this);
+
+    QRect r/* = e->rect()*/;
+    r = style()->subControlRect(QStyle::ComplexControl::CC_ToolButton, &toolbutton, QStyle::SC_ToolButton, this).adjusted(Settings::scaled(2), Settings::scaled(2), -Settings::scaled(2), -Settings::scaled(2));
+    p.drawText(r, str);
+}
+
+        
 //-------------------------------------------------------------
 
 
@@ -418,29 +461,22 @@ namespace FormStates
 //-------------------------------------------------------------
 
 
-KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui::KanjiSearchWidget), ignorefilter(false), radform(nullptr), radindex(0)
+KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui::KanjiSearchWidget), ignorefilter(false), radform(nullptr)
 {
     ui->setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    // Scaling would break these fonts.
-    //ui->readingEdit->setFont(Settings::kanaFont(false));
-
     restrictWidgetSize(ui->strokeEdit, 6, AdjustedValue::MinMax);
     restrictWidgetSize(ui->jlptEdit, 6, AdjustedValue::MinMax);
     restrictWidgetSize(ui->skip1Edit, 4, AdjustedValue::MinMax);
     restrictWidgetSize(ui->skip2Edit, 4, AdjustedValue::MinMax);
-    restrictWidgetSize(ui->radicalsCBox, 10, AdjustedValue::Min);
+    restrictWidgetSize(ui->radicalsButton, 20, AdjustedValue::Min);
 
     ui->meaningEdit->setCharacterSize(8);
     ui->readingEdit->setCharacterSize(6);
     ui->indexEdit->setCharacterSize(6);
-
-    ui->radicalsCBox->setCharacterSize(15);
-
-    //ui->kanjiGrid->setCellSize(std::ceil(Settings::fonts.kanjifontsize / 0.7));
 
     QLayout *tmplayout = ui->optionsWidget->layout();
     std::vector<QLayoutItem*> tmpitems;
@@ -482,24 +518,6 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     fillFilters(filters);
 
-    // Checkboxes updated when any of these changes
-    //connect(ui->strokeEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->meaningEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->readingEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->readingCBox, SIGNAL(activated(int)), this, SLOT(updateCheckbox()));
-    //connect(ui->okuriganaButton, &QToolButton::toggled, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->jlptEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skip1Button, &QToolButton::toggled, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skip2Button, &QToolButton::toggled, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skip3Button, &QToolButton::toggled, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skip4Button, &QToolButton::toggled, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skip1Edit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skip2Edit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->skipEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->jouyouCBox, SIGNAL(activated(int)), this, SLOT(updateCheckbox()));
-    //connect(ui->indexEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::updateCheckbox);
-    //connect(ui->indexCBox, SIGNAL(activated(int)), this, SLOT(updateCheckbox()));
-
     // Filtering activated on these
     connect(ui->strokeEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::filter);
     connect(ui->meaningEdit, &QLineEdit::textChanged, this, &KanjiSearchWidget::filter);
@@ -523,19 +541,30 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     connect(ui->sortCBox, SIGNAL(activated(int)), this, SLOT(sortKanji()));
 
-    // Radical selection
-    connect(ui->radicalsCBox, SIGNAL(activated(int)), this, SLOT(radicalsBoxChanged(int)));
-
     RadicalFiltersModel &m = radicalFiltersModel();
     connect(&m, &RadicalFiltersModel::filterAdded, this, &KanjiSearchWidget::radsAdded);
     connect(&m, &RadicalFiltersModel::filterRemoved, this, &KanjiSearchWidget::radsRemoved);
     connect(&m, &RadicalFiltersModel::filterMoved, this, &KanjiSearchWidget::radsMoved);
     connect(&m, &RadicalFiltersModel::cleared, this, &KanjiSearchWidget::radsCleared);
-    while (ui->radicalsCBox->count() != m.size() + 1)
-        ui->radicalsCBox->addItem(m.filterText(ui->radicalsCBox->count() - 1));
-    ui->radicalsCBox->setEnabled(ui->radicalsCBox->count() > 1);
 
-    connect(&popmap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
+    connect(&radicalsMap, SIGNAL(mapped(int)), this, SLOT(radicalSelected(int)));
+
+    QAction *a = radicalsMenu.addAction(tr("None"));
+    connect(a, SIGNAL(triggered(bool)), &radicalsMap, SLOT(map()));
+    radicalsMap.setMapping(a, 0);
+    for (int ix = 0, siz = radicalsMenu.actions().size(); ix != m.size(); ++ix)
+    {
+        a = radicalsMenu.addAction(m.filterText(ix));
+        connect(a, SIGNAL(triggered(bool)), &radicalsMap, SLOT(map()));
+        radicalsMap.setMapping(a, ix + 1);
+    }
+
+    ui->radicalsButton->setMenu(&radicalsMenu);
+    // Getting around Qt bug that apparently restores fonts randomly(?) to default when a
+    // widget changes parent. Calling scale here does for some reason fix the issue.
+    gUI->scaleWidget(ui->radicalsButton);
+
+    connect(&filterMap, SIGNAL(mapped(int)), this, SLOT(showHideAction(int)));
 
     if (dynamic_cast<ZKanjiForm*>(window()) != nullptr || dynamic_cast<PopupKanjiSearch*>(window()) != nullptr)
         ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
@@ -701,41 +730,21 @@ void KanjiSearchWidget::saveState(KanjiFilterData &data) const
         data.skip3 = val;
     else
         data.skip3 = -1;
-    //}
-    //else
-    //{
-    //    data.skip1 = 0;
-    //    data.skip2 = 0;
-    //    data.skip3 = 0;
-    //}
 
-    data.jouyou = /*ui->jouyouWidget->isVisibleTo(ui->optionsWidget) ?*/ ui->jouyouCBox->currentIndex() /*: 0*/;
+    data.jouyou = ui->jouyouCBox->currentIndex();
 
     data.indextype = (KanjiIndexT)ui->indexCBox->currentIndex();
-    data.index = /*ui->indexWidget->isVisibleTo(ui->optionsWidget) ?*/ ui->indexEdit->text().trimmed() /*: QString()*/;
+    data.index = ui->indexEdit->text().trimmed();
 
-    //if (ui->radicalsWidget->isVisibleTo(ui->optionsWidget))
-    //{
-    //    if (radform != nullptr)
-    //    {
-    //        data.rads = radform->activeFilter();
-    //        tmprads = radform->selectionToFilter();
-    //    }
-    //    else
-    //   {
+    //if (ui->radicalsCBox->currentIndex() > 0)
+    //    data.rads = radicalFiltersModel().filters(ui->radicalsCBox->currentIndex() - 1);
+    //else
+    //    data.rads = RadicalFilter();
 
-    if (ui->radicalsCBox->currentIndex() > 0 /*&& ui->radicalsCBox->currentIndex() < ui->radicalsCBox->count()*/)
-        data.rads = radicalFiltersModel().filters(ui->radicalsCBox->currentIndex() - 1);
+    if (ui->radicalsButton->index() > 0)
+        data.rads = radicalFiltersModel().filters(ui->radicalsButton->index() - 1);
     else
         data.rads = RadicalFilter();
-    //            f.data.rads = radicalFiltersModel().filters(ui->radicalsCBox->currentIndex() - 1);
-    //    }
-    //}
-    //else
-    //{
-    //    f.data.rads.groups.clear();
-    //    f.tmprads.clear();
-    //}
 }
 
 void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
@@ -816,7 +825,8 @@ void KanjiSearchWidget::restoreState(const KanjiFilterData &data)
             else
                 index += 1;
         }
-        ui->radicalsCBox->setCurrentIndex(std::max(0, index));
+
+        ui->radicalsButton->setIndex(std::max(0, index));
     }
 
     ui->line->setVisible(ui->strokeWidget->isVisibleTo(ui->optionsWidget) || ui->meaningWidget->isVisibleTo(ui->optionsWidget) || ui->readingWidget->isVisibleTo(ui->optionsWidget) ||
@@ -993,7 +1003,7 @@ void KanjiSearchWidget::fillFilters(RuntimeKanjiFilters &f) const
 void KanjiSearchWidget::reset()
 {
     ui->strokeEdit->setText(QString());
-    ui->radicalsCBox->setCurrentIndex(0);
+    ui->radicalsButton->setIndex(0);
     ui->meaningEdit->setText(QString());
     ui->mAfterButton->setChecked(true);
     ui->readingEdit->setText(QString());
@@ -1002,14 +1012,12 @@ void KanjiSearchWidget::reset()
     ui->okuriganaButton->setChecked(true);
     ui->jlptEdit->setText(QString());
     ui->jouyouCBox->setCurrentIndex(0);
-    //ui->partsCBox->setCurrentIndex(0);
     ui->skip1Button->setChecked(false);
     ui->skip2Button->setChecked(false);
     ui->skip3Button->setChecked(false);
     ui->skip4Button->setChecked(false);
     ui->skip1Edit->setText(QString());
     ui->skip2Edit->setText(QString());
-    //ui->skipEdit->setText(QString());
     ui->indexCBox->setCurrentIndex(0);
     ui->indexEdit->setText(QString());
 
@@ -1024,8 +1032,7 @@ void KanjiSearchWidget::showEvent(QShowEvent *e)
     flow->setAlignment(Qt::AlignVCenter);
     flow->restrictWidth(ui->meaningWidget, restrictedWidgetSize(ui->meaningEdit, 12) + ui->meaningWidget->layout()->spacing() * 2 + ui->meaningLabel->width() + ui->mAfterButton->width());
     flow->restrictWidth(ui->readingWidget, restrictedWidgetSize(ui->readingEdit, 8) + ui->readingLabel->width() + ui->rAfterButton->width() + ui->rStrictButton->width() + ui->okuriganaButton->width() + ui->readingWidget->layout()->spacing() * 2);
-    //flow->restrictWidth(ui->indexWidget, restrictedWidgetSize(ui->indexEdit, 12) + ui->indexLabel->width() + ui->indexCBox->width() + ui->indexWidget->layout()->spacing() * 2);
-    flow->restrictWidth(ui->radicalsWidget, ui->radicalsLabel->width() + restrictedWidgetSize(ui->radicalsCBox, 20) + ui->radicalsWidget->layout()->spacing());
+    flow->restrictWidth(ui->radicalsWidget, ui->radicalsLabel->width() + restrictedWidgetSize(ui->radicalsButton, 20) + ui->radicalsWidget->layout()->spacing());
     flow->setSpacingAfter(ui->resetWidget, 0);
 
     if (ui->okuriganaButton->height() != ui->rAfterButton->height())
@@ -1040,84 +1047,84 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
 {
     QAction *a;
 
-    popup.clear();
+    filterMenu.clear();
 
-    a = popup.addAction("Show all filters");
+    a = filterMenu.addAction("Show all filters");
     a->setEnabled(!ui->strokeEdit->isVisible() || !ui->meaningEdit->isVisible() || !ui->readingEdit->isVisible() ||
-        !ui->jlptEdit->isVisible() || !ui->radicalsCBox->isVisible() || !ui->jouyouCBox->isVisible() ||
+        !ui->jlptEdit->isVisible() || !ui->radicalsButton->isVisible() || !ui->jouyouCBox->isVisible() ||
         !ui->skip1Edit->isVisible() || !ui->indexEdit->isVisible());
     if (a->isEnabled())
     {
-        connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-        popmap.setMapping(a, 0);
+        connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+        filterMap.setMapping(a, 0);
     }
 
-    a = popup.addAction("Hide all filters");
+    a = filterMenu.addAction("Hide all filters");
     a->setEnabled(ui->strokeEdit->isVisible() || ui->meaningEdit->isVisible() || ui->readingEdit->isVisible() ||
-        ui->jlptEdit->isVisible() || ui->radicalsCBox->isVisible() || ui->jouyouCBox->isVisible() ||
+        ui->jlptEdit->isVisible() || ui->radicalsButton->isVisible() || ui->jouyouCBox->isVisible() ||
         ui->skip1Edit->isVisible() || ui->indexEdit->isVisible());
     if (a->isEnabled())
     {
-        connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-        popmap.setMapping(a, 1);
+        connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+        filterMap.setMapping(a, 1);
     }
 
-    popup.addSeparator();
+    filterMenu.addSeparator();
 
-    a = popup.addAction("Stroke count filter");
+    a = filterMenu.addAction("Stroke count filter");
     a->setCheckable(true);
     a->setChecked(ui->strokeEdit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 2);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 2);
 
-    a = popup.addAction("JLPT level filter");
+    a = filterMenu.addAction("JLPT level filter");
     a->setCheckable(true);
     a->setChecked(ui->jlptEdit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 3);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 3);
 
-    a = popup.addAction("Meaning filter");
+    a = filterMenu.addAction("Meaning filter");
     a->setCheckable(true);
     a->setChecked(ui->meaningEdit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 4);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 4);
 
-    a = popup.addAction("Reading filter");
+    a = filterMenu.addAction("Reading filter");
     a->setCheckable(true);
     a->setChecked(ui->readingEdit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 5);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 5);
 
-    a = popup.addAction("Jouyou grade filter");
+    a = filterMenu.addAction("Jouyou grade filter");
     a->setCheckable(true);
     a->setChecked(ui->jouyouCBox->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 6);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 6);
 
-    a = popup.addAction("Radicals filter");
+    a = filterMenu.addAction("Radicals filter");
     a->setCheckable(true);
-    a->setChecked(ui->radicalsCBox->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 7);
+    a->setChecked(ui->radicalsButton->isVisible());
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 7);
 
-    a = popup.addAction("Index filter");
+    a = filterMenu.addAction("Index filter");
     a->setCheckable(true);
     a->setChecked(ui->indexEdit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 8);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 8);
 
-    a = popup.addAction("SKIP code filter");
+    a = filterMenu.addAction("SKIP code filter");
     a->setCheckable(true);
     a->setChecked(ui->skip1Edit->isVisible());
-    connect(a, SIGNAL(triggered(bool)), &popmap, SLOT(map()));
-    popmap.setMapping(a, 9);
+    connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
+    filterMap.setMapping(a, 9);
 
     ZKanjiWidget *w = ZKanjiWidget::getZParent(this);
     if (w != nullptr)
-        w->addDockAction(&popup);
+        w->addDockAction(&filterMenu);
 
 
-    popup.popup(e->globalPos());
+    filterMenu.popup(e->globalPos());
     e->accept();
 }
 
@@ -1751,41 +1758,6 @@ void KanjiSearchWidget::listFilteredKanji(const RuntimeKanjiFilters &f, std::vec
     }
 }
 
-//void KanjiSearchWidget::updateCheckbox()
-//{
-//    auto checkfunc = [](QLineEdit *edit, QCheckBox *box) {
-//        box->setChecked(!edit->text().isEmpty());
-//    };
-//
-//
-//    if (sender() == ui->strokeEdit)
-//        checkfunc(ui->strokeEdit, ui->strokeBox);
-//    else if (sender() == ui->meaningEdit)
-//        checkfunc(ui->meaningEdit, ui->meaningBox);
-//    else if (sender() == ui->readingEdit)
-//        checkfunc(ui->readingEdit, ui->readingBox);
-//    else if (sender() == ui->readingCBox)
-//        checkfunc(ui->readingEdit, ui->readingBox);
-//    else if (sender() == ui->okuriganaButton)
-//        checkfunc(ui->readingEdit, ui->readingBox);
-//    else if (sender() == ui->jlptEdit)
-//        checkfunc(ui->jlptEdit, ui->jlptBox);
-//    else if (sender() == ui->jouyouCBox)
-//        ui->jouyouBox->setChecked(true);
-//    else if (sender() == ui->indexEdit)
-//        checkfunc(ui->indexEdit, ui->indexBox);
-//    else if (sender() == ui->indexCBox)
-//        checkfunc(ui->indexEdit, ui->indexBox);
-//    else if (sender() == ui->skip1Button || sender() == ui->skip2Button || sender() == ui->skip3Button || sender() == ui->skip4Button)
-//        ui->skipBox->setChecked(true);
-//    else if (sender() == ui->skip1Edit && !ui->skip1Edit->text().isEmpty())
-//        ui->skipBox->setChecked(true);
-//    else if (sender() == ui->skip2Edit && !ui->skip2Edit->text().isEmpty())
-//        ui->skipBox->setChecked(true);
-//    else if (sender() == ui->skipEdit && !ui->skipEdit->text().isEmpty())
-//        ui->skipBox->setChecked(true);
-//}
-
 void KanjiSearchWidget::filterKanji(bool forced)
 {
     if (ignorefilter)
@@ -1871,74 +1843,11 @@ void KanjiSearchWidget::on_f8Button_clicked()
 
 void KanjiSearchWidget::on_allButton_clicked(bool checked)
 {
-    //ui->f1Button->setChecked(checked);
-    //ui->f2Button->setChecked(checked);
-    //ui->f3Button->setChecked(checked);
-    //ui->f4Button->setChecked(checked);
-    //ui->f5Button->setChecked(checked);
-    //ui->f6Button->setChecked(checked);
-    //ui->f7Button->setChecked(checked);
-    //ui->f8Button->setChecked(checked);
-
     showHideAction(checked ? 0 : 1);
 }
 
-//void KanjiSearchWidget::on_rOptionsButton_toggled(bool checked)
-//{
-//    ui->rOptionsWidget->setVisible(checked);
-//    ui->rOptionsWidget->updateGeometry();
-//    //ui->readingEdit->setVisible(!checked);
-//
-//    QSizePolicy pol = ui->readingWidget->sizePolicy();
-//    pol.setHorizontalPolicy(checked ? QSizePolicy::MinimumExpanding : QSizePolicy::Expanding);
-//    ui->readingWidget->setSizePolicy(pol);
-//    ui->readingWidget->updateGeometry();
-//}
-
-//void KanjiSearchWidget::on_clearButton_clicked()
-//{
-//    switch (ui->pagesStack->currentIndex())
-//    {
-//    case 0: // Meaning
-//        ui->meaningEdit->setText(QString());
-//        break;
-//    case 1: // Reading
-//        ui->readingEdit->setText(QString());
-//        ui->readingCBox->setCurrentIndex(0);
-//        ui->okuriganaButton->setChecked(true);
-//        filterKanji();
-//        break;
-//    case 2: // JLPT
-//        ui->jlptEdit->setText(QString());
-//        break;
-//    case 3: // Jouyou
-//        ui->jouyouCBox->setCurrentIndex(0);
-//        filterKanji();
-//        break;
-//    case 4: // Parts
-//        ui->partsCBox->setCurrentIndex(0);
-//        filterKanji();
-//        break;
-//    case 5: // SKIP
-//        ui->skip1Button->setChecked(false);
-//        ui->skip2Button->setChecked(false);
-//        ui->skip3Button->setChecked(false);
-//        ui->skip4Button->setChecked(false);
-//        ui->skip1Edit->setText(QString());
-//        ui->skip2Edit->setText(QString());
-//        filterKanji();
-//        break;
-//    case 6: // Index
-//        ui->indexCBox->setCurrentIndex(0);
-//        ui->indexEdit->setText(QString());
-//        filterKanji();
-//        break;
-//    }
-//}
-
 void KanjiSearchWidget::on_radicalsButton_clicked()
 {
-    ui->radicalsCBox->setEnabled(false);
     ui->radicalsButton->setEnabled(false);
     radform = new RadicalForm(this);
     connect(radform, &RadicalForm::selectionChanged, this, &KanjiSearchWidget::radicalsChanged);
@@ -1946,8 +1855,8 @@ void KanjiSearchWidget::on_radicalsButton_clicked()
     connect(radform, &RadicalForm::resultIsOk, this, &KanjiSearchWidget::radicalsOk);
     connect(radform, &RadicalForm::destroyed, this, &KanjiSearchWidget::radicalsClosed);
     radform->setFromModel(ui->kanjiGrid->model());
-    if (radindex != 0)
-        radform->setFilter(radindex - 1);
+    if (ui->radicalsButton->index() != 0)
+        radform->setFilter(ui->radicalsButton->index() - 1);
     radform->show();
     filterKanji();
 }
@@ -2061,28 +1970,13 @@ void KanjiSearchWidget::sortKanji()
     //delete model;
 }
 
-void KanjiSearchWidget::radicalsBoxChanged(int ix)
+void KanjiSearchWidget::radicalSelected(int ix)
 {
-    /*if (ix == ui->radicalsCBox->count() - 1)
-    {
-        ui->radicalsCBox->setEnabled(false);
-        radform = new RadicalForm(this);
-        connect(radform, &RadicalForm::selectionChanged, this, &KanjiSearchWidget::radicalsChanged);
-        connect(radform, &RadicalForm::groupingChanged, this, &KanjiSearchWidget::radicalGroupingChanged);
-        connect(radform, &RadicalForm::resultIsOk, this, &KanjiSearchWidget::radicalsOk);
-        connect(radform, &RadicalForm::destroyed, this, &KanjiSearchWidget::radicalsClosed);
-        radform->setFromModel(ui->kanjiGrid->model());
-        if (radindex != 0)
-            radform->setFilter(radindex - 1);
-        radform->show();
-        filterKanji();
-    }
-    else*/
-    if (radindex != ix)
-    {
-        radindex = ix;
-        filterKanji();
-    }
+    if (ui->radicalsButton->index() == ix)
+        return;
+
+    ui->radicalsButton->setIndex(ix);
+    filterKanji();
 }
 
 void KanjiSearchWidget::radicalsChanged()
@@ -2099,89 +1993,70 @@ void KanjiSearchWidget::radicalsOk()
 {
     RadicalFilter f;
     radform->activeFilter(f);
-    radindex = radicalFiltersModel().add(f) + 1;
     radform = nullptr;
-    ui->radicalsCBox->setCurrentIndex(radindex);
+    ui->radicalsButton->setIndex(radicalFiltersModel().add(f) + 1);
 }
 
 void KanjiSearchWidget::radicalsClosed()
 {
     if (radform != nullptr)
-    {
         radform = nullptr;
-        ui->radicalsCBox->setCurrentIndex(radindex);
-    }
     filterKanji();
-    ui->radicalsCBox->setEnabled(ui->radicalsCBox->count() > 1);
     ui->radicalsButton->setEnabled(true);
 }
 
 void KanjiSearchWidget::radsAdded()
 {
     RadicalFiltersModel &m = radicalFiltersModel();
-    ui->radicalsCBox->addItem(m.filterText(m.size() - 1));
+    QAction *a = radicalsMenu.addAction(m.filterText(m.size() - 1));
+    connect(a, SIGNAL(triggered(bool)), &radicalsMap, SLOT(map()));
+    radicalsMap.setMapping(a, m.size());
 }
 
 void KanjiSearchWidget::radsRemoved(int index)
 {
+    // Remap the remaining actions.
+    for (int ix = index, siz = radicalsMenu.actions().size(); ix != siz; ++ix)
+    {
+        radicalsMap.removeMappings(radicalsMenu.actions().at(ix));
+        if (ix != siz - 1)
+            radicalsMap.setMapping(radicalsMenu.actions().at(ix + 1), ix);
+    }
+
     ++index;
-    if (radindex == index)
-        radindex = 0;
-    else if (radindex > index)
-        --radindex;
-    ui->radicalsCBox->removeItem(index);
+    if (ui->radicalsButton->index() == index)
+        ui->radicalsButton->setIndex(0);
+    else if (ui->radicalsButton->index() > index)
+        ui->radicalsButton->setIndex(ui->radicalsButton->index() - 1);
+
+    QAction *a = radicalsMenu.actions().at(index);
+    radicalsMenu.removeAction(a);
+    a->deleteLater();
 }
 
 void KanjiSearchWidget::radsMoved(int index, bool up)
 {
     ++index;
-    QString str = ui->radicalsCBox->itemText(index);
-    ui->radicalsCBox->setUpdatesEnabled(false);
-    ui->radicalsCBox->setItemText(index, ui->radicalsCBox->itemText(index + (up ? -1 : 1)));
-    ui->radicalsCBox->setItemText(index + (up ? -1 : 1), str);
-    ui->radicalsCBox->setUpdatesEnabled(true);
-    if (radindex == index)
-        radindex += (up ? -1 : 1);
+
+    QString str = radicalsMenu.actions().at(index)->text();
+    radicalsMenu.actions().at(index)->setText(radicalsMenu.actions().at(index + (up ? -1 : 1))->text());
+    radicalsMenu.actions().at(index + (up ? -1 : 1))->setText(str);
+
+    if (ui->radicalsButton->index() == index)
+        ui->radicalsButton->setIndex(ui->radicalsButton->index() + (up ? -1 : 1));
 }
 
 void KanjiSearchWidget::radsCleared()
 {
-    ui->radicalsCBox->setUpdatesEnabled(false);
-    while (ui->radicalsCBox->count() != 1)
-        ui->radicalsCBox->removeItem(1);
-    ui->radicalsCBox->setUpdatesEnabled(true);
-    radindex = 0;
-}
+    while (radicalsMenu.actions().size() != 1)
+    {
+        QAction *a = radicalsMenu.actions().at(radicalsMenu.actions().size() - 1);
+        radicalsMenu.removeAction(a);
+        a->deleteLater();
+    }
 
-//void KanjiSearchWidget::showPage(bool checked)
-//{
-//    if (!checked)
-//        return;
-//
-//    if (sender() == ui->meaningButton)
-//        ui->pagesStack->setCurrentIndex(0);
-//    else if (sender() == ui->readingButton)
-//        ui->pagesStack->setCurrentIndex(1);
-//    else if (sender() == ui->jlptButton)
-//        ui->pagesStack->setCurrentIndex(2);
-//    else if (sender() == ui->jouyouButton)
-//        ui->pagesStack->setCurrentIndex(3);
-//    else if (sender() == ui->partsButton)
-//        ui->pagesStack->setCurrentIndex(4);
-//    else if (sender() == ui->skipButton)
-//        ui->pagesStack->setCurrentIndex(5);
-//    else if (sender() == ui->indexButton)
-//        ui->pagesStack->setCurrentIndex(6);
-//
-//    ui->meaningButton->setChecked(sender() == ui->meaningButton);
-//    ui->readingButton->setChecked(sender() == ui->readingButton);
-//    ui->jlptButton->setChecked(sender() == ui->jlptButton);
-//    ui->jouyouButton->setChecked(sender() == ui->jouyouButton);
-//    ui->partsButton->setChecked(sender() == ui->partsButton);
-//    ui->skipButton->setChecked(sender() == ui->skipButton);
-//    ui->indexButton->setChecked(sender() == ui->indexButton);
-//
-//}
+    ui->radicalsButton->setIndex(0);
+}
 
 
 //-------------------------------------------------------------

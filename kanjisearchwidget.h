@@ -10,8 +10,31 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QSignalMapper>
+#include <QToolButton>
 #include <memory>
 #include "zradicalgrid.h"
+
+
+
+class ZRadicalsButton : public QToolButton
+{
+    Q_OBJECT
+public:
+    ZRadicalsButton(QWidget *parent = nullptr);
+    virtual ~ZRadicalsButton();
+
+    void setIndex(int index);
+    int index() const;
+protected:
+    virtual void paintEvent(QPaintEvent *e) override;
+private:
+    // Index of the selected radicals filter, or the original filter index while the radicals
+    // filter window is shown.
+    int radindex;
+
+    typedef QToolButton base;
+};
+
 
 enum class KanjiIndexT {
     Unicode, EUCJP, ShiftJIS, JISX0208, Kuten,
@@ -146,8 +169,7 @@ private:
     // Returns whether the passed two filters would give the same result, even if some
     // settings are different. (For example because one setting is not used in either.)
     bool filtersMatch(const RuntimeKanjiFilters &a, const RuntimeKanjiFilters &b);
-    // Nothing is set in the filters, so the kanji grid should show the whole
-    // list.
+    // Nothing is set in the filters, so the kanji grid should show the whole list.
     bool filtersEmpty(const RuntimeKanjiFilters &f);
 
     // Creates a list of kanji indexes given the passed filter.
@@ -163,15 +185,18 @@ private:
     // Previously saved radical filters.
     //smartvector<RadicalFilter> radfilters;
 
-    // The window allowing selection of radicals to filter kanji. Null when
-    // not shown.
+    // The window allowing selection of radicals to filter kanji. Null when not shown.
     RadicalForm *radform;
-    // Index in the radicals box that was selected before the radicals filter
-    // window is shown.
-    int radindex;
 
-    QMenu popup;
-    QSignalMapper popmap;
+    // Popup menu to select which filter is active.
+    QMenu filterMenu;
+    // Mapping for filterMenu actions.
+    QSignalMapper filterMap;
+
+    // Popup menu showing radical filters list.
+    QMenu radicalsMenu;
+    // Mapping for radicalsMenu actions.
+    QSignalMapper radicalsMap;
 
     typedef QWidget base;
 private slots:
@@ -185,14 +210,8 @@ private slots:
     void on_f7Button_clicked();
     void on_f8Button_clicked();
     void on_allButton_clicked(bool checked);
-    //void on_clearButton_clicked();
-
-    //void on_rOptionsButton_toggled(bool checked);
 
     void on_radicalsButton_clicked();
-
-    // Checks or unchecks the checkbox next to a filter widget depending on its state.
-    //void updateCheckbox();
 
     void showHideAction(int index);
 
@@ -206,9 +225,9 @@ private slots:
     void sortKanji();
 
     // Called when a new item is selected in the combobox of the radicals.
-    void radicalsBoxChanged(int ix);
-    // Called when the new radicals have been selected in either in the radicals
-    // window or in the radicals combo box.
+    void radicalSelected(int ix);
+    // Called when the new radicals have been selected in either in the radicals window or in
+    // the radicals combo box.
     void radicalsChanged();
     // Called when the grouping of radicals changes in the radicals window.
     void radicalGroupingChanged(bool grouping);
@@ -217,27 +236,18 @@ private slots:
     // Called when the radicals selection form is about to be closed.
     void radicalsClosed();
 
-    // Called when a radical has been added to the global radicals filter model.
-    // Updates the listed radicals in the radicals combo box.
+    // Called when a radical has been added to the global radicals filter model. Updates the
+    // listed radicals in the radicals combo box.
     void radsAdded();
-    // Called when a radical has been removed from the global radicals filter model.
-    // Updates the listed radicals in the radicals combo box.
+    // Called when a radical has been removed from the global radicals filter model. Updates
+    // the listed radicals in the radicals combo box.
     void radsRemoved(int index);
-    // Called when a radical has been moved in the global radicals filter model.
-    // Updates the listed radicals in the radicals combo box.
+    // Called when a radical has been moved in the global radicals filter model. Updates the
+    // listed radicals in the radicals combo box.
     void radsMoved(int index, bool up);
-    // Called when the global radicals filter model has been cleared.
-    // Updates the listed radicals in the radicals combo box.
+    // Called when the global radicals filter model has been cleared. Updates the listed
+    // radicals in the radicals combo box.
     void radsCleared();
-
-    //void showPage(bool checked);
-//public: /* Static */
-//    static void saveXMLData();
-//    static void loadXMLData();
-//private: /* Static */
-//    static void emptyXMLData();
-//
-//    static KanjiFilterData savedata;
 };
 
 
