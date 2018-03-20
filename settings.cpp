@@ -1044,8 +1044,9 @@ namespace Settings
 
         if (brokenorder)
         {
-            kanji.showref.swap(std::vector<char>(kanjirefcnt, (const char)1));
-            //kanji.reforder.resize(kanjirefcnt);
+            std::vector<char> tmp(kanjirefcnt, (const char)1);
+            kanji.showref.swap(tmp);
+            //kanji.showref.swap(std::vector<char>(kanjirefcnt, (const char)1));
             std::iota(kanji.reforder.begin(), kanji.reforder.end(), 0);
         }
 

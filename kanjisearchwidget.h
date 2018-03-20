@@ -10,29 +10,26 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QSignalMapper>
-#include <QToolButton>
+#include <QComboBox>
 #include <memory>
 #include "zradicalgrid.h"
 
 
 
-class ZRadicalsButton : public QToolButton
+class ZComboButton : public QComboBox
 {
     Q_OBJECT
+signals:
+    void clicked();
 public:
-    ZRadicalsButton(QWidget *parent = nullptr);
-    virtual ~ZRadicalsButton();
-
-    void setIndex(int index);
-    int index() const;
+    ZComboButton(QWidget *parent = nullptr);
+    virtual ~ZComboButton();
 protected:
     virtual void paintEvent(QPaintEvent *e) override;
+    virtual void mousePressEvent(QMouseEvent *e) override;
 private:
-    // Index of the selected radicals filter, or the original filter index while the radicals
-    // filter window is shown.
-    int radindex;
 
-    typedef QToolButton base;
+    typedef QComboBox base;
 };
 
 
@@ -193,11 +190,6 @@ private:
     // Mapping for filterMenu actions.
     QSignalMapper filterMap;
 
-    // Popup menu showing radical filters list.
-    QMenu radicalsMenu;
-    // Mapping for radicalsMenu actions.
-    QSignalMapper radicalsMap;
-
     typedef QWidget base;
 private slots:
     void on_resetButton_clicked();
@@ -211,7 +203,7 @@ private slots:
     void on_f8Button_clicked();
     void on_allButton_clicked(bool checked);
 
-    void on_radicalsButton_clicked();
+    void radicalsCButtonClicked();
 
     void showHideAction(int index);
 

@@ -728,23 +728,12 @@
           </widget>
          </item>
          <item>
-          <widget class="ZRadicalsButton" name="radicalsButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+          <widget class="ZComboButton" name="radicalsCButton">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>9</pointsize>
-            </font>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::MenuButtonPopup</enum>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
+           <property name="minimumContentsLength">
+            <number>10</number>
            </property>
           </widget>
          </item>
@@ -1451,8 +1440,8 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZRadicalsButton</class>
-   <extends>QToolButton</extends>
+   <class>ZComboButton</class>
+   <extends>QComboBox</extends>
    <header>kanjisearchwidget.h</header>
   </customwidget>
  </customwidgets>
