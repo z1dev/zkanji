@@ -37,9 +37,10 @@
 //-------------------------------------------------------------
 
 
-ZComboButton::ZComboButton(QWidget *parent) : base(parent)
+ZComboButton::ZComboButton(QWidget *parent) : base(parent), mouseover(false)
 {
     setContextMenuPolicy(Qt::PreventContextMenu);
+    setAttribute(Qt::WA_MouseTracking);
 }
 
 ZComboButton::~ZComboButton()
@@ -49,26 +50,40 @@ ZComboButton::~ZComboButton()
 
 void ZComboButton::paintEvent(QPaintEvent *e)
 {
-    //setPopupMode(QToolButton::MenuButtonPopup);
-
-    //base::paintEvent(e);
-
-    //setPopupMode(QToolButton::DelayedPopup);
-
     int radindex = currentIndex();
-    QString str = radindex == 0 ? tr("Click to select...") : radicalFiltersModel().filterText(radindex - 1);
+    QString str = radindex == 0 || mouseover ? tr("Click to select...") : radicalFiltersModel().filterText(radindex - 1);
     QStylePainter p(this);
 
-    //p.setFont(font());
-    QStyleOptionToolButton toolbutton;
-    toolbutton.initFrom(this);
-    toolbutton.toolButtonStyle = Qt::ToolButtonTextBesideIcon;
-    toolbutton.features = QStyleOptionToolButton::None | QStyleOptionToolButton::Menu;
-    
-    style()->drawComplexControl(QStyle::CC_ToolButton, &toolbutton, &p, this);
+    QStyleOptionComboBox boxopt;
+    initStyleOption(&boxopt);
+    boxopt.editable = true;
+    p.setPen(palette().color(QPalette::Text));
 
-    QRect r/* = e->rect()*/;
-    r = style()->subControlRect(QStyle::ComplexControl::CC_ToolButton, &toolbutton, QStyle::SC_ToolButton, this).adjusted(Settings::scaled(4), Settings::scaled(3), -Settings::scaled(4), -Settings::scaled(3));
+    p.drawComplexControl(QStyle::CC_ComboBox, boxopt);
+
+    QRect r = rect();
+    r.setRight(style()->subControlRect(QStyle::CC_ComboBox, &boxopt, QStyle::SC_ComboBoxArrow, this).left() - 1);
+
+#ifdef Q_OS_WIN
+    if (hasFocus())
+    {
+        QStyleOptionFocusRect focus;
+        focus.QStyleOption::operator=(boxopt);
+        focus.rect = style()->subElementRect(QStyle::SE_ComboBoxFocusRect, &boxopt, this);
+        focus.state |= QStyle::State_FocusAtBorder;
+        focus.backgroundColor = boxopt.palette.base().color();
+        style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focus, &p, this);
+
+        //QStyleOptionFocusRect option;
+        //option.initFrom(this);
+        //option.backgroundColor = palette().color(QPalette::Background);
+        //option.rect = r.adjusted(Settings::scaled(1), Settings::scaled(1), Settings::scaled(0), Settings::scaled(-1));
+
+        //style()->drawPrimitive(QStyle::PE_FrameFocusRect, &option, &p, this);
+    }
+#endif
+
+    r.adjust(Settings::scaled(4), Settings::scaled(3), -Settings::scaled(2), -Settings::scaled(3));
     p.drawText(r, Qt::AlignLeft | Qt::AlignVCenter | Qt::TextSingleLine, str);
 }
 
@@ -77,20 +92,69 @@ void ZComboButton::mousePressEvent(QMouseEvent *e)
     if (e->button() != Qt::LeftButton)
         return;
 
-    QStyleOptionToolButton toolbutton;
-    toolbutton.initFrom(this);
-    toolbutton.features = QStyleOptionToolButton::None | QStyleOptionToolButton::Menu;
+    QStyleOptionComboBox boxopt;
+    initStyleOption(&boxopt);
+    boxopt.editable = true;
+    QRect r = style()->subControlRect(QStyle::CC_ComboBox, &boxopt, QStyle::SC_ComboBoxArrow, this);
 
-    QRect r/* = e->rect()*/;
-    r = style()->subControlRect(QStyle::ComplexControl::CC_ToolButton, &toolbutton, QStyle::SC_ToolButton, this).adjusted(Settings::scaled(4), Settings::scaled(3), -Settings::scaled(4), -Settings::scaled(3));
-
-    if (r.contains(e->pos()))
+    if (!r.contains(e->pos()))
         emit clicked();
     else
         base::mousePressEvent(e);
 }
 
-        
+void ZComboButton::mouseMoveEvent(QMouseEvent *e)
+{
+    if (e->buttons() == 0)
+    {
+        QStyleOptionComboBox boxopt;
+        initStyleOption(&boxopt);
+        boxopt.editable = true;
+        QRect r = style()->subControlRect(QStyle::CC_ComboBox, &boxopt, QStyle::SC_ComboBoxArrow, this);
+
+        if (!r.contains(e->pos()))
+        {
+            if (!mouseover)
+            {
+                mouseover = true;
+                update();
+            }
+        }
+        else
+        {
+            if (mouseover)
+            {
+                mouseover = false;
+                update();
+            }
+        }
+    }
+
+    base::mouseMoveEvent(e);
+}
+
+void ZComboButton::leaveEvent(QEvent *e)
+{
+    if (mouseover)
+    {
+        mouseover = false;
+        update();
+    }
+
+    base::leaveEvent(e);
+}
+
+void ZComboButton::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)
+    {
+        emit clicked();
+        return;
+    }
+    base::keyPressEvent(e);
+}
+
+    
 //-------------------------------------------------------------
 
 

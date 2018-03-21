@@ -27,8 +27,11 @@ public:
 protected:
     virtual void paintEvent(QPaintEvent *e) override;
     virtual void mousePressEvent(QMouseEvent *e) override;
+    virtual void mouseMoveEvent(QMouseEvent *e) override;
+    virtual void leaveEvent(QEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
 private:
-
+    bool mouseover;
     typedef QComboBox base;
 };
 
