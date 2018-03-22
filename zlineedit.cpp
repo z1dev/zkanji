@@ -90,6 +90,13 @@ QSize ZLineEdit::sizeHint() const
     return siz;
 }
 
+QSize ZLineEdit::minimumSizeHint() const
+{
+    if (prefwidth == -1)
+        return base::minimumSizeHint();
+    return sizeHint();
+}
+
 void ZLineEdit::setText(const QString &str)
 {
     const QValidator *v = validator();

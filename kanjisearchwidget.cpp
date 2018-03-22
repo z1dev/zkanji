@@ -553,8 +553,8 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
     restrictWidgetSize(ui->skip2Edit, 4, AdjustedValue::MinMax);
     restrictWidgetSize(ui->radicalsCButton, ui->radicalsCButton->minimumContentsLength(), AdjustedValue::Min);
 
-    ui->meaningEdit->setCharacterSize(8);
-    ui->readingEdit->setCharacterSize(6);
+    ui->meaningEdit->setCharacterSize(12);
+    ui->readingEdit->setCharacterSize(3);
     ui->indexEdit->setCharacterSize(6);
 
     QLayout *tmplayout = ui->optionsWidget->layout();
@@ -1098,8 +1098,8 @@ void KanjiSearchWidget::showEvent(QShowEvent *e)
 
     ZFlowLayout *flow = (ZFlowLayout*)ui->optionsWidget->layout();
     flow->setAlignment(Qt::AlignVCenter);
-    flow->restrictWidth(ui->meaningWidget, restrictedWidgetSize(ui->meaningEdit, 12) + ui->meaningWidget->layout()->spacing() * 2 + ui->meaningLabel->width() + ui->mAfterButton->width());
-    flow->restrictWidth(ui->readingWidget, restrictedWidgetSize(ui->readingEdit, 8) + ui->readingLabel->width() + ui->rAfterButton->width() + ui->rStrictButton->width() + ui->okuriganaButton->width() + ui->readingWidget->layout()->spacing() * 2);
+    flow->restrictWidth(ui->meaningWidget, ui->meaningEdit->sizeHint().width() /*restrictedWidgetSize(ui->meaningEdit, 8)*/ + ui->meaningWidget->layout()->spacing() * 2 + ui->meaningLabel->width() + ui->mAfterButton->width());
+    flow->restrictWidth(ui->readingWidget, ui->readingEdit->sizeHint().width() /*restrictedWidgetSize(ui->readingEdit, 6)*/ + ui->readingLabel->width() + ui->rAfterButton->width() + ui->rStrictButton->width() + ui->okuriganaButton->width() + ui->readingWidget->layout()->spacing() * 2);
     flow->restrictWidth(ui->radicalsWidget, ui->radicalsLabel->width() + restrictedWidgetSize(ui->radicalsCButton, ui->radicalsCButton->minimumContentsLength()) + ui->radicalsWidget->layout()->spacing());
     flow->setSpacingAfter(ui->resetWidget, 0);
 

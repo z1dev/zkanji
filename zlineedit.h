@@ -51,6 +51,7 @@ public:
     void setCharacterSize(double chsiz);
 
     virtual QSize sizeHint() const override;
+    virtual QSize minimumSizeHint() const override;
 public slots:
     void setText(const QString &str);
     void clear();
