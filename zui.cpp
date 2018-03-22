@@ -1231,31 +1231,28 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
         }
     }
 
-    // Replace any non-Japanese string found in input, that matches one item
-    // of kanainput, with the same indexed item from kanaoutput, up to the
-    // position of pos.
+    // Replace any non-Japanese string found in input, that matches one item of kanainput,
+    // with the same indexed item from kanaoutput, up to the position of pos.
 
-    // Starting position in kanainput/kanaoutput for items that can be
-    // converted to the syllable at the current input position.
+    // Starting position in kanainput/kanaoutput for items that can be converted to the
+    // syllable at the current input position.
     int kanapos = 0;
 
-    // Number of items matching the latin character at the current position
-    // in kanainput/kanaoutput.
+    // Number of items matching the latin character at the current position in
+    // kanainput/kanaoutput.
     int kanacnt = 0;
 
-    // Katakana input, when any upper case character is found in the romaji
-    // string.
+    // Katakana input, when any upper case character is found in the romaji string.
     bool kata = false;
 
     // Index of the current candidate in kanainput.
     int cindex = 0;
 
-    // Character position in the current candidate in kanainput (indexed by
-    // cindex).
+    // Character position in the current candidate in kanainput (indexed by cindex).
     int cpos = 0;
 
-    // Length of the current candidate in kanainput. Only set when the
-    // candidate's characters up to cpos are valid.
+    // Length of the current candidate in kanainput. Only set when the candidate's characters
+    // up to cpos are valid.
     int clen = -1;
 
     // Current position in input.
@@ -1270,8 +1267,7 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
         if (inputpos == pos)
             break;
 
-        // The length and position of the candidate can only be the same if a
-        // match was found.
+        // The length and position of the candidate can only be the same if a match was found.
         if (cpos == clen)
         {
             // Add a small tsu character if the first consonant is doubled.
@@ -1379,51 +1375,106 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
     // Whether the returned string is acceptable or intermediate.
     bool good = true;
 
-    // Remove any leftover consecutive romaji which doesn't have pos right
-    // after its end index. Handle the n character as a special case, and
-    // replace it with the correct kana.
+    // Remove any leftover consecutive romaji which doesn't have pos right after its end
+    // index. Handle the n character as a special case, and replace it with the correct kana.
 
+    bool foundN = false;
     // Fix the string after pos.
-    for (int ix = pos; ix != input.size(); ++ix)
+    for (int ix = pos, siz = input.size(); ix != siz; ++ix)
     {
         if (!validChar(input.at(ix).unicode()))
         {
             if (input.at(ix) == QChar('n'))
+            {
+                foundN = true;
                 input[ix] = QChar(0x3093); /* hiragana n*/
+            }
             else if (input.at(ix) == QChar('N'))
+            {
+                foundN = true;
                 input[ix] = QChar(0x30F3); /* katakana n*/
+            }
             else
-                input.remove(ix--, 1);
+            {
+                foundN = false;
+                input.remove(ix, 1);
+                --ix;
+                --siz;
+            }
+
+            if (foundN && ix + 1 < siz)
+            {
+                // Double 'n' must be converted to a single 'n' also. Because one 'n' has already
+                // been converted, the other one should just be removed now.
+
+                QChar c = input.at(ix + 1);
+                if (c == QChar('n') || c == QChar('N'))
+                {
+                    input.remove(ix + 1, 1);
+                    --ix;
+                    --siz;
+                }
+            }
+
         }
     }
 
-    // Nothing is removed right before the cursor position. This is only set
-    // when the first valid character was found and anything else can now be
-    // removed.
+    // Nothing is removed right before the cursor position. This is only set when the first
+    // valid character was found and anything else can now be removed.
     bool remove = false;
+    foundN = false;
 
     // Fix the string before pos.
     for (int ix = pos - 1; ix != -1; --ix)
     {
-        if (validChar(input.at(ix).unicode()))
+        QChar ch = input.at(ix);
+        if (validChar(ch.unicode()))
+        {
+            // Found a character to be left in the input string. Everything in front of this
+            // is not part of the last consecutive romaji and must be removed.
             remove = true;
-        else if (ix != pos - 1 && input.at(ix) == QChar('n') && input.at(ix + 1).toLower() != QChar('y'))
+            foundN = false;
+        }
+        else if (foundN && ch.toLower() == QChar('n'))
+        {
+            // An N character has already been converted right in front of this one. Since
+            // duplication is converted to a single 'n', this must be removed.
+            --pos;
+            input.remove(ix, 1);
+            foundN = false;
+        }
+        else if (ix != pos - 1 && ch == QChar('n') && input.at(ix + 1).toLower() != QChar('y'))
         {
             input[ix] = QChar(0x3093); /* hiragana n*/
             remove = true;
+            foundN = true;
         }
-        else if (ix != pos - 1 && input.at(ix) == QChar('N') && input.at(ix + 1).toLower() != QChar('y'))
+        else if (ix != pos - 1 && ch == QChar('N') && input.at(ix + 1).toLower() != QChar('y'))
         {
             input[ix] = QChar(0x30F3); /* katakana n*/
             remove = true;
+            foundN = true;
         }
         else if (remove)
         {
             --pos;
             input.remove(ix, 1);
+            foundN = false;
         }
         else // Still in the romaji string right before pos. Don't remove but mark input as intermediate.
+        {
             good = false;
+            foundN = false;
+        }
+
+        if (foundN && input.at(ix + 1).toLower() == QChar('n'))
+        {
+            // Duplicate 'nn' was found at end of input till pos. Since the 'n' at pos is left
+            // untouched, if the previous character was an 'n' too, it should be removed.
+            input.remove(ix + 1, 1);
+            --pos;
+            foundN = false;
+        }
     }
 
     return good ? Acceptable : Intermediate;
