@@ -36,7 +36,7 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     connect(ui->searchEdit, &ZLineEdit::textChanged, this, &RadicalForm::updateSettings);
     connect(ui->groupButton, &QToolButton::toggled, this, &RadicalForm::updateSettings);
     connect(ui->namesButton, &QToolButton::toggled, this, &RadicalForm::updateSettings);
-    connect(ui->exactButton, &QToolButton::toggled, this, &RadicalForm::updateSettings);
+    connect(ui->anyAfterButton, &QToolButton::toggled, this, &RadicalForm::updateSettings);
 
     connect(ui->clearButton, &QPushButton::clicked, this, &RadicalForm::clearSelection);
 
@@ -77,6 +77,8 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     setAttribute(Qt::WA_DontShowOnScreen, false);
 
     ui->expandWidget->installEventFilter(this);
+
+    ui->anyAfterButton->setChecked(true);
 }
 
 RadicalForm::~RadicalForm()
@@ -106,7 +108,7 @@ void RadicalForm::setDisplayMode(RadicalFilterModes newmode)
     ui->groupButton->setEnabled(newmode == RadicalFilterModes::NamedRadicals);
     ui->namesButton->setEnabled(newmode == RadicalFilterModes::NamedRadicals);
     ui->searchEdit->setEnabled(newmode == RadicalFilterModes::NamedRadicals);
-    ui->exactButton->setEnabled(newmode == RadicalFilterModes::NamedRadicals);
+    ui->anyAfterButton->setEnabled(newmode == RadicalFilterModes::NamedRadicals);
     ui->addButton->setEnabled(newmode != RadicalFilterModes::Radicals);
     //ui->clearButton->setEnabled(newmode != RadicalFilterModes::Radicals);
 }
@@ -310,14 +312,14 @@ void RadicalForm::updateSettings()
         ui->radicalGrid->setNamesDisplay(ui->namesButton->isChecked());
         return;
     }
-    if (sender() == ui->exactButton)
+    if (sender() == ui->anyAfterButton)
     {
-        ui->radicalGrid->setExactMatch(ui->exactButton->isChecked());
+        ui->radicalGrid->setExactMatch(!ui->anyAfterButton->isChecked());
         return;
     }
     if (sender() == ui->searchEdit)
     {
-        ui->radicalGrid->setSearchName(hiraganize(ui->searchEdit->text()));
+        ui->radicalGrid->setSearchString(romanize(ui->searchEdit->text()));
         return;
     }
 }
@@ -328,7 +330,7 @@ void RadicalForm::clearSelection()
     ui->strokeEdit->setText(QString());
     ui->radicalGrid->setUpdatesEnabled(false);
     ui->radicalGrid->setStrokeLimit(0);
-    ui->radicalGrid->setSearchName(QString());
+    ui->radicalGrid->setSearchString(QString());
     ui->radicalGrid->clearSelection();
     ui->radicalGrid->setUpdatesEnabled(true);
 }

@@ -303,16 +303,16 @@ void ZRadicalGrid::setNamesDisplay(bool newnames)
     viewport()->update();
 }
 
-QString ZRadicalGrid::searchName() const
+QString ZRadicalGrid::searchString() const
 {
     return search;
 }
 
-void ZRadicalGrid::setSearchName(const QString &newname)
+void ZRadicalGrid::setSearchString(const QString &val)
 {
-    if (search == newname)
+    if (search == val)
         return;
-    search = newname;
+    search = val;
     filter();
 }
 
@@ -568,7 +568,7 @@ void ZRadicalGrid::init()
 
     int lastsize = -1;
 
-    float radh = 0.72f;
+    float radh = 0.82f;
     radfontsize = int(heights * radh);
     QFont radfont = Settings::radicalFont();
     //ss = QFont::StyleStrategy(radfont.styleStrategy() | QFont::NoSubpixelAntialias);
@@ -911,7 +911,7 @@ void ZRadicalGrid::filter()
                 radpos = ix;
             if (group && !list.empty() && list.back() == radpos)
                 continue;
-            if ((search.isEmpty() || (!search.isEmpty() && ZKanji::radlist[ix]->names.contains(search.constData(), exact))) &&
+            if ((search.isEmpty() || (!search.isEmpty() && ZKanji::radlist[ix]->romajinames.contains(search.constData(), exact))) &&
                 (smin == 0 || (ZKanji::radlist[ix]->strokes >= smin && ZKanji::radlist[ix]->strokes <= smax)))
             {
                 if (!excluded.count(radpos) && included.contains(radpos))
@@ -985,8 +985,8 @@ void ZRadicalGrid::recomputeItems()
 
             dat->width += spacingw * 2;
 
-            // Two rows of kanji names are displayed. The list is broken,
-            // where the two rows make up the least width.
+            // Two rows of kanji names are displayed. The list is broken, where the two rows
+            // make up the least width.
 
             // Collect all the names to one list, to make it easier to 
             dat->names.reserve(namesiz);

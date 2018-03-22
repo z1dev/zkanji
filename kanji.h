@@ -29,6 +29,7 @@ struct KanjiRadical
     uchar strokes; // Number of strokes in radical.
     uchar radical; // Number of radical.
     QCharStringList names; // List for names of radical. (Many radicals can have the same name.)
+    QCharStringList romajinames; // List for names of radical in romaji form. (Many radicals can have the same name.)
 };
 
 class KanjiRadicalList : public TextSearchTreeBase

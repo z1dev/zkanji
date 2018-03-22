@@ -670,6 +670,9 @@ void KanjiRadicalList::addRadical(QChar ch, std::vector<ushort> &&kanji, uchar s
     rad->strokes = strokes;
     rad->radical = radical;
     rad->names = std::move(names);
+    rad->romajinames.reserve(rad->names.size());
+    for (int ix = 0, siz = rad->names.size(); ix != siz; ++ix)
+        rad->romajinames.add(romanize(rad->names[ix]).constData());
     list.push_back(rad);
 }
 
@@ -725,7 +728,7 @@ void KanjiRadicalList::doGetWord(int index, QStringList &texts) const
 
     const KanjiRadical *rad = list[index];
 
-    texts << romanize(rad->names[name].data());
+    texts << rad->romajinames[name].toQString(); //romanize(rad->names[name].data());
 
 
     //int len = qcharlen(rad->names);
@@ -795,6 +798,9 @@ void KanjiRadicalList::load(QDataStream &stream)
         stream >> u8;
         r->radical = u8;
         stream >> r->names;
+        r->romajinames.reserve(r->names.size());
+        for (int ix = 0, siz = r->names.size(); ix != siz; ++ix)
+            r->romajinames.add(romanize(r->names[ix]).constData());
 
         list.push_back(r);
     }

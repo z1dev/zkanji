@@ -53,64 +53,59 @@ public:
     // Changes which radicals or parts are displayed.
     void setDisplayMode(RadicalFilterModes newmode);
 
-    // The minimum number of strokes the displayed part or radical
-    // should have.
+    // The minimum number of strokes the displayed part or radical should have.
     int strokeLimitMin() const;
-    // The maximum number of strokes the displayed part or radical
-    // should have. Always equal or greater than strokeLimitMin().
+    // The maximum number of strokes the displayed part or radical should have. Always equal
+    // or greater than strokeLimitMin().
     int strokeLimitMax() const;
-    // Sets both the max and min limit for the displayed radicals
-    // stroke count to the same value. Set to 0 to erase the limit.
+    // Sets both the max and min limit for the displayed radicals stroke count to the same
+    // value. Set to 0 to erase the limit.
     void setStrokeLimit(int limit);
-    // Sets a minimum and maximum limit to the displayed radicals'
-    // stroke count. If maxlimit is less than minlimit, it's
-    // corrected.
+    // Sets a minimum and maximum limit to the displayed radicals' stroke count. If maxlimit
+    // is less than minlimit, it's corrected.
     void setStrokeLimits(int minlimit, int maxlimit);
 
-    // Only used in NamedRadicals mode. Whether the view displays
-    // different versions of the same radical as a single item.
+    // Only used in NamedRadicals mode. Whether the view displays different versions of the
+    // same radical as a single item.
     bool groupDisplay() const;
-    // Only used in NamedRadicals mode. Set whether the view should
-    // display different versions of the same radical as a single item.
+    // Only used in NamedRadicals mode. Set whether the view should display different versions
+    // of the same radical as a single item.
     void setGroupDisplay(bool newgroup);
 
-    // Only used in NamedRadicals mode. Whether the view lists the
-    // names of the items.
+    // Only used in NamedRadicals mode. Whether the view lists the names of the items.
     bool namesDisplay() const;
-    // Only used in NamedRadicals mode. Set whether the view should
-    // list the names of the given item.
+    // Only used in NamedRadicals mode. Set whether the view should list the names of the
+    // given item.
     void setNamesDisplay(bool newnames);
 
-    // Only used in NamedRadicals mode. Only shows radicals that consist
-    // or start with the returned string, depending on the value of
-    // exactMatch().
-    QString searchName() const;
-    // Only used in NamedRadicals mode. Set whether only show radicals that
-    // consist or start with a string, depending on the value of exactMatch()
-    // Set an empty string to erase the filter.
-    void setSearchName(const QString &newname);
+    // Only used in NamedRadicals mode. Only shows radicals that consist or start with the
+    // returned string, depending on the value of exactMatch().
+    QString searchString() const;
+    // Only used in NamedRadicals mode. Set the prefix string of radicals to show. Depending
+    // on the value of exactMatch(), the string might have to fully match. The string should
+    // be in romaji. Set an empty string to erase the filter.
+    void setSearchString(const QString &val);
 
-    // Only used in NamedRadicals mode. Only show radicals that have a
-    // name exactly matching the value of searchName().
+    // Only used in NamedRadicals mode. Only show radicals that have a name exactly matching
+    // the value of searchName().
     bool exactMatch() const;
-    // Only used in NamedRadicals mode. Set whether only show radicals that
-    // have a name exactly matching the value of searchName().
+    // Only used in NamedRadicals mode. Set whether only show radicals that have a name
+    // exactly matching the value of searchName().
     void setExactMatch(bool newexact);
 
-    // Adds the current selection to the list of finalized selections. Any of
-    // the radicals in a single selection can be in a kanji to be a valid
-    // result. Each separate selection must match a kanji to be a valid result.
+    // Adds the current selection to the list of finalized selections. Any of/ the radicals in
+    // a single selection can be in a kanji to be a valid result. Each separate selection must
+    // match a kanji to be a valid result.
     void finalizeSelection();
-    // Removes every finalized selection and resets the current selections
-    // as well.
+    // Removes every finalized selection and resets the current selections as well.
     void clearSelection();
 
-    // Sets the list of kanji that are selected in a parent kanji search window.
-    // The list of kanji restricts the shown radicals to the valid ones.
-    // The list is taken from the model that represents kanji in a grid view.
+    // Sets the list of kanji that are selected in a parent kanji search window. The list of
+    // kanji restricts the shown radicals to the valid ones. The list is taken from the model
+    // that represents kanji in a grid view.
     void setFromModel(KanjiGridModel *model);
-    // Sets the list of kanji that are selected in a parent kanji search window.
-    // The list of kanji restricts the shown radicals to the valid ones.
+    // Sets the list of kanji that are selected in a parent kanji search window. The list of
+    // kanji restricts the shown radicals to the valid ones.
     void setFromList(const std::vector<ushort> &list);
 
     //// Clears the previously obtained list via setKanjiList. The list of kanji
@@ -119,8 +114,8 @@ public:
 
     // Returns a radicals filter that can be used to filter kanji.
     void activeFilter(RadicalFilter &f);
-    // Creates a list of radical indexes from the current selection that can
-    // be added to the finalized filters.
+    // Creates a list of radical indexes from the current selection that can be added to the
+    // finalized filters.
     std::vector<ushort> selectionToFilter();
 signals:
     // The selection has changed, resulting in new kanji to be displayed.
@@ -141,35 +136,31 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
 private:
-    // Computes the correct font sizes used for displaying the radicals, and
-    // the radical indexes.
+    // Computes the correct font sizes used for displaying the radicals, and the radical
+    // indexes.
     void init();
 
-    // Collects the radicals that can be shown depending on the current
-    // kanji list of the parent kanji form. Any settings like stroke count
-    // or radical name set in the radical form are filtered further by
-    // calling filter().
+    // Collects the radicals that can be shown depending on the current kanji list of the
+    // parent kanji form. Any settings like stroke count or radical name set in the radical
+    // form are filtered further by calling filter().
     void filterIncluded();
 
     // Collects the radicals to be shown, filling up list, and widths.
     void filter();
 
-    // Fills the items list with the data of each listed item in the
-    // grid. Only those radicals are added that are in list too. If
-    // group is true and mode is NamedRadicals, consecutive radicals
-    // with the same radical number are included in the data.
+    // Fills the items list with the data of each listed item in the grid. Only those radicals
+    // are added that are in list too. If group is true and mode is NamedRadicals, consecutive
+    // radicals with the same radical number are included in the data.
     void recomputeItems();
 
-    // Computes new row item distribution and scrollbar sizes from
-    // the passed viewport size.
+    // Computes new row item distribution and scrollbar sizes from the passed viewport size.
     void recompute(const QSize &size);
 
     // Updates the vertical scrollbar.
     void recomputeScrollbar(const QSize &size);
 
-    // The radical or part with the given index holds a stroke count,
-    // and must not come last in a line. The index is for the list, that
-    // itself holds indexes to filtered radicals.
+    // The radical or part with the given index holds a stroke count,/ and must not come last
+    // in a line. The index is for the list, that itself holds indexes to filtered radicals.
     bool blockStarter(int index);
 
     // The width of an item in the grid. The index is for the list, that itself holds indexes
@@ -183,8 +174,7 @@ private:
     // at index, or the item is for stroke count, the result is -1.
     int indexAt(int x, int y);
     // Returns the index of the item at the given coordinate in the list. If there is no item
-    // at index, or the item is for stroke count, the
-    // result is -1.
+    // at index, or the item is for stroke count, the result is -1.
     int indexAt(const QPoint &pt);
     // Returns the index of the given value in the list.
     int indexOf(ushort val);

@@ -206,6 +206,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="groupButton">
+             <property name="toolTip">
+              <string>Group positions of the same radical as a single item</string>
+             </property>
              <property name="text">
               <string>Group</string>
              </property>
@@ -219,6 +222,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="namesButton">
+             <property name="toolTip">
+              <string>Show radical names</string>
+             </property>
              <property name="text">
               <string>Names</string>
              </property>
@@ -238,20 +244,40 @@
             </widget>
            </item>
            <item>
-            <widget class="ZKanaLineEdit" name="searchEdit"/>
-           </item>
-           <item>
-            <widget class="QToolButton" name="exactButton">
-             <property name="text">
-              <string>Exact</string>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="spacing">
+              <number>2</number>
              </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoRaise">
-              <bool>false</bool>
-             </property>
-            </widget>
+             <item>
+              <widget class="ZKanaLineEdit" name="searchEdit"/>
+             </item>
+             <item>
+              <widget class="QToolButton" name="anyAfterButton">
+               <property name="toolTip">
+                <string>Allow incomplete search</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="Resources/resources.qrc">
+                 <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>18</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoRaise">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <widget class="QPushButton" name="addButton">
@@ -260,6 +286,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Finalize current selection</string>
              </property>
              <property name="text">
               <string>Add</string>
@@ -339,6 +368,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Clear previous and current selections</string>
+             </property>
              <property name="text">
               <string>Clear</string>
              </property>
@@ -372,20 +404,7 @@
         <property name="verticalSpacing">
          <number>4</number>
         </property>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="label_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Filter history:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
+        <item row="1" column="1">
          <widget class="QListWidget" name="radsList">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -398,7 +417,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="1" column="0">
          <widget class="QWidget" name="radsButtons" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -433,8 +452,24 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Move filter up</string>
+             </property>
              <property name="text">
               <string>Up</string>
+             </property>
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/upmark.svg</normaloff>:/upmark.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -449,8 +484,24 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Move filter down</string>
+             </property>
              <property name="text">
               <string>Down</string>
+             </property>
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/downmark.svg</normaloff>:/downmark.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -465,8 +516,24 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>Remove selected filter</string>
+             </property>
              <property name="text">
               <string>Remove</string>
+             </property>
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -475,25 +542,76 @@
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>0</width>
-               <height>0</height>
+               <width>1</width>
+               <height>10</height>
               </size>
              </property>
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="radsClearButton">
+            <widget class="QToolButton" name="radsClearButton">
              <property name="enabled">
               <bool>false</bool>
              </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Clear filter history</string>
+             </property>
              <property name="text">
-              <string>Remove All</string>
+              <string>Remove all</string>
+             </property>
+             <property name="icon">
+              <iconset resource="Resources/resources.qrc">
+               <normaloff>:/xmark.svg</normaloff>:/xmark.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>18</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Filter history:</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -556,6 +674,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
