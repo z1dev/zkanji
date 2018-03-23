@@ -1150,7 +1150,7 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
     connect(a, &QAction::triggered, this, &KanjiInfoForm::copyData);
     a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
     menu.addSeparator();
-    a = menu.addAction(tr("Kanji to group..."));
+    a = menu.addAction(tr("Add kanji to group..."));
     connect(a, &QAction::triggered, this, &KanjiInfoForm::addToGroup);
     a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
     menu.addSeparator();
