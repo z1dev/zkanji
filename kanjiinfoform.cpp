@@ -31,6 +31,7 @@
 #include "zui.h"
 #include "formstate.h"
 #include "generalsettings.h"
+#include "dialogs.h"
 
 // Event posted when deferring the resize of controls in the info form.
 ZEVENT(InfoResizeEvent)
@@ -576,6 +577,13 @@ void KanjiInfoForm::copyData() const
     if (ui->kanjiView->kanjiIndex() < 0)
         return;
     gUI->clipCopy(QString("%1\n\n").arg(ZKanji::kanjis[ui->kanjiView->kanjiIndex()]->ch) + ui->infoText->toPlainText());
+}
+
+void KanjiInfoForm::addToGroup() const
+{
+    if (ui->kanjiView->kanjiIndex() < 0)
+        return;
+    kanjiToGroupSelect(dict, { (ushort)ui->kanjiView->kanjiIndex() });
 }
 
 //void KanjiInfoForm::appendData() const
@@ -1133,13 +1141,65 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
     QAction *a;
     a = menu.addAction(tr("Copy kanji"));
     connect(a, &QAction::triggered, this, &KanjiInfoForm::copy);
+    a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
     a = menu.addAction(tr("Append kanji"));
     connect(a, &QAction::triggered, this, &KanjiInfoForm::append);
+    a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
     menu.addSeparator();
     a = menu.addAction(tr("Copy kanji data"));
     connect(a, &QAction::triggered, this, &KanjiInfoForm::copyData);
-    //a = menu.addAction(tr("Append kanji data"));
-    //connect(a, &QAction::triggered, this, &KanjiInfoForm::appendData);
+    a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
+    menu.addSeparator();
+    a = menu.addAction(tr("Kanji to group..."));
+    connect(a, &QAction::triggered, this, &KanjiInfoForm::addToGroup);
+    a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
+    menu.addSeparator();
+    QMenu *sub = menu.addMenu("Panels");
+    a = sub->addAction(tr("Words"));
+    a->setCheckable(true);
+    a->setChecked(ui->wordsButton->isChecked());
+    connect(a, &QAction::triggered, this, [this]() {
+        ui->wordsButton->toggle();
+        on_wordsButton_clicked(ui->wordsButton->isChecked());
+    });
+
+    sub->addSeparator();
+    a = sub->addAction(tr("Similar kanji"));
+    a->setCheckable(true);
+    a->setEnabled(!ui->wordsButton->isChecked());
+    if (a->isEnabled())
+    {
+        a->setCheckable(true);
+        a->setChecked(ui->simButton->isChecked());
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->simButton->toggle();
+            on_simButton_clicked(ui->simButton->isChecked());
+        });
+    }
+    a = sub->addAction(tr("Kanji parts"));
+    a->setCheckable(true);
+    a->setEnabled(!ui->wordsButton->isChecked());
+    if (a->isEnabled())
+    {
+        a->setCheckable(true);
+        a->setChecked(ui->partsButton->isChecked());
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->partsButton->toggle();
+            on_partsButton_clicked(ui->partsButton->isChecked());
+        });
+    }
+    a = sub->addAction(tr("Part of"));
+    a->setCheckable(true);
+    a->setEnabled(!ui->wordsButton->isChecked());
+    if (a->isEnabled())
+    {
+        a->setCheckable(true);
+        a->setChecked(ui->partofButton->isChecked());
+        connect(a, &QAction::triggered, this, [this]() {
+            ui->partofButton->toggle();
+            on_partofButton_clicked(ui->partofButton->isChecked());
+        });
+    }
     menu.addSeparator();
     a = menu.addAction(tr("Background grid"));
     a->setCheckable(true);
@@ -1217,52 +1277,6 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
                 on_speedSlider_valueChanged(4);
             });
         }
-    }
-    menu.addSeparator();
-    a = menu.addAction(tr("Words"));
-    a->setCheckable(true);
-    a->setChecked(ui->wordsButton->isChecked());
-    connect(a, &QAction::triggered, this, [this]() {
-        ui->wordsButton->toggle();
-        on_wordsButton_clicked(ui->wordsButton->isChecked());
-    });
-
-    menu.addSeparator();
-    a = menu.addAction(tr("Similar kanji"));
-    a->setCheckable(true);
-    a->setEnabled(!ui->wordsButton->isChecked());
-    if (a->isEnabled())
-    {
-        a->setCheckable(true);
-        a->setChecked(ui->simButton->isChecked());
-        connect(a, &QAction::triggered, this, [this]() {
-            ui->simButton->toggle();
-            on_simButton_clicked(ui->simButton->isChecked());
-        });
-    }
-    a = menu.addAction(tr("Kanji parts"));
-    a->setCheckable(true);
-    a->setEnabled(!ui->wordsButton->isChecked());
-    if (a->isEnabled())
-    {
-        a->setCheckable(true);
-        a->setChecked(ui->partsButton->isChecked());
-        connect(a, &QAction::triggered, this, [this]() {
-            ui->partsButton->toggle();
-            on_partsButton_clicked(ui->partsButton->isChecked());
-        });
-    }
-    a = menu.addAction(tr("Part of"));
-    a->setCheckable(true);
-    a->setEnabled(!ui->wordsButton->isChecked());
-    if (a->isEnabled())
-    {
-        a->setCheckable(true);
-        a->setChecked(ui->partofButton->isChecked());
-        connect(a, &QAction::triggered, this, [this]() {
-            ui->partofButton->toggle();
-            on_partofButton_clicked(ui->partofButton->isChecked());
-        });
     }
 
     menu.exec(pos);

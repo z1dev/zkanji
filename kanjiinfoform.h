@@ -62,6 +62,7 @@ public:
     void copy() const;
     void append() const;
     void copyData() const;
+    void addToGroup() const;
     //void appendData() const;
 protected:
     virtual bool event(QEvent *e) override;
