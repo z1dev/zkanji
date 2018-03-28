@@ -333,7 +333,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Save and restore window positions and sizes</string>
+                 <string>Save and restore window positions and dock states</string>
                 </property>
                </widget>
               </item>

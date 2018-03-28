@@ -143,7 +143,8 @@ namespace Settings
         ini.setValue("dateformat", general.dateformat == GeneralSettings::YearMonthDay ? "YearMonthDay" : general.dateformat == GeneralSettings::MonthDayYear ? "MonthDayYear" : "DayMonthYear");
         ini.setValue("savewinstates", general.savewinstates);
         ini.setValue("savetoolstates", general.savetoolstates);
-        ini.setValue("startstate", (int)general.startstate);
+        ini.setValue("startstate", general.startstate == GeneralSettings::SaveState ? "savestate" : general.startstate == GeneralSettings::AlwaysMinimize ? "minimize" : general.startstate == GeneralSettings::AlwaysMaximize ? "maximize" : "forget");
+        ini.setValue("startplacement", general.startplace == GeneralSettings::MainOnActive ? "mainonactive" : general.startplace == GeneralSettings::AllOnActive ? "allonactive" : "savedmonitor");
         ini.setValue("minimizebehavior", general.minimizebehavior == GeneralSettings::TrayOnClose ? "closetotray" : general.minimizebehavior == GeneralSettings::TrayOnMinimize ? "minimizetotray" : "default" );
         ini.setValue("scaling", clamp(general.savedscale, 100, 400));
 
@@ -757,9 +758,12 @@ namespace Settings
 
         general.savewinstates = ini.value("savewinstates", true).toBool();
         general.savetoolstates = ini.value("savetoolstates", true).toBool();
-        val = ini.value("startstate", 0).toInt(&ok);
-        if (ok && val >= 0 && val <= 3)
-            general.startstate = (GeneralSettings::StartState)val;
+
+        tmp = ini.value("startstate", "savestate").toString().toLower();
+        general.startstate = tmp == "forget" ? GeneralSettings::ForgetState : tmp == "minimize" ? GeneralSettings::AlwaysMinimize : tmp == "maximize" ? GeneralSettings::AlwaysMaximize : GeneralSettings::SaveState;
+
+        tmp = ini.value("startplacement", "mainonactive").toString().toLower();
+        general.startplace = tmp == "savedmonitor" ? GeneralSettings::SavedMonitor : tmp == "allonactive" ? GeneralSettings::AllOnActive : GeneralSettings::MainOnActive;
 
         tmp = ini.value("minimizebehavior", "default").toString();
         if (tmp == "closetotray")
