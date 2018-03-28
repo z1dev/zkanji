@@ -184,6 +184,8 @@ void ZKanjiForm::saveXMLSettings(QXmlStreamWriter &writer) const
         writer.writeAttribute("height", QString::number(settingsrect.height()));
         writer.writeAttribute("screenx", QString::number(sg.left()));
         writer.writeAttribute("screeny", QString::number(sg.top()));
+        writer.writeAttribute("screenw", QString::number(sg.width()));
+        writer.writeAttribute("screenh", QString::number(sg.height()));
 
         if (mainform)
         {
@@ -277,20 +279,13 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     geom.setWidth((ok ? reader.attributes().value("width").toInt(&ok) : -1));
     geom.setHeight((ok ? reader.attributes().value("height").toInt(&ok) : -1));
 
-    int screenx = -1;
-    int screeny = -1;
+    int screenx = ok ? reader.attributes().value("screenx").toInt(&ok) : -1;
+    int screeny = ok ? reader.attributes().value("screeny").toInt(&ok) : -1;
+    int screenw = ok ? reader.attributes().value("screenw").toInt(&ok) : -1;
+    int screenh = ok ? reader.attributes().value("screenh").toInt(&ok) : -1;
+    ok = ok && screenw > 1 && screenh > 1;
 
-    screenx = reader.attributes().value("screenx").toInt(&ok);
-    if (!ok)
-        screenx = -1;
-    else
-    {
-        screeny = reader.attributes().value("screeny").toInt(&ok);
-        if (!ok)
-            screeny = -1;
-    }
-
-    if (!ok)
+    if (!ok || !Settings::general.savewinstates)
         geom = QRect();
 
     if (!geom.isEmpty())
@@ -305,10 +300,13 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
         // Find the screen that contains the window.
 
-        int screennum = screenNumber(QRect(geom.topLeft(), geom.size() + framesize));
+        int screennum = (Settings::general.startplace == GeneralSettings::SavedMonitor || (!mainform && Settings::general.startplace == GeneralSettings::MainOnActive)) ?
+            screenNumber(QRect(geom.topLeft(), geom.size() + framesize))  : -1;
+        
+
         QRect sg = qApp->desktop()->screenGeometry(screennum);
         if (screennum == -1 && screenx != -1 && screeny != -1)
-            geom.moveTo(sg.topLeft() + QPoint(geom.left() - screenx, geom.top() - screeny));
+            geom.moveTo(sg.topLeft() + QPoint((geom.left() - screenx) * (sg.width() / screenw), (geom.top() - screeny) * (sg.height() / screenh)));
 
         if (geom.left() + geom.width() + framesize.width() > sg.left() + sg.width())
             geom.moveLeft(std::max(sg.left(), sg.left() + sg.width() - geom.width() - framesize.width()));
@@ -335,7 +333,7 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
     restoremaximized = false;
 
-    if (mainform)
+    if (Settings::general.savewinstates && mainform)
     {
         Qt::WindowState state;
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>590</width>
-    <height>440</height>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -325,13 +325,6 @@
                </spacer>
               </item>
               <item row="4" column="0" colspan="2">
-               <widget class="QLabel" name="label_20">
-                <property name="text">
-                 <string>Window position and state:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0" colspan="2">
                <widget class="QCheckBox" name="savePosBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -340,11 +333,11 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Save and restore windows</string>
+                 <string>Save and restore window positions and sizes</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
+              <item row="5" column="0">
                <widget class="QLabel" name="startupStateLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -353,11 +346,11 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Main window:</string>
+                 <string>Main window state:</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="1">
+              <item row="5" column="1">
                <widget class="QComboBox" name="startupStateCBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -386,6 +379,44 @@
                 <item>
                  <property name="text">
                   <string>Don't save state</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="placementLabel">
+                <property name="text">
+                 <string>Startup placement:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QComboBox" name="placementCBox">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Main window on active monitor</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Every window on active monitor</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Every window at previous position</string>
                  </property>
                 </item>
                </widget>
@@ -1794,11 +1825,8 @@
                 </item>
                 <item row="1" column="1">
                  <layout class="QGridLayout" name="gridLayout_3">
-                  <property name="horizontalSpacing">
+                  <property name="spacing">
                    <number>4</number>
-                  </property>
-                  <property name="verticalSpacing">
-                   <number>10</number>
                   </property>
                   <item row="1" column="1">
                    <layout class="QHBoxLayout" name="horizontalLayout_16">
@@ -5483,6 +5511,7 @@
   <tabstop>dateFormatCBox</tabstop>
   <tabstop>savePosBox</tabstop>
   <tabstop>startupStateCBox</tabstop>
+  <tabstop>placementCBox</tabstop>
   <tabstop>saveToolPosBox</tabstop>
   <tabstop>saveKanjiBox</tabstop>
   <tabstop>minimizeCBox</tabstop>
@@ -5645,8 +5674,8 @@
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>
