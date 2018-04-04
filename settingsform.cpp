@@ -478,10 +478,9 @@ void SettingsForm::reset()
 {
     ui->dateFormatCBox->setCurrentIndex((int)Settings::general.dateformat);
 
-    ui->savePosBox->setChecked(Settings::general.savewinstates);
-    ui->saveToolPosBox->setChecked(Settings::general.savetoolstates);
+    ui->savePosBox->setChecked(Settings::general.savewinpos);
+    //ui->saveToolPosBox->setChecked(Settings::general.savetoolstates);
     ui->startupStateCBox->setCurrentIndex((int)Settings::general.startstate);
-    ui->placementCBox->setCurrentIndex((int)Settings::general.startplace);
     if (QSystemTrayIcon::isSystemTrayAvailable())
         ui->minimizeCBox->setCurrentIndex((int)Settings::general.minimizebehavior);
     on_savePosBox_toggled();
@@ -726,10 +725,9 @@ void SettingsForm::applyClicked()
     if (ui->dateFormatCBox->currentIndex() == -1)
         ui->dateFormatCBox->setCurrentIndex(0);
     Settings::general.dateformat = (GeneralSettings::DateFormat)ui->dateFormatCBox->currentIndex();
-    Settings::general.savewinstates = ui->savePosBox->isChecked();
-    Settings::general.savetoolstates = ui->saveToolPosBox->isChecked();
+    Settings::general.savewinpos = ui->savePosBox->isChecked();
+    //Settings::general.savetoolstates = ui->saveToolPosBox->isChecked();
     Settings::general.startstate = (GeneralSettings::StartState)ui->startupStateCBox->currentIndex();
-    Settings::general.startplace = (GeneralSettings::StartPlacement)ui->placementCBox->currentIndex();
     if (QSystemTrayIcon::isSystemTrayAvailable())
         Settings::general.minimizebehavior = (GeneralSettings::MinimizeBehavior)ui->minimizeCBox->currentIndex();
 
@@ -1005,11 +1003,9 @@ void SettingsForm::on_backupFolderButton_clicked()
 
 void SettingsForm::on_savePosBox_toggled()
 {
-    ui->saveToolPosBox->setEnabled(ui->savePosBox->isChecked());
+    //ui->saveToolPosBox->setEnabled(ui->savePosBox->isChecked());
     ui->startupStateCBox->setEnabled(ui->savePosBox->isChecked());
     ui->startupStateLabel->setEnabled(ui->savePosBox->isChecked());
-    ui->placementCBox->setEnabled(ui->savePosBox->isChecked());
-    ui->placementLabel->setEnabled(ui->savePosBox->isChecked());
 }
 
 void SettingsForm::on_jlptBox_toggled()

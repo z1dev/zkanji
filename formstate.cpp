@@ -23,6 +23,7 @@
 #include "wordstudylistform.h"
 #include "zui.h"
 #include "globalui.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -47,7 +48,7 @@ namespace FormStates
 
     bool emptyState(const SplitterFormData &data)
     {
-        return data.pos.isNull() && data.screenpos.isNull() && !data.siz.isValid();
+        return /*data.pos.isNull() && data.screenpos.isNull() &&*/ !data.siz.isValid();
     }
 
     bool emptyState(const CollectFormData &data)
@@ -104,10 +105,10 @@ namespace FormStates
 
     void saveXMLSettings(const SplitterFormData &data, QXmlStreamWriter &writer)
     {
-        writer.writeAttribute("x", QString::number(data.pos.x()));
-        writer.writeAttribute("y", QString::number(data.pos.y()));
-        writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
-        writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
+        //writer.writeAttribute("x", QString::number(data.pos.x()));
+        //writer.writeAttribute("y", QString::number(data.pos.y()));
+        //writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
+        //writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
         writer.writeAttribute("width", QString::number(data.siz.width()));
         writer.writeAttribute("height", QString::number(data.siz.height()));
 
@@ -124,28 +125,30 @@ namespace FormStates
         int sy;
         int w;
         int h;
-        x = reader.attributes().value("x").toInt(&ok);
-        if (ok)
-            y = reader.attributes().value("y").toInt(&ok);
-        if (ok)
-            sx = reader.attributes().value("screenx").toInt(&ok);
-        if (ok)
-            sy = reader.attributes().value("screeny").toInt(&ok);
-        if (ok)
+        //x = reader.attributes().value("x").toInt(&ok);
+        //if (ok)
+        //    y = reader.attributes().value("y").toInt(&ok);
+        //if (ok)
+        //    sx = reader.attributes().value("screenx").toInt(&ok);
+        //if (ok)
+        //    sy = reader.attributes().value("screeny").toInt(&ok);
+        //if (ok)
+
+        //if (Settings::general.savewinpos)
             w = reader.attributes().value("width").toInt(&ok);
         if (ok)
             h = reader.attributes().value("height").toInt(&ok);
 
         if (ok)
         {
-            data.pos = QPoint(x, y);
-            data.screenpos = QPoint(sx, sy);
+            //data.pos = QPoint(x, y);
+            //data.screenpos = QPoint(sx, sy);
             data.siz = QSize(w, h);
         }
         else
         {
-            data.pos = QPoint();
-            data.screenpos = QPoint();
+            //data.pos = QPoint();
+            //data.screenpos = QPoint();
             data.siz = QSize();
         }
 
@@ -478,16 +481,16 @@ namespace FormStates
             writer.writeAttribute("width", QString::number(data.siz.width()));
             writer.writeAttribute("height", QString::number(data.siz.height()));
         }
-        if (!data.pos.isNull())
-        {
-            writer.writeAttribute("x", QString::number(data.pos.x()));
-            writer.writeAttribute("y", QString::number(data.pos.y()));
-        }
-        if (!data.screenpos.isNull())
-        {
-            writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
-            writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
-        }
+        //if (!data.pos.isNull())
+        //{
+        //    writer.writeAttribute("x", QString::number(data.pos.x()));
+        //    writer.writeAttribute("y", QString::number(data.pos.y()));
+        //}
+        //if (!data.screenpos.isNull())
+        //{
+        //    writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
+        //    writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
+        //}
 
         writer.writeAttribute("grid", data.grid ? True : False);
         writer.writeAttribute("sod", data.sod ? True : False);
@@ -537,44 +540,44 @@ namespace FormStates
         if (!ok)
             data.siz = QSize();
 
-        ok = false;
-        if (reader.attributes().hasAttribute("x"))
-        {
-            val = reader.attributes().value("x").toInt(&ok);
-            if (val < -999999 || val > 999999)
-                ok = false;
-            if (ok)
-                data.pos.setX(val);
-        }
-        if (ok && reader.attributes().hasAttribute("y"))
-        {
-            val = reader.attributes().value("y").toInt(&ok);
-            if (val < -999999 || val > 999999)
-                ok = false;
-            if (ok)
-                data.pos.setY(val);
-        }
-        if (!ok)
-            data.pos = QPoint();
+        //ok = false;
+        //if (reader.attributes().hasAttribute("x"))
+        //{
+        //    val = reader.attributes().value("x").toInt(&ok);
+        //    if (val < -999999 || val > 999999)
+        //        ok = false;
+        //    if (ok)
+        //        data.pos.setX(val);
+        //}
+        //if (ok && reader.attributes().hasAttribute("y"))
+        //{
+        //    val = reader.attributes().value("y").toInt(&ok);
+        //    if (val < -999999 || val > 999999)
+        //        ok = false;
+        //    if (ok)
+        //        data.pos.setY(val);
+        //}
+        //if (!ok)
+        //    data.pos = QPoint();
 
-        if (reader.attributes().hasAttribute("screenx"))
-        {
-            val = reader.attributes().value("screenx").toInt(&ok);
-            if (val < -999999 || val > 999999)
-                ok = false;
-            if (ok)
-                data.screenpos.setX(val);
-        }
-        if (ok && reader.attributes().hasAttribute("screeny"))
-        {
-            val = reader.attributes().value("screeny").toInt(&ok);
-            if (val < -999999 || val > 999999)
-                ok = false;
-            if (ok)
-                data.screenpos.setY(val);
-        }
-        if (!ok)
-            data.screenpos = QPoint();
+        //if (reader.attributes().hasAttribute("screenx"))
+        //{
+        //    val = reader.attributes().value("screenx").toInt(&ok);
+        //    if (val < -999999 || val > 999999)
+        //        ok = false;
+        //    if (ok)
+        //        data.screenpos.setX(val);
+        //}
+        //if (ok && reader.attributes().hasAttribute("screeny"))
+        //{
+        //    val = reader.attributes().value("screeny").toInt(&ok);
+        //    if (val < -999999 || val > 999999)
+        //        ok = false;
+        //    if (ok)
+        //        data.screenpos.setY(val);
+        //}
+        //if (!ok)
+        //    data.screenpos = QPoint();
 
         data.grid = reader.attributes().value("grid") == True;
         data.sod = reader.attributes().value("sod") == True;
@@ -1086,8 +1089,10 @@ namespace FormStates
         writer.writeAttribute("y", QString::number(data.rect.y()));
         writer.writeAttribute("width", QString::number(data.rect.width()));
         writer.writeAttribute("height", QString::number(data.rect.height()));
-        writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
-        writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
+        writer.writeAttribute("screenx", QString::number(data.screen.x()));
+        writer.writeAttribute("screeny", QString::number(data.screen.y()));
+        writer.writeAttribute("screenw", QString::number(data.screen.width()));
+        writer.writeAttribute("screenh", QString::number(data.screen.height()));
     }
 
     void loadXMLSettings(RecognizerFormData &data, QXmlStreamReader &reader)
@@ -1135,7 +1140,7 @@ namespace FormStates
             if (val < -999999 || val > 999999)
                 ok = false;
             if (ok)
-                data.screenpos.setX(val);
+                data.screen.setX(val);
         }
         if (ok && reader.attributes().hasAttribute("screeny"))
         {
@@ -1143,13 +1148,29 @@ namespace FormStates
             if (val < -999999 || val > 999999)
                 ok = false;
             if (ok)
-                data.screenpos.setY(val);
+                data.screen.setY(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screenw"))
+        {
+            val = reader.attributes().value("screenw").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screen.setWidth(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screenh"))
+        {
+            val = reader.attributes().value("screenh").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screen.setHeight(val);
         }
 
         if (!ok)
         {
             data.rect = QRect();
-            data.screenpos = QPoint();
+            data.screen = QRect();
         }
 
         reader.skipCurrentElement();
@@ -1162,10 +1183,10 @@ namespace FormStates
         if (nodata)
             data.wsizes[1] = -1;
 
-        data.pos = window->pos();
+        //data.pos = window->pos();
 
-        QRect sg = qApp->desktop()->screenGeometry(window);
-        data.screenpos = sg.topLeft();
+        //QRect sg = qApp->desktop()->screenGeometry(window);
+        //data.screenpos = sg.topLeft();
 
         data.siz = window->isMaximized() ? window->normalGeometry().size() : window->size();
 
@@ -1212,8 +1233,8 @@ namespace FormStates
         }
 
         //QRect r = data.geom;
-        QPoint pos = data.pos;
-        QPoint spos = data.screenpos;
+        //QPoint pos = data.pos;
+        //QPoint spos = data.screenpos;
         QSize siz = data.siz;
 
         if (splitter->widget(1)->isVisibleTo(window))
@@ -1239,28 +1260,28 @@ namespace FormStates
 
         QRect sg;
 
-        int screennum = screenNumber(QRect(pos, siz));
-        if (screennum == -1)
-        {
-            screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
-            sg = qApp->screens().at(screennum)->geometry();
-            pos = (data.pos - data.screenpos) + sg.topLeft();
-        }
-        else
-            sg = qApp->screens().at(screennum)->geometry();
+        //int screennum = screenNumber(QRect(pos, siz));
+        //if (screennum == -1)
+        //{
+        //    screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
+        //    sg = qApp->screens().at(screennum)->geometry();
+        //    pos = (data.pos - data.screenpos) + sg.topLeft();
+        //}
+        //else
+        //    sg = qApp->screens().at(screennum)->geometry();
 
         // Geometry might be out of bounds. Move window within bounds.
 
-        if (pos.x() < sg.left())
-            pos.setX(sg.left());
-        else if (pos.x() + siz.width() > sg.left() + sg.width())
-            pos.setX(sg.left() + sg.width() - siz.width());
-        if (pos.y() < sg.top())
-            pos.setY(sg.top());
-        else if (pos.y() + siz.height() > sg.top() + sg.height())
-            pos.setY(sg.top() + sg.height() - siz.height());
+        //if (pos.x() < sg.left())
+        //    pos.setX(sg.left());
+        //else if (pos.x() + siz.width() > sg.left() + sg.width())
+        //    pos.setX(sg.left() + sg.width() - siz.width());
+        //if (pos.y() < sg.top())
+        //    pos.setY(sg.top());
+        //else if (pos.y() + siz.height() > sg.top() + sg.height())
+        //    pos.setY(sg.top() + sg.height() - siz.height());
 
-        window->move(pos);
+        //window->move(pos);
 
         if (splitter->widget(1)->isVisibleTo(window))
             splitter->setSizes({ data.wsizes[0], data.wsizes[1] });
@@ -1310,24 +1331,27 @@ namespace FormStates
         bool data = FormStates::sizes.find(sizename) != FormStates::sizes.end();
         QSize &size = FormStates::sizes[sizename];
 
-        bool ok;
-        int val;
-        if (reader.attributes().hasAttribute("width"))
-        {
-            val = reader.attributes().value("width").toInt(&ok);
-            if (val < 0 || val > 999999)
-                ok = false;
-            if (ok)
-                size.setWidth(val);
-        }
-        if (ok && reader.attributes().hasAttribute("height"))
-        {
-            val = reader.attributes().value("height").toInt(&ok);
-            if (val < 0 || val > 999999)
-                ok = false;
-            if (ok)
-                size.setHeight(val);
-        }
+        bool ok = false;
+        //if (Settings::general.savewinpos)
+        //{
+            int val;
+            if (reader.attributes().hasAttribute("width"))
+            {
+                val = reader.attributes().value("width").toInt(&ok);
+                if (val < 0 || val > 999999)
+                    ok = false;
+                if (ok)
+                    size.setWidth(val);
+            }
+            if (ok && reader.attributes().hasAttribute("height"))
+            {
+                val = reader.attributes().value("height").toInt(&ok);
+                if (val < 0 || val > 999999)
+                    ok = false;
+                if (ok)
+                    size.setHeight(val);
+            }
+        //}
         if (!ok)
             size = QSize();
 

@@ -82,13 +82,14 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     
     connect(readingCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readingBoxChanged(int)));
 
-    updateGeometry();
-    setAttribute(Qt::WA_DontShowOnScreen, true);
-    show();
-    ignoreresize = true;
-    hide();
-    ignoreresize = false;
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    updateWindowGeometry(this);
+    //updateGeometry();
+    //setAttribute(Qt::WA_DontShowOnScreen, true);
+    //show();
+    //ignoreresize = true;
+    //hide();
+    //ignoreresize = false;
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     restrictWidgetSize(ui->speedSlider, 16);
 
@@ -199,8 +200,8 @@ void KanjiInfoForm::saveState(KanjiInfoData &data) const
 {
     QRect g = geometry();
     data.siz = isMaximized() ? normalGeometry().size() : g.size();
-    data.pos = g.topLeft();
-    data.screenpos = qApp->desktop()->screenGeometry(this).topLeft();
+    //data.pos = g.topLeft();
+    //data.screenpos = qApp->desktop()->screenGeometry(this).topLeft();
 
     int h = data.siz.height();
     if (ui->sodWidget->isVisibleTo(this))
@@ -303,72 +304,73 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
 
     ui->splitter->setSizes({ data.toph, dicth });
 
-    QRect geom = QRect(data.pos, data.siz);
-    if (geom.size().isValid())
+    //QRect geom = QRect(data.pos, data.siz);
+    int geomh = 0;
+    if (data.siz.isValid())
     {
-        int h = geom.height();
+        geomh = data.siz.height();
         if (ui->sodWidget->isVisibleTo(this))
         {
             ui->sodWidget->adjustSize();
-            h += ui->sodWidget->height() + ui->sodWidget->parentWidget()->layout()->spacing();
+            geomh += ui->sodWidget->height() + ui->sodWidget->parentWidget()->layout()->spacing();
         }
         if (ui->similarWidget->isVisibleTo(this))
         {
             ui->similarWidget->adjustSize();
-            h += ui->similarWidget->height() + ui->similarWidget->parentWidget()->layout()->spacing();
+            geomh += ui->similarWidget->height() + ui->similarWidget->parentWidget()->layout()->spacing();
         }
         if (ui->partsWidget->isVisibleTo(this))
         {
             ui->partsWidget->adjustSize();
-            h += ui->partsWidget->height() + ui->partsWidget->parentWidget()->layout()->spacing();
+            geomh += ui->partsWidget->height() + ui->partsWidget->parentWidget()->layout()->spacing();
         }
         if (ui->partofWidget->isVisibleTo(this))
         {
             ui->partofWidget->adjustSize();
-            h += ui->partofWidget->height() + ui->partofWidget->parentWidget()->layout()->spacing();
+            geomh += ui->partofWidget->height() + ui->partofWidget->parentWidget()->layout()->spacing();
         }
         if (ui->dictWidget->isVisibleTo(this))
         {
             ui->dictWidget->adjustSize();
-            h += dicth + ui->splitter->handleWidth();
+            geomh += dicth + ui->splitter->handleWidth();
         }
-        geom.setHeight(h);
+        //geom.setHeight(h);
         //resize(siz);
     }
     else
-        geom.setSize(geometry().size());
+        geomh = geometry().height(); // .setSize(geometry().size());
 
-    int screennum = !data.siz.isValid() ? -1 : screenNumber(QRect(data.pos, geom.size()));
-    QRect sg;
-    if (screennum == -1)
-    {
-        screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
-        sg = qApp->desktop()->screenGeometry(screennum);
-        if (data.siz.isValid())
-            geom.moveTo(sg.topLeft() + (data.pos - data.screenpos));
-        else
-            geom.moveTo(sg.center() - QPoint(geom.width() / 2, geom.height() / 2));
-    }
-    else
-        sg = qApp->desktop()->screenGeometry(screennum);
+    //int screennum = !data.siz.isValid() ? -1 : screenNumber(QRect(data.pos, geom.size()));
+    //QRect sg;
+    //if (screennum == -1)
+    //{
+    //    screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
+    //    sg = qApp->desktop()->screenGeometry(screennum);
+    //    if (data.siz.isValid())
+    //        geom.moveTo(sg.topLeft() + (data.pos - data.screenpos));
+    //    else
+    //        geom.moveTo(sg.center() - QPoint(geom.width() / 2, geom.height() / 2));
+    //}
+    //else
+    //    sg = qApp->desktop()->screenGeometry(screennum);
 
-    // Geometry might be out of bounds. Move window within bounds.
+    //// Geometry might be out of bounds. Move window within bounds.
 
-    if (geom.left() < sg.left())
-        geom.moveLeft(sg.left());
-    else if (geom.left() + geom.width() > sg.left() + sg.width())
-        geom.moveLeft(sg.left() + sg.width() - geom.width());
-    if (geom.top() < sg.top())
-        geom.moveTop(sg.top());
-    else if (geom.top() + geom.height() > sg.top() + sg.height())
-        geom.moveTop(sg.top() + sg.height() - geom.height());
-    if (geom.width() > std::min(sg.width(), sg.height()))
-        geom.setWidth(std::min(sg.width(), sg.height()));
-    if (geom.height() > std::min(sg.height(), sg.height()))
-        geom.setHeight(std::min(sg.height(), sg.height()));
+    //if (geom.left() < sg.left())
+    //    geom.moveLeft(sg.left());
+    //else if (geom.left() + geom.width() > sg.left() + sg.width())
+    //    geom.moveLeft(sg.left() + sg.width() - geom.width());
+    //if (geom.top() < sg.top())
+    //    geom.moveTop(sg.top());
+    //else if (geom.top() + geom.height() > sg.top() + sg.height())
+    //    geom.moveTop(sg.top() + sg.height() - geom.height());
+    //if (geom.width() > std::min(sg.width(), sg.height()))
+    //    geom.setWidth(std::min(sg.width(), sg.height()));
+    //if (geom.height() > std::min(sg.height(), sg.height()))
+    //    geom.setHeight(std::min(sg.height(), sg.height()));
 
-    move(geom.topLeft());
-    resize(geom.size());
+    //move(geom.topLeft());
+    resize(QSize(data.siz.width(), geomh)/*geom.size()*/);
 
     ignoreresize = false;
     _resized(true);
@@ -539,10 +541,12 @@ void KanjiInfoForm::popup(Dictionary *d, int kindex)
         //qApp->processEvents();
         restoreState(FormStates::kanjiinfo);
 
-        setAttribute(Qt::WA_DontShowOnScreen);
-        show();
-        hide();
-        setAttribute(Qt::WA_DontShowOnScreen, false);
+        //setAttribute(Qt::WA_DontShowOnScreen);
+        //show();
+        //hide();
+        //setAttribute(Qt::WA_DontShowOnScreen, false);
+
+        updateWindowGeometry(this);
         _resized();
     }
     show();

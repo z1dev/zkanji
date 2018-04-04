@@ -113,9 +113,13 @@ void restrictWidgetWiderSize(QWidget *widget, double charnum, AdjustedValue val 
 // Returns the width in pixels for widget if it was restricted to the given charnum number of
 // wide characters using the widget's current font.
 int restrictedWidgetWiderSize(QWidget *widget, double charnum);
+
+// Updates layouts and geometry of the given widget without showing its window.
+void updateWindowGeometry(QWidget *widget);
+
+
 // Returns the width of the label's current text.
 int fixedLabelWidth(QLabel *label);
-
 // Updates the layout of a widget for each parent of QLabels to have the size policy set to
 // QLayout::SetMinimumSize which ensures that word wrapping labels fit and get resized
 // correctly.

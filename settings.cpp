@@ -141,10 +141,9 @@ namespace Settings
         // General settings
 
         ini.setValue("dateformat", general.dateformat == GeneralSettings::YearMonthDay ? "YearMonthDay" : general.dateformat == GeneralSettings::MonthDayYear ? "MonthDayYear" : "DayMonthYear");
-        ini.setValue("savewinstates", general.savewinstates);
-        ini.setValue("savetoolstates", general.savetoolstates);
+        ini.setValue("savewinpos", general.savewinpos);
+        //ini.setValue("savetoolstates", general.savetoolstates);
         ini.setValue("startstate", general.startstate == GeneralSettings::SaveState ? "savestate" : general.startstate == GeneralSettings::AlwaysMinimize ? "minimize" : general.startstate == GeneralSettings::AlwaysMaximize ? "maximize" : "forget");
-        ini.setValue("startplacement", general.startplace == GeneralSettings::MainOnActive ? "mainonactive" : general.startplace == GeneralSettings::AllOnActive ? "allonactive" : "savedmonitor");
         ini.setValue("minimizebehavior", general.minimizebehavior == GeneralSettings::TrayOnClose ? "closetotray" : general.minimizebehavior == GeneralSettings::TrayOnMinimize ? "minimizetotray" : "default" );
         ini.setValue("scaling", clamp(general.savedscale, 100, 400));
 
@@ -498,14 +497,14 @@ namespace Settings
             writer.writeEndElement(); /* Window */
         }
 
-        if (Settings::general.savetoolstates)
-        {
-            // Differs from saving last used values in a kanji information window. This saves
-            // the state of currently visible kanji information windows.
-            writer.writeStartElement("KanjiInfoWindows");
-            gUI->saveXMLKanjiInfo(writer);
-            writer.writeEndElement(); /* KanjiInfoWindows */
-        }
+        //if (Settings::general.savetoolstates)
+        //{
+        //    // Differs from saving last used values in a kanji information window. This saves
+        //    // the state of currently visible kanji information windows.
+        //    writer.writeStartElement("KanjiInfoWindows");
+        //    gUI->saveXMLKanjiInfo(writer);
+        //    writer.writeEndElement(); /* KanjiInfoWindows */
+        //}
 
         writer.writeEndElement(); /* Windows */
 
@@ -756,14 +755,13 @@ namespace Settings
         //if (val >= 0 && val <= 999)
         //    general.settingspage = val;
 
-        general.savewinstates = ini.value("savewinstates", true).toBool();
-        general.savetoolstates = ini.value("savetoolstates", true).toBool();
+        general.savewinpos = ini.value("savewinpos", true).toBool();
+        //general.savetoolstates = ini.value("savetoolstates", true).toBool();
 
         tmp = ini.value("startstate", "savestate").toString().toLower();
         general.startstate = tmp == "forget" ? GeneralSettings::ForgetState : tmp == "minimize" ? GeneralSettings::AlwaysMinimize : tmp == "maximize" ? GeneralSettings::AlwaysMaximize : GeneralSettings::SaveState;
 
         tmp = ini.value("startplacement", "mainonactive").toString().toLower();
-        general.startplace = tmp == "savedmonitor" ? GeneralSettings::SavedMonitor : tmp == "allonactive" ? GeneralSettings::AllOnActive : GeneralSettings::MainOnActive;
 
         tmp = ini.value("minimizebehavior", "default").toString();
         if (tmp == "closetotray")
@@ -1226,9 +1224,9 @@ namespace Settings
             }
             else if (reader.name() == "WindowStates")
             {
-                if (!Settings::general.savewinstates)
+                /*if (!Settings::general.savewinstates)
                     reader.skipCurrentElement();
-                else while (reader.readNextStartElement())
+                else*/ while (reader.readNextStartElement())
                 {
                     // To avoid spamming the state file, splitter states and sizes are only
                     // loaded for currently existing forms.
@@ -1256,9 +1254,9 @@ namespace Settings
             }
             else if (reader.name() == "Windows")
             {
-                if (!Settings::general.savewinstates)
+                /*if (!Settings::general.savewinstates)
                     reader.skipCurrentElement();
-                else while (reader.readNextStartElement())
+                else*/ while (reader.readNextStartElement())
                 {
                     bool ismain = reader.name() == "MainWindow";
                     if (ismain && gUI->mainForm() != nullptr)
@@ -1269,8 +1267,8 @@ namespace Settings
                     }
                     if (ismain || reader.name() == "Window")
                         gUI->loadXMLWindow(ismain, reader);
-                    else if (Settings::general.savetoolstates && reader.name() == "KanjiInfoWindows")
-                        gUI->loadXMLKanjiInfo(reader);
+                    //else if (Settings::general.savetoolstates && reader.name() == "KanjiInfoWindows")
+                    //    gUI->loadXMLKanjiInfo(reader);
                     else
                         reader.skipCurrentElement();
                 }
@@ -1281,16 +1279,16 @@ namespace Settings
                 {
                     if (reader.name() == "LastDecks")
                     {
-                        if (!Settings::general.savewinstates)
-                            reader.skipCurrentElement();
-                        else
+                        //if (!Settings::general.savewinstates)
+                        //    reader.skipCurrentElement();
+                        //else
                             gUI->loadXMLLastDecks(reader);
                     }
                     else if (reader.name() == "LastGroups")
                     {
-                        if (!Settings::general.savewinstates)
-                            reader.skipCurrentElement();
-                        else
+                        //if (!Settings::general.savewinstates)
+                        //    reader.skipCurrentElement();
+                        //else
                             gUI->loadXMLLastGroups(reader);
                     }
                     else

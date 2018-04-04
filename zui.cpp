@@ -445,6 +445,37 @@ int restrictedWidgetWiderSize(QWidget *widget, double charnum)
     return _sizeHelper(charnum, mmax(fm.averageCharWidth(), fm.width('W'), fm.width('M'), fm.width('X')));
 }
 
+void updateWindowGeometry(QWidget *widget)
+{
+
+    std::function<void(QLayout*)> invalidateLayout;
+    invalidateLayout = [&invalidateLayout](QLayout *l) {
+        for (int ix = 0, siz = l->count(); ix != siz; ++ix) {
+            QLayoutItem *item = l->itemAt(ix);
+            if (item->layout())
+                invalidateLayout(item->layout());
+            else
+                item->invalidate();
+        }
+
+        l->invalidate();
+        l->activate();
+    };
+
+    const QObjectList &childs = widget->children();
+    for (int ix = 0, siz = childs.size(); ix != siz; ++ix)
+    {
+        QObject *child = childs.at(ix);
+        if (child->isWidgetType()) {
+            updateWindowGeometry((QWidget*)child);
+        }
+    }
+
+    if (widget->layout()) {
+        invalidateLayout(widget->layout());
+    }
+}
+
 int fixedLabelWidth(QLabel *label)
 {
     return label->fontMetrics().width(label->text());

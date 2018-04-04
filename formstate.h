@@ -24,9 +24,10 @@ class QXmlStreamWriter;
 struct SplitterFormData
 {
     // Top left corner of the window with frame.
-    QPoint pos;
+    //QPoint pos;
     // Top left corner of screen that contained the window last.
-    QPoint screenpos;
+    //QPoint screenpos;
+
     // Size of the window geometry without frame.
     QSize siz;
     // Splitter widget sizes.
@@ -98,10 +99,10 @@ struct KanjiInfoData
     QSize siz;
 
     // Position of the window.
-    QPoint pos;
+    //QPoint pos;
 
     // Position of window on their screen.
-    QPoint screenpos;
+    //QPoint screenpos;
 
     bool grid = true;
     bool sod = true;
@@ -222,7 +223,7 @@ struct RecognizerFormData
     QRect rect;
 
     // Top left corner of screen that contained the window last.
-    QPoint screenpos;
+    QRect screen;
 };
 
 

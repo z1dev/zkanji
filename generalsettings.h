@@ -12,18 +12,16 @@ struct GeneralSettings
 {
     enum DateFormat { DayMonthYear, MonthDayYear, YearMonthDay };
     enum StartState { SaveState, AlwaysMinimize, AlwaysMaximize, ForgetState };
-    enum StartPlacement { MainOnActive, AllOnActive, SavedMonitor };
     enum MinimizeBehavior { DefaultMinimize, TrayOnMinimize, TrayOnClose };
 
     DateFormat dateformat = DayMonthYear;
 
-    // Whether to save and restore window positions and states.
-    bool savewinstates = true;
+    // Whether to save and restore window sizes.
+    bool savewinpos = true;
     // Tool window states (i.e. kanji information window.)
-    bool savetoolstates = false;
+    //bool savetoolstates = false;
 
     StartState startstate = SaveState;
-    StartPlacement startplace = MainOnActive;
     MinimizeBehavior minimizebehavior = DefaultMinimize;
 
     // Interface scaling saved from the settings window, but not applied. Values 100-400.

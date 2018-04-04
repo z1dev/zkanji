@@ -333,7 +333,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Save and restore window positions and dock states</string>
+                 <string>Save and restore main window positions</string>
                 </property>
                </widget>
               </item>
@@ -383,58 +383,7 @@
                 </item>
                </widget>
               </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="placementLabel">
-                <property name="text">
-                 <string>Startup placement:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QComboBox" name="placementCBox">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="sizeAdjustPolicy">
-                 <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Main window on active monitor</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Every window on active monitor</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Every window at previous position</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="7" column="0" colspan="2">
-               <widget class="QCheckBox" name="saveToolPosBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Save and restore tool windows</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0" colspan="2">
+              <item row="6" column="0" colspan="2">
                <widget class="QCheckBox" name="saveKanjiBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -447,14 +396,14 @@
                 </property>
                </widget>
               </item>
-              <item row="9" column="0">
+              <item row="7" column="0">
                <widget class="QLabel" name="label_125">
                 <property name="text">
                  <string>Minimize and close:</string>
                 </property>
                </widget>
               </item>
-              <item row="9" column="1">
+              <item row="7" column="1">
                <widget class="QComboBox" name="minimizeCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -479,7 +428,7 @@
                 </item>
                </widget>
               </item>
-              <item row="10" column="1">
+              <item row="8" column="1">
                <spacer name="verticalSpacer_5">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -495,14 +444,14 @@
                 </property>
                </spacer>
               </item>
-              <item row="11" column="0" colspan="2">
+              <item row="9" column="0" colspan="2">
                <widget class="QLabel" name="label_4">
                 <property name="text">
                  <string>Handwriting recognition window:</string>
                 </property>
                </widget>
               </item>
-              <item row="12" column="0" colspan="2">
+              <item row="10" column="0" colspan="2">
                <widget class="QCheckBox" name="recogSaveBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -515,7 +464,7 @@
                 </property>
                </widget>
               </item>
-              <item row="13" column="0">
+              <item row="11" column="0">
                <widget class="QLabel" name="label_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -528,7 +477,7 @@
                 </property>
                </widget>
               </item>
-              <item row="13" column="1">
+              <item row="11" column="1">
                <widget class="QComboBox" name="recogPositionCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -548,7 +497,7 @@
                 </item>
                </widget>
               </item>
-              <item row="14" column="0" colspan="2">
+              <item row="12" column="0" colspan="2">
                <widget class="QLabel" name="label_19">
                 <property name="text">
                  <string>&lt;p&gt;*During a test the handwriting recognition window will always appear at the positon and size where it was moved last.&lt;/p&gt;</string>
@@ -558,7 +507,7 @@
                 </property>
                </widget>
               </item>
-              <item row="15" column="1">
+              <item row="13" column="1">
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -574,14 +523,14 @@
                 </property>
                </spacer>
               </item>
-              <item row="16" column="0" colspan="2">
+              <item row="14" column="0" colspan="2">
                <widget class="QLabel" name="label_13">
                 <property name="text">
                  <string>Word group test:</string>
                 </property>
                </widget>
               </item>
-              <item row="17" column="0" colspan="2">
+              <item row="15" column="0" colspan="2">
                <widget class="QCheckBox" name="hideSuspendedBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -5511,8 +5460,6 @@
   <tabstop>dateFormatCBox</tabstop>
   <tabstop>savePosBox</tabstop>
   <tabstop>startupStateCBox</tabstop>
-  <tabstop>placementCBox</tabstop>
-  <tabstop>saveToolPosBox</tabstop>
   <tabstop>saveKanjiBox</tabstop>
   <tabstop>minimizeCBox</tabstop>
   <tabstop>recogSaveBox</tabstop>
@@ -5674,8 +5621,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

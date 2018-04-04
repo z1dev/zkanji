@@ -113,17 +113,19 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
 
     updateMainMenu();
 
-    // Allowing the ZKanjiWidget to calculate correct sizes.
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
+    //// Allowing the ZKanjiWidget to calculate correct sizes.
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
 
-    QRect fr = frameGeometry();
-    int scrnum = -1;
-    QRect g = qApp->desktop()->screenGeometry(mainform ? this : (QWidget*)gUI->mainForm());
-    move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
+    //QRect fr = frameGeometry();
+    //int scrnum = -1;
+    //QRect g = qApp->desktop()->screenGeometry(mainform ? this : (QWidget*)gUI->mainForm());
+    //move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
 
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    updateWindowGeometry(this);
 }
 
 ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent)
@@ -155,15 +157,17 @@ ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent)
     updateMainMenu();
 
     // Allowing the ZKanjiWidget to calculate correct sizes.
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
 
-    QRect fr = frameGeometry();
-    QRect g = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
-    move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
+    //QRect fr = frameGeometry();
+    //QRect g = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    //move(g.left() + (g.width() - fr.width()) / 2, g.top() + (g.height() - fr.height()) / 2);
 
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
+
+    updateWindowGeometry(this);
 }
 
 ZKanjiForm::~ZKanjiForm()
@@ -267,7 +271,8 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     // Qt incorrectly(?) sends size and move events for a previous size and position after
     // startup, and never posts events sent right afterwards. We need to process events here,
     // or the window size and position won't be loaded.
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+
+    //qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
 
     FlagGuard<bool> menuguard(&skipmenu, true, false);
 
@@ -279,49 +284,39 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
     geom.setWidth((ok ? reader.attributes().value("width").toInt(&ok) : -1));
     geom.setHeight((ok ? reader.attributes().value("height").toInt(&ok) : -1));
 
-    int screenx = ok ? reader.attributes().value("screenx").toInt(&ok) : -1;
-    int screeny = ok ? reader.attributes().value("screeny").toInt(&ok) : -1;
-    int screenw = ok ? reader.attributes().value("screenw").toInt(&ok) : -1;
-    int screenh = ok ? reader.attributes().value("screenh").toInt(&ok) : -1;
-    ok = ok && screenw > 1 && screenh > 1;
+    QRect screen;
+    screen.setLeft(ok ? reader.attributes().value("screenx").toInt(&ok) : -1);
+    screen.setTop(ok ? reader.attributes().value("screeny").toInt(&ok) : -1);
+    screen.setWidth(ok ? reader.attributes().value("screenw").toInt(&ok) : -1);
+    screen.setHeight(ok ? reader.attributes().value("screenh").toInt(&ok) : -1);
+    ok = ok && screen.width() > 0 && screen.height() > 0 && screen.width() < 999999 && screen.height() < 999999 && screen.left() > -999999 && screen.left() < 999999 && screen.top() > -999999 && screen.top() < 999999;
 
-    if (!ok || !Settings::general.savewinstates)
+    QRect sg = ok ? qApp->desktop()->screenGeometry(screenNumber(geom)) : QRect();
+
+    if (!ok)
         geom = QRect();
-
-    if (!geom.isEmpty())
+    else if (!geom.isEmpty())
     {
-        setAttribute(Qt::WA_DontShowOnScreen);
-        show();
+        if (geom.width() > sg.width() - 2)
+            geom.setWidth(sg.width() - 2);
+        if (geom.height() > sg.height() - 16)
+            geom.setHeight(sg.height() - 16);
 
-        QSize framesize = frameGeometry().size() - geometry().size();
-
-        hide();
-        setAttribute(Qt::WA_DontShowOnScreen, false);
-
-        // Find the screen that contains the window.
-
-        int screennum = (Settings::general.startplace == GeneralSettings::SavedMonitor || (!mainform && Settings::general.startplace == GeneralSettings::MainOnActive)) ?
-            screenNumber(QRect(geom.topLeft(), geom.size() + framesize))  : -1;
+        resize(geom.size());
         
-
-        QRect sg = qApp->desktop()->screenGeometry(screennum);
-        if (screennum == -1 && screenx != -1 && screeny != -1)
-            geom.moveTo(sg.topLeft() + QPoint((geom.left() - screenx) * (sg.width() / screenw), (geom.top() - screeny) * (sg.height() / screenh)));
-
-        if (geom.left() + geom.width() + framesize.width() > sg.left() + sg.width())
-            geom.moveLeft(std::max(sg.left(), sg.left() + sg.width() - geom.width() - framesize.width()));
-        else if (geom.left() < sg.left())
-            geom.moveLeft(sg.left());
-        if (geom.top() + geom.height() + framesize.height() > sg.top() + sg.height())
-            geom.moveTop(std::max(sg.top(), sg.top() + sg.height() - geom.height() - framesize.height()));
-        else if (geom.top() < sg.top())
-            geom.moveTop(sg.top());
-        if (geom.width() + framesize.width() > sg.width())
-            geom.setWidth(sg.width() - framesize.width());
-        if (geom.height() + framesize.height() > sg.height())
-            geom.setHeight(sg.height() - framesize.height());
-
-        move(geom.topLeft());
+        if (Settings::general.savewinpos)
+        {
+            if (geom.left() < sg.left())
+                geom.setLeft(sg.left());
+            else if (geom.left() + geom.width() >= sg.left() + sg.width())
+                geom.setLeft(sg.left() + sg.width() - geom.width());
+            if (geom.top() < sg.top())
+                geom.setTop(sg.top());
+            else if (geom.top() + geom.height() >= sg.top() + sg.height())
+                geom.setTop(sg.top() + sg.height() - geom.height());
+            move(geom.topLeft());
+        }
+        settingsrect = geom;
     }
 
     //if (!geom.isEmpty())
@@ -333,7 +328,7 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
 
     restoremaximized = false;
 
-    if (Settings::general.savewinstates && mainform)
+    if (Settings::general.savewinpos && mainform)
     {
         Qt::WindowState state;
 
@@ -408,18 +403,18 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             updateMainMenu();
         }
 
-        if (!geom.isEmpty())
-        {
-            qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+        //if (!geom.isEmpty())
+        //{
+        //    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
 
-            updateGeometry();
-            layout()->invalidate();
-            layout()->activate();
+        //    updateGeometry();
+        //    layout()->invalidate();
+        //    layout()->activate();
 
-            resize(geom.size());
-            move(geom.topLeft());
-            settingsrect = geom;
-        }
+        //    resize(geom.size());
+        //    move(geom.topLeft());
+        //    settingsrect = geom;
+        //}
         return;
     }
 
@@ -482,18 +477,18 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
                     updateMainMenu();
                 }
 
-                if (!geom.isEmpty())
-                {
-                    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+                //if (!geom.isEmpty())
+                //{
+                //    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
 
-                    updateGeometry();
-                    layout()->invalidate();
-                    layout()->activate();
+                //    updateGeometry();
+                //    layout()->invalidate();
+                //    layout()->activate();
 
-                    resize(geom.size());
-                    move(geom.topLeft());
-                    settingsrect = geom;
-                }
+                //    resize(geom.size());
+                //    move(geom.topLeft());
+                //    settingsrect = geom;
+                //}
                 return;
             }
             continue;
@@ -512,18 +507,18 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
             w->loadXMLSettings(reader);
             reader.skipCurrentElement();
 
-            if (!geom.isEmpty())
-            {
-                qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+            //if (!geom.isEmpty())
+            //{
+            //    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
 
-                updateGeometry();
-                layout()->invalidate();
-                layout()->activate();
+            //    updateGeometry();
+            //    layout()->invalidate();
+            //    layout()->activate();
 
-                resize(geom.size());
-                move(geom.topLeft());
-                settingsrect = geom;
-            }
+            //    resize(geom.size());
+            //    move(geom.topLeft());
+            //    settingsrect = geom;
+            //}
             return;
         }
 
@@ -593,18 +588,18 @@ void ZKanjiForm::loadXMLSettings(QXmlStreamReader &reader)
         updateMainMenu();
     }
 
-    if (!geom.isEmpty())
-    {
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+    //if (!geom.isEmpty())
+    //{
+    //    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
 
-        updateGeometry();
-        layout()->invalidate();
-        layout()->activate();
+    //    updateGeometry();
+    //    layout()->invalidate();
+    //    layout()->activate();
 
-        resize(geom.size());
-        move(geom.topLeft());
-        settingsrect = geom;
-    }
+    //    resize(geom.size());
+    //    move(geom.topLeft());
+    //    settingsrect = geom;
+    //}
 }
 
 bool ZKanjiForm::mainForm() const
