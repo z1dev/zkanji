@@ -977,6 +977,12 @@
     <ClCompile Include="kanawritingpracticeform.cpp">
       <Filter>Code\Files with .ui\Study\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_formstate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_formstate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1387,6 +1393,9 @@
     <CustomBuild Include="kanawritingpracticeform.h">
       <Filter>Code\Files with .ui\Study\Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="formstate.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kanji.h">
@@ -1538,9 +1547,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_popupdict.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="formstate.h">
-      <Filter>Code\General\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_wordtodeckform.h">
       <Filter>Generated Files</Filter>

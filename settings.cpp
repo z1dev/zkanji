@@ -308,6 +308,7 @@ namespace Settings
         ini.setValue("kanji/ref3", kanji.mainref3);
         ini.setValue("kanji/ref4", kanji.mainref4);
         ini.setValue("kanji/parts", kanji.listparts);
+        ini.setValue("kanji/showpos", kanji.showpos == KanjiSettings::NearCursor ? "nearcursor" : kanji.showpos == KanjiSettings::RestoreLast ? "last" : "default");
         ini.setValue("kanji/tooltip", kanji.tooltip);
         ini.setValue("kanji/hidetooltip", kanji.hidetooltip);
         ini.setValue("kanji/tooltipdelay", kanji.tooltipdelay);
@@ -414,7 +415,7 @@ namespace Settings
 
         writer.writeStartElement("WindowStates");
 
-        for (auto &state : FormStates::splitter)
+        for (auto &state : FormStates::splitters)
         {
             if (!FormStates::emptyState(state.second))
             {
@@ -1019,6 +1020,16 @@ namespace Settings
         if (ok && val >= 0 && val <= kanjirefcnt)
             kanji.mainref4 = val;
         kanji.listparts = ini.value("kanji/parts", false).toBool();
+
+
+        tmp = ini.value("kanji/showpos", "nearcursor").toString().toLower();
+        if (tmp == "default")
+            kanji.showpos = KanjiSettings::SystemDefault;
+        else if (tmp == "last")
+            kanji.showpos = KanjiSettings::RestoreLast;
+        else
+            kanji.showpos = KanjiSettings::NearCursor;
+        
         kanji.tooltip = ini.value("kanji/tooltip", true).toBool();
         kanji.hidetooltip = ini.value("kanji/hidetooltip", true).toBool();
         val = ini.value("kanji/tooltipdelay", 5).toInt(&ok);
@@ -1232,7 +1243,7 @@ namespace Settings
                     // loaded for currently existing forms.
                     if (reader.name() == "WordEditor" || reader.name() == "WordToGroup" || reader.name() == "WordToDictionary")
                         FormStates::loadXMLDialogSplitterState(reader);
-                    else if (reader.name() == "WordToDeck")
+                    else if (reader.name() == "WordToDeck" || reader.name() == "DictionaryEditor")
                         FormStates::loadXMLDialogSize(reader);
                     else if (reader.name() == "CollectWords")
                         FormStates::loadXMLSettings(FormStates::collectform, reader);

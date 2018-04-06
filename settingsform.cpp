@@ -550,6 +550,7 @@ void SettingsForm::reset()
     ((KanjiRefListModel*)ui->refTable->model())->reset();
 
     ui->kanjiPartsBox->setChecked(Settings::kanji.listparts);
+    ui->kanjiPosCBox->setCurrentIndex((int)Settings::kanji.showpos);
     ui->tooltipBox->setChecked(Settings::kanji.tooltip);
     ui->tooltipHideBox->setChecked(Settings::kanji.hidetooltip);
     ui->tooltipTimeoutEdit->setText(QString::number(Settings::kanji.tooltipdelay));
@@ -804,6 +805,7 @@ void SettingsForm::applyClicked()
 
 
     Settings::kanji.listparts = ui->kanjiPartsBox->isChecked();
+    Settings::kanji.showpos = (KanjiSettings::ShowPosition)ui->kanjiPosCBox->currentIndex();
     Settings::kanji.tooltip = ui->tooltipBox->isChecked();
     Settings::kanji.hidetooltip = ui->tooltipHideBox->isChecked();
     val = ui->tooltipTimeoutEdit->text().toInt(&ok);

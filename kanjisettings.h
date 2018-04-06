@@ -12,6 +12,8 @@
 
 struct KanjiSettings
 {
+    enum ShowPosition { NearCursor, RestoreLast, SystemDefault };
+
     bool savefilters = true;
     bool resetpopupfilters = false;
 
@@ -21,6 +23,8 @@ struct KanjiSettings
     int mainref4 = 0;
 
     bool listparts = false;
+
+    ShowPosition showpos;
 
     bool tooltip = true;
     bool hidetooltip = true;

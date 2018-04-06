@@ -118,6 +118,11 @@
             <string>Kanji information</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Handwriting window</string>
+           </property>
+          </item>
          </item>
          <item>
           <property name="text">
@@ -228,7 +233,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -445,92 +450,13 @@
                </spacer>
               </item>
               <item row="9" column="0" colspan="2">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Handwriting recognition window:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="0" colspan="2">
-               <widget class="QCheckBox" name="recogSaveBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Remember last window size</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="0">
-               <widget class="QLabel" name="label_3">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Display position*:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="1">
-               <widget class="QComboBox" name="recogPositionCBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Near input text box</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Where it was last moved</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="12" column="0" colspan="2">
-               <widget class="QLabel" name="label_19">
-                <property name="text">
-                 <string>&lt;p&gt;*During a test the handwriting recognition window will always appear at the positon and size where it was moved last.&lt;/p&gt;</string>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="1">
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>13</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="14" column="0" colspan="2">
                <widget class="QLabel" name="label_13">
                 <property name="text">
                  <string>Word group test:</string>
                 </property>
                </widget>
               </item>
-              <item row="15" column="0" colspan="2">
+              <item row="10" column="0" colspan="2">
                <widget class="QCheckBox" name="hideSuspendedBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1765,10 +1691,17 @@
                 <property name="verticalSpacing">
                  <number>4</number>
                 </property>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QLabel" name="label_100">
+                  <property name="text">
+                   <string>Kanji information:</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_33">
                   <property name="text">
-                   <string>Main kanji indexes:</string>
+                   <string>Main indexes:</string>
                   </property>
                  </widget>
                 </item>
@@ -1803,6 +1736,9 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="sizeAdjustPolicy">
+                       <enum>QComboBox::AdjustToContents</enum>
+                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -1832,6 +1768,9 @@
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
+                      </property>
+                      <property name="sizeAdjustPolicy">
+                       <enum>QComboBox::AdjustToContents</enum>
                       </property>
                      </widget>
                     </item>
@@ -1863,6 +1802,9 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="sizeAdjustPolicy">
+                       <enum>QComboBox::AdjustToContents</enum>
+                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -1893,13 +1835,29 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="sizeAdjustPolicy">
+                       <enum>QComboBox::AdjustToContents</enum>
+                      </property>
                      </widget>
                     </item>
                    </layout>
                   </item>
                  </layout>
                 </item>
-                <item row="2" column="1">
+                <item row="2" column="0" colspan="2">
+                 <widget class="QCheckBox" name="kanjiPartsBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Show non-kanji parts and parents</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
                  <spacer name="verticalSpacer_7">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -1915,14 +1873,14 @@
                   </property>
                  </spacer>
                 </item>
-                <item row="3" column="0" colspan="2">
+                <item row="5" column="0" colspan="2">
                  <widget class="QLabel" name="label_34">
                   <property name="text">
                    <string>Tooltip:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0" colspan="2">
+                <item row="6" column="0" colspan="2">
                  <widget class="QCheckBox" name="tooltipBox">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1935,7 +1893,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="0" colspan="2">
+                <item row="7" column="0" colspan="2">
                  <widget class="QCheckBox" name="tooltipHideBox">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1948,14 +1906,14 @@
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="0">
+                <item row="8" column="0">
                  <widget class="QLabel" name="label_32">
                   <property name="text">
                    <string>Hide in seconds:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
+                <item row="8" column="1">
                  <widget class="ZLineEdit" name="tooltipTimeoutEdit">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1968,7 +1926,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="1">
+                <item row="9" column="1">
                  <spacer name="verticalSpacer_8">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -1984,54 +1942,46 @@
                   </property>
                  </spacer>
                 </item>
-                <item row="8" column="0" colspan="2">
-                 <widget class="QLabel" name="label_35">
-                  <property name="text">
-                   <string>Kanji information window:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="9" column="0" colspan="2">
-                 <widget class="QCheckBox" name="kanjiPartsBox">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Show non-kanji parts and parents</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="10" column="1">
-                 <spacer name="verticalSpacer_9">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>13</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item row="11" column="0" colspan="2">
+                <item row="10" column="0" colspan="2">
                  <widget class="QLabel" name="label_22">
                   <property name="text">
                    <string>Listed references:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0" colspan="2">
-                 <widget class="QLabel" name="label_100">
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_20">
                   <property name="text">
-                   <string>Kanji information:</string>
+                   <string>Display position:</string>
                   </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QComboBox" name="kanjiPosCBox">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QComboBox::AdjustToContents</enum>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Show near cursor</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Restore last position</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>System default</string>
+                   </property>
+                  </item>
                  </widget>
                 </item>
                </layout>
@@ -2105,6 +2055,82 @@
                  <widget class="ZListBox" name="refTable"/>
                 </item>
                </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="handwritingPage">
+             <layout class="QFormLayout" name="formLayout_17">
+              <property name="horizontalSpacing">
+               <number>10</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>4</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item row="0" column="0" colspan="2">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Handwriting recognition window:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QCheckBox" name="recogSaveBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Remember last window size</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Display position*:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QComboBox" name="recogPositionCBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Near input text box</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Where it was last moved</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="2">
+               <widget class="QLabel" name="label_19">
+                <property name="text">
+                 <string>&lt;p&gt;*During a test the handwriting recognition window will always appear at the positon and size where it was moved last.&lt;/p&gt;</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -5462,8 +5488,6 @@
   <tabstop>startupStateCBox</tabstop>
   <tabstop>saveKanjiBox</tabstop>
   <tabstop>minimizeCBox</tabstop>
-  <tabstop>recogSaveBox</tabstop>
-  <tabstop>recogPositionCBox</tabstop>
   <tabstop>hideSuspendedBox</tabstop>
   <tabstop>autoSizeBox</tabstop>
   <tabstop>inflectionCBox</tabstop>
@@ -5478,6 +5502,7 @@
   <tabstop>popupHideCBox</tabstop>
   <tabstop>popupActivationCBox</tabstop>
   <tabstop>popupWidenBox</tabstop>
+  <tabstop>popupStatusBox</tabstop>
   <tabstop>kanjiHideCBox</tabstop>
   <tabstop>kanjiResetBox</tabstop>
   <tabstop>popupTransparencySlider</tabstop>
@@ -5497,13 +5522,16 @@
   <tabstop>kanjiRef2CBox</tabstop>
   <tabstop>kanjiRef3CBox</tabstop>
   <tabstop>kanjiRef4CBox</tabstop>
+  <tabstop>kanjiPartsBox</tabstop>
+  <tabstop>kanjiPosCBox</tabstop>
   <tabstop>tooltipBox</tabstop>
   <tabstop>tooltipHideBox</tabstop>
   <tabstop>tooltipTimeoutEdit</tabstop>
-  <tabstop>kanjiPartsBox</tabstop>
   <tabstop>refUpButton</tabstop>
   <tabstop>refDownButton</tabstop>
   <tabstop>refTable</tabstop>
+  <tabstop>recogSaveBox</tabstop>
+  <tabstop>recogPositionCBox</tabstop>
   <tabstop>autoSaveBox</tabstop>
   <tabstop>autoSaveEdit</tabstop>
   <tabstop>backupBox</tabstop>
@@ -5526,6 +5554,7 @@
   <tabstop>kanjiFontCBox</tabstop>
   <tabstop>kanjiAliasBox</tabstop>
   <tabstop>kanjiSizeCBox</tabstop>
+  <tabstop>useInactiveBox</tabstop>
   <tabstop>colBgCBox</tabstop>
   <tabstop>coliBgCBox</tabstop>
   <tabstop>colTextCBox</tabstop>
@@ -5534,6 +5563,11 @@
   <tabstop>coliSelBgCBox</tabstop>
   <tabstop>colSelTextCBox</tabstop>
   <tabstop>coliSelTextCBox</tabstop>
+  <tabstop>colGridCBox</tabstop>
+  <tabstop>colScrollBgCBox</tabstop>
+  <tabstop>coliScrollBgCBox</tabstop>
+  <tabstop>colScrollCBox</tabstop>
+  <tabstop>coliScrollCBox</tabstop>
   <tabstop>colInfCBox</tabstop>
   <tabstop>colAttribCBox</tabstop>
   <tabstop>colTypeCBox</tabstop>
@@ -5549,9 +5583,13 @@
   <tabstop>colN1CBox</tabstop>
   <tabstop>colNoWordsCBox</tabstop>
   <tabstop>colUnsortedCBox</tabstop>
+  <tabstop>okuColorBox</tabstop>
+  <tabstop>colOkuCBox</tabstop>
   <tabstop>bgKataCBox</tabstop>
   <tabstop>bgHiraCBox</tabstop>
   <tabstop>textSimilarCBox</tabstop>
+  <tabstop>colStrokeDotCBox</tabstop>
+  <tabstop>colKanjiExCBox</tabstop>
   <tabstop>colStudyCorrectCBox</tabstop>
   <tabstop>colStudyWrongCBox</tabstop>
   <tabstop>colStudyNewCBox</tabstop>
@@ -5604,25 +5642,14 @@
   <tabstop>printDefFontCBox</tabstop>
   <tabstop>printInfoFontCBox</tabstop>
   <tabstop>printInfoStyleCBox</tabstop>
-  <tabstop>colGridCBox</tabstop>
-  <tabstop>colScrollBgCBox</tabstop>
-  <tabstop>coliScrollBgCBox</tabstop>
-  <tabstop>colScrollCBox</tabstop>
-  <tabstop>coliScrollCBox</tabstop>
-  <tabstop>useInactiveBox</tabstop>
-  <tabstop>okuColorBox</tabstop>
-  <tabstop>colOkuCBox</tabstop>
-  <tabstop>colStrokeDotCBox</tabstop>
-  <tabstop>colKanjiExCBox</tabstop>
-  <tabstop>popupStatusBox</tabstop>
  </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

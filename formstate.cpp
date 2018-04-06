@@ -35,7 +35,7 @@ namespace FormStates
     const QString False = QStringLiteral("0");
 
     // Saved state of dialog windows with splitter.
-    std::map<QString, SplitterFormData> splitter;
+    std::map<QString, SplitterFormData> splitters;
 
     // Saved size of dialog windows.
     std::map<QString, QSize> sizes;
@@ -481,16 +481,18 @@ namespace FormStates
             writer.writeAttribute("width", QString::number(data.siz.width()));
             writer.writeAttribute("height", QString::number(data.siz.height()));
         }
-        //if (!data.pos.isNull())
-        //{
-        //    writer.writeAttribute("x", QString::number(data.pos.x()));
-        //    writer.writeAttribute("y", QString::number(data.pos.y()));
-        //}
-        //if (!data.screenpos.isNull())
-        //{
-        //    writer.writeAttribute("screenx", QString::number(data.screenpos.x()));
-        //    writer.writeAttribute("screeny", QString::number(data.screenpos.y()));
-        //}
+        if (!data.pos.isNull())
+        {
+            writer.writeAttribute("x", QString::number(data.pos.x()));
+            writer.writeAttribute("y", QString::number(data.pos.y()));
+        }
+        if (!data.screen.isEmpty())
+        {
+            writer.writeAttribute("screenx", QString::number(data.screen.left()));
+            writer.writeAttribute("screeny", QString::number(data.screen.top()));
+            writer.writeAttribute("screenw", QString::number(data.screen.width()));
+            writer.writeAttribute("screenh", QString::number(data.screen.height()));
+        }
 
         writer.writeAttribute("grid", data.grid ? True : False);
         writer.writeAttribute("sod", data.sod ? True : False);
@@ -540,44 +542,60 @@ namespace FormStates
         if (!ok)
             data.siz = QSize();
 
-        //ok = false;
-        //if (reader.attributes().hasAttribute("x"))
-        //{
-        //    val = reader.attributes().value("x").toInt(&ok);
-        //    if (val < -999999 || val > 999999)
-        //        ok = false;
-        //    if (ok)
-        //        data.pos.setX(val);
-        //}
-        //if (ok && reader.attributes().hasAttribute("y"))
-        //{
-        //    val = reader.attributes().value("y").toInt(&ok);
-        //    if (val < -999999 || val > 999999)
-        //        ok = false;
-        //    if (ok)
-        //        data.pos.setY(val);
-        //}
-        //if (!ok)
-        //    data.pos = QPoint();
+        ok = false;
+        if (reader.attributes().hasAttribute("x"))
+        {
+            val = reader.attributes().value("x").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.pos.setX(val);
+        }
+        if (ok && reader.attributes().hasAttribute("y"))
+        {
+            val = reader.attributes().value("y").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.pos.setY(val);
+        }
+        if (!ok)
+            data.pos = QPoint();
 
-        //if (reader.attributes().hasAttribute("screenx"))
-        //{
-        //    val = reader.attributes().value("screenx").toInt(&ok);
-        //    if (val < -999999 || val > 999999)
-        //        ok = false;
-        //    if (ok)
-        //        data.screenpos.setX(val);
-        //}
-        //if (ok && reader.attributes().hasAttribute("screeny"))
-        //{
-        //    val = reader.attributes().value("screeny").toInt(&ok);
-        //    if (val < -999999 || val > 999999)
-        //        ok = false;
-        //    if (ok)
-        //        data.screenpos.setY(val);
-        //}
-        //if (!ok)
-        //    data.screenpos = QPoint();
+        if (reader.attributes().hasAttribute("screenx"))
+        {
+            val = reader.attributes().value("screenx").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screen.setLeft(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screeny"))
+        {
+            val = reader.attributes().value("screeny").toInt(&ok);
+            if (val < -999999 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screen.setTop(val);
+        }
+        if (reader.attributes().hasAttribute("screenw"))
+        {
+            val = reader.attributes().value("screenw").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screen.setWidth(val);
+        }
+        if (ok && reader.attributes().hasAttribute("screenh"))
+        {
+            val = reader.attributes().value("screenh").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                data.screen.setHeight(val);
+        }
+        if (!ok)
+            data.screen = QRect();
 
         data.grid = reader.attributes().value("grid") == True;
         data.sod = reader.attributes().value("sod") == True;
@@ -1178,8 +1196,8 @@ namespace FormStates
 
     void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter)
     {
-        bool nodata = FormStates::splitter.find(statename) == FormStates::splitter.end();
-        SplitterFormData &data = FormStates::splitter[statename];
+        bool nodata = splitters.find(statename) == splitters.end();
+        SplitterFormData &data = splitters[statename];
         if (nodata)
             data.wsizes[1] = -1;
 
@@ -1210,8 +1228,8 @@ namespace FormStates
 
     void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter)
     {
-        auto it = FormStates::splitter.find(statename);
-        if (it == FormStates::splitter.end())
+        auto it = splitters.find(statename);
+        if (it == splitters.end())
             return;
 
         SplitterFormData &data = it->second;
@@ -1295,25 +1313,29 @@ namespace FormStates
         if (statename.isEmpty())
             return;
 
-        bool nodata = FormStates::splitter.find(statename) == FormStates::splitter.end();
-        SplitterFormData &data = FormStates::splitter[statename];
+        bool nodata = splitters.find(statename) == splitters.end();
+        SplitterFormData &data = splitters[statename];
         if (nodata)
             data.wsizes[1] = -1;
 
         loadXMLSettings(data, reader);
     }
 
+    namespace
+    {
+        RestoreDialogHelperPrivate restorehelper;
+    }
     void saveDialogSize(QString sizename, QMainWindow *window)
     {
         FormStates::sizes[sizename] = window->size();
-
     }
 
-    void restoreDialogSize(QString sizename, QMainWindow *window)
+    void restoreDialogSize(QString sizename, QMainWindow *window, bool addfilter)
     {
-        if (FormStates::sizes.find(sizename) == FormStates::sizes.end())
-            return;
-        window->resize(FormStates::sizes[sizename]);
+        if (sizes.find(sizename) != sizes.end())
+            window->resize(sizes[sizename]);
+        if (addfilter)
+            restorehelper.installFor(sizename, window);
     }
 
     void saveXMLDialogSize(const QSize size, QXmlStreamWriter &writer)
@@ -1328,7 +1350,7 @@ namespace FormStates
         if (sizename.isEmpty())
             return;
 
-        bool data = FormStates::sizes.find(sizename) != FormStates::sizes.end();
+        //bool data = FormStates::sizes.find(sizename) != FormStates::sizes.end();
         QSize &size = FormStates::sizes[sizename];
 
         bool ok = false;
@@ -1357,6 +1379,41 @@ namespace FormStates
 
         reader.skipCurrentElement();
     }
+
+
+    //-------------------------------------------------------------
+
+
+    void RestoreDialogHelperPrivate::installFor(QString sizename, QMainWindow *window)
+    {
+        auto it = filtered.find(window);
+        if (it != filtered.end())
+            return;
+
+        window->installEventFilter(this);
+        filtered[window] = sizename;
+        connect(window, &QObject::destroyed, this, &RestoreDialogHelperPrivate::windowDestroyed);
+    }
+
+    bool RestoreDialogHelperPrivate::eventFilter(QObject *o, QEvent *e)
+    {
+        if (e->type() == QEvent::Close)
+        {
+            QString sizename = filtered[(QMainWindow*)o];
+            saveDialogSize(sizename, (QMainWindow*)o);
+        }
+        return base::eventFilter(o, e);
+    }
+
+    void RestoreDialogHelperPrivate::windowDestroyed(QObject *o)
+    {
+        auto it = filtered.find((QMainWindow*)o);
+        if (it != filtered.end())
+            filtered.erase(it);
+    }
+
+
+    //-------------------------------------------------------------
 
 }
 

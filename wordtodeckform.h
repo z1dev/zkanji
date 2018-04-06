@@ -126,7 +126,7 @@ public:
 
     void exec(WordDeck *studydeck, Dictionary *dictionary, const std::vector<int> &indexes);
 protected:
-    virtual void closeEvent(QCloseEvent *e) override;
+    //virtual void closeEvent(QCloseEvent *e) override;
     virtual void showEvent(QShowEvent *e) override;
 protected slots:
     // Connected to the model's dataChanged to look for CheckState changes.

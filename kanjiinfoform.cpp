@@ -200,8 +200,8 @@ void KanjiInfoForm::saveState(KanjiInfoData &data) const
 {
     QRect g = geometry();
     data.siz = isMaximized() ? normalGeometry().size() : g.size();
-    //data.pos = g.topLeft();
-    //data.screenpos = qApp->desktop()->screenGeometry(this).topLeft();
+    data.pos = g.topLeft();
+    data.screen = qApp->desktop()->screenGeometry(screenNumber(QRect(data.pos, data.siz)));
 
     int h = data.siz.height();
     if (ui->sodWidget->isVisibleTo(this))
@@ -370,7 +370,37 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     //    geom.setHeight(std::min(sg.height(), sg.height()));
 
     //move(geom.topLeft());
+
     resize(QSize(data.siz.width(), geomh)/*geom.size()*/);
+
+    if (Settings::kanji.showpos == KanjiSettings::RestoreLast)
+    {
+        QRect sg = qApp->desktop()->screenGeometry(screenNumber(QRect(data.pos, data.siz)));
+        if (data.screen == sg)
+            move(std::max(sg.left(), std::min(data.pos.x(), sg.left() + sg.width() - data.siz.width())), std::max(sg.top(), std::min(data.pos.y(), sg.top() + sg.height() - data.siz.height())));
+    }
+    else if (Settings::kanji.showpos == KanjiSettings::NearCursor)
+    {
+        QPoint p = QCursor::pos();
+        QRect sg = qApp->desktop()->screenGeometry(p);
+
+        // Place window to the left of the cursor if there is more screen space there.
+        bool toleft = p.x() - sg.left() > sg.width() + sg.left() - p.x();
+        // Place window above the cursor if there is more screen space there.
+        bool toabove = p.y() - sg.top() > sg.height() + sg.top() - p.y();
+
+        QPoint pos;
+        if (toleft)
+            pos.setX(std::max(sg.left(), p.x() - data.siz.width() - Settings::scaled(32)));
+        else
+            pos.setX(std::min(sg.left() + sg.width() - data.siz.width(), p.x() + Settings::scaled(64)));
+        if (toabove)
+            pos.setY(std::max(sg.top(), p.y() - data.siz.height() - Settings::scaled(32)));
+        else
+            pos.setY(std::min(sg.top() + sg.height() - data.siz.height(), p.y() + Settings::scaled(48)));
+
+        move(pos);
+    }
 
     ignoreresize = false;
     _resized(true);

@@ -12,8 +12,10 @@
 
 #include <QString>
 #include <QRect>
+#include <QObject>
 
 #include <map>
+#include <vector>
 
 class QMainWindow;
 class CollectWordsForm;
@@ -99,10 +101,11 @@ struct KanjiInfoData
     QSize siz;
 
     // Position of the window.
-    //QPoint pos;
+    QPoint pos;
 
-    // Position of window on their screen.
-    //QPoint screenpos;
+    // Screen position and size. If this doesn't match when position is to be restored, the
+    // window will be shown at the default position instead.
+    QRect screen;
 
     bool grid = true;
     bool sod = true;
@@ -229,11 +232,13 @@ struct RecognizerFormData
 
 struct KanjiFilterData;
 struct PopupKanjiData;
+class QXmlStreamWriter;
+class QXmlStreamReader;
 
 namespace FormStates
 {
     // Saved state of dialog windows with splitter.
-    extern std::map<QString, SplitterFormData> splitter;
+    extern std::map<QString, SplitterFormData> splitters;
 
     // Saved size of dialog windows.
     extern std::map<QString, QSize> sizes;
@@ -308,12 +313,37 @@ namespace FormStates
 
     void loadXMLDialogSplitterState(QXmlStreamReader &reader);
 
+    // Saves the current geometry size of the passed window in a map with `sizename` as the
+    // key. Use restoreDialogSize() to restore the saved size for the name if it exists.
     void saveDialogSize(QString sizename, QMainWindow *window);
-    void restoreDialogSize(QString sizename, QMainWindow *window);
+    // Restores size of a window saved under `sizename`. If `installcloseevent` is true, an
+    // event filter is installed for closeEvent(), that will call saveDialogSize() with the
+    // same name and window. Otherwise saveDialogSize() must be called manually at the
+    // appropriate time. Only allow the event filtering when the closeEvent() won't reject the
+    // close of a window, otherwise the size might be saved early and new windows might block
+    // the one already open.
+    void restoreDialogSize(QString sizename, QMainWindow *window, bool installcloseevent);
 
     void saveXMLDialogSize(const QSize size, QXmlStreamWriter &writer);
     void loadXMLDialogSize(QXmlStreamReader &reader);
+
+    // Used by restoreDialogSize() as the object for installing event filters.
+    class RestoreDialogHelperPrivate : public QObject
+    {
+        Q_OBJECT
+    public:
+        void installFor(QString sizename, QMainWindow *window);
+    protected:
+        virtual bool eventFilter(QObject *o, QEvent *e) override;
+    protected slots:
+        void windowDestroyed(QObject *o);
+    private:
+        std::map<QMainWindow*, QString> filtered;
+
+        typedef QObject base;
+    };
 }
+
 
 #endif // FORMSTATE_H
 

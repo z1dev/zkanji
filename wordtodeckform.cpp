@@ -642,7 +642,7 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
 
     ui->wordsTable->assignStatusBar(ui->listStatus);
 
-    FormStates::restoreDialogSize("WordToDeck", this);
+    FormStates::restoreDialogSize("WordToDeck", this, true);
 }
 
 WordToDeckForm::~WordToDeckForm()
@@ -704,11 +704,11 @@ void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std
     showModal();
 }
 
-void WordToDeckForm::closeEvent(QCloseEvent *e)
-{
-    FormStates::saveDialogSize("WordToDeck", this);
-    base::closeEvent(e);
-}
+//void WordToDeckForm::closeEvent(QCloseEvent *e)
+//{
+//    FormStates::saveDialogSize("WordToDeck", this);
+//    base::closeEvent(e);
+//}
 
 void WordToDeckForm::showEvent(QShowEvent *e)
 {

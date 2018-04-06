@@ -15,6 +15,7 @@
 #include "zkanjimain.h"
 #include "zui.h"
 #include "settings.h"
+#include "formstate.h"
 
 
 //-------------------------------------------------------------
@@ -175,6 +176,8 @@ DictionaryEditorForm::DictionaryEditorForm(QWidget *parent) : base(parent), ui(n
     ui->dictView->setCurrentRow(0);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Close), &QPushButton::clicked, this, &DictionaryEditorForm::close);
+
+    FormStates::restoreDialogSize("DictionaryEditor", this, true);
 }
 
 DictionaryEditorForm::~DictionaryEditorForm()
