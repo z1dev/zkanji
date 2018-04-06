@@ -14,6 +14,7 @@
 #include "groups.h"
 #include "globalui.h"
 #include "zui.h"
+#include "formstate.h"
 
 
 //-------------------------------------------------------------
@@ -32,6 +33,8 @@ DictionaryExportForm::DictionaryExportForm(QWidget *parent) : base(parent), ui(n
     exportbutton->setEnabled(false);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &DictionaryExportForm::exportClicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DictionaryExportForm::closeCancel);
+
+    FormStates::restoreDialogSize("DictionaryExport", this, true);
 }
 
 bool DictionaryExportForm::exec(Dictionary *dict)

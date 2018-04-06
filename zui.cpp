@@ -445,35 +445,49 @@ int restrictedWidgetWiderSize(QWidget *widget, double charnum)
     return _sizeHelper(charnum, mmax(fm.averageCharWidth(), fm.width('W'), fm.width('M'), fm.width('X')));
 }
 
+namespace
+{
+    int updateWindowGeometryHelper(QWidget *w, int level)
+    {
+        ++level;
+
+        std::function<void(QLayout*)> invalidateLayout;
+        invalidateLayout = [&invalidateLayout](QLayout *l)
+        {
+            for (int ix = 0, siz = l->count(); ix != siz; ++ix)
+            {
+                QLayoutItem *item = l->itemAt(ix);
+                if (item->layout())
+                    invalidateLayout(item->layout());
+                else
+                    item->invalidate();
+            }
+
+            l->invalidate();
+            l->activate();
+        };
+
+        const QObjectList &childs = w->children();
+        for (int ix = 0, siz = childs.size(); ix != siz; ++ix)
+        {
+            QObject *child = childs.at(ix);
+            if (child->isWidgetType())
+            {
+                for (int ix = 1, childlevel = updateWindowGeometryHelper((QWidget*)child, level); ix != childlevel; ++ix)
+                    ;
+            }
+        }
+
+        if (w->layout())
+            invalidateLayout(w->layout());
+
+        return level;
+    }
+}
+
 void updateWindowGeometry(QWidget *widget)
 {
-
-    std::function<void(QLayout*)> invalidateLayout;
-    invalidateLayout = [&invalidateLayout](QLayout *l) {
-        for (int ix = 0, siz = l->count(); ix != siz; ++ix) {
-            QLayoutItem *item = l->itemAt(ix);
-            if (item->layout())
-                invalidateLayout(item->layout());
-            else
-                item->invalidate();
-        }
-
-        l->invalidate();
-        l->activate();
-    };
-
-    const QObjectList &childs = widget->children();
-    for (int ix = 0, siz = childs.size(); ix != siz; ++ix)
-    {
-        QObject *child = childs.at(ix);
-        if (child->isWidgetType()) {
-            updateWindowGeometry((QWidget*)child);
-        }
-    }
-
-    if (widget->layout()) {
-        invalidateLayout(widget->layout());
-    }
+    updateWindowGeometryHelper(widget, 0);
 }
 
 int fixedLabelWidth(QLabel *label)

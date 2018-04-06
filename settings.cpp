@@ -1243,7 +1243,7 @@ namespace Settings
                     // loaded for currently existing forms.
                     if (reader.name() == "WordEditor" || reader.name() == "WordToGroup" || reader.name() == "WordToDictionary")
                         FormStates::loadXMLDialogSplitterState(reader);
-                    else if (reader.name() == "WordToDeck" || reader.name() == "DictionaryEditor")
+                    else if (reader.name() == "WordToDeck" || reader.name() == "DictionaryEditor" || reader.name() == "DictionaryExport" || reader.name() == "DictionaryImport" || reader.name() == "DictionaryStats")
                         FormStates::loadXMLDialogSize(reader);
                     else if (reader.name() == "CollectWords")
                         FormStates::loadXMLSettings(FormStates::collectform, reader);

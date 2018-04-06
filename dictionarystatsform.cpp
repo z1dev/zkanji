@@ -23,6 +23,7 @@
 #include "groups.h"
 #include "zkanjimain.h"
 #include "zui.h"
+#include "formstate.h"
 
 
 //-------------------------------------------------------------
@@ -241,19 +242,29 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *prnt) : base(prnt),
 
     connect(ui->buttonBox->button(QDialogButtonBox::Close), &QAbstractButton::clicked, this, &DictionaryStatsForm::close);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
+    for (int ix = 0; ix != 3; ++ix)
+        updateWindowGeometry(this);
+
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
 
     QLabel *lb[] = { ui->lb1, ui->lb2, ui->lb3, ui->lb4, ui->lb5, ui->lb6,
                      ui->lb7, ui->lb8, ui->lb9, ui->lb10, ui->lb11, ui->lb12,
-                     ui->lb13 };
+                     ui->lb13, ui->lb14, ui->lb15 };
     int mm = 0;
     for (int ix = 0, siz = sizeof(lb) / sizeof(QLabel*); ix != siz; ++ix)
+    {
+        updateWindowGeometry(lb[ix]);
         mm = std::max<int>(mm, lb[ix]->width());
+    }
     for (int ix = 0, siz = sizeof(lb) / sizeof(QLabel*); ix != siz; ++ix)
+    {
         lb[ix]->setMinimumWidth(mm);
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+        lb[ix]->setMaximumWidth(mm);
+    }
+
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     restrictWidgetSize(ui->kanjiNumLabel, 8);
     restrictWidgetSize(ui->entryNumLabel, 8);
@@ -275,16 +286,18 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *prnt) : base(prnt),
 
     // Center the window on parent to make it work on X11.
 
-    QRect gr = frameGeometry();
-    QRect fr = frameGeometry();
-    QRect dif = QRect(QPoint(gr.left() - fr.left(), gr.top() - fr.top()), QPoint(fr.right() - gr.right(), fr.bottom() - gr.bottom()));
+    //QRect gr = frameGeometry();
+    //QRect fr = frameGeometry();
+    //QRect dif = QRect(QPoint(gr.left() - fr.left(), gr.top() - fr.top()), QPoint(fr.right() - gr.right(), fr.bottom() - gr.bottom()));
 
-    QRect r = parent() != nullptr ? ((QWidget*)parent())->frameGeometry() : qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    //QRect r = parent() != nullptr ? ((QWidget*)parent())->frameGeometry() : qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
 
-    int left = r.left() + (r.width() - fr.width()) / 2 + (dif.left() + dif.right()) / 2;
-    int top = r.top() + (r.height() - fr.height()) / 2 + (dif.top() + dif.bottom()) / 2;
+    //int left = r.left() + (r.width() - fr.width()) / 2 + (dif.left() + dif.right()) / 2;
+    //int top = r.top() + (r.height() - fr.height()) / 2 + (dif.top() + dif.bottom()) / 2;
 
-    setGeometry(QRect(left, top, gr.width(), gr.height()));
+    //setGeometry(QRect(left, top, gr.width(), gr.height()));
+
+    FormStates::restoreDialogSize("DictionaryStats", this, true);
 }
 
 DictionaryStatsForm::~DictionaryStatsForm()

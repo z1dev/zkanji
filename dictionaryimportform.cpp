@@ -8,7 +8,7 @@
 #include "ui_dictionaryimportform.h"
 #include "words.h"
 #include "globalui.h"
-
+#include "formstate.h"
 
 //-------------------------------------------------------------
 
@@ -41,6 +41,8 @@ DictionaryImportForm::DictionaryImportForm(QWidget *parent) : base(parent), ui(n
     ui->wordBox->setEnabled(false);
     ui->kanjiGroups->setEnabled(false);
     ui->wordGroups->setEnabled(false);
+
+    FormStates::restoreDialogSize("DictionaryImport", this, true);
 }
 
 DictionaryImportForm::~DictionaryImportForm()
