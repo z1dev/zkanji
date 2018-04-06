@@ -371,6 +371,12 @@ void DictionaryStatsForm::closeEvent(QCloseEvent *e)
     base::closeEvent(e);
 }
 
+void DictionaryStatsForm::showEvent(QShowEvent *e)
+{
+    ui->dictInfoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
+    base::showEvent(e);
+}
+
 void DictionaryStatsForm::updateData()
 {
     stopThreads();
