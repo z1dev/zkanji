@@ -83,13 +83,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     connect(readingCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readingBoxChanged(int)));
 
     updateWindowGeometry(this);
-    //updateGeometry();
-    //setAttribute(Qt::WA_DontShowOnScreen, true);
-    //show();
-    //ignoreresize = true;
-    //hide();
-    //ignoreresize = false;
-    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     restrictWidgetSize(ui->speedSlider, 16);
 
@@ -109,13 +102,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->partsLabel->setMinimumWidth(labelw);
     ui->partofLabel->setMinimumWidth(labelw);
 
-    //ZFlowLayout *flow = new ZFlowLayout(ui->refWidget);
-    //flow->setContentsMargins(0, 0, 0, 0);
-    //flow->setVerticalSpacing(4);
-    //flow->setHorizontalSpacing(8);
-    //ui->refWidget->setLayout(flow);
-    //ui->refWidget->hide();
-
     ui->similarWidget->hide();
     ui->partsWidget->hide();
     ui->partofWidget->hide();
@@ -124,18 +110,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->dictWidget->setExamplesVisible(false);
     ui->dictWidget->setInflButtonVisible(false);
     ui->dictWidget->setListMode(DictionaryWidget::Filtered);
-
-    //setBackgroundRole(QPalette::Base);
-    //ui->centralwidget->setAutoFillBackground(true);
-    //ui->sodWidget->setBackgroundRole(QPalette::Base);
-    //ui->sodWidget->setAutoFillBackground(true);
-
-    //ui->similarWidget->setBackgroundRole(QPalette::Base);
-    //ui->partsWidget->setBackgroundRole(QPalette::Base);
-    //ui->partofWidget->setBackgroundRole(QPalette::Base);
-    //ui->similarWidget->setAutoFillBackground(true);
-    //ui->partsWidget->setAutoFillBackground(true);
-    //ui->partofWidget->setAutoFillBackground(true);
 
     ui->similarScroller->setScrollerType(ZScrollArea::Buttons);
     ui->partsScroller->setScrollerType(ZScrollArea::Buttons);
@@ -153,14 +127,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     ui->similarScroller->setFrameShape(QFrame::NoFrame);
     ui->partsScroller->setFrameShape(QFrame::NoFrame);
     ui->partofScroller->setFrameShape(QFrame::NoFrame);
-
-    //ui->similarScroller->model()->setBgColor(Settings::uiColor(ColorSettings::SimilarBg));
-    //ui->partsScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartsBg));
-    //ui->partofScroller->model()->setBgColor(Settings::uiColor(ColorSettings::PartOfBg));
-
-    //ui->similarWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::SimilarBg)).name()));
-    //ui->partsWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartsBg)).name()));
-    //ui->partofWidget->setStyleSheet(QString("background-color: %1").arg((Settings::uiColor(ColorSettings::PartOfBg)).name()));
 
     ui->infoText->setCursorWidth(0);
 
@@ -288,13 +254,15 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     if (wordsmodel != nullptr)
         wordsmodel->setShowOnlyExamples(readingFilterButton->isChecked());
 
-    ui->centralwidget->layout()->activate();
-    layout()->activate();
+    updateWindowGeometry(this);
 
-    ui->centralwidget->layout()->invalidate();
-    layout()->invalidate();
-    ui->centralwidget->layout()->update();
-    layout()->update();
+    //ui->centralwidget->layout()->activate();
+    //layout()->activate();
+
+    //ui->centralwidget->layout()->invalidate();
+    //layout()->invalidate();
+    //ui->centralwidget->layout()->update();
+    //layout()->update();
 
 
     if (data.dicth == -1)
@@ -373,11 +341,13 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
 
     resize(QSize(data.siz.width(), geomh)/*geom.size()*/);
 
+    //updateWindowGeometry(this);
+
     if (Settings::kanji.showpos == KanjiSettings::RestoreLast)
     {
         QRect sg = qApp->desktop()->screenGeometry(screenNumber(QRect(data.pos, data.siz)));
         if (data.screen == sg)
-            move(std::max(sg.left(), std::min(data.pos.x(), sg.left() + sg.width() - data.siz.width())), std::max(sg.top(), std::min(data.pos.y(), sg.top() + sg.height() - data.siz.height())));
+            move(std::max(sg.left(), std::min(data.pos.x(), sg.left() + sg.width() - data.siz.width())), std::max(sg.top(), std::min(data.pos.y(), sg.top() + sg.height() - geomh)));
     }
     else if (Settings::kanji.showpos == KanjiSettings::NearCursor)
     {
@@ -395,9 +365,9 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
         else
             pos.setX(std::min(sg.left() + sg.width() - data.siz.width(), p.x() + Settings::scaled(64)));
         if (toabove)
-            pos.setY(std::max(sg.top(), p.y() - data.siz.height() - Settings::scaled(32)));
+            pos.setY(std::max(sg.top(), p.y() - geomh - Settings::scaled(32)));
         else
-            pos.setY(std::min(sg.top() + sg.height() - data.siz.height(), p.y() + Settings::scaled(48)));
+            pos.setY(std::min(sg.top() + sg.height() - geomh, p.y() + Settings::scaled(48)));
 
         move(pos);
     }
@@ -877,7 +847,7 @@ void KanjiInfoForm::on_speedSlider_valueChanged(int value)
 void KanjiInfoForm::on_simButton_clicked(bool checked)
 {
     ignoreresize = true;
-    int h = ui->similarWidget->height() + ui->similarWidget->parentWidget()->layout()->spacing();
+    int h = ui->similarWidget->sizeHint().height() /*std::max(ui->similarLabel->height(), ui->similarScroller->sizeHint().height()) + ui->similarLine->height()*/ + ui->similarWidget->parentWidget()->layout()->spacing();
 
     QSize s = geometry().size();
     if (!checked)
@@ -904,7 +874,9 @@ void KanjiInfoForm::on_simButton_clicked(bool checked)
 void KanjiInfoForm::on_partsButton_clicked(bool checked)
 {
     ignoreresize = true;
-    int h = ui->partsWidget->height() + ui->partsWidget->parentWidget()->layout()->spacing();
+    int h = ui->partsWidget->sizeHint().height() /*std::max(ui->partsLabel->height(), ui->partsScroller->sizeHint().height()) + ui->partsLine->height()*/ + ui->partsWidget->parentWidget()->layout()->spacing();
+
+    //int h = ui->partsWidget->height() + ui->partsWidget->parentWidget()->layout()->spacing();
 
     QSize s = geometry().size();
     if (!checked)
@@ -931,7 +903,8 @@ void KanjiInfoForm::on_partsButton_clicked(bool checked)
 void KanjiInfoForm::on_partofButton_clicked(bool checked)
 {
     ignoreresize = true;
-    int h = ui->partofWidget->height() + ui->partofWidget->parentWidget()->layout()->spacing();
+    int h = ui->partofWidget->sizeHint().height() /*std::max(ui->partofLabel->height(), ui->partofScroller->sizeHint().height()) + ui->partofLine->height()*/ + ui->partofWidget->parentWidget()->layout()->spacing();
+    //int h = ui->partofWidget->height() + ui->partofWidget->parentWidget()->layout()->spacing();
 
     QSize s = geometry().size();
     if (!checked)
@@ -964,9 +937,9 @@ void KanjiInfoForm::on_wordsButton_clicked(bool checked)
     ui->partsButton->setEnabled(ZKanji::elements()->size() != 0 && !checked);
     ui->partofButton->setEnabled(ZKanji::elements()->size() != 0 && !checked);
 
-    int h = (!checked && ui->simButton->isChecked()) || ui->similarWidget->isVisible() ? (ui->similarWidget->height() + ui->similarWidget->parentWidget()->layout()->spacing()) : 0;
-    h += (!checked && ui->partsButton->isChecked()) || ui->partsWidget->isVisible() ? (ui->partsWidget->height() + ui->partsWidget->parentWidget()->layout()->spacing()) : 0;
-    h += (!checked && ui->partofButton->isChecked()) || ui->partofWidget->isVisible() ? (ui->partofWidget->height() + ui->partofWidget->parentWidget()->layout()->spacing()) : 0;
+    int h = (!checked && ui->simButton->isChecked()) || ui->similarWidget->isVisible() ? (ui->similarWidget->sizeHint().height() + ui->similarWidget->parentWidget()->layout()->spacing()) : 0;
+    h += (!checked && ui->partsButton->isChecked()) || ui->partsWidget->isVisible() ? (ui->partsWidget->sizeHint().height() + ui->partsWidget->parentWidget()->layout()->spacing()) : 0;
+    h += (!checked && ui->partofButton->isChecked()) || ui->partofWidget->isVisible() ? (ui->partofWidget->sizeHint().height() + ui->partofWidget->parentWidget()->layout()->spacing()) : 0;
 
     if (dicth == -1 || ui->dictWidget->isVisibleTo(ui->dictWidget->parentWidget()))
         dicth = ui->dictWidget->isVisibleTo(ui->dictWidget->parentWidget()) ? ui->splitter->sizes().at(1) : ui->dataWidget->minimumSizeHint().height();

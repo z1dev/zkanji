@@ -99,12 +99,13 @@ public:
     virtual int scrollMax() const override;
     virtual int scrollPage() const override;
     virtual int scrollStep() const override;
+
+    virtual QSize sizeHint() const override;
+    virtual QSize minimumSizeHint() const override;
 signals:
     void itemClicked(int index);
 protected:
     virtual void scrolled(int oldpos, int &newpos) override;
-
-    virtual QSize minimumSizeHint() const override;
 
     virtual void paintEvent(QPaintEvent *e) override;
     //virtual void resizeEvent(QResizeEvent *e) override;

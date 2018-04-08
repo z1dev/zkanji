@@ -237,6 +237,11 @@ void ZItemScroller::scrolled(int oldpos, int &newpos)
     update();
 }
 
+QSize ZItemScroller::sizeHint() const
+{
+    return minimumSizeHint();
+}
+
 QSize ZItemScroller::minimumSizeHint() const
 {
     int mleft, mtop, mright, mbottom;

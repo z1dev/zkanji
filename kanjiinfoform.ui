@@ -900,7 +900,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="Line" name="line_8">
+        <widget class="Line" name="similarLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -964,7 +964,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="Line" name="line_9">
+        <widget class="Line" name="partsLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -1028,7 +1028,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="Line" name="line_10">
+        <widget class="Line" name="partofLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
