@@ -1169,12 +1169,6 @@
       </item>
       <item>
        <widget class="QComboBox" name="sortCBox">
-        <property name="toolTip">
-         <string/>
-        </property>
-        <property name="statusTip">
-         <string/>
-        </property>
         <item>
          <property name="text">
           <string>Jouyou grade</string>
@@ -1291,9 +1285,6 @@
       </property>
       <item>
        <widget class="QComboBox" name="fromCBox">
-        <property name="toolTip">
-         <string/>
-        </property>
         <property name="sizeAdjustPolicy">
          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
         </property>

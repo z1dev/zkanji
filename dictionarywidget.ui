@@ -219,7 +219,7 @@
           </sizepolicy>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QHBoxLayout" name="horizontalLayout">
@@ -310,7 +310,7 @@
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
                </property>
-               <property name="statusTip">
+               <property name="toolTip">
                 <string>Toggle katakana/hiragana sensitive search</string>
                </property>
                <property name="icon">
@@ -473,7 +473,7 @@
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
                </property>
-               <property name="statusTip">
+               <property name="toolTip">
                 <string>Case sensitive search</string>
                </property>
                <property name="icon">
@@ -636,7 +636,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ZStatusBar" name="listStatus" native="true"/>
+    <widget class="ZStatusBar" name="listStatus"/>
    </item>
   </layout>
  </widget>
