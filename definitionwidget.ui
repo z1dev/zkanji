@@ -44,6 +44,9 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="toolTip">
+      <string>Word meaning shown during tests or in printed vocabulary lists</string>
+     </property>
     </widget>
    </item>
    <item>

@@ -289,6 +289,9 @@
          </property>
          <item>
           <widget class="QToolButton" name="resetButton">
+           <property name="toolTip">
+            <string>Erase all search fields to reset displayed list of kanji</string>
+           </property>
            <property name="text">
             <string>Reset</string>
            </property>
@@ -335,7 +338,11 @@
           </widget>
          </item>
          <item>
-          <widget class="ZLineEdit" name="strokeEdit"/>
+          <widget class="ZLineEdit" name="strokeEdit">
+           <property name="toolTip">
+            <string>Number of strokes in kanji to display. You can use a range, i.e.: 2-4</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -378,7 +385,11 @@
           </widget>
          </item>
          <item>
-          <widget class="ZLineEdit" name="jlptEdit"/>
+          <widget class="ZLineEdit" name="jlptEdit">
+           <property name="toolTip">
+            <string>JLPT N level of kanji to display</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -422,6 +433,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="mAfterButton">
+           <property name="toolTip">
+            <string>Toggle whether the search text can be a partial word</string>
+           </property>
            <property name="icon">
             <iconset resource="Resources/resources.qrc">
              <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
@@ -441,7 +455,11 @@
           </widget>
          </item>
          <item>
-          <widget class="ZLineEdit" name="meaningEdit"/>
+          <widget class="ZLineEdit" name="meaningEdit">
+           <property name="toolTip">
+            <string>Meaning of displayed kanji must contain the entered text</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -514,6 +532,9 @@
               </property>
               <item>
                <widget class="QToolButton" name="rAfterButton">
+                <property name="toolTip">
+                 <string>Whether entered reading can be partial</string>
+                </property>
                 <property name="icon">
                  <iconset resource="Resources/resources.qrc">
                   <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
@@ -536,6 +557,9 @@
                <widget class="QToolButton" name="rStrictButton">
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>When pressed, enter hiragana for KUN readings and katakana for ON readings</string>
                 </property>
                 <property name="icon">
                  <iconset resource="Resources/resources.qrc">
@@ -561,10 +585,17 @@
           </widget>
          </item>
          <item>
-          <widget class="ZKanaLineEdit" name="readingEdit"/>
+          <widget class="ZKanaLineEdit" name="readingEdit">
+           <property name="toolTip">
+            <string>Display kanji with entered kana reading</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="okuriganaButton">
+           <property name="toolTip">
+            <string>Toggle whether entered search text can contain okurigana</string>
+           </property>
            <property name="text">
             <string>Oku.</string>
            </property>
@@ -626,6 +657,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Jouyou level of kanji to display</string>
            </property>
            <property name="maxVisibleItems">
             <number>12</number>
@@ -729,6 +763,9 @@
          </item>
          <item>
           <widget class="ZComboButton" name="radicalsCButton">
+           <property name="toolTip">
+            <string>Limit listed kanji to those containing selected radicals</string>
+           </property>
            <property name="sizeAdjustPolicy">
             <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
            </property>
@@ -1132,6 +1169,12 @@
       </item>
       <item>
        <widget class="QComboBox" name="sortCBox">
+        <property name="toolTip">
+         <string/>
+        </property>
+        <property name="statusTip">
+         <string/>
+        </property>
         <item>
          <property name="text">
           <string>Jouyou grade</string>
@@ -1217,7 +1260,7 @@
       </widget>
      </item>
      <item>
-      <widget class="ZStatusBar" name="kanjiStatus" native="true">
+      <widget class="ZStatusBar" name="kanjiStatus">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -1248,6 +1291,9 @@
       </property>
       <item>
        <widget class="QComboBox" name="fromCBox">
+        <property name="toolTip">
+         <string/>
+        </property>
         <property name="sizeAdjustPolicy">
          <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
         </property>
@@ -1423,6 +1469,12 @@
    <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
@@ -1431,12 +1483,6 @@
    <class>ZKanjiGridView</class>
    <extends>QWidget</extends>
    <header>zkanjigridview.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZStatusBar</class>
-   <extends>QStatusBar</extends>
-   <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -106,6 +106,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="queuedButton">
+               <property name="toolTip">
+                <string>Show words in the queue, that were not studied previously</string>
+               </property>
                <property name="text">
                 <string>Queued</string>
                </property>
@@ -128,6 +131,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="studiedButton">
+               <property name="toolTip">
+                <string>Show words previously studied</string>
+               </property>
                <property name="text">
                 <string>Studied</string>
                </property>
@@ -147,6 +153,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="testedButton">
+               <property name="toolTip">
+                <string>Show words from the last study session</string>
+               </property>
                <property name="text">
                 <string>Last test</string>
                </property>
@@ -186,6 +195,9 @@
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="toolTip">
+                <string>Add parts of selected word to the queue</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/addtoqueue.svg</normaloff>:/addtoqueue.svg</iconset>
@@ -206,6 +218,9 @@
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="toolTip">
+                <string>Move studied word back to the queue, clearing its study data</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/backtoqueue.svg</normaloff>:/backtoqueue.svg</iconset>
@@ -225,6 +240,9 @@
               <widget class="QToolButton" name="delButton">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Remove selected word from the deck, clearing its study data</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -270,6 +288,9 @@
              </property>
              <item>
               <widget class="QToolButton" name="wButton">
+               <property name="toolTip">
+                <string>Display or hide word items with studied written form</string>
+               </property>
                <property name="text">
                 <string>W</string>
                </property>
@@ -289,6 +310,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="kButton">
+               <property name="toolTip">
+                <string>Display or hide word items with studied kana reading</string>
+               </property>
                <property name="text">
                 <string>K</string>
                </property>
@@ -308,6 +332,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="dButton">
+               <property name="toolTip">
+                <string>Display or hide word items with studied definition</string>
+               </property>
                <property name="text">
                 <string>D</string>
                </property>

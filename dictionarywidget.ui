@@ -66,6 +66,9 @@
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
+          <property name="toolTip">
+           <string>Translate from Japanese</string>
+          </property>
           <property name="iconSize">
            <size>
             <width>18</width>
@@ -88,6 +91,9 @@
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
+          <property name="toolTip">
+           <string>Translate to Japanese</string>
+          </property>
           <property name="iconSize">
            <size>
             <width>18</width>
@@ -109,6 +115,9 @@
          <widget class="QToolButton" name="browseButton">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Browse dictionary</string>
           </property>
           <property name="text">
            <string/>
@@ -210,7 +219,7 @@
           </sizepolicy>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QHBoxLayout" name="horizontalLayout">
@@ -249,6 +258,9 @@
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
                </property>
+               <property name="toolTip">
+                <string>Any start of word</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/anystart.svg</normaloff>:/anystart.svg</iconset>
@@ -272,6 +284,9 @@
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
                </property>
+               <property name="toolTip">
+                <string>Any end of word</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
@@ -294,6 +309,9 @@
               <widget class="QToolButton" name="jpStrictButton">
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="statusTip">
+                <string>Toggle katakana/hiragana sensitive search</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -326,6 +344,9 @@
             <widget class="QToolButton" name="recognizeButton">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="toolTip">
+              <string>Write a Japanese character with mouse or pen</string>
              </property>
              <property name="icon">
               <iconset resource="Resources/resources.qrc">
@@ -360,6 +381,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="inflButton">
+             <property name="toolTip">
+              <string>Toggle conjugated forms</string>
+             </property>
              <property name="icon">
               <iconset resource="Resources/resources.qrc">
                <normaloff>:/deinf.svg</normaloff>:/deinf.svg</iconset>
@@ -420,6 +444,9 @@
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
                </property>
+               <property name="toolTip">
+                <string>Any end of word</string>
+               </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
                  <normaloff>:/anyend.svg</normaloff>:/anyend.svg</iconset>
@@ -445,6 +472,9 @@
               <widget class="QToolButton" name="enStrictButton">
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="statusTip">
+                <string>Case sensitive search</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -510,6 +540,9 @@
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
+         <property name="toolTip">
+          <string>Show definitions in separate rows</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/multi.svg</normaloff>:/multi.svg</iconset>
@@ -557,6 +590,9 @@
            <widget class="QToolButton" name="examplesButton">
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Word example sentences</string>
             </property>
             <property name="text">
              <string/>
@@ -617,7 +653,7 @@
   </customwidget>
   <customwidget>
    <class>ZStatusBar</class>
-   <extends>QWidget</extends>
+   <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>

@@ -57,6 +57,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="hiraButton">
+           <property name="toolTip">
+            <string>Show which hiragana syllables to practice. When not displayed currently, the syllables are still checked</string>
+           </property>
            <property name="text">
             <string>Hiragana</string>
            </property>
@@ -73,6 +76,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="kataButton">
+           <property name="toolTip">
+            <string>Show which katakana syllables to practice. When not displayed currently, the syllables are still checked</string>
+           </property>
            <property name="text">
             <string>Katakana</string>
            </property>
@@ -99,6 +105,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="checkButton">
+           <property name="toolTip">
+            <string>Check all currently displayed kana</string>
+           </property>
            <property name="text">
             <string>Check/uncheck all</string>
            </property>

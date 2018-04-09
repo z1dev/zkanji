@@ -396,6 +396,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Ask at most entered number of words in the test</string>
+             </property>
             </widget>
            </item>
           </layout>
@@ -459,6 +462,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Suspend test after entered number of minutes</string>
+             </property>
             </widget>
            </item>
           </layout>
@@ -484,6 +490,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Use a timer when answering each item. If the timer runs out, the answer is rejected</string>
           </property>
           <property name="text">
            <string>Use timer</string>
@@ -606,6 +615,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>When checked uses an initial random order of studied words</string>
+          </property>
           <property name="text">
            <string>Shuffle words before the test starts</string>
           </property>
@@ -690,7 +702,7 @@
         <item>
          <widget class="QStackedWidget" name="methodStack">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="gradualPage">
            <layout class="QFormLayout" name="formLayout_2">
@@ -733,6 +745,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Number of words to test in first round. New words will be added in each round</string>
               </property>
               <property name="currentText">
                <string>5</string>
@@ -797,6 +812,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>New words to test in each round, beside previously tested ones</string>
+              </property>
               <property name="currentText">
                <string>2</string>
               </property>
@@ -840,6 +858,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>Show at most this number of words from previous rounds in each new round</string>
+              </property>
               <property name="currentText">
                <string>5</string>
               </property>
@@ -880,6 +901,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Check to test words in random order in each round. When not checked, words will be shown in the order they were included in the rounds</string>
               </property>
               <property name="text">
                <string>Shuffle words shown in each round</string>
@@ -1045,6 +1069,9 @@
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
             </property>
+            <property name="toolTip">
+             <string>Refresh word list if you changed the items in the group</string>
+            </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
               <normaloff>:/refreshmark.svg</normaloff>:/refreshmark.svg</iconset>
@@ -1069,6 +1096,9 @@
           </item>
           <item>
            <widget class="QComboBox" name="displayBox">
+            <property name="toolTip">
+             <string>Which words to show here. Use one of the &quot;conflict&quot; options to see possible overlap of studied part</string>
+            </property>
             <item>
              <property name="text">
               <string>Group words</string>
@@ -1128,6 +1158,9 @@
                  <property name="focusPolicy">
                   <enum>Qt::NoFocus</enum>
                  </property>
+                 <property name="toolTip">
+                  <string>Reset score of selected words, to make them appear like they haven't been studied before</string>
+                 </property>
                  <property name="text">
                   <string>Reset score</string>
                  </property>
@@ -1147,6 +1180,9 @@
                 <widget class="QToolButton" name="excludeButton">
                  <property name="focusPolicy">
                   <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>Don't study selected words</string>
                  </property>
                  <property name="text">
                   <string>Exclude</string>
@@ -1173,6 +1209,9 @@
                 <widget class="QToolButton" name="includeButton">
                  <property name="focusPolicy">
                   <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>Allow selected excluded words to be studied</string>
                  </property>
                  <property name="text">
                   <string>Include</string>
@@ -1277,6 +1316,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Use accepted settings when creating new test for a group</string>
         </property>
         <property name="text">
          <string>Make default for new groups</string>

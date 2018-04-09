@@ -57,6 +57,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="switchButton">
+        <property name="toolTip">
+         <string>Switch to adding word to group</string>
+        </property>
         <property name="text">
          <string>...</string>
         </property>

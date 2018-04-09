@@ -35,7 +35,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Edit information about the dictionary:</string>
+         <string>&lt;b&gt;Edit information about the dictionary:&lt;/b&gt;</string>
         </property>
        </widget>
       </item>

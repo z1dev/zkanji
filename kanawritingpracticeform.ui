@@ -228,6 +228,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="revealButton">
+            <property name="toolTip">
+             <string>Play/stop stroke order animation for syllable</string>
+            </property>
             <property name="text">
              <string>Reveal</string>
             </property>
@@ -425,6 +428,9 @@
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
+           <property name="toolTip">
+            <string>Undo last stroke</string>
+           </property>
            <property name="icon">
             <iconset resource="Resources/resources.qrc">
              <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
@@ -447,6 +453,9 @@
           <widget class="QToolButton" name="nextButton">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Redo last stroke</string>
            </property>
            <property name="icon">
             <iconset resource="Resources/resources.qrc">
@@ -471,6 +480,9 @@
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
+           <property name="toolTip">
+            <string>Erase drawn strokes</string>
+           </property>
            <property name="text">
             <string>...</string>
            </property>
@@ -493,6 +505,9 @@
           <widget class="QToolButton" name="gridButton">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Toggle grid to help stroke positioning</string>
            </property>
            <property name="icon">
             <iconset resource="Resources/resources.qrc">

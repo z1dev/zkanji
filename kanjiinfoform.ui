@@ -66,6 +66,9 @@
              <property name="enabled">
               <bool>true</bool>
              </property>
+             <property name="toolTip">
+              <string>Lock displayed data. Other kanji will be displayed in a different window.</string>
+             </property>
              <property name="icon">
               <iconset resource="Resources/resources.qrc">
                <normaloff>:/lockopen.svg</normaloff>:/lockopen.svg</iconset>
@@ -211,7 +214,7 @@
        <item>
         <widget class="QToolButton" name="gridButton">
          <property name="toolTip">
-          <string>Background grid</string>
+          <string>Toggle background grid</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
@@ -241,7 +244,7 @@
        <item>
         <widget class="QToolButton" name="sodButton">
          <property name="toolTip">
-          <string>Stroke order diagram</string>
+          <string>Toggle stroke order diagram</string>
          </property>
          <property name="text">
           <string>S.O.D.</string>
@@ -264,7 +267,7 @@
        <item>
         <widget class="QToolButton" name="wordsButton">
          <property name="toolTip">
-          <string>Words containing this kanji</string>
+          <string>Toggle words containing this kanji</string>
          </property>
          <property name="text">
           <string>Words</string>
@@ -289,7 +292,7 @@
          <item>
           <widget class="QToolButton" name="simButton">
            <property name="toolTip">
-            <string>List of similar looking kanji</string>
+            <string>Toggle list of similar looking kanji</string>
            </property>
            <property name="text">
             <string>Similar</string>
@@ -302,7 +305,7 @@
          <item>
           <widget class="QToolButton" name="partsButton">
            <property name="toolTip">
-            <string>List of parts making up this kanji</string>
+            <string>Toggle list of parts making up this kanji</string>
            </property>
            <property name="text">
             <string>Parts</string>
@@ -315,7 +318,7 @@
          <item>
           <widget class="QToolButton" name="partofButton">
            <property name="toolTip">
-            <string>List of kanji where this kanji appears as a part</string>
+            <string>Toggle list of kanji where this kanji appears as a part</string>
            </property>
            <property name="text">
             <string>Part of</string>

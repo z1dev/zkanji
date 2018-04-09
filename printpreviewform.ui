@@ -102,6 +102,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="firstButton">
+         <property name="toolTip">
+          <string>Go to first page</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/firstpage.svg</normaloff>:/firstpage.svg</iconset>
@@ -119,6 +122,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="prevButton">
+         <property name="toolTip">
+          <string>Go to previous page</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/prevpage.svg</normaloff>:/prevpage.svg</iconset>
@@ -181,6 +187,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="nextButton">
+         <property name="toolTip">
+          <string>Go to next page</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/nextpage.svg</normaloff>:/nextpage.svg</iconset>
@@ -201,6 +210,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="lastButton">
+         <property name="toolTip">
+          <string>Go to last page</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/lastpage.svg</normaloff>:/lastpage.svg</iconset>
@@ -218,6 +230,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="singleButton">
+         <property name="toolTip">
+          <string>Continuous pages</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/onepage.svg</normaloff>:/onepage.svg</iconset>
@@ -247,6 +262,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="doubleButton">
+         <property name="toolTip">
+          <string>Two column display</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/twopage.svg</normaloff>:/twopage.svg</iconset>
@@ -273,6 +291,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="fitButton">
+         <property name="toolTip">
+          <string>Fit whole page to window</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/fitpage.svg</normaloff>:/fitpage.svg</iconset>
@@ -299,6 +320,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="stretchButton">
+         <property name="toolTip">
+          <string>Stretch page width to window</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/stretchpage.svg</normaloff>:/stretchpage.svg</iconset>
@@ -325,6 +349,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="zoomoutButton">
+         <property name="toolTip">
+          <string>Zoom out</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/zoomout.svg</normaloff>:/zoomout.svg</iconset>
@@ -342,6 +369,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="zoominButton">
+         <property name="toolTip">
+          <string>Zoom in</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/zoomin.svg</normaloff>:/zoomin.svg</iconset>
@@ -364,6 +394,9 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Change print settings</string>
          </property>
          <property name="text">
           <string>Settings</string>

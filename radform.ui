@@ -81,6 +81,9 @@
            </property>
            <item>
             <widget class="QToolButton" name="mode1Button">
+             <property name="toolTip">
+              <string>List of common kanji parts</string>
+             </property>
              <property name="text">
               <string>Parts</string>
              </property>
@@ -103,6 +106,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="mode2Button">
+             <property name="toolTip">
+              <string>List of kanji dictionary radicals</string>
+             </property>
              <property name="text">
               <string>Radicals</string>
              </property>
@@ -122,6 +128,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="mode3Button">
+             <property name="toolTip">
+              <string>List of kanji parts and radicals depending on their position</string>
+             </property>
              <property name="text">
               <string>Radicals as parts</string>
              </property>
@@ -194,6 +203,9 @@
                <width>32</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Number of strokes of displayed radicals. You can use range i.e.: 2-3</string>
              </property>
             </widget>
            </item>
@@ -658,14 +670,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZKanaLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZRadicalGrid</class>

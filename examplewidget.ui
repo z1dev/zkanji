@@ -115,6 +115,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Switch between Japanese/English, Japanese only or English only display</string>
+            </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
               <normaloff>:/rotate.svg</normaloff>:/rotate.svg</iconset>
@@ -163,6 +166,9 @@
            <widget class="ZLineEdit" name="indexEdit">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Current example</string>
             </property>
            </widget>
           </item>

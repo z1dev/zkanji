@@ -111,6 +111,9 @@
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
+           <property name="toolTip">
+            <string>Create new word deck. Words added to a deck can be studied separately from other decks</string>
+           </property>
            <property name="text">
             <string>Create</string>
            </property>
@@ -136,6 +139,9 @@
           <widget class="QToolButton" name="delButton">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Remove selected deck. All study data is removed with the deck</string>
            </property>
            <property name="text">
             <string>Delete</string>
@@ -174,6 +180,9 @@
          </property>
          <item>
           <widget class="QToolButton" name="viewButton">
+           <property name="toolTip">
+            <string>Show words added to the current deck</string>
+           </property>
            <property name="text">
             <string>Items</string>
            </property>
@@ -197,6 +206,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="statsButton">
+           <property name="toolTip">
+            <string>Show item and study statistics for current deck</string>
+           </property>
            <property name="text">
             <string>Statistics</string>
            </property>

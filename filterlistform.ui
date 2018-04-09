@@ -80,6 +80,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Move above previous filter</string>
+            </property>
             <property name="text">
              <string>Delete filter</string>
             </property>
@@ -106,6 +109,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Move below next filter</string>
+            </property>
             <property name="text">
              <string>Delete filter</string>
             </property>
@@ -131,6 +137,9 @@
            <widget class="QToolButton" name="delButton">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Remove filter</string>
             </property>
             <property name="text">
              <string>Delete filter</string>
@@ -186,6 +195,9 @@
         </item>
         <item row="1" column="4">
          <widget class="QToolButton" name="editButton">
+          <property name="toolTip">
+           <string>Open and close filter editor to edit or add filters</string>
+          </property>
           <property name="text">
            <string>Edit</string>
           </property>

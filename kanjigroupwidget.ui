@@ -93,6 +93,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Move selected in front of previous kanji</string>
+            </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
               <normaloff>:/leftmark.svg</normaloff>:/leftmark.svg</iconset>
@@ -116,6 +119,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Move selected after next kanji</string>
+            </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
               <normaloff>:/rightmark.svg</normaloff>:/rightmark.svg</iconset>
@@ -138,6 +144,9 @@
            <widget class="QToolButton" name="delButton">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Remove selected kanji from group</string>
             </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
@@ -179,8 +188,7 @@
           <widget class="ZKanjiGridView" name="kanjiGrid" native="true"/>
          </item>
          <item>
-          <widget class="ZStatusBar" name="kanjiStatus" native="true">
-          </widget>
+          <widget class="ZStatusBar" name="kanjiStatus"/>
          </item>
         </layout>
        </item>
@@ -192,15 +200,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanjiGridView</class>
-   <extends>QWidget</extends>
-   <header>zkanjigridview.h</header>
+   <class>ZStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>zstatusbar.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZStatusBar</class>
+   <class>ZKanjiGridView</class>
    <extends>QWidget</extends>
-   <header>zstatusbar.h</header>
+   <header>zkanjigridview.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -119,6 +119,9 @@
           </property>
           <item>
            <widget class="QToolButton" name="kanjiButton">
+            <property name="toolTip">
+             <string>Write a Japanese character with mouse or pen</string>
+            </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
               <normaloff>:/kanjipen.svg</normaloff>:/kanjipen.svg</iconset>
@@ -144,6 +147,9 @@
               <horstretch>5</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Written form of word, possibly containing kanji</string>
             </property>
            </widget>
           </item>
@@ -206,6 +212,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Enter relative word frequency. Higher numbers mean higher frequency of use</string>
+             </property>
              <property name="text">
               <string notr="true">0</string>
              </property>
@@ -224,7 +233,11 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="ZKanaLineEdit" name="kanaEdit"/>
+       <widget class="ZKanaLineEdit" name="kanaEdit">
+        <property name="toolTip">
+         <string>Kana reading of the word. Make sure this matches the written form</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -268,6 +281,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="cloneButton">
+        <property name="toolTip">
+         <string>Duplicate selected definition. The new definition will be added at the end of the list</string>
+        </property>
         <property name="text">
          <string>Clone</string>
         </property>
@@ -281,6 +297,9 @@
       </item>
       <item>
        <widget class="QToolButton" name="delButton">
+        <property name="toolTip">
+         <string>Remove selected definition</string>
+        </property>
         <property name="icon">
          <iconset resource="Resources/resources.qrc">
           <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
@@ -411,6 +430,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
@@ -420,11 +444,6 @@
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
    <class>WordAttribWidget</class>

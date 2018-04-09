@@ -148,6 +148,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>List words containing given number of kanji. Ranges can be used i.e.: 2-3</string>
+            </property>
             <property name="text">
              <string>3</string>
             </property>
@@ -176,6 +179,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Maximum length of listed words when written with kana</string>
             </property>
             <property name="text">
              <string>8</string>
@@ -206,6 +212,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Minimum word frequency of listed words</string>
+            </property>
             <property name="text">
              <string>1000</string>
             </property>
@@ -222,6 +231,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Exlude words from result that contain kanji at not matching position or with not matching reading</string>
+            </property>
             <property name="text">
              <string>Strict position and reading</string>
             </property>
@@ -237,6 +249,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Exclude words with kanji not in the list</string>
             </property>
             <property name="text">
              <string>Limit words to the listed kanji</string>
@@ -310,6 +325,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Position of kanji in words</string>
            </property>
            <item>
             <property name="text">

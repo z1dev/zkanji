@@ -162,6 +162,9 @@
       </item>
       <item>
        <widget class="ZLineEdit" name="filterEdit">
+        <property name="toolTip">
+         <string>Display groups with names containing entered text</string>
+        </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
         </property>
@@ -174,14 +177,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GroupTreeView</class>
-   <extends>QTreeView</extends>
-   <header>ztreeview.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GroupTreeView</class>
+   <extends>QTreeView</extends>
+   <header>ztreeview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

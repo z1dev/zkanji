@@ -76,6 +76,9 @@
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
+         <property name="toolTip">
+          <string>Close</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/closex.svg</normaloff>:/closex.svg</iconset>
@@ -112,6 +115,9 @@
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
+         <property name="toolTip">
+          <string>Toggle grid to help stroke positioning</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/grid.svg</normaloff>:/grid.svg</iconset>
@@ -137,6 +143,9 @@
         <widget class="QToolButton" name="generalButton">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Allow searching for kana or non-kanji characters</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
@@ -177,6 +186,9 @@
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
+         <property name="toolTip">
+          <string>Undo last stroke</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/delmark.svg</normaloff>:/delmark.svg</iconset>
@@ -200,6 +212,9 @@
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
          </property>
+         <property name="toolTip">
+          <string>Redo last stroke</string>
+         </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
            <normaloff>:/addmark.svg</normaloff>:/addmark.svg</iconset>
@@ -222,6 +237,9 @@
         <widget class="QToolButton" name="clearButton">
          <property name="focusPolicy">
           <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Erase drawn strokes</string>
          </property>
          <property name="text">
           <string>...</string>
@@ -255,15 +273,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZWindow</class>
-   <extends>QMainWindow</extends>
-   <header>zwindow.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>RecognizerArea</class>
    <extends>QFrame</extends>
    <header>recognizerform.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZWindow</class>
+   <extends>QMainWindow</extends>
+   <header>zwindow.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
