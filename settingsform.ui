@@ -233,7 +233,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -329,7 +329,7 @@
                 </property>
                </spacer>
               </item>
-              <item row="4" column="0" colspan="2">
+              <item row="5" column="0" colspan="2">
                <widget class="QCheckBox" name="savePosBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -337,12 +337,15 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>When checked, windows will show up at their last saved position. This option must be unchecked to always start program on the system default monitor</string>
+                </property>
                 <property name="text">
                  <string>Save and restore main window positions</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
+              <item row="6" column="0">
                <widget class="QLabel" name="startupStateLabel">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -355,7 +358,7 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
+              <item row="6" column="1">
                <widget class="QComboBox" name="startupStateCBox">
                 <property name="enabled">
                  <bool>false</bool>
@@ -365,6 +368,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Select whether to minimize or maximize main window on startup</string>
                 </property>
                 <item>
                  <property name="text">
@@ -388,7 +394,7 @@
                 </item>
                </widget>
               </item>
-              <item row="6" column="0" colspan="2">
+              <item row="7" column="0" colspan="2">
                <widget class="QCheckBox" name="saveKanjiBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -401,20 +407,23 @@
                 </property>
                </widget>
               </item>
-              <item row="7" column="0">
+              <item row="9" column="0">
                <widget class="QLabel" name="label_125">
                 <property name="text">
                  <string>Minimize and close:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="9" column="1">
                <widget class="QComboBox" name="minimizeCBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Select what should happen when closing or minimizing the program</string>
                 </property>
                 <item>
                  <property name="text">
@@ -433,7 +442,7 @@
                 </item>
                </widget>
               </item>
-              <item row="8" column="1">
+              <item row="10" column="1">
                <spacer name="verticalSpacer_5">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -449,14 +458,14 @@
                 </property>
                </spacer>
               </item>
-              <item row="9" column="0" colspan="2">
+              <item row="11" column="0" colspan="2">
                <widget class="QLabel" name="label_13">
                 <property name="text">
                  <string>Word group test:</string>
                 </property>
                </widget>
               </item>
-              <item row="10" column="0" colspan="2">
+              <item row="12" column="0" colspan="2">
                <widget class="QCheckBox" name="hideSuspendedBox">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -464,8 +473,25 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>When a word group has a suspended test, the items of the group in the word group widget will be replaced with buttons to continue study or show the words</string>
+                </property>
                 <property name="text">
                  <string>Hide words of suspended tests</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0" colspan="2">
+               <widget class="QLabel" name="label_35">
+                <property name="text">
+                 <string>Startup settings:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0" colspan="2">
+               <widget class="QLabel" name="label_127">
+                <property name="text">
+                 <string>Main window behavior:</string>
                 </property>
                </widget>
               </item>
@@ -503,6 +529,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Make sure the words' written form and reading are always readable in a dictionary search</string>
+                </property>
                 <property name="text">
                  <string>Auto-size columns to fit their contents</string>
                 </property>
@@ -528,6 +557,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>When to show the type of inflection in dictionary searches for inflected words</string>
                 </property>
                 <item>
                  <property name="text">
@@ -560,6 +592,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Display order of words in a dictionary search</string>
                 </property>
                 <item>
                  <property name="text">
@@ -604,6 +639,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Which order to display words in dictionary browse mode</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>Romanized (a-b-c-d-e...)</string>
@@ -647,6 +685,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Indicate in dictionary search results if a word was added to a word group</string>
+                </property>
                 <property name="text">
                  <string>Word is included in a group</string>
                 </property>
@@ -659,6 +700,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Show or hide suggested JLPT N level of words in search results and other word lists</string>
                 </property>
                 <property name="text">
                  <string>Suggested JLPT level</string>
@@ -688,6 +732,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Position of JLPT N level indicator</string>
                 </property>
                 <item>
                  <property name="text">
@@ -744,6 +791,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Size of the search history in the dictionary</string>
+                </property>
                 <property name="text">
                  <string>1000</string>
                 </property>
@@ -761,7 +811,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Store search text if not changed for a while</string>
+                 <string>Store search text in search history, if it's not changed for a while</string>
                 </property>
                 <property name="checked">
                  <bool>true</bool>
@@ -884,6 +934,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Show popup dictionary at full screen width when it's docked and is shown</string>
+                </property>
                 <property name="text">
                  <string>Resize to screen width when docked</string>
                 </property>
@@ -952,6 +1005,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Clear entered search text in kanji filters each time the popup kanji search is hidden and shown</string>
                 </property>
                 <property name="text">
                  <string>Reset filters on popup</string>
@@ -1048,6 +1104,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Allow using this shortcut key combination to display popup window in &quot;translate from Japanese&quot; mode</string>
                 </property>
                 <property name="text">
                  <string>From Japanese</string>
@@ -1250,6 +1309,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Allow using this shortcut key combination to display popup window in &quot;translate to Japanese&quot; mode</string>
+                </property>
                 <property name="text">
                  <string>To Japanese</string>
                 </property>
@@ -1450,6 +1512,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Allow using this shortcut key combination to display the kanji search</string>
                 </property>
                 <property name="text">
                  <string>Kanji search</string>
@@ -1662,6 +1727,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Show or hide the popup dictionary status bar. Uncheck to save screen space</string>
+                </property>
                 <property name="text">
                  <string>Show status bar</string>
                 </property>
@@ -1736,6 +1804,9 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="toolTip">
+                       <string>Reference to show on kanji tooltips and above other references in the kanji information window</string>
+                      </property>
                       <property name="sizeAdjustPolicy">
                        <enum>QComboBox::AdjustToContents</enum>
                       </property>
@@ -1768,6 +1839,9 @@
                         <horstretch>0</horstretch>
                         <verstretch>0</verstretch>
                        </sizepolicy>
+                      </property>
+                      <property name="toolTip">
+                       <string>Reference to show on kanji tooltips and above other references in the kanji information window</string>
                       </property>
                       <property name="sizeAdjustPolicy">
                        <enum>QComboBox::AdjustToContents</enum>
@@ -1802,6 +1876,9 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="toolTip">
+                       <string>Reference to show on kanji tooltips and above other references in the kanji information window</string>
+                      </property>
                       <property name="sizeAdjustPolicy">
                        <enum>QComboBox::AdjustToContents</enum>
                       </property>
@@ -1835,6 +1912,9 @@
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="toolTip">
+                       <string>Reference to show on kanji tooltips and above other references in the kanji information window</string>
+                      </property>
                       <property name="sizeAdjustPolicy">
                        <enum>QComboBox::AdjustToContents</enum>
                       </property>
@@ -1851,6 +1931,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>List parts and parents of kanji in the kanji information window that are not kanji themselves</string>
                   </property>
                   <property name="text">
                    <string>Show non-kanji parts and parents</string>
@@ -1963,6 +2046,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Where to show the kanji information window when double clicking a kanji</string>
                   </property>
                   <property name="sizeAdjustPolicy">
                    <enum>QComboBox::AdjustToContents</enum>
@@ -2110,6 +2196,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Where to display the handwriting recognition window</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>Near input text box</string>
@@ -2166,6 +2255,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Allow saving of your study and group data, and modifications to the dictionary at even intervals</string>
+                </property>
                 <property name="text">
                  <string>Autosave user data when modified (recommended*)</string>
                 </property>
@@ -2195,6 +2287,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Minutes to wait after the data has been last saved to check if there is anything to save</string>
                 </property>
                 <property name="text">
                  <string>2</string>
@@ -2231,6 +2326,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Create a complete copy of the user data files each day the program starts. Attention: In case of first signs of data corruption, make a safe copy of the backups immediately</string>
                 </property>
                 <property name="text">
                  <string>Create backups</string>
@@ -2271,6 +2369,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Only create a fresh backup after this number of days passed since last backup was saved</string>
                 </property>
                 <property name="text">
                  <string>3</string>
@@ -2372,6 +2473,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Enter a name to display for the web site</string>
                   </property>
                   <property name="maxLength">
                    <number>32</number>
@@ -2487,6 +2591,9 @@
                  <widget class="QToolButton" name="siteDelButton">
                   <property name="enabled">
                    <bool>false</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Erase web site from list</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -2750,7 +2857,7 @@
               <item row="1" column="0">
                <widget class="QLabel" name="label_53">
                 <property name="text">
-                 <string>Kanji/kana:</string>
+                 <string>Kanji / kana:</string>
                 </property>
                </widget>
               </item>
@@ -2761,6 +2868,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Font for displaying kanji and kana</string>
                 </property>
                 <property name="writingSystem">
                  <enum>QFontDatabase::Japanese</enum>
@@ -2781,6 +2891,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Font for displaying most non-Japanese text</string>
                 </property>
                </widget>
               </item>
@@ -2804,6 +2917,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Font for smaller text, like word notes in the dictionary</string>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -2813,6 +2929,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Font-style for the notes font</string>
                   </property>
                   <item>
                    <property name="text">
@@ -2876,6 +2995,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Size of lines in a dictionary search</string>
+                </property>
                 <property name="currentIndex">
                  <number>1</number>
                 </property>
@@ -2938,6 +3060,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Size of lines in a dictionary search with the popup dictionary</string>
                 </property>
                 <property name="currentIndex">
                  <number>1</number>
@@ -3012,6 +3137,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Font for displaying kanji in kanji grids, like the kanji search</string>
+                </property>
                 <property name="writingSystem">
                  <enum>QFontDatabase::Japanese</enum>
                 </property>
@@ -3024,6 +3152,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>When checked, on some systems the kanji will be smoothed using peculiarities of modern monitors. Uncheck to use traditional anti-aliasing if you don't like that effect</string>
                 </property>
                 <property name="text">
                  <string>Disable sub-pixel rendering (where available)</string>
@@ -3050,6 +3181,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Font size of kanji in kanji grids</string>
                 </property>
                 <item>
                  <property name="text">
@@ -3383,6 +3517,9 @@
               </item>
               <item row="0" column="1">
                <widget class="QCheckBox" name="useInactiveBox">
+                <property name="toolTip">
+                 <string>Allows displaying colors separately for inactive windows or widgets. Might not work reliably</string>
+                </property>
                 <property name="text">
                  <string>Use inactive colors</string>
                 </property>
@@ -3752,6 +3889,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Show the okurigana ending of kanji kun readings with a different color</string>
                 </property>
                 <property name="text">
                  <string>Color okurigana in kun readings</string>
@@ -4142,6 +4282,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>The hour when the daily long-term study test day starts</string>
+                  </property>
                   <property name="text">
                    <string>4</string>
                   </property>
@@ -4170,8 +4313,11 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Show the last studied words with their results when finishing a long-term study session</string>
+                </property>
                 <property name="text">
-                 <string>Show test results after testing</string>
+                 <string>Show test result after study</string>
                 </property>
                </widget>
               </item>
@@ -4212,6 +4358,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Which days should the program add new items to study from the queue. The queue must hold items, or the study will start with only studied ones</string>
                 </property>
                 <item>
                  <property name="text">
@@ -4260,6 +4409,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Number of fresh items to include from the queue when a new study session starts</string>
+                  </property>
                   <property name="text">
                    <string>0</string>
                   </property>
@@ -4288,6 +4440,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Try to avoid including several parts of the same word on the same study session</string>
+                </property>
                 <property name="text">
                  <string>Limit to a single item for each new word</string>
                 </property>
@@ -4300,6 +4455,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Only include fresh items from the queue to study, if the due items on a given study day don't exceed a limited number of items</string>
                 </property>
                 <property name="text">
                  <string>Limit tested items by adding fewer new ones</string>
@@ -4320,6 +4478,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Number of fresh items to include from the queue and due items together shouldn't exceed this number</string>
                 </property>
                 <property name="text">
                  <string>100</string>
@@ -4370,6 +4531,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Which kanji readings found in the tested words to practice after a study session</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>ON readings</string>
@@ -4413,6 +4577,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Practice kanji readings found in the selected words only</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>New and mistaken words</string>
@@ -4450,6 +4617,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Display the number of days the tested item will be due in, when selecting an answer button</string>
+                </property>
                 <property name="text">
                  <string>Show estimated intervals above the answer buttons</string>
                 </property>
@@ -4478,6 +4648,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>The kana characters will be replaced by blanks when showing the written form of the word before the answer is given</string>
                 </property>
                 <property name="text">
                  <string>Hide kana characters in written form, when kana reading is tested</string>
@@ -4678,7 +4851,7 @@
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>5</width>
+                     <width>30</width>
                      <height>5</height>
                     </size>
                    </property>
@@ -4730,6 +4903,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Show a text field to enter the tested written form</string>
+                  </property>
                   <property name="text">
                    <string>Written form</string>
                   </property>
@@ -4743,6 +4919,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Show a text field to enter the tested kana reading</string>
+                  </property>
                   <property name="text">
                    <string>Kana reading</string>
                   </property>
@@ -4755,6 +4934,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Show a text field to enter the tested definition</string>
                   </property>
                   <property name="text">
                    <string>Definition</string>
@@ -4784,8 +4966,11 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Only show word as correctly answered when the answer was entered with the correct kana</string>
+                </property>
                 <property name="text">
-                 <string>Katakana/hiragana usage must match</string>
+                 <string>Katakana and hiragana usage must match</string>
                 </property>
                </widget>
               </item>
@@ -4918,6 +5103,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Suspend test if a number of items have been answered already</string>
+                </property>
                 <property name="text">
                  <string>After tested items:</string>
                 </property>
@@ -4930,6 +5118,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Suspend test after this number of items</string>
                 </property>
                 <property name="text">
                  <string>60</string>
@@ -4944,6 +5135,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Suspend test if a number of minutes have passed after studying started</string>
+                </property>
                 <property name="text">
                  <string>After minutes passed:</string>
                 </property>
@@ -4956,6 +5150,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Suspend test after this number of minutes</string>
                 </property>
                 <property name="text">
                  <string>20</string>
@@ -5003,6 +5200,9 @@
               </item>
               <item row="2" column="0" colspan="2">
                <widget class="QCheckBox" name="printUserDefBox">
+                <property name="toolTip">
+                 <string>Instead of the word definition found in the dictionary, print the definition you set for studying</string>
+                </property>
                 <property name="text">
                  <string>Print user specified study definitions</string>
                 </property>
@@ -5015,6 +5215,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Check to print the written form of words. Uncheck to print the kana reading</string>
                 </property>
                 <property name="text">
                  <string>Print kanji</string>
@@ -5035,6 +5238,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Placement of kana reading of kanji in words, when kanji is printed</string>
                 </property>
                 <item>
                  <property name="text">
@@ -5114,6 +5320,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Print each word line as a single block of text, instead of printing the Japanese and definition parts in separate columns</string>
+                </property>
                 <property name="text">
                  <string>Flow definition and Japanese together</string>
                 </property>
@@ -5127,6 +5336,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Print the word definition and its Japanese form on alternate pages. This can be used for studying</string>
+                </property>
                 <property name="text">
                  <string>Definition and Japanese on separate pages</string>
                 </property>
@@ -5135,7 +5347,7 @@
               <item row="10" column="0">
                <widget class="QLabel" name="label_112">
                 <property name="text">
-                 <string>Row height:</string>
+                 <string>Line height:</string>
                 </property>
                </widget>
               </item>
@@ -5146,6 +5358,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Physical size of a printed line on paper</string>
                 </property>
                 <item>
                  <property name="text">
@@ -5199,6 +5414,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Number of Japanese / definition columns on each page</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>1</string>
@@ -5247,6 +5465,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Draw a light gray background for every second word to visually separate them</string>
+                </property>
                 <property name="text">
                  <string>Background for every second row</string>
                 </property>
@@ -5260,6 +5481,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Separate each word with a line</string>
+                </property>
                 <property name="text">
                  <string>Separator line between rows</string>
                 </property>
@@ -5272,6 +5496,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Print the page number at the bottom of the page</string>
                 </property>
                 <property name="text">
                  <string>Print page number</string>
@@ -5306,6 +5533,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Use the fonts selected for dictionary search results, instead of different fonts just for printing</string>
+                </property>
                 <property name="text">
                  <string>Use dictionary fonts</string>
                 </property>
@@ -5326,6 +5556,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Font for printing kanji and kana</string>
+                </property>
                </widget>
               </item>
               <item row="3" column="0">
@@ -5342,6 +5575,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Font for printing most non-Japanese text</string>
                 </property>
                </widget>
               </item>
@@ -5365,6 +5601,9 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="toolTip">
+                   <string>Font for printing smaller text, like word notes</string>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -5374,6 +5613,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Font-style for the notes font</string>
                   </property>
                   <item>
                    <property name="text">
