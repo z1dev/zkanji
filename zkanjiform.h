@@ -184,6 +184,8 @@ private slots:
     void dictionaryRemoved(int index, int orderindex, void *oldaddress);
     void dictionaryMoved(int from, int to);
     void dictionaryRenamed(int index, int orderindex);
+
+    void menuwidgetDestroyed(QObject *o);
 private:
     //void installCommands();
 

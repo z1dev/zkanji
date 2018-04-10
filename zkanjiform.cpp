@@ -79,7 +79,8 @@ extern char ZKANJI_PROGRAM_VERSION[];
 
 ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != nullptr ? Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
     : Qt::WindowFlags()), ui(new Ui::ZKanjiForm), mainform(mainform), activewidget(nullptr), //activepage(-1), activedict(nullptr),
-    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
+    docking(false), menupdatepending(false), menusearchwidget(nullptr), menugroupwidget(nullptr), overlay(nullptr),
+    restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
     setWindowTitle(QStringLiteral("zkanji %1").arg(ZKANJI_PROGRAM_VERSION));
@@ -131,7 +132,8 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
 ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent)
     : base(parent, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
     ui(new Ui::ZKanjiForm), mainform(false), activewidget(nullptr), //activepage(-1), activedict(nullptr),
-    docking(false), menupdatepending(false), overlay(nullptr), restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
+    docking(false), menupdatepending(false), menusearchwidget(nullptr), menugroupwidget(nullptr), overlay(nullptr),
+    restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
     setMouseTracking(true);
@@ -874,6 +876,16 @@ void ZKanjiForm::updateSubMenu(ZKanjiWidget *w, QMenu *menu, int from, int to, C
 ZEVENT(UpdateDictionaryMenuEvent)
 void ZKanjiForm::updateDictionaryMenu(ZKanjiWidget *srcw, ZKanjiWidget *grpw)
 {
+    if (menusearchwidget != nullptr && srcw != menusearchwidget)
+        disconnect(menusearchwidget, &QObject::destroyed, this, &ZKanjiForm::menuwidgetDestroyed);
+    if (srcw != nullptr && srcw != menusearchwidget)
+        connect(srcw, &QObject::destroyed, this, &ZKanjiForm::menuwidgetDestroyed);
+
+    if (menugroupwidget != nullptr && grpw != menugroupwidget)
+        disconnect(menugroupwidget, &QObject::destroyed, this, &ZKanjiForm::menuwidgetDestroyed);
+    if (grpw != nullptr && grpw != menugroupwidget)
+        disconnect(grpw, &QObject::destroyed, this, &ZKanjiForm::menuwidgetDestroyed);
+
     menusearchwidget = srcw;
     menugroupwidget = grpw;
     if (menupdatepending)
@@ -1023,12 +1035,12 @@ bool ZKanjiForm::event(QEvent *e)
             }
         }
 
-        if (srcw)
+        if (srcw && srcw->dictionary())
         {
             searchgroup->actions().at(0)->setText(tr("Japanese to %1").arg(srcw->dictionary()->name()));
             searchgroup->actions().at(1)->setText(tr("%1 to Japanese").arg(srcw->dictionary()->name()));
         }
-        if (grpw)
+        if (grpw && grpw->dictionary())
         {
             wordsgroup->actions().at(0)->setText(tr("Japanese to %1").arg(grpw->dictionary()->name()));
             wordsgroup->actions().at(1)->setText(tr("%1 to Japanese").arg(grpw->dictionary()->name()));
@@ -1386,6 +1398,14 @@ void ZKanjiForm::dictionaryRenamed(int index, int orderindex)
 {
     QAction *a = dictmenu->actions().at(orderindex);
     a->setText(ZKanji::dictionary(index)->name());
+}
+
+void ZKanjiForm::menuwidgetDestroyed(QObject *o)
+{
+    if (menusearchwidget == o)
+        menusearchwidget = nullptr;
+    if (menugroupwidget == o)
+        menugroupwidget = nullptr;
 }
 
 //void ZKanjiForm::installCommands()
