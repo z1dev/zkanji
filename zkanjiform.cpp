@@ -85,7 +85,7 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
     ui->setupUi(this);
     setWindowTitle(QStringLiteral("zkanji %1").arg(ZKANJI_PROGRAM_VERSION));
 
-    setMouseTracking(true);
+    //setMouseTracking(true);
 
     if (!mainform)
         setAttribute(Qt::WA_DeleteOnClose);
@@ -136,7 +136,8 @@ ZKanjiForm::ZKanjiForm(ZKanjiWidget *w, QWidget *parent)
     restoremaximized(false), skipchange(false), skipmenu(false), dictmenu(nullptr), dictmap(nullptr), commandmap(nullptr), searchgroup(nullptr)
 {
     ui->setupUi(this);
-    setMouseTracking(true);
+
+    //setMouseTracking(true);
 
     setAttribute(Qt::WA_DeleteOnClose);
 

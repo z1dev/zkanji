@@ -451,6 +451,7 @@ void GlobalUI::startDockDrag(ZKanjiForm *form)
         w->hide();
     }
 
+    mainforms[0]->setMouseTracking(true);
     mainforms[0]->grabMouse();
     mainforms[0]->grabKeyboard();
 }
@@ -459,6 +460,7 @@ void GlobalUI::endDockDrag()
 {
     mainforms[0]->releaseKeyboard();
     mainforms[0]->releaseMouse();
+    mainforms[0]->setMouseTracking(false);
 
     if (dockform != nullptr)
     {
