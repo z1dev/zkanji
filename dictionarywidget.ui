@@ -311,7 +311,7 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>Katakana/hiragana sensitive search</string>
+                <string>Hiragana/katakana sensitive search</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -647,15 +647,15 @@
    <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>ZComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>ZDictionaryListView</class>

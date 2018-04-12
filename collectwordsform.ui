@@ -136,7 +136,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Number of kanji:</string>
+             <string>Kanji limit:</string>
             </property>
            </widget>
           </item>
@@ -149,7 +149,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>List words containing given number of kanji. Ranges can be used i.e.: 2-3</string>
+             <string>Limit number of kanji in words. Ranges are allowed. i.e.: 2-4</string>
             </property>
             <property name="text">
              <string>3</string>
@@ -200,7 +200,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Min. word frequency:</string>
+             <string>Min. frequency:</string>
             </property>
            </widget>
           </item>
@@ -213,7 +213,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Minimum word frequency of listed words</string>
+             <string>Collect words having higher frequency</string>
             </property>
             <property name="text">
              <string>1000</string>
@@ -232,7 +232,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Exlude words from result that contain kanji at not matching position or with not matching reading</string>
+             <string>Kanji position and reading must match for every kanji in the words</string>
             </property>
             <property name="text">
              <string>Strict position and reading</string>
@@ -325,9 +325,6 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Position of kanji in words</string>
            </property>
            <item>
             <property name="text">
@@ -467,12 +464,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DictionaryWidget</class>
-   <extends>QWidget</extends>
-   <header>dictionarywidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
@@ -481,6 +472,12 @@
    <class>ZKanjiGridView</class>
    <extends>QWidget</extends>
    <header>zkanjigridview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DictionaryWidget</class>
+   <extends>QWidget</extends>
+   <header>dictionarywidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

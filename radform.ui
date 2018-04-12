@@ -205,7 +205,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>Number of strokes of displayed radicals. You can use range i.e.: 2-3</string>
+              <string>Number of strokes in listed radicals. Ranges are allowed. i.e.: 2-4</string>
              </property>
             </widget>
            </item>
@@ -219,7 +219,7 @@
            <item>
             <widget class="QToolButton" name="groupButton">
              <property name="toolTip">
-              <string>Group positions of the same radical as a single item</string>
+              <string>Group positions of the same radical</string>
              </property>
              <property name="text">
               <string>Group</string>
