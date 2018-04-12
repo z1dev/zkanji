@@ -123,6 +123,8 @@ private slots:
 
     void dictionaryReset();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+
+    void wordSelChanged();
 private:
     // Reads an SVG image file as text, replacing the black color (#000000) with the current
     // text color, and setting the result as icon for the passed widget.

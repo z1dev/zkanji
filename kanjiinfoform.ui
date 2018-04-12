@@ -214,7 +214,7 @@
        <item>
         <widget class="QToolButton" name="gridButton">
          <property name="toolTip">
-          <string>Toggle background grid</string>
+          <string>Background grid</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
@@ -244,7 +244,7 @@
        <item>
         <widget class="QToolButton" name="sodButton">
          <property name="toolTip">
-          <string>Toggle stroke order diagram</string>
+          <string>View stroke order diagram</string>
          </property>
          <property name="text">
           <string>S.O.D.</string>
@@ -267,7 +267,7 @@
        <item>
         <widget class="QToolButton" name="wordsButton">
          <property name="toolTip">
-          <string>Toggle words containing this kanji</string>
+          <string>Show list of words with the kanji</string>
          </property>
          <property name="text">
           <string>Words</string>
@@ -292,7 +292,7 @@
          <item>
           <widget class="QToolButton" name="simButton">
            <property name="toolTip">
-            <string>Toggle list of similar looking kanji</string>
+            <string>Show similar looking kanji</string>
            </property>
            <property name="text">
             <string>Similar</string>
@@ -305,7 +305,7 @@
          <item>
           <widget class="QToolButton" name="partsButton">
            <property name="toolTip">
-            <string>Toggle list of parts making up this kanji</string>
+            <string>Show parts of kanji</string>
            </property>
            <property name="text">
             <string>Parts</string>
@@ -318,7 +318,7 @@
          <item>
           <widget class="QToolButton" name="partofButton">
            <property name="toolTip">
-            <string>Toggle list of kanji where this kanji appears as a part</string>
+            <string>Show other kanji containing the kanji</string>
            </property>
            <property name="text">
             <string>Part of</string>
@@ -495,6 +495,9 @@
              </property>
              <item>
               <widget class="QToolButton" name="playButton">
+               <property name="toolTip">
+                <string>Play stroke order animation</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -521,6 +524,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="pauseButton">
+               <property name="toolTip">
+                <string>Pause stroke order animation</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -547,6 +553,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="stopButton">
+               <property name="toolTip">
+                <string>Stop stroke order animation</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -596,6 +605,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="rewindButton">
+               <property name="toolTip">
+                <string>Rewind kanji animation to start</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -616,6 +628,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="backButton">
+               <property name="toolTip">
+                <string>Back one stroke</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -663,6 +678,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="foreButton">
+               <property name="toolTip">
+                <string>Forward to next stroke</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -686,6 +704,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="endButton">
+               <property name="toolTip">
+                <string>Forward to complete kanji</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -832,6 +853,9 @@
                <width>120</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Stroke drawing speed</string>
              </property>
              <property name="minimum">
               <number>1</number>

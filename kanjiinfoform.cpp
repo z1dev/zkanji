@@ -60,14 +60,24 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     connect(ui->kanjiView, &ZKanjiDiagram::strokeChanged, this, &KanjiInfoForm::strokeChanged);
 
     readingFilterButton = new QToolButton(this);
-    readingFilterButton->setText("ReF");
+    //readingFilterButton->setText("ReF");
     readingFilterButton->setCheckable(true);
+    readingFilterButton->setToolTip("Only show marked words");
+    readingFilterButton->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
+    readingFilterButton->setIcon(QIcon(":/wordselect.svg"));
+    readingFilterButton->setAutoRaise(true);
     ui->dictWidget->addBackWidget(readingFilterButton);
 
     connect(readingFilterButton, &QToolButton::clicked, this, &KanjiInfoForm::readingFilterClicked);
 
     exampleSelButton = new QToolButton(this);
-    exampleSelButton->setText("Sel");
+    //exampleSelButton->setText("Sel");
+    exampleSelButton->setEnabled(false);
+    exampleSelButton->setCheckable(true);
+    exampleSelButton->setToolTip("Mark as example word of kanji");
+    exampleSelButton->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
+    exampleSelButton->setIcon(QIcon(":/paperclip.svg"));
+    exampleSelButton->setAutoRaise(true);
     ui->dictWidget->addBackWidget(exampleSelButton);
 
     connect(exampleSelButton, &QToolButton::clicked, this, &KanjiInfoForm::exampleSelButtonClicked);
@@ -78,6 +88,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     readingCBox = new QComboBox(this);
     readingCBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
     readingCBox->setMinimumContentsLength(6);
+    readingCBox->setToolTip("Show words that match selected kanji reading");
     ui->dictWidget->addBackWidget(readingCBox);
     
     connect(readingCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readingBoxChanged(int)));
@@ -139,6 +150,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     connect(ui->similarScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
     connect(ui->partsScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
     connect(ui->partofScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
+
+    connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &KanjiInfoForm::wordSelChanged);
 
     settingsChanged();
 }
@@ -247,6 +260,7 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
         if (!wordsmodel)
             wordsmodel.reset(new KanjiWordsItemModel(this));
         wordsmodel->setKanji(dict, kindex, readingCBox->currentIndex() - 1);
+        exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
         ui->dictWidget->setModel(wordsmodel.get());
         connect(ui->splitter, &QSplitter::splitterMoved, this, &KanjiInfoForm::restrictKanjiViewSize);
     }
@@ -972,6 +986,7 @@ void KanjiInfoForm::on_wordsButton_clicked(bool checked)
             wordsmodel.reset(new KanjiWordsItemModel(this));
         wordsmodel->setKanji(dict, ui->kanjiView->kanjiIndex(), readingCBox->currentIndex() - 1);
         ui->dictWidget->setModel(wordsmodel.get());
+        exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
 
         int toph = ui->dataWidget->height();
 
@@ -1038,13 +1053,19 @@ void KanjiInfoForm::readingFilterClicked(bool checked)
     //testFuriganaReadingTest();
 
     if (wordsmodel != nullptr)
+    {
         wordsmodel->setShowOnlyExamples(checked);
+        exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
+    }
 }
 
 void KanjiInfoForm::readingBoxChanged(int index)
 {
     if (wordsmodel != nullptr && ui->kanjiView->kanjiIndex() >= 0)
+    {
         wordsmodel->setKanji(dict, ui->kanjiView->kanjiIndex(), readingCBox->currentIndex() - 1);
+        exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
+    }
 }
 
 void KanjiInfoForm::exampleSelButtonClicked(bool checked)
@@ -1134,6 +1155,23 @@ void KanjiInfoForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary 
 {
     if (d == dict)
         close();
+}
+
+void KanjiInfoForm::wordSelChanged()
+{
+    if (wordsmodel == nullptr || dict == nullptr)
+        return;
+
+    int siz = ui->dictWidget->view()->selectionSize();
+    int sel = 0;
+    for (int ix = 0; ix != siz; ++ix)
+    {
+        int row = ui->dictWidget->view()->selectedRow(ix);
+        if (dict->isKanjiExample(ui->kanjiView->kanjiIndex(), ui->dictWidget->wordIndex(row)))
+            ++sel;
+    }
+
+    exampleSelButton->setChecked(siz != 0 && siz == sel);
 }
 
 void KanjiInfoForm::loadColorIcon(QAbstractButton *w, QString name, QColor col)

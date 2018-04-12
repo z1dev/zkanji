@@ -42,7 +42,7 @@
        <item>
         <widget class="QToolButton" name="btnAddCateg">
          <property name="toolTip">
-          <string>Create new group category...</string>
+          <string>Create new group category</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
@@ -62,7 +62,7 @@
        <item>
         <widget class="QToolButton" name="btnAddGroup">
          <property name="toolTip">
-          <string>Create new group...</string>
+          <string>Create new group</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">
@@ -82,7 +82,7 @@
        <item>
         <widget class="QToolButton" name="btnDelGroup">
          <property name="toolTip">
-          <string>Delete group...</string>
+          <string>Delete group</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">

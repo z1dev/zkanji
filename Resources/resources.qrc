@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>paperclip.svg</file>
         <file>floatwnd.svg</file>
         <file>dockwnd.svg</file>
         <file>stats.svg</file>
@@ -76,5 +77,6 @@
         <file>dockwindows.svg</file>
         <file>pin.svg</file>
         <file>programicon.svg</file>
+        <file>wordselect.svg</file>
     </qresource>
 </RCC>

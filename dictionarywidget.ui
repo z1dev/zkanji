@@ -176,7 +176,7 @@
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
-           <string>Word filtering by attributes</string>
+           <string>Word filtering by attributes. Right-click to edit filters</string>
           </property>
           <property name="icon">
            <iconset resource="Resources/resources.qrc">
@@ -311,7 +311,7 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>Toggle katakana/hiragana sensitive search</string>
+                <string>Katakana/hiragana sensitive search</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -382,7 +382,7 @@
            <item>
             <widget class="QToolButton" name="inflButton">
              <property name="toolTip">
-              <string>Toggle conjugated forms</string>
+              <string>Search for conjugated words</string>
              </property>
              <property name="icon">
               <iconset resource="Resources/resources.qrc">
