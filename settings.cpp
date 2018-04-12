@@ -92,7 +92,7 @@ namespace Settings
     const QColor dialectddef = QColor(188, 30, 112);
     const QColor sentencewordddef = QColor(255, 0, 0);
     const QColor kanaonlyddef = QColor(144, 176, 160);
-    const QColor kanjiexbgddef = QColor(210, 255, 210);
+    const QColor kanjiexbgddef = QColor(70, 125, 90);
     const QColor kanjitestposddef = QColor(255, 0, 0);
 
     const QColor okucolorddef = QColor(48, 162, 255);
