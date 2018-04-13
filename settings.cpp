@@ -98,9 +98,9 @@ namespace Settings
     const QColor okucolorddef = QColor(48, 162, 255);
 
     const QColor n5ddef = QColor(255, 34, 34);
-    const QColor n4ddef = QColor(50, 115, 240);
-    const QColor n3ddef = QColor(7, 160, 153);
-    const QColor n2ddef = QColor(145, 77, 200);
+    const QColor n4ddef = QColor(75, 145, 255);
+    const QColor n3ddef = QColor(27, 190, 183);
+    const QColor n2ddef = QColor(175, 107, 230);
     const QColor n1ddef = QColor(248, 248, 255);
 
     const QColor nowordsddef = QColor(192, 192, 192);
