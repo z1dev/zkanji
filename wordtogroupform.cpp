@@ -11,7 +11,7 @@
 #include "words.h"
 #include "wordtodictionaryform.h"
 #include "dialogsettings.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "zlistview.h"
 #include "globalui.h"
 #include "zui.h"

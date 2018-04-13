@@ -11,6 +11,7 @@
 #include "globalui.h"
 #include "zui.h"
 #include "generalsettings.h"
+#include "formstates.h"
 
 //-------------------------------------------------------------
 
@@ -25,6 +26,8 @@ DictionaryTextForm::DictionaryTextForm(QWidget *parent) : base(parent), ui(new U
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &DictionaryTextForm::accept);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DictionaryTextForm::close);
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &DictionaryTextForm::checkRemoved);
+
+    FormStates::restoreDialogSize("DictionaryText", this, true);
 }
 
 DictionaryTextForm::~DictionaryTextForm()

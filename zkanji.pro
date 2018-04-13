@@ -44,7 +44,7 @@ SOURCES += \
     dictionarywidget.cpp \
     examplewidget.cpp \
     filterlistform.cpp \
-    formstate.cpp \
+    formstates.cpp \
     furigana.cpp \
     globalui.cpp \
     grammar.cpp \
@@ -168,7 +168,7 @@ HEADERS += \
     fastarray.h \
     filterlistform.h \
     fontsettings.h \
-    formstate.h \
+    formstates.h \
     furigana.h \
     generalsettings.h \
     globalui.h \

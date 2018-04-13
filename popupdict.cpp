@@ -17,7 +17,7 @@
 #include "ui_popupdict.h"
 
 #include "popupsettings.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "globalui.h"
 #include "zevents.h"
 #include "zdictionarylistview.h"

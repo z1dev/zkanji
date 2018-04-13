@@ -65,12 +65,12 @@ void SelectDictionaryDialog::on_buttonBox_rejected()
 //-------------------------------------------------------------
 
 
-int selectDictionaryDialog(QString str, int firstselected, QString okstr)
-{
-    SelectDictionaryDialog form(gUI->activeMainForm());
-
-    return form.exec(str, firstselected, okstr);
-}
+//int selectDictionaryDialog(QString str, int firstselected, QString okstr)
+//{
+//    SelectDictionaryDialog form(gUI->activeMainForm());
+//
+//    return form.exec(str, firstselected, okstr);
+//}
 
 
 //-------------------------------------------------------------

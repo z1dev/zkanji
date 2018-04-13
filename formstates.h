@@ -36,6 +36,13 @@ struct SplitterFormData
     int wsizes[2];
 };
 
+struct FormSizeStateData
+{
+    // Size of the window geometry without frame.
+    QSize siz;
+    // Whether window was maximized when closed and should be restored maximized.
+    bool maximized;
+};
 
 struct ListStateData
 {
@@ -243,6 +250,9 @@ namespace FormStates
     // Saved size of dialog windows.
     extern std::map<QString, QSize> sizes;
 
+    // Saved size and maximized state of dialog windows.
+    extern std::map<QString, FormSizeStateData> maxsizes;
+
     // Saved state of the CollectWordsForm window.
     extern CollectFormData collectform;
 
@@ -308,10 +318,14 @@ namespace FormStates
     void saveXMLSettings(const RecognizerFormData &data, QXmlStreamWriter &writer);
     void loadXMLSettings(RecognizerFormData &data, QXmlStreamReader &reader);
 
+    void saveDialogSplitterState(QString statename, const QSize &siz, int size1, int size2);
+    void restoreDialogSplitterState(QString statename, QSize &siz, int &size1, int &size2);
+
     void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
     void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
 
     void loadXMLDialogSplitterState(QXmlStreamReader &reader);
+
 
     // Saves the current geometry size of the passed window in a map with `sizename` as the
     // key. Use restoreDialogSize() to restore the saved size for the name if it exists.
@@ -324,21 +338,32 @@ namespace FormStates
     // the one already open.
     void restoreDialogSize(QString sizename, QMainWindow *window, bool installcloseevent);
 
+    // Same as saveDialogSize() but also saves maximized state of window.
+    void saveDialogMaximizedAndSize(QString sizename, QMainWindow *window);
+    // Same as restoreDialogSize() but also restores maximized state of window.
+    void restoreDialogMaximizedAndSize(QString sizename, QMainWindow *window, bool installcloseevent);
+
     void saveXMLDialogSize(const QSize size, QXmlStreamWriter &writer);
     void loadXMLDialogSize(QXmlStreamReader &reader);
+
+    void saveXMLDialogMaximizedAndSize(const FormSizeStateData dat, QXmlStreamWriter &writer);
+    void loadXMLDialogMaximizedAndSize(QXmlStreamReader &reader);
 
     // Used by restoreDialogSize() as the object for installing event filters.
     class RestoreDialogHelperPrivate : public QObject
     {
         Q_OBJECT
     public:
-        void installFor(QString sizename, QMainWindow *window);
+        // Installs an event filter for the window. When it's closed, its size and possibly
+        // maximized state should be saved. The state is only saved if maximized is true.
+        void installFor(QString sizename, QMainWindow *window, bool maximized = false);
     protected:
         virtual bool eventFilter(QObject *o, QEvent *e) override;
     protected slots:
         void windowDestroyed(QObject *o);
     private:
-        std::map<QMainWindow*, QString> filtered;
+        // [window, [identifier string for window, whether saving maximized state]]
+        std::map<QMainWindow*, std::pair<QString, bool>> filtered;
 
         typedef QObject base;
     };

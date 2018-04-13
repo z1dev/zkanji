@@ -23,7 +23,7 @@
 #include "groups.h"
 #include "zkanjimain.h"
 #include "zui.h"
-#include "formstate.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------
@@ -242,8 +242,8 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *prnt) : base(prnt),
 
     connect(ui->buttonBox->button(QDialogButtonBox::Close), &QAbstractButton::clicked, this, &DictionaryStatsForm::close);
 
-    for (int ix = 0; ix != 3; ++ix)
-        updateWindowGeometry(this);
+    //for (int ix = 0; ix != 3; ++ix)
+    updateWindowGeometry(this);
 
     //setAttribute(Qt::WA_DontShowOnScreen);
     //show();
@@ -255,7 +255,7 @@ DictionaryStatsForm::DictionaryStatsForm(int index, QWidget *prnt) : base(prnt),
     for (int ix = 0, siz = sizeof(lb) / sizeof(QLabel*); ix != siz; ++ix)
     {
         updateWindowGeometry(lb[ix]);
-        mm = std::max<int>(mm, lb[ix]->width());
+        mm = std::max<int>(mm, lb[ix]->sizeHint().width());
     }
     for (int ix = 0, siz = sizeof(lb) / sizeof(QLabel*); ix != siz; ++ix)
     {

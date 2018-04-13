@@ -25,7 +25,7 @@
 #include "settingsform.h"
 #include "globalui.h"
 
-// TODO: add manifest so the system dialogs don't have the ancient win95 look.
+#include "formstates.h"
 
 
 //-------------------------------------------------------------
@@ -719,6 +719,8 @@ PrintPreviewForm::PrintPreviewForm(QWidget *parent) : base(parent), ui(new Ui::P
     connect(preview->findChild<QAbstractScrollArea*>()->verticalScrollBar(), &QScrollBar::valueChanged, this, &PrintPreviewForm::pageScrolled);
     connect(gUI, &GlobalUI::settingsChanged, preview, &QPrintPreviewWidget::updatePreview);
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &PrintPreviewForm::dictionaryToBeRemoved);
+
+    FormStates::restoreDialogMaximizedAndSize("PrintPreview", this, true);
 }
 
 PrintPreviewForm::~PrintPreviewForm()

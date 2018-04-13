@@ -11,6 +11,7 @@
 #include "zdictionarymodel.h"
 #include "words.h"
 #include "zui.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------
@@ -41,6 +42,8 @@ KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(false);
     ui->acceptButton->setDefault(true);
+
+    FormStates::restoreDialogSize("KanjiDefinition", this, true);
 }
 
 KanjiDefinitionForm::~KanjiDefinitionForm()

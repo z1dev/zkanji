@@ -13,7 +13,7 @@
 #include "ui_kanapracticesettingsform.h"
 #include "globalui.h"
 #include "zui.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "kanareadingpracticeform.h"
 #include "kanawritingpracticeform.h"
 

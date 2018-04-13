@@ -18,7 +18,7 @@
 #include "dialogs.h"
 #include "fontsettings.h"
 #include "romajizer.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "colorsettings.h"
 
 

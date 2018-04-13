@@ -10,6 +10,7 @@
 #include "groups.h"
 #include "zgrouptreemodel.h"
 #include "globalui.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------
@@ -34,6 +35,8 @@ GroupImportForm::GroupImportForm(QWidget *parent) : base(parent), ui(new Ui::Gro
     ui->wordsWidget->showOnlyCategories();
     ui->kanjiWidget->setMultiSelect(false);
     ui->wordsWidget->setMultiSelect(false);
+
+    FormStates::restoreDialogSize("GroupImport", this, true);
 }
 
 GroupImportForm::~GroupImportForm()

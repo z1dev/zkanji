@@ -11,7 +11,7 @@
 #include "zkanjigridmodel.h"
 #include "words.h"
 #include "globalui.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "zui.h"
 #include "zdictionarycombobox.h"
 

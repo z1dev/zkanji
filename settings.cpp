@@ -31,7 +31,7 @@
 #include "zkanjiform.h"
 #include "zradicalgrid.h"
 #include "zui.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "kanji.h"
 #include "sites.h"
 #include "groups.h"
@@ -431,6 +431,16 @@ namespace Settings
             {
                 writer.writeStartElement(state.first);
                 FormStates::saveXMLDialogSize(state.second, writer);
+                writer.writeEndElement();
+            }
+        }
+
+        for (auto &state : FormStates::maxsizes)
+        {
+            if (state.second.siz.isValid())
+            {
+                writer.writeStartElement(state.first);
+                FormStates::saveXMLDialogMaximizedAndSize(state.second, writer);
                 writer.writeEndElement();
             }
         }
@@ -1241,10 +1251,14 @@ namespace Settings
                 {
                     // To avoid spamming the state file, splitter states and sizes are only
                     // loaded for currently existing forms.
-                    if (reader.name() == "WordEditor" || reader.name() == "WordToGroup" || reader.name() == "WordToDictionary")
+                    if (reader.name() == "WordEditor" || reader.name() == "WordToGroup" || reader.name() == "WordToDictionary" || reader.name() == "WordFilterList" || reader.name() == "KanjiToGroup")
                         FormStates::loadXMLDialogSplitterState(reader);
-                    else if (reader.name() == "WordToDeck" || reader.name() == "DictionaryEditor" || reader.name() == "DictionaryExport" || reader.name() == "DictionaryImport" || reader.name() == "DictionaryStats")
+                    else if (reader.name() == "WordToDeck" || reader.name() == "DictionaryEditor" || reader.name() == "DictionaryExport" || reader.name() == "DictionaryImport" ||
+                            reader.name() == "DictionaryStats" || reader.name() == "DictionaryText" || reader.name() == "GroupExport" || reader.name() == "GroupImport" ||
+                            reader.name() == "GroupPicker" || reader.name() == "KanjiDefinition")
                         FormStates::loadXMLDialogSize(reader);
+                    else if (reader.name() == "PrintPreview")
+                        FormStates::loadXMLDialogMaximizedAndSize(reader);
                     else if (reader.name() == "CollectWords")
                         FormStates::loadXMLSettings(FormStates::collectform, reader);
                     else if (reader.name() == "KanjiInformation")

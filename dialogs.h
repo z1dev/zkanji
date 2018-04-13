@@ -38,12 +38,12 @@ void editWord(Dictionary *d, int windex, int defindex, QWidget *parent);
 // start editing a new word. (The word is only created if the user accepts the edit.)
 void editWord(Dictionary *srcd, int srcwindex, const std::vector<int> &srcdindexes, Dictionary *dest, int destwindex, QWidget *parent);
 
-// Opens a modal window above the main form for selecting a dictionary. Specify the text shown
-// to the user as the parameter. Returns the real index of the selected dictionary, or -1 on
-// cancel. Set okstr to some string to change the text of the ok button. Pass the real index
-// of the default selected dictionary. If it's -1, the first dictionary will be selected in
-// the user defined order.
-int selectDictionaryDialog(QString str, int firstselected = -1, QString okstr = QString());
+//// Opens a modal window above the main form for selecting a dictionary. Specify the text shown
+//// to the user as the parameter. Returns the real index of the selected dictionary, or -1 on
+//// cancel. Set okstr to some string to change the text of the ok button. Pass the real index
+//// of the default selected dictionary. If it's -1, the first dictionary will be selected in
+//// the user defined order.
+//int selectDictionaryDialog(QString str, int firstselected = -1, QString okstr = QString());
 
 // Opens the kanji definition editor form to edit the kanji passed in list.
 void editKanjiDefinition(Dictionary *d, const std::vector<ushort> &list);

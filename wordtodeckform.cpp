@@ -18,7 +18,7 @@
 #include "wordstudylistform.h"
 #include "globalui.h"
 #include "generalsettings.h"
-#include "formstate.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------

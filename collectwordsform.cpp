@@ -19,7 +19,7 @@
 #include "zkanjimain.h"
 #include "zdictionarymodel.h"
 #include "furigana.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "zdictionarylistview.h"
 #include "generalsettings.h"
 

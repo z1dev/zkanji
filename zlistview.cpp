@@ -27,7 +27,7 @@
 #include "fontsettings.h"
 #include "colorsettings.h"
 #include "globalui.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "generalsettings.h"
 
 //-------------------------------------------------------------

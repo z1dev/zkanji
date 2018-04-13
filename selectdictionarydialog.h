@@ -17,6 +17,9 @@ class SelectDictionaryDialog : public DialogWindow
 {
     Q_OBJECT
 public:
+    // WARNING: this dialog window is not up-to-date. Don't use until fixing.
+    virtual void TemporaryToBeRemovedWhenDialogIsUsed() = 0;
+
     SelectDictionaryDialog(QWidget *parent = nullptr);
     virtual ~SelectDictionaryDialog();
 

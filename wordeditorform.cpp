@@ -17,7 +17,7 @@
 #include "zdictionarymodel.h"
 #include "zflowlayout.h"
 #include "romajizer.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "fontsettings.h"
 #include "globalui.h"
 #include "generalsettings.h"

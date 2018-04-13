@@ -15,7 +15,7 @@
 #include "zui.h"
 #include "globalui.h"
 #include "dialogs.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "zkanjimain.h"
 #include "romajizer.h"
 #include "colorsettings.h"

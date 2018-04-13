@@ -98,7 +98,7 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Enter meanings in separate lines:</string>
+         <string>Enter meanings on separate lines:</string>
         </property>
        </widget>
       </item>
@@ -225,6 +225,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ZKanjiDiagram</class>
    <extends>QWidget</extends>
    <header>zkanjidiagram.h</header>
@@ -235,11 +240,6 @@
    <extends>QWidget</extends>
    <header>dictionarywidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZDictionaryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zdictionarycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

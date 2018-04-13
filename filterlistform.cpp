@@ -17,6 +17,7 @@
 #include "ranges.h"
 #include "dialogs.h"
 #include "globalui.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------
@@ -435,7 +436,7 @@ FilterListForm::FilterListForm(WordFilterConditions *conditions, const QRect &r,
     connect(model, &FilterListModel::deleteInitiated, this, &FilterListForm::deleteInitiated);
     connect(ui->filterTable, &ZListView::rowDoubleClicked, this, &FilterListForm::editInitiated);
     connect(ui->filterTable, &ZListView::currentRowChanged, this, &FilterListForm::currentRowChanged);
-    connect(ui->closeButton, &QAbstractButton::clicked, this, &FilterListForm::close);
+    //connect(ui->closeButton, &QAbstractButton::clicked, this, &FilterListForm::close);
 
     //connect(ui->nameEdit, &ZLineEdit::textEdited, this, &FilterListForm::allowApply);
     connect(ui->anyButton, &QRadioButton::toggled, this, &FilterListForm::allowApply);
@@ -447,18 +448,30 @@ FilterListForm::FilterListForm(WordFilterConditions *conditions, const QRect &r,
     connect(ui->buttons->button(QDialogButtonBox::StandardButton::Discard), &QAbstractButton::clicked, this, &FilterListForm::discardClicked);
     connect(ui->buttons->button(QDialogButtonBox::StandardButton::Save), &QAbstractButton::clicked, this, &FilterListForm::saveClicked);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
-    updateGeometry();
-    editwidth = ui->editWidget->width();
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    QSize siz;
+    int listwidth = -1;
+    FormStates::restoreDialogSplitterState("WordFilterList", siz, listwidth, editwidth);
+
+    if (siz.isValid())
+    {
+        ui->splitter->setSizes({ listwidth, editwidth });
+        resize(siz);
+    }
+    //else
+    //{
+    //    updateWindowGeometry(this);
+    //    editwidth = ui->editWidget->sizeHint().width();
+    //}
 
     ui->editWidget->installEventFilter(this);
-
     ui->editWidget->hide();
 
+    updateWindowGeometry(this);
+
     QRect desk = qApp->desktop()->availableGeometry(QPoint((r.right() + r.left()) / 2, (r.bottom() + r.top()) / 2));
+
+    setAttribute(Qt::WA_DontShowOnScreen);
+    show();
 
     QRect geom = geometry();
     QRect fr = frameGeometry();
@@ -479,6 +492,9 @@ FilterListForm::FilterListForm(WordFilterConditions *conditions, const QRect &r,
         left = r.left() + dif.left();
 
     setGeometry(QRect(left, top, geom.width() - ui->editWidget->width() - ui->splitter->handleWidth(), geom.height()));
+
+    hide();
+    setAttribute(Qt::WA_DontShowOnScreen, false);
 }
 
 FilterListForm::~FilterListForm()
@@ -719,8 +735,14 @@ void FilterListForm::keyPressEvent(QKeyEvent *e)
 
 void FilterListForm::closeEvent(QCloseEvent *e)
 {
+    QSize siz = isMaximized() ? normalGeometry().size() : size();
+    if (ui->editWidget->isVisibleTo(this))
+        siz.setWidth(siz.width() - ui->splitter->handleWidth() - editwidth);
+
     if (filterindex == -1 || !ui->buttons->button(QDialogButtonBox::StandardButton::Save)->isEnabled())
     {
+        FormStates::saveDialogSplitterState("WordFilterList", siz, ui->listWidget->width() , editwidth);
+
         base::closeEvent(e);
         return;
     }
@@ -728,7 +750,11 @@ void FilterListForm::closeEvent(QCloseEvent *e)
     if (QMessageBox::question(this, "zkanji", tr("Your change to the current filter will be lost. Do you wish to discard it?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         e->ignore();
     else
+    {
+        FormStates::saveDialogSplitterState("WordFilterList", siz, ui->listWidget->width(), editwidth);
+
         base::closeEvent(e);
+    }
 }
 
 void FilterListForm::toggleEditor(bool show)
@@ -737,7 +763,7 @@ void FilterListForm::toggleEditor(bool show)
         return;
 
     if (editwidth == -1)
-        editwidth = ui->editWidget->width();
+        editwidth = ui->editWidget->sizeHint().width();
 
     int oldwidth = editwidth;
     int leftsize = ui->listWidget->width();

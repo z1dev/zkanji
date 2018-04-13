@@ -8,7 +8,7 @@
 #include "ui_dictionaryimportform.h"
 #include "words.h"
 #include "globalui.h"
-#include "formstate.h"
+#include "formstates.h"
 
 //-------------------------------------------------------------
 

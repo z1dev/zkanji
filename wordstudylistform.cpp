@@ -27,7 +27,7 @@
 #include "zui.h"
 #include "grouppickerform.h"
 #include "groups.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "dialogs.h"
 #include "colorsettings.h"
 #include "generalsettings.h"

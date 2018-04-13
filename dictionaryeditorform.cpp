@@ -15,7 +15,7 @@
 #include "zkanjimain.h"
 #include "zui.h"
 #include "settings.h"
-#include "formstate.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------

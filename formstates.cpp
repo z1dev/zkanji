@@ -12,7 +12,7 @@
 #include <QDesktopWidget>
 #include <QScreen>
 
-#include "formstate.h"
+#include "formstates.h"
 #include "settings.h"
 #include "words.h"
 #include "zexamplestrip.h"
@@ -39,6 +39,9 @@ namespace FormStates
 
     // Saved size of dialog windows.
     std::map<QString, QSize> sizes;
+
+    // Saved size and maximized state of dialog windows.
+    std::map<QString, FormSizeStateData> maxsizes;
 
     // Saved state of the CollectWordsForm window.
     CollectFormData collectform;
@@ -1194,6 +1197,29 @@ namespace FormStates
         reader.skipCurrentElement();
     }
 
+    void saveDialogSplitterState(QString statename, const QSize &siz, int size1, int size2)
+    {
+        SplitterFormData &data = splitters[statename];
+        data.siz = siz;
+        data.wsizes[0] = size1;
+        data.wsizes[1] = size2;
+    }
+
+    void restoreDialogSplitterState(QString statename, QSize &siz, int &size1, int &size2)
+    {
+        auto it = splitters.find(statename);
+        if (it == splitters.end())
+            return;
+
+        SplitterFormData &data = it->second;
+        if (!data.siz.isValid())
+            return;
+
+        siz = data.siz;
+        size1 = data.wsizes[0];
+        size2 = data.wsizes[1];
+    }
+
     void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter)
     {
         bool nodata = splitters.find(statename) == splitters.end();
@@ -1235,17 +1261,17 @@ namespace FormStates
         SplitterFormData &data = it->second;
         if (!data.siz.isValid())
         {
-            // Move window to same screen as the current visible main window.
-            int screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
-            int windownum = qApp->desktop()->screenNumber(window);
-            if (screennum != windownum)
-            {
-                QRect sg = qApp->screens().at(screennum)->geometry();
-                if (windownum != -1)
-                    window->move((window->geometry().topLeft() - qApp->screens().at(windownum)->geometry().topLeft()) + sg.topLeft());
-                else
-                    window->move(window->pos() + (sg.center() - window->geometry().center()) );
-            }
+            //// Move window to same screen as the current visible main window.
+            //int screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
+            //int windownum = qApp->desktop()->screenNumber(window);
+            //if (screennum != windownum)
+            //{
+            //    QRect sg = qApp->screens().at(screennum)->geometry();
+            //    if (windownum != -1)
+            //        window->move((window->geometry().topLeft() - qApp->screens().at(windownum)->geometry().topLeft()) + sg.topLeft());
+            //    else
+            //        window->move(window->pos() + (sg.center() - window->geometry().center()) );
+            //}
 
             return;
         }
@@ -1325,6 +1351,7 @@ namespace FormStates
     {
         RestoreDialogHelperPrivate restorehelper;
     }
+
     void saveDialogSize(QString sizename, QMainWindow *window)
     {
         FormStates::sizes[sizename] = window->size();
@@ -1336,6 +1363,27 @@ namespace FormStates
             window->resize(sizes[sizename]);
         if (addfilter)
             restorehelper.installFor(sizename, window);
+    }
+
+    void saveDialogMaximizedAndSize(QString sizename, QMainWindow *window)
+    {
+        FormSizeStateData &dat = FormStates::maxsizes[sizename];
+        dat.siz = window->size();
+        dat.maximized = window->isMaximized();
+    }
+
+    void restoreDialogMaximizedAndSize(QString sizename, QMainWindow *window, bool addfilter)
+    {
+        auto it = maxsizes.find(sizename);
+        if (it != maxsizes.end())
+        {
+            window->resize(it->second.siz);
+            if (it->second.maximized)
+                window->setWindowState(Qt::WindowMaximized);
+        }
+
+        if (addfilter)
+            restorehelper.installFor(sizename, window, true);
     }
 
     void saveXMLDialogSize(const QSize size, QXmlStreamWriter &writer)
@@ -1380,18 +1428,64 @@ namespace FormStates
         reader.skipCurrentElement();
     }
 
+    void saveXMLDialogMaximizedAndSize(const FormSizeStateData dat, QXmlStreamWriter &writer)
+    {
+        writer.writeAttribute("width", QString::number(dat.siz.width()));
+        writer.writeAttribute("height", QString::number(dat.siz.height()));
+        writer.writeAttribute("maximized", dat.maximized ? True : False);
+    }
+
+    void loadXMLDialogMaximizedAndSize(QXmlStreamReader &reader)
+    {
+        QString sizename = reader.name().toString();
+        if (sizename.isEmpty())
+            return;
+
+        FormSizeStateData &dat = FormStates::maxsizes[sizename];
+
+        bool ok = false;
+        int val;
+        if (reader.attributes().hasAttribute("width"))
+        {
+            val = reader.attributes().value("width").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                dat.siz.setWidth(val);
+        }
+        if (ok && reader.attributes().hasAttribute("height"))
+        {
+            val = reader.attributes().value("height").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                dat.siz.setHeight(val);
+        }
+        if (ok && reader.attributes().hasAttribute("maximized"))
+            dat.maximized = reader.attributes().value("maximized") != False;
+
+        if (!ok)
+        {
+            dat.siz = QSize();
+            dat.maximized = false;
+        }
+
+        reader.skipCurrentElement();
+    }
+
 
     //-------------------------------------------------------------
 
 
-    void RestoreDialogHelperPrivate::installFor(QString sizename, QMainWindow *window)
+    void RestoreDialogHelperPrivate::installFor(QString sizename, QMainWindow *window, bool maximized)
     {
         auto it = filtered.find(window);
         if (it != filtered.end())
             return;
 
         window->installEventFilter(this);
-        filtered[window] = sizename;
+        filtered[window].first = sizename;
+        filtered[window].second = maximized;
         connect(window, &QObject::destroyed, this, &RestoreDialogHelperPrivate::windowDestroyed);
     }
 
@@ -1399,8 +1493,12 @@ namespace FormStates
     {
         if (e->type() == QEvent::Close)
         {
-            QString sizename = filtered[(QMainWindow*)o];
-            saveDialogSize(sizename, (QMainWindow*)o);
+            const auto &dat = filtered[(QMainWindow*)o];
+            QString sizename = dat.first;
+            if (!dat.second)
+                saveDialogSize(sizename, (QMainWindow*)o);
+            else
+                saveDialogMaximizedAndSize(sizename, (QMainWindow*)o);
         }
         return base::eventFilter(o, e);
     }

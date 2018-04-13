@@ -24,7 +24,7 @@
 #include "zlistview.h"
 #include "dictionarysettings.h"
 #include "globalui.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "zkanjiform.h"
 #include "zkanjiwidget.h"
 #include "fontsettings.h"

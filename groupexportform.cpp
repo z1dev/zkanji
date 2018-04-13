@@ -12,6 +12,7 @@
 #include "words.h"
 #include "groups.h"
 #include "globalui.h"
+#include "formstates.h"
 
 
 //-------------------------------------------------------------
@@ -28,6 +29,8 @@ GroupExportForm::GroupExportForm(QWidget *parent) : base(parent), ui(new Ui::Gro
     exportbutton->setEnabled(false);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &GroupExportForm::exportClicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &GroupExportForm::closeCancel);
+
+    FormStates::restoreDialogSize("GroupExport", this, true);
 }
 
 GroupExportForm::~GroupExportForm()

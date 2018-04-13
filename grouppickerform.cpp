@@ -12,7 +12,7 @@
 #include "groups.h"
 #include "zabstracttreemodel.h"
 #include "globalui.h"
-
+#include "formstates.h"
 
 //-------------------------------------------------------------
 
@@ -25,6 +25,8 @@ GroupBase* GroupPickerForm::select(GroupWidget::Modes mode, const QString &instr
         f->hideDictionarySelect();
     f->setDictionary(dict);
     f->setInstructions(instructions);
+
+    FormStates::restoreDialogSize("GroupPicker", f, true);
 
     GroupBase *result = nullptr;
     connect(f, &GroupPickerForm::groupSelected, [&result](Dictionary *dict, GroupBase *group) {

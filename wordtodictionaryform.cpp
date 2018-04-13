@@ -10,7 +10,7 @@
 #include "zdictionarymodel.h"
 #include "words.h"
 #include "wordeditorform.h"
-#include "formstate.h"
+#include "formstates.h"
 #include "globalui.h"
 #include "zdictionariesmodel.h"
 #include "zui.h"
