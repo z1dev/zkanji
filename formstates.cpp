@@ -1354,7 +1354,7 @@ namespace FormStates
 
     void saveDialogSize(QString sizename, QMainWindow *window)
     {
-        FormStates::sizes[sizename] = window->size();
+        FormStates::sizes[sizename] = window->isMaximized() ? window->normalGeometry().size() : window->size();
     }
 
     void restoreDialogSize(QString sizename, QMainWindow *window, bool addfilter)
@@ -1368,7 +1368,7 @@ namespace FormStates
     void saveDialogMaximizedAndSize(QString sizename, QMainWindow *window)
     {
         FormSizeStateData &dat = FormStates::maxsizes[sizename];
-        dat.siz = window->size();
+        dat.siz = window->isMaximized() ? window->normalGeometry().size() :  window->size();
         dat.maximized = window->isMaximized();
     }
 
