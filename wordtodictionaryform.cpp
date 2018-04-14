@@ -19,7 +19,7 @@
 //-------------------------------------------------------------
 
 
-WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr)
+WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), addButton(nullptr), expandsize(-1)
 {
     ui->setupUi(this);
 
@@ -35,6 +35,9 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
     ui->meaningsTable->assignStatusBar(ui->meaningsStatus);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToDictionaryForm::dictionaryToBeRemoved);
+    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToDictionaryForm::on_cancelButton_clicked);
+    addButton = ui->buttonBox->addButton(tr("Create word"), QDialogButtonBox::ButtonRole::AcceptRole);
+    connect(addButton, &QPushButton::clicked, this, &WordToDictionaryForm::on_addButton_clicked);
 }
 
 WordToDictionaryForm::~WordToDictionaryForm()
@@ -44,11 +47,7 @@ WordToDictionaryForm::~WordToDictionaryForm()
 
 void WordToDictionaryForm::exec(Dictionary *d, int windex)
 {
-    // Pre-compute window sizes.
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    updateWindowGeometry(this);
 
     dict = d;
     index = windex;
@@ -57,10 +56,10 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex)
 
     // Set fixed width to the add button.
 
-    QFontMetrics mcs = ui->addButton->fontMetrics();
+    QFontMetrics mcs = addButton->fontMetrics();
     int dif = std::abs(mcs.boundingRect(tr("Create word")).width() - mcs.boundingRect(tr("Add meanings")).width());
-    ui->addButton->setMinimumWidth(ui->addButton->width() + dif);
-    ui->addButton->setMaximumWidth(ui->addButton->minimumWidth());
+    addButton->setMinimumWidth(addButton->sizeHint().width() + dif);
+    addButton->setMaximumWidth(addButton->minimumWidth());
 
     // Show the original word on top.
 
@@ -73,9 +72,12 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex)
     proxy = new DictionariesProxyModel(this);
     proxy->setDictionary(dict);
     ui->dictCBox->setModel(proxy);
-    ui->dictCBox->setCurrentIndex(0);
 
     FormStates::restoreDialogSplitterState("WordToDictionary", this, ui->splitter);
+
+    expandsize = ui->splitter->sizes().at(1);
+
+    ui->dictCBox->setCurrentIndex(0);
 
     show();
 }
@@ -128,45 +130,63 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
         connect(dest, &Dictionary::dictionaryReset, this, &WordToDictionaryForm::close);
     dindex = dest->findKanjiKanaWord(dict->wordEntry(index));
 
-    int h = ui->meaningsWidget->frameGeometry().height() + centralWidget()->layout()->spacing();
+    //int h = ui->meaningsWidget->height() + ui->splitter->handleWidth(); // + ui->centralwidget->layout()->spacing();
 
     if (dindex == -1)
     {
         if (ui->meaningsWidget->isVisibleTo(this))
         {
-            QSize s = geometry().size();
+            QSize s = size();
+            s.setHeight(s.height() - ui->meaningsWidget->height() - ui->splitter->handleWidth());
+
+            expandsize = ui->meaningsWidget->height();
+
             ui->meaningsWidget->hide();
 
-            centralWidget()->layout()->activate();
-            layout()->activate();
+            ui->splitter->refresh();
+            ui->splitter->updateGeometry();
 
-            s.setHeight(s.height() - h);
+            updateWindowGeometry(this);
+
+            //ui->widget->layout()->activate();
+            //centralWidget()->layout()->activate();
+            //layout()->activate();
+
             resize(s);
         }
-        ui->addButton->setText(tr("Create word"));
+        addButton->setText(tr("Create word"));
     }
     else
     {
         // Show existing definitions in the bottom table.
-        //MultiLineDictionaryItemModel *mmodel = new MultiLineDictionaryItemModel(ui->meaningsTable);
         DictionaryWordListItemModel *model = new DictionaryWordListItemModel(this);
         std::vector<int> result;
         result.push_back(dindex);
         model->setWordList(dest, std::move(result));
-        //mmodel->setSourceModel(model);
         if (ui->meaningsTable->model() != nullptr)
             ui->meaningsTable->model()->deleteLater();
         ui->meaningsTable->setMultiLine(true);
-        ui->meaningsTable->setModel(/*m*/model);
+        ui->meaningsTable->setModel(model);
 
-        ui->addButton->setText(tr("Add meanings"));
+        addButton->setText(tr("Add meanings"));
 
         if (!ui->meaningsWidget->isVisibleTo(this))
         {
-            QSize s = geometry().size();
-            s.setHeight(s.height() + h);
+            int oldexp = expandsize;
+
+            int siz1 = ui->widget->height();
+
+            QSize s = size();
+            s.setHeight(s.height() + ui->splitter->handleWidth() + expandsize);
             resize(s);
+
+            //updateWindowGeometry(this);
+            //centralWidget()->layout()->activate();
+            //layout()->activate();
+
             ui->meaningsWidget->show();
+
+            ui->splitter->setSizes({ siz1, oldexp });
         }
     }
 
@@ -186,7 +206,7 @@ void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int di
 
 void WordToDictionaryForm::wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/)
 {
-    ui->addButton->setEnabled(ui->wordsTable->hasSelection());
+    addButton->setEnabled(ui->wordsTable->hasSelection());
 }
 
 void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)

@@ -9,6 +9,7 @@
 
 #include <QtCore>
 #include <QMainWindow>
+#include <QPushButton>
 
 #include "dialogwindow.h"
 
@@ -60,6 +61,11 @@ private:
     Dictionary *dest;
     // Word index in the destination dictionary.
     int dindex;
+
+    QPushButton *addButton;
+
+    // Height of the bottom words table when shown.
+    int expandsize;
 
     typedef DialogWindow    base;
 };
