@@ -19,8 +19,8 @@ enum class Commands {
     ToggleAnyStart, ToggleAnyEnd, ToggleDeinflect, ToggleStrict,
     ToggleFilter, EditFilters, ToggleMultiline,
 
-    WordsToGroup, EditWord, DeleteWord, RevertWord,
-    StudyWord, CreateNewWord, CopyWordDef, CopyWordKanji,
+    WordsToGroup, StudyWord, WordToDict, EditWord, DeleteWord,
+    RevertWord, CreateNewWord, CopyWordDef, CopyWordKanji,
     CopyWordKana, CopyWord, AppendWordKanji, AppendWordKana,
 
     ResetKanjiSearch, StrokeFilter, JLPTFilter, MeaningFilter,

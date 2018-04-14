@@ -1664,6 +1664,8 @@ void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, 
     //srcsubmenu = menu->addMenu(tr("Words"));
 
     gUI->addCommandAction(commandmap, menu, tr("Add word to group..."), categ == CommandCategories::SearchCateg ? QKeySequence(tr("Ctrl+Enter")) : QKeySequence(), makeCommand(Commands::WordsToGroup, categ));
+    gUI->addCommandAction(commandmap, menu, tr("Add word to study deck..."), QKeySequence(), makeCommand(Commands::StudyWord, categ));
+    gUI->addCommandAction(commandmap, menu, tr("Add word to dictionary..."), QKeySequence(), makeCommand(Commands::WordToDict, categ));
     menu->addSeparator();
     gUI->addCommandAction(commandmap, menu, tr("Edit word..."), QKeySequence(), makeCommand(Commands::EditWord, categ));
     //menu->addSeparator();
@@ -1679,10 +1681,6 @@ void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, 
         menu->addSeparator();
         gUI->addCommandAction(commandmap, menu, tr("New word to dictionary..."), QKeySequence(), makeCommand(Commands::CreateNewWord, categ));
     }
-
-    menu->addSeparator();
-
-    gUI->addCommandAction(commandmap, menu, tr("Add word to study deck..."), QKeySequence(), makeCommand(Commands::StudyWord, categ));
 
     menu->addSeparator();
 

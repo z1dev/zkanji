@@ -236,13 +236,14 @@ protected:
     //void baseLayoutChanged(const QList<QPersistentModelIndex> &parents = QList<QPersistentModelIndex>(), QAbstractItemModel::LayoutChangeHint hint = QAbstractItemModel::NoLayoutChangeHint);
 private:
     void selectionToGroup() const;
+    void wordsToDeck() const;
+    void wordsToDeck(const std::vector<int> &windexes) const;
+    void wordToDictionary() const;
     void editWord() const;
     void deleteWord() const;
     void deleteWord(int windex) const;
     void revertWord() const;
     void createNewWord() const;
-    void wordsToDeck() const;
-    void wordsToDeck(const std::vector<int> &windexes) const;
 
     void copyWordDef() const;
     void copyWordKanji() const;

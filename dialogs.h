@@ -16,6 +16,9 @@ void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool show
 void kanjiToGroupSelect(Dictionary *d, ushort kindex, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
 void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
 
+void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal = false);
+
+
 // Opens the dictionary listing window where new dictionaries can be created or user
 // dictionaries can be deleted.
 void editDictionaries();

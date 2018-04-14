@@ -218,3 +218,14 @@ void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dict
 
 //-------------------------------------------------------------
 
+
+void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal)
+{
+    WordToDictionaryForm *form = new WordToDictionaryForm(gUI->activeMainForm());
+    if (showmodal)
+        form->setWindowModality(Qt::ApplicationModal);
+    form->exec(d, windex);
+}
+
+
+//-------------------------------------------------------------

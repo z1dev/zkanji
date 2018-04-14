@@ -15,6 +15,7 @@
 #include "zlistview.h"
 #include "globalui.h"
 #include "zui.h"
+#include "dialogs.h"
 
 
 //-------------------------------------------------------------
@@ -133,11 +134,11 @@ void WordToGroupForm::on_switchButton_clicked()
 {
     // Copy member values in case the form is deleted in close.
     Dictionary *d = dict;
+    int windex = list.front();
 
     close();
 
-    WordToDictionaryForm *form = new WordToDictionaryForm(parentWidget());
-    form->exec(d, list.front());
+    wordToDictionarySelect(d, windex);
 }
 
 void WordToGroupForm::selChanged()

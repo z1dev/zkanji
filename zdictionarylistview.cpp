@@ -165,6 +165,12 @@ void ZDictionaryListView::executeCommand(int command)
     case (int)Commands::WordsToGroup:
         selectionToGroup();
         break;
+    case (int)Commands::StudyWord:
+        wordsToDeck();
+        break;
+    case (int)Commands::WordToDict:
+        wordToDictionary();
+        break;
     case (int)Commands::EditWord:
         editWord();
         break;
@@ -175,9 +181,6 @@ void ZDictionaryListView::executeCommand(int command)
         break;
     case (int)Commands::RevertWord:
         revertWord();
-        break;
-    case (int)Commands::StudyWord:
-        wordsToDeck();
         break;
     case (int)Commands::CreateNewWord:
         createNewWord();
@@ -217,6 +220,14 @@ void ZDictionaryListView::commandState(int command, bool &enabled, bool &checked
     case (int)Commands::WordsToGroup:
         enabled = ZKanji::dictionaryCount() != 0 && hasSelection();
         break;
+    case (int)Commands::StudyWord:
+        enabled = ZKanji::dictionaryCount() != 0 && hasSelection();
+        visible = ZKanji::dictionaryCount() != 0;
+        break;
+    case (int)Commands::WordToDict:
+        enabled = ZKanji::dictionaryCount() > 1 && selectionSize() == 1;
+        visible = ZKanji::dictionaryCount() > 1;
+        break;
     case (int)Commands::EditWord:
         enabled = ZKanji::dictionaryCount() != 0 && selectionSize() == 1;
         break;
@@ -232,10 +243,6 @@ void ZDictionaryListView::commandState(int command, bool &enabled, bool &checked
 
 //        int windex = indexes(selectedRow(0)); // model()->data(model()->index(selectedRow(0), 0), (int)DictRowRoles::WordIndex).toInt();
 //        enabled = windex != -1 && ZKanji::originals.find(windex) != nullptr;
-        break;
-    case (int)Commands::StudyWord:
-        enabled = ZKanji::dictionaryCount() != 0 && hasSelection();
-        visible = ZKanji::dictionaryCount() != 0;
         break;
     case (int)Commands::CreateNewWord:
         visible = ZKanji::dictionaryCount() != 0;
@@ -597,6 +604,11 @@ void ZDictionaryListView::signalSelectionChanged()
     {
         int selcnt = selectionSize();
         ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::WordsToGroup, categ), selcnt != 0);
+        ((ZKanjiForm*)window())->showCommand(makeCommand(Commands::StudyWord, categ), ZKanji::dictionaryCount() != 0);
+        ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::StudyWord, categ), ZKanji::dictionaryCount() != 0 && selcnt != 0);
+        ((ZKanjiForm*)window())->showCommand(makeCommand(Commands::WordToDict, categ), ZKanji::dictionaryCount() > 1);
+        ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::WordToDict, categ), ZKanji::dictionaryCount() > 1 && selcnt == 1);
+
         ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::EditWord, categ), selcnt == 1);
 
         ((ZKanjiForm*)window())->showCommand(makeCommand(Commands::DeleteWord, categ), ZKanji::dictionaryCount() != 0 && selcnt == 1 && dictionary() != nullptr && (dictionary() != ZKanji::dictionary(0) || dictionary()->isUserEntry(indexes(selectedRow(0)))));
@@ -604,8 +616,6 @@ void ZDictionaryListView::signalSelectionChanged()
 
         ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::DeleteWord, categ), ZKanji::dictionaryCount() != 0 && selcnt == 1 && dictionary() != nullptr && (dictionary() != ZKanji::dictionary(0) || dictionary()->isUserEntry(indexes(selectedRow(0)))));
         ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::RevertWord, categ), ZKanji::dictionaryCount() != 0 && dictionary() == ZKanji::dictionary(0) && selcnt == 1 && dictionary()->isModifiedEntry(indexes(selectedRow(0))));
-
-        ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::StudyWord, categ), ZKanji::dictionaryCount() != 0 && selcnt != 0);
 
         ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::CopyWordDef, categ), selcnt != 0);
         ((ZKanjiForm*)window())->enableCommand(makeCommand(Commands::CopyWordKanji, categ), selcnt != 0);
@@ -1064,6 +1074,26 @@ void ZDictionaryListView::selectionToGroup() const
     wordToGroupSelect(dictionary(), sel/*, gUI->activeMainForm()*/);
 }
 
+void ZDictionaryListView::wordsToDeck() const
+{
+    std::vector<int> sel;
+    selectedRows(sel);
+
+    indexes(sel, sel);
+
+    wordsToDeck(sel);
+}
+
+void ZDictionaryListView::wordsToDeck(const std::vector<int> &windexes) const
+{
+    addWordsToDeck(dictionary(), windexes);
+}
+
+void ZDictionaryListView::wordToDictionary() const
+{
+    wordToDictionarySelect(dictionary(), indexes(selectedRow(0)));
+}
+
 void ZDictionaryListView::editWord() const
 {
     ::editWord(dictionary(), indexes(selectedRow(0)), 0, gUI->activeMainForm());
@@ -1089,21 +1119,6 @@ void ZDictionaryListView::revertWord() const
 void ZDictionaryListView::createNewWord() const
 {
     editNewWord(dictionary());
-}
-
-void ZDictionaryListView::wordsToDeck() const
-{
-    std::vector<int> sel;
-    selectedRows(sel);
-
-    indexes(sel, sel);
-
-    wordsToDeck(sel);
-}
-
-void ZDictionaryListView::wordsToDeck(const std::vector<int> &windexes) const
-{
-    addWordsToDeck(dictionary(), windexes);
 }
 
 void ZDictionaryListView::copyWordDef() const
@@ -1294,7 +1309,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
 
     Dictionary *dict = dictionary();
     bool hasdict = ZKanji::dictionaryCount() != 0;
-    if (dict == nullptr && ZKanji::dictionaryCount() != 0)
+    if (dict == nullptr && hasdict)
         dict = ZKanji::dictionary(0);
 
     std::vector<int> windexes;
@@ -1394,6 +1409,15 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
         connect(astudy, &QAction::triggered, [this, &windexes]() {
             wordsToDeck(windexes);
         });
+
+        if (ZKanji::dictionaryCount() > 1 && windexes.size() == 1 && selstr.isEmpty())
+        {
+            QAction *adict = popup->addAction(tr("Add word to dictionary..."));
+            connect(adict, &QAction::triggered, [dict, &windexes]() {
+                wordToDictionarySelect(dict, windexes.front()/*, gUI->activeMainForm()*/);
+            });
+        }
+
         popup->addSeparator();
     }
 
