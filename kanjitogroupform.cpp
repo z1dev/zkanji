@@ -36,11 +36,10 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     acceptButton->setEnabled(false);
     connect(acceptButton, &QPushButton::clicked, this, &KanjiToGroupForm::accept);
 
-    //ui->groupWidget->addControlWidget(new QLabel(tr("Destination:"), this));
-    dictCBox = new ZDictionaryComboBox(this);
-    ui->groupWidget->addControlWidget(dictCBox);
+    //dictCBox = new ZDictionaryComboBox(this);
+    //ui->groupWidget->addControlWidget(dictCBox, true);
 
-    connect(dictCBox, (void(QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &KanjiToGroupForm::setDictionary);
+    //connect(ui->dictCBox, (void(QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &KanjiToGroupForm::setDictionary);
 
     ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
 }
@@ -59,7 +58,7 @@ void KanjiToGroupForm::exec(Dictionary *d, ushort kindex, GroupBase *initialSele
     model = new KanjiListModel(this);
     model->setList({ kindex });
 
-    dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(d)));
+    ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(d)));
 
     ui->kanjiGrid->setModel(model);
 
@@ -80,7 +79,7 @@ void KanjiToGroupForm::exec(Dictionary *d, const std::vector<ushort> kindexes, G
     model = new KanjiListModel(this);
     model->setList(kindexes);
 
-    dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(d)));
+    ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(d)));
 
     ui->kanjiGrid->setModel(model);
 
@@ -112,7 +111,7 @@ void KanjiToGroupForm::selChanged()
     acceptButton->setEnabled(ui->groupWidget->singleSelected(false) != nullptr);
 }
 
-void KanjiToGroupForm::setDictionary(int index)
+void KanjiToGroupForm::on_dictCBox_currentIndexChanged(int index)
 {
     ui->groupWidget->setDictionary(ZKanji::dictionary(ZKanji::dictionaryPosition(index)));
 }

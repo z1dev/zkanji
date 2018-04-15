@@ -143,9 +143,19 @@ void GroupWidget::addButtonWidget(QAbstractButton *widget)
     ui->buttonLayout->insertWidget(ui->buttonLayout->count(), widget);
 }
 
-void GroupWidget::addControlWidget(QWidget *widget)
+void GroupWidget::addControlWidget(QWidget *widget, bool rightAlign)
 {
-    ui->controlsLayout->insertWidget(ui->controlsLayout->count() - 1, widget);
+    if (rightAlign)
+        ui->controlsLayout->addWidget(widget);
+    else
+    {
+        int pos = 1;
+        // Find the spacer item to insert widgets in front of it
+        for (int siz = ui->controlsLayout->count(); pos != siz; ++pos)
+            if (ui->controlsLayout->itemAt(siz - pos)->spacerItem() != nullptr)
+                break;
+        ui->controlsLayout->insertWidget(ui->controlsLayout->count() - pos, widget);
+    }
 }
 
 void GroupWidget::keyPressEvent(QKeyEvent *e)

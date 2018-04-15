@@ -85,10 +85,11 @@ public:
     // keep the layout.
     void addButtonWidget(QAbstractButton *button);
 
-    // Adds a widget above the groups tree next to the buttons, after any custom button added
+    // Adds a widget above the groups tree next to the buttons and any custom button added
     // with addButtonWidget(). The widget should be similar in height to the buttons to keep
-    // the layout.
-    void addControlWidget(QWidget *widget);
+    // the layout. Set rightAlign to true, to add the widget sticking to the right side of the
+    // group widget. 
+    void addControlWidget(QWidget *widget, bool rightAlign = false);
 protected:
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void contextMenuEvent(QContextMenuEvent *e) override;

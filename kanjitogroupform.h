@@ -36,7 +36,7 @@ private slots:
     // Items have been selected or deselected in the group widget.
     void selChanged();
     // Changes the dictionary displayed in the group widget.
-    void setDictionary(int index);
+    void on_dictCBox_currentIndexChanged(int index);
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
