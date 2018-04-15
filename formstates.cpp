@@ -24,6 +24,7 @@
 #include "zui.h"
 #include "globalui.h"
 #include "generalsettings.h"
+#include "dialogs.h"
 
 
 //-------------------------------------------------------------
@@ -1220,7 +1221,7 @@ namespace FormStates
         size2 = data.wsizes[1];
     }
 
-    void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter)
+    void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter, const int *size2)
     {
         bool nodata = splitters.find(statename) == splitters.end();
         SplitterFormData &data = splitters[statename];
@@ -1250,9 +1251,11 @@ namespace FormStates
             else
                 data.siz.setHeight(data.siz.height() - splitter->handleWidth() - data.wsizes[1]);
         }
+        else  if (size2 != nullptr)
+            data.wsizes[1] = *size2;
     }
 
-    void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter)
+    void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter, int *size2)
     {
         auto it = splitters.find(statename);
         if (it == splitters.end())
@@ -1330,7 +1333,11 @@ namespace FormStates
         if (splitter->widget(1)->isVisibleTo(window))
             splitter->setSizes({ data.wsizes[0], data.wsizes[1] });
         else
+        {
+            if (size2 != nullptr)
+                *size2 = data.wsizes[1];
             splitter->setSizes({ data.wsizes[0] });
+        }
     }
 
     void loadXMLDialogSplitterState(QXmlStreamReader &reader)

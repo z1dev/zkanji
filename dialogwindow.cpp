@@ -62,6 +62,8 @@ void DialogWindow::modalClose(ModalResult result)
 {
     if (!loop || !loop->isRunning())
     {
+        res = result;
+
         close();
         return;
     }

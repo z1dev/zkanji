@@ -225,7 +225,7 @@ void PopupDictionary::on_floatButton_clicked(bool checked)
 
 void PopupDictionary::on_dictionary_wordDoubleClicked(int windex, int dindex)
 {
-    wordToGroupSelect(ZKanji::dictionary(dictindex), windex);
+    gUI->wordToDestSelect(ZKanji::dictionary(dictindex), windex);
 }
 
 void PopupDictionary::appStateChange(Qt::ApplicationState state)

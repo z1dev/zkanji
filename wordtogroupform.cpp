@@ -21,10 +21,12 @@
 //-------------------------------------------------------------
 
 
-WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::WordToGroupForm)
+WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::WordToGroupForm), updatelast(false)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
+
+    ui->buttonBox->addButton(ui->switchButton, QDialogButtonBox::ResetRole);
 
     gUI->scaleWidget(this);
 
@@ -49,13 +51,17 @@ WordToGroupForm::~WordToGroupForm()
     delete ui;
 }
 
-void WordToGroupForm::exec(Dictionary *d, int windex, GroupBase *initialSelection)
+void WordToGroupForm::exec(Dictionary *d, int windex, GroupBase *initialSelection, bool updatelastdiag)
 {
     ui->switchButton->setVisible(ZKanji::dictionaryCount() > 1);
 
     dict = d;
     connect(dict, &Dictionary::dictionaryReset, this, &WordToGroupForm::close);
     list.push_back(windex);
+
+    updatelast = updatelastdiag;
+    if (updatelast)
+        gUI->setLastWordToDialog(GlobalUI::LastWordDialog::Group);
 
     ui->groupWidget->setDictionary(d);
 
@@ -69,7 +75,7 @@ void WordToGroupForm::exec(Dictionary *d, int windex, GroupBase *initialSelectio
     ui->wordsTable->setMultiLine(true);
     ui->wordsTable->setModel(model);
 
-    if (ZKanji::dictionaryCount() == 1)
+    if (ZKanji::dictionaryCount() == 1 || !updatelast)
         ui->switchButton->hide();
 
     if (initialSelection != nullptr)
@@ -80,7 +86,7 @@ void WordToGroupForm::exec(Dictionary *d, int windex, GroupBase *initialSelectio
     show();
 }
 
-void WordToGroupForm::exec(Dictionary *d, const std::vector<int> &indexes, GroupBase *initialSelection)
+void WordToGroupForm::exec(Dictionary *d, const std::vector<int> &indexes, GroupBase *initialSelection, bool updatelastdiag)
 {
     if (indexes.empty())
         return;
@@ -88,6 +94,10 @@ void WordToGroupForm::exec(Dictionary *d, const std::vector<int> &indexes, Group
     dict = d;
     connect(dict, &Dictionary::dictionaryReset, this, &WordToGroupForm::close);
     list = indexes;
+
+    updatelast = updatelastdiag;
+    if (updatelast)
+        gUI->setLastWordToDialog(GlobalUI::LastWordDialog::Group);
 
     ui->switchButton->setVisible(ZKanji::dictionaryCount() > 1 && list.size() == 1);
 
@@ -103,7 +113,7 @@ void WordToGroupForm::exec(Dictionary *d, const std::vector<int> &indexes, Group
     ui->wordsTable->setMultiLine(list.size() == 1);
     ui->wordsTable->setModel(model);
 
-    if (ZKanji::dictionaryCount() == 1)
+    if (ZKanji::dictionaryCount() == 1 || !updatelast)
         ui->switchButton->hide();
 
     if (initialSelection != nullptr)
@@ -135,10 +145,11 @@ void WordToGroupForm::on_switchButton_clicked()
     // Copy member values in case the form is deleted in close.
     Dictionary *d = dict;
     int windex = list.front();
+    bool modal = windowModality() != Qt::NonModal;
 
     close();
 
-    wordToDictionarySelect(d, windex);
+    wordToDictionarySelect(d, windex, modal, updatelast);
 }
 
 void WordToGroupForm::selChanged()
@@ -148,7 +159,7 @@ void WordToGroupForm::selChanged()
 
 void WordToGroupForm::dictionaryAdded()
 {
-    if (list.size() == 1)
+    if (list.size() == 1 && updatelast)
         ui->switchButton->setVisible(true);
 }
 
@@ -165,20 +176,20 @@ void WordToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictionar
 
 
 // Declared in "dialogs.h"
-void wordToGroupSelect(Dictionary *d, int windex, bool showmodal/*, QWidget *dialogParent*/)
+void wordToGroupSelect(Dictionary *d, int windex, bool showmodal, bool updatelastdiag/*, QWidget *dialogParent*/)
 {
     WordToGroupForm *form = new WordToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, windex, d->wordGroups().lastSelected());
+    form->exec(d, windex, d->wordGroups().lastSelected(), updatelastdiag);
 }
 
-void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool showmodal/*, QWidget *dialogParent*/)
+void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool showmodal, bool updatelastdiag/*, QWidget *dialogParent*/)
 {
     WordToGroupForm *form = new WordToGroupForm(gUI->activeMainForm() /*dialogParent*/);
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, indexes, d->wordGroups().lastSelected());
+    form->exec(d, indexes, d->wordGroups().lastSelected(), updatelastdiag);
 }
 
 

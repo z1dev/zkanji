@@ -45,6 +45,8 @@
 #include "dialogs.h"
 #include "grouppickerform.h"
 #include "colorsettings.h"
+#include "wordtogroupform.h"
+#include "wordtodictionaryform.h"
 
 //// Mode button icon image width.
 //static const int _iconW = 16;
@@ -123,7 +125,7 @@ GlobalUI* GlobalUI::instance()
     return i;
 }
 
-GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infoblock(0), dockform(nullptr), hiddencounter(0), autosavecounter(0), lastworddest(nullptr)
+GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infoblock(0), dockform(nullptr), hiddencounter(0), autosavecounter(0), lastworddict(nullptr), lastworddiag(LastWordDialog::Group)
 {
     if (i != nullptr)
         throw "Code should only contain a single instance of this.";
@@ -280,26 +282,33 @@ void GlobalUI::loadXMLLastGroups(QXmlStreamReader &reader)
     }
 }
 
-void GlobalUI::saveXMLLastSelections(QXmlStreamWriter &writer)
+void GlobalUI::saveXMLLastSettings(QXmlStreamWriter &writer)
 {
-    writer.writeAttribute("worddestdict", lastworddest == nullptr ? "" : lastworddest->name());
+    writer.writeAttribute("worddestdict", lastworddict == nullptr ? "" : lastworddict->name());
+    writer.writeAttribute("lastworddiag", lastworddiag == LastWordDialog::Group ? "group" : "dictionary");
 }
 
-void GlobalUI::loadXMLLastSelections(QXmlStreamReader &reader)
+void GlobalUI::loadXMLLastSettings(QXmlStreamReader &reader)
 {
-    while (reader.readNextStartElement())
+    if (reader.attributes().hasAttribute("worddestdict"))
     {
-        reader.skipCurrentElement();
-        if (reader.attributes().hasAttribute("worddestdict"))
-        {
-            QString val = reader.attributes().value("worddestdict").toString();
-            int ix = ZKanji::dictionaryIndex(val);
-            if (ix != -1)
-                setLastWordDestination(ZKanji::dictionary(ix));
-            else
-                lastworddest = nullptr;
-        }
+        QString val = reader.attributes().value("worddestdict").toString();
+        int ix = ZKanji::dictionaryIndex(val);
+        if (ix != -1)
+            setLastWordDestination(ZKanji::dictionary(ix));
+        else
+            lastworddict = nullptr;
     }
+    if (reader.attributes().hasAttribute("lastworddiag"))
+    {
+        QString val = reader.attributes().value("lastworddiag").toString().toLower();
+        if (val == "dictionary")
+            lastworddiag = LastWordDialog::Dictionary;
+        else
+            lastworddiag = LastWordDialog::Group;
+    }
+
+    reader.skipCurrentElement();
 }
 
 void GlobalUI::createWindow(bool ismain)
@@ -458,12 +467,25 @@ ZKanjiForm* GlobalUI::dockForm() const
 
 Dictionary* GlobalUI::lastWordDestination() const
 {
-    return lastworddest;
+    return lastworddict;
 }
 
 void GlobalUI::setLastWordDestination(Dictionary *d)
 {
-    lastworddest = d;
+    lastworddict = d;
+}
+
+void GlobalUI::wordToDestSelect(Dictionary *d, int windex, bool showmodal)
+{
+    if (lastworddiag == LastWordDialog::Group || ZKanji::dictionaryCount() == 1)
+        wordToGroupSelect(d, windex, showmodal, true);
+    else
+        wordToDictionarySelect(d, windex, showmodal, true);
+}
+
+void GlobalUI::setLastWordToDialog(LastWordDialog last)
+{
+    lastworddiag = last;
 }
 
 void GlobalUI::startDockDrag(ZKanjiForm *form)
@@ -871,8 +893,8 @@ void GlobalUI::signalDictionaryToBeRemoved(int index, int orderindex, Dictionary
     //if (flagimg.empty())
     //    return;
 
-    if (lastworddest == dict)
-        lastworddest = nullptr;
+    if (lastworddict == dict)
+        lastworddict = nullptr;
 
     ZKanji::eraseDictionaryFlag(dict->name());
 

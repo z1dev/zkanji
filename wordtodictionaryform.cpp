@@ -45,12 +45,16 @@ WordToDictionaryForm::~WordToDictionaryForm()
     delete ui;
 }
 
-void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial)
+void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial, bool updatelastdiag)
 {
     updateWindowGeometry(this);
 
     dict = d;
     index = windex;
+
+    updatelast = updatelastdiag;
+    if (updatelast)
+        gUI->setLastWordToDialog(GlobalUI::LastWordDialog::Dictionary);
 
     connect(dict, &Dictionary::dictionaryReset, this, &WordToDictionaryForm::close);
 
@@ -67,15 +71,14 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial)
     model->setWord(dict, windex);
     ui->wordsTable->setModel(model);
 
-    connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &WordToDictionaryForm::wordSelChanged);
+    //connect(ui->wordsTable, &ZDictionaryListView::rowSelectionChanged, this, &WordToDictionaryForm::wordSelChanged);
 
     proxy = new DictionariesProxyModel(this);
     proxy->setDictionary(dict);
     ui->dictCBox->setModel(proxy);
 
-    FormStates::restoreDialogSplitterState("WordToDictionary", this, ui->splitter);
-
-    expandsize = ui->splitter->sizes().at(1);
+    if (!updatelast)
+        ui->switchButton->hide();
 
     if (initial == nullptr)
         ui->dictCBox->setCurrentIndex(0);
@@ -93,12 +96,16 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial)
             ui->dictCBox->setCurrentIndex(0);
     }
 
+    FormStates::restoreDialogSplitterState("WordToDictionary", this, ui->splitter, &expandsize);
+
+    expandsize = ui->splitter->sizes().at(1);
+
     show();
 }
 
 void WordToDictionaryForm::closeEvent(QCloseEvent *e)
 {
-    FormStates::saveDialogSplitterState("WordToDictionary", this, ui->splitter);
+    FormStates::saveDialogSplitterState("WordToDictionary", this, ui->splitter, &expandsize);
 
     base::closeEvent(e);
 }
@@ -131,10 +138,11 @@ void WordToDictionaryForm::on_switchButton_clicked()
     // Copy member values in case the form is deleted in close.
     Dictionary *d = dict;
     int windex = index;
+    bool modal = windowModality() != Qt::NonModal;
 
     close();
 
-    wordToGroupSelect(d, windex/*, parentWidget()*/);
+    wordToGroupSelect(d, windex, modal, updatelast/*, parentWidget()*/);
 }
 
 void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
@@ -212,7 +220,6 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
                 ui->splitter->setSizes({ siz1 - oldexp - ui->splitter->handleWidth(), oldexp });
         }
     }
-
 }
 
 void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int dindex)
@@ -221,6 +228,9 @@ void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int di
     Dictionary *d = dest;
     gUI->setLastWordDestination(proxy->dictionaryAtRow(ui->dictCBox->currentIndex()));
 
+    if (updatelast)
+        gUI->setLastWordToDialog(GlobalUI::LastWordDialog::Dictionary);
+
     close();
 
     // Create and open the word editor in simple edit mode to edit double clicked definition
@@ -228,10 +238,10 @@ void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int di
     editWord(d, windex, dindex, parentWidget());
 }
 
-void WordToDictionaryForm::wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/)
-{
-    addButton->setEnabled(ui->wordsTable->hasSelection());
-}
+//void WordToDictionaryForm::wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/)
+//{
+//    addButton->setEnabled(ui->wordsTable->hasSelection());
+//}
 
 void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
 {
@@ -243,12 +253,12 @@ void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dict
 //-------------------------------------------------------------
 
 
-void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal)
+void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal, bool updatelastdiag)
 {
     WordToDictionaryForm *form = new WordToDictionaryForm(gUI->activeMainForm());
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, windex, gUI->lastWordDestination());
+    form->exec(d, windex, gUI->lastWordDestination(), updatelastdiag);
 }
 
 

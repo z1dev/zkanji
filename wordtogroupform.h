@@ -23,8 +23,8 @@ public:
     WordToGroupForm(QWidget *parent = nullptr);
     virtual ~WordToGroupForm();
 
-    void exec(Dictionary *d, int windex, GroupBase *initialSelection = nullptr);
-    void exec(Dictionary *d, const std::vector<int> &indexes, GroupBase *initialSelection = nullptr);
+    void exec(Dictionary *d, int windex, GroupBase *initialSelection = nullptr, bool updatelastdiag = false);
+    void exec(Dictionary *d, const std::vector<int> &indexes, GroupBase *initialSelection = nullptr, bool updatelastdiag = false);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
 private slots:
@@ -44,6 +44,8 @@ private:
     std::vector<int> list;
 
     QPushButton *acceptButton;
+
+    bool updatelast;
 
     typedef DialogWindow base;
 };

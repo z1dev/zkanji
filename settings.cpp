@@ -530,7 +530,7 @@ namespace Settings
         writer.writeEndElement(); /* LastGroups */
 
         writer.writeStartElement("LastSelections");
-        gUI->saveXMLLastSelections(writer);
+        gUI->saveXMLLastSettings(writer);
         writer.writeEndElement(); /* LastGroups */
 
         writer.writeEndElement(); /* Misc */
@@ -1311,17 +1311,17 @@ namespace Settings
                         //if (!Settings::general.savewinstates)
                         //    reader.skipCurrentElement();
                         //else
-                            gUI->loadXMLLastDecks(reader);
+                        gUI->loadXMLLastDecks(reader);
                     }
                     else if (reader.name() == "LastGroups")
                     {
                         //if (!Settings::general.savewinstates)
                         //    reader.skipCurrentElement();
                         //else
-                            gUI->loadXMLLastGroups(reader);
+                        gUI->loadXMLLastGroups(reader);
                     }
                     else if (reader.name() == "LastSelections")
-                        gUI->loadXMLLastSelections(reader);
+                        gUI->loadXMLLastSettings(reader);
                     else
                         reader.skipCurrentElement();
                 }

@@ -580,7 +580,7 @@ void ZKanjiWidget::allowActionDestroyed()
 
 void ZKanjiWidget::on_dictionary_wordDoubleClicked(int windex, int dindex)
 {
-    wordToGroupSelect(dictionary(), windex/*, window()*/);
+    gUI->wordToDestSelect(ZKanji::dictionary(dictindex), windex);
 }
 
 void ZKanjiWidget::on_pagesStack_currentChanged(int index)

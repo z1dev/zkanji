@@ -159,7 +159,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Destination dictionary:</string>
+             <string>Destination:</string>
             </property>
            </widget>
           </item>

@@ -1071,7 +1071,7 @@ void ZDictionaryListView::selectionToGroup() const
 
     indexes(sel, sel);
 
-    wordToGroupSelect(dictionary(), sel/*, gUI->activeMainForm()*/);
+    wordToGroupSelect(dictionary(), sel, false, true/*, gUI->activeMainForm()*/);
 }
 
 void ZDictionaryListView::wordsToDeck() const
@@ -1091,7 +1091,7 @@ void ZDictionaryListView::wordsToDeck(const std::vector<int> &windexes) const
 
 void ZDictionaryListView::wordToDictionary() const
 {
-    wordToDictionarySelect(dictionary(), indexes(selectedRow(0)));
+    wordToDictionarySelect(dictionary(), indexes(selectedRow(0)), false, true);
 }
 
 void ZDictionaryListView::editWord() const
@@ -1403,18 +1403,18 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
     {
         QAction *aadd = popup->addAction(tr("Add word to group..."));
         connect(aadd, &QAction::triggered, [dict, &windexes]() {
-            wordToGroupSelect(dict, windexes/*, gUI->activeMainForm()*/);
+            wordToGroupSelect(dict, windexes, false, true/*, gUI->activeMainForm()*/);
         });
         QAction *astudy = popup->addAction(tr("Add word to study deck..."));
         connect(astudy, &QAction::triggered, [this, &windexes]() {
             wordsToDeck(windexes);
         });
 
-        if (ZKanji::dictionaryCount() > 1 && windexes.size() == 1 && selstr.isEmpty())
+        if (ZKanji::dictionaryCount() > 1 && windexes.size() == 1)
         {
             QAction *adict = popup->addAction(tr("Add word to dictionary..."));
             connect(adict, &QAction::triggered, [dict, &windexes]() {
-                wordToDictionarySelect(dict, windexes.front()/*, gUI->activeMainForm()*/);
+                wordToDictionarySelect(dict, windexes.front(), false, true/*, gUI->activeMainForm()*/);
             });
         }
 

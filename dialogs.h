@@ -11,13 +11,27 @@
 
 class Dictionary;
 class QWidget;
-void wordToGroupSelect(Dictionary *d, int windex, bool showmodal = false /*, QWidget *dialogParent = nullptr*/);
-void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
+class WordToGroupForm;
+class KanjiToGroupForm;
+class WordToDictionaryForm;
+
+// Shows WordToGroupForm dialog. Set updatelastdiag to true, if the global UI should remember
+// the last word dialog where the ok button was pressed. Calling gUI->wordToDestSelect() will
+// then open the last dialog.
+void wordToGroupSelect(Dictionary *d, int windex, bool showmodal = false, bool updatelastdiag = false /*, QWidget *dialogParent = nullptr*/);
+// Shows WordToGroupForm dialog. Set updatelastdiag to true, if the global UI should remember
+// the last word dialog where the ok button was pressed. Calling gUI->wordToDestSelect() will
+// then open the last dialog.
+void wordToGroupSelect(Dictionary *d, const std::vector<int> &indexes, bool showmodal = false, bool updatelastdiag = false/*, QWidget *dialogParent = nullptr*/);
+// Shows kanjiToGroupForm dialog.
 void kanjiToGroupSelect(Dictionary *d, ushort kindex, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
+// Shows kanjiToGroupForm dialog.
 void kanjiToGroupSelect(Dictionary *d, const std::vector<ushort> kindexes, bool showmodal = false/*, QWidget *dialogParent = nullptr*/);
 
-void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal = false);
-
+// Shows WordToDictionaryForm dialog. Set updatelastdiag to true, if the global UI should
+// remember the last word dialog where the ok button was pressed. Calling
+// gUI->wordToDestSelect() will then open the last dialog.
+void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal = false, bool updatelastdiag = false);
 
 // Opens the dictionary listing window where new dictionaries can be created or user
 // dictionaries can be deleted.

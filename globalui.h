@@ -144,10 +144,10 @@ public:
     // dictionary.
     void loadXMLLastGroups(QXmlStreamReader &reader);
 
-    // Saves simple selections in dialogs where this doesn't depend on a dictionary.
-    void saveXMLLastSelections(QXmlStreamWriter &writer);
-    // Loads simple selections in dialogs where this doesn't depend on a dictionary.
-    void loadXMLLastSelections(QXmlStreamReader &reader);
+    // Saves general settings in dialogs.
+    void saveXMLLastSettings(QXmlStreamWriter &writer);
+    // Loads general settings in dialogs.
+    void loadXMLLastSettings(QXmlStreamReader &reader);
 
     // Creates and shows a ZKanji window. Pass true in ismain for the first created window.
     // If ismain is true and a main window already exists, the function returns immediately.
@@ -187,6 +187,14 @@ public:
     Dictionary* lastWordDestination() const;
     // Set the last dictionary a word has been added to from the word to dictionary dialog.
     void setLastWordDestination(Dictionary *d);
+
+    // Calls either the global wordToGroupSelect() or wordToDictionarySelect() depending on
+    // the last window shown and accepted with the ok button.
+    void wordToDestSelect(Dictionary *d, int windex, bool showmodal = false);
+
+    enum class LastWordDialog { Group, Dictionary };
+    // Changes which dialog the wordToDestSelect will show next.
+    void setLastWordToDialog(LastWordDialog last);
 
     // Hides every top level window apart from the main form, and notifies it to show the dock
     // panels while the mouse is moved.
@@ -394,8 +402,10 @@ private:
     // Widgets scaled by calling scaleWidget() or preventWidgetScale().
     QSet<QWidget*> scaledwidgets;
 
-    Dictionary *lastworddest;
+    Dictionary *lastworddict;
 
+    LastWordDialog lastworddiag;
+    
     friend class HideAppWindowsGuard;
     friend class AutoSaveGuard;
     typedef QObject base;

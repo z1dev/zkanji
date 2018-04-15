@@ -321,8 +321,14 @@ namespace FormStates
     void saveDialogSplitterState(QString statename, const QSize &siz, int size1, int size2);
     void restoreDialogSplitterState(QString statename, QSize &siz, int &size1, int &size2);
 
-    void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
-    void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter);
+    // Saves the window size and the size of widgets in the passed splitter under the given
+    // state name. Pass second widget size in size2 if the second widget is hidden. Otherwise
+    // the value is ignored.
+    void saveDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter, const int *size2 = nullptr);
+    // Restores the size and widget sizes in a splitter for window under the given state name.
+    // Receive a value in size2 if the second widget is hidden and won't be restored, to get
+    // its last saved value.
+    void restoreDialogSplitterState(QString statename, QMainWindow *window, QSplitter *splitter, int *size2 = nullptr);
 
     void loadXMLDialogSplitterState(QXmlStreamReader &reader);
 

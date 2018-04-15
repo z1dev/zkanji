@@ -27,7 +27,7 @@ public:
     WordToDictionaryForm(QWidget *parent = nullptr);
     virtual ~WordToDictionaryForm();
 
-    void exec(Dictionary *d, int windex, Dictionary *initialSel = nullptr);
+    void exec(Dictionary *d, int windex, Dictionary *initialSel = nullptr, bool updatelastdiag = false);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
 private slots:
@@ -44,7 +44,7 @@ private slots:
     void on_meaningsTable_wordDoubleClicked(int windex, int dindex);
     // Notification when the selection in the top table's selection, showing word meanings to
     // copy, changes. Enables/disables the create/copy button.
-    void wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/);
+    //void wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/);
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
@@ -66,6 +66,8 @@ private:
 
     // Height of the bottom words table when shown.
     int expandsize;
+
+    bool updatelast;
 
     typedef DialogWindow    base;
 };
