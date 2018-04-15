@@ -529,6 +529,10 @@ namespace Settings
         gUI->saveXMLLastGroups(writer);
         writer.writeEndElement(); /* LastGroups */
 
+        writer.writeStartElement("LastSelections");
+        gUI->saveXMLLastSelections(writer);
+        writer.writeEndElement(); /* LastGroups */
+
         writer.writeEndElement(); /* Misc */
 
 
@@ -1316,6 +1320,8 @@ namespace Settings
                         //else
                             gUI->loadXMLLastGroups(reader);
                     }
+                    else if (reader.name() == "LastSelections")
+                        gUI->loadXMLLastSelections(reader);
                     else
                         reader.skipCurrentElement();
                 }

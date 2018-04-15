@@ -27,7 +27,7 @@ public:
     WordToDictionaryForm(QWidget *parent = nullptr);
     virtual ~WordToDictionaryForm();
 
-    void exec(Dictionary *d, int windex);
+    void exec(Dictionary *d, int windex, Dictionary *initialSel = nullptr);
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
 private slots:

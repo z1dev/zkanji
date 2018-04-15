@@ -144,6 +144,11 @@ public:
     // dictionary.
     void loadXMLLastGroups(QXmlStreamReader &reader);
 
+    // Saves simple selections in dialogs where this doesn't depend on a dictionary.
+    void saveXMLLastSelections(QXmlStreamWriter &writer);
+    // Loads simple selections in dialogs where this doesn't depend on a dictionary.
+    void loadXMLLastSelections(QXmlStreamReader &reader);
+
     // Creates and shows a ZKanji window. Pass true in ismain for the first created window.
     // If ismain is true and a main window already exists, the function returns immediately.
     void createWindow(bool ismain = false);
@@ -177,6 +182,11 @@ public:
     // The floating form currently being positioned to be docked into the main form. Only set
     // while docking targetting takes place.
     ZKanjiForm* dockForm() const;
+
+    // The last dictionary a word has been added to via the word to dictionary dialog.
+    Dictionary* lastWordDestination() const;
+    // Set the last dictionary a word has been added to from the word to dictionary dialog.
+    void setLastWordDestination(Dictionary *d);
 
     // Hides every top level window apart from the main form, and notifies it to show the dock
     // panels while the mouse is moved.
@@ -383,6 +393,8 @@ private:
 
     // Widgets scaled by calling scaleWidget() or preventWidgetScale().
     QSet<QWidget*> scaledwidgets;
+
+    Dictionary *lastworddest;
 
     friend class HideAppWindowsGuard;
     friend class AutoSaveGuard;

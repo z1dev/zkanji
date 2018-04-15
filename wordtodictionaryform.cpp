@@ -45,7 +45,7 @@ WordToDictionaryForm::~WordToDictionaryForm()
     delete ui;
 }
 
-void WordToDictionaryForm::exec(Dictionary *d, int windex)
+void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial)
 {
     updateWindowGeometry(this);
 
@@ -77,7 +77,21 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex)
 
     expandsize = ui->splitter->sizes().at(1);
 
-    ui->dictCBox->setCurrentIndex(0);
+    if (initial == nullptr)
+        ui->dictCBox->setCurrentIndex(0);
+    else
+    {
+        bool found = false;
+        for (int ix = 0, siz = proxy->rowCount(); ix != siz && !found; ++ix)
+            if (proxy->dictionaryAtRow(ix) == initial)
+            {
+                ui->dictCBox->setCurrentIndex(ix);
+                found = true;
+            }
+
+        if (!found)
+            ui->dictCBox->setCurrentIndex(0);
+    }
 
     show();
 }
@@ -98,6 +112,8 @@ void WordToDictionaryForm::on_addButton_clicked()
     std::vector<int> wdindexes;
     ui->wordsTable->selectedRows(wdindexes);
     std::sort(wdindexes.begin(), wdindexes.end());
+
+    gUI->setLastWordDestination(proxy->dictionaryAtRow(ui->dictCBox->currentIndex()));
 
     close();
 
@@ -152,7 +168,8 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
             //centralWidget()->layout()->activate();
             //layout()->activate();
 
-            resize(s);
+            if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+                resize(s);
         }
         addButton->setText(tr("Create word"));
     }
@@ -176,9 +193,12 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
 
             int siz1 = ui->widget->height();
 
-            QSize s = size();
-            s.setHeight(s.height() + ui->splitter->handleWidth() + expandsize);
-            resize(s);
+            if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+            {
+                QSize s = size();
+                s.setHeight(s.height() + ui->splitter->handleWidth() + expandsize);
+                resize(s);
+            }
 
             //updateWindowGeometry(this);
             //centralWidget()->layout()->activate();
@@ -186,7 +206,10 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
 
             ui->meaningsWidget->show();
 
-            ui->splitter->setSizes({ siz1, oldexp });
+            if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
+                ui->splitter->setSizes({ siz1, oldexp });
+            else
+                ui->splitter->setSizes({ siz1 - oldexp - ui->splitter->handleWidth(), oldexp });
         }
     }
 
@@ -196,6 +219,7 @@ void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int di
 {
     // Copy member values in case the form is deleted in close.
     Dictionary *d = dest;
+    gUI->setLastWordDestination(proxy->dictionaryAtRow(ui->dictCBox->currentIndex()));
 
     close();
 
@@ -224,7 +248,7 @@ void wordToDictionarySelect(Dictionary *d, int windex, bool showmodal)
     WordToDictionaryForm *form = new WordToDictionaryForm(gUI->activeMainForm());
     if (showmodal)
         form->setWindowModality(Qt::ApplicationModal);
-    form->exec(d, windex);
+    form->exec(d, windex, gUI->lastWordDestination());
 }
 
 

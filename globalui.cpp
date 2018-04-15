@@ -123,7 +123,7 @@ GlobalUI* GlobalUI::instance()
     return i;
 }
 
-GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infoblock(0), dockform(nullptr), hiddencounter(0), autosavecounter(0)
+GlobalUI::GlobalUI(QObject *parent) : base(parent), kanjiinfo(nullptr), infoblock(0), dockform(nullptr), hiddencounter(0), autosavecounter(0), lastworddest(nullptr)
 {
     if (i != nullptr)
         throw "Code should only contain a single instance of this.";
@@ -280,6 +280,28 @@ void GlobalUI::loadXMLLastGroups(QXmlStreamReader &reader)
     }
 }
 
+void GlobalUI::saveXMLLastSelections(QXmlStreamWriter &writer)
+{
+    writer.writeAttribute("worddestdict", lastworddest == nullptr ? "" : lastworddest->name());
+}
+
+void GlobalUI::loadXMLLastSelections(QXmlStreamReader &reader)
+{
+    while (reader.readNextStartElement())
+    {
+        reader.skipCurrentElement();
+        if (reader.attributes().hasAttribute("worddestdict"))
+        {
+            QString val = reader.attributes().value("worddestdict").toString();
+            int ix = ZKanji::dictionaryIndex(val);
+            if (ix != -1)
+                setLastWordDestination(ZKanji::dictionary(ix));
+            else
+                lastworddest = nullptr;
+        }
+    }
+}
+
 void GlobalUI::createWindow(bool ismain)
 {
     if (ismain && !lastsave.isValid())
@@ -432,6 +454,16 @@ ZKanjiForm* GlobalUI::forms(int ix) const
 ZKanjiForm* GlobalUI::dockForm() const
 {
     return dockform;
+}
+
+Dictionary* GlobalUI::lastWordDestination() const
+{
+    return lastworddest;
+}
+
+void GlobalUI::setLastWordDestination(Dictionary *d)
+{
+    lastworddest = d;
 }
 
 void GlobalUI::startDockDrag(ZKanjiForm *form)
@@ -838,6 +870,9 @@ void GlobalUI::signalDictionaryToBeRemoved(int index, int orderindex, Dictionary
     //// images are not filled until that.
     //if (flagimg.empty())
     //    return;
+
+    if (lastworddest == dict)
+        lastworddest = nullptr;
 
     ZKanji::eraseDictionaryFlag(dict->name());
 
