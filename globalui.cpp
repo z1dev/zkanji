@@ -460,6 +460,11 @@ ZKanjiForm* GlobalUI::forms(int ix) const
     return mainforms[ix];
 }
 
+bool GlobalUI::hasMainAccess() const
+{
+    return qApp->activeModalWidget() == nullptr && (mainForm()->isVisible() || (PopupDictionary::getInstance() != nullptr && PopupDictionary::getInstance()->isVisible()) || (PopupKanjiSearch::getInstance() != nullptr && PopupKanjiSearch::getInstance()->isVisible()));
+}
+
 ZKanjiForm* GlobalUI::dockForm() const
 {
     return dockform;
@@ -706,6 +711,11 @@ void GlobalUI::toggleKanjiInfo(bool toggleon)
                 kanjiinfo = f;
         }
     }
+}
+
+bool GlobalUI::kanjiInfoAllowed() const
+{
+    return infoblock == 0;
 }
 
 QAction* GlobalUI::addCommandAction(QSignalMapper *map, QMenu *parentmenu, const QString &str, const QKeySequence &keyseq, int command, bool checkable, QActionGroup *group)

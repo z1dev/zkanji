@@ -179,6 +179,10 @@ public:
     // order of activation.
     ZKanjiForm* forms(int ix) const;
 
+    // Whether the main form or the popup dictionary/kanji search is visible, and no dialog
+    // windows block them.
+    bool hasMainAccess() const;
+
     // The floating form currently being positioned to be docked into the main form. Only set
     // while docking targetting takes place.
     ZKanjiForm* dockForm() const;
@@ -241,6 +245,10 @@ public:
     // Shows or hides the kanji information windows and allows or prevents new ones to open.
     // Set toggleon to true to show and enable, or to false to disallow kanji info windows.
     void toggleKanjiInfo(bool toggleon = true);
+
+    // Returns true if kanji information could be shown by calling showKanjiInfo(). Some
+    // operations, like showing a modal window, might block kanji information to be shown.
+    bool kanjiInfoAllowed() const;
 
     // Adds a shortcut to the passed menu via the mapper. The passed UICommand will be
     // executed by executeCommand on the active ZKanjiWidget, when the shortcut is used.

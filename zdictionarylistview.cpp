@@ -1299,6 +1299,8 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
     popup = new QMenu(this);
     popup->setAttribute(Qt::WA_DeleteOnClose);
 
+    bool mainaccess = gUI->hasMainAccess();
+
     //if (selstr.isEmpty())
     //    selstr = index.data(Qt::DisplayRole).toString();
 
@@ -1354,7 +1356,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
         kindexes.clear();
     }
 
-    if (dict != nullptr && hasdict && kindex != -1 && selstr.size() < 2)
+    if (dict != nullptr && hasdict && kindex != -1 && selstr.size() < 2 && gUI->kanjiInfoAllowed())
     {
         QAction *akinfo = popup->addAction(tr("Kanji information..."));
         connect(akinfo, &QAction::triggered, [dict, kindex]() {
@@ -1399,7 +1401,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
 
     QAction *menusep = popup->addSeparator();
 
-    if (hasdict && dict != nullptr && selstr.isEmpty())
+    if (hasdict && dict != nullptr && selstr.isEmpty() && mainaccess)
     {
         QAction *aadd = popup->addAction(tr("Add word to group..."));
         connect(aadd, &QAction::triggered, [dict, &windexes]() {
@@ -1421,7 +1423,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
         popup->addSeparator();
     }
 
-    if (hasdict && dict != nullptr && (kindex != -1 || !kindexes.empty()))
+    if (hasdict && dict != nullptr && (kindex != -1 || !kindexes.empty()) && mainaccess)
     {
         QMenu *ksub = popup->addMenu(tr("Kanji"));
         QAction *akadd = ksub->addAction(tr("Add kanji to group..."));
@@ -1501,7 +1503,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
 
     popup->addSeparator();
 
-    if (hasdict && dict != nullptr && windexes.size() == 1 && selstr.isEmpty())
+    if (hasdict && dict != nullptr && windexes.size() == 1 && selstr.isEmpty() && mainaccess)
     {
         QAction *aedit = popup->addAction(tr("Edit word..."));
         connect(aedit, &QAction::triggered, [dict, &windexes]() {
