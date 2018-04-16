@@ -98,7 +98,7 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial, 
 
     FormStates::restoreDialogSplitterState("WordToDictionary", this, ui->splitter, &expandsize);
 
-    expandsize = ui->splitter->sizes().at(1);
+    //expandsize = ui->splitter->sizes().at(1);
 
     show();
 }
