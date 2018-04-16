@@ -61,7 +61,7 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
     ui->groupWidget->setDictionary(ZKanji::dictionary(0));
     ui->groupWidget->setMode(GroupWidget::Words);
 
-    ui->dictWidget->setExamplesVisible(false);
+    ui->dictWidget->setExamplesInteraction(false);
     ui->dictWidget->setWordDragEnabled(true);
     connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &WordGroupWidget::wordSelectionChanged);
 

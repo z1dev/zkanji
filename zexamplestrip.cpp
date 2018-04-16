@@ -331,7 +331,8 @@ void ZExamplePopup::mouseDoubleClickEvent(QMouseEvent *e)
 //-------------------------------------------------------------
 
 
-ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), display(ExampleDisplay::Both), index(-1), dirty(false), block(0), line(0), wordpos(-1), common(nullptr), current(-1), hovered(-1), jpwidth(-1), trwidth(-1)
+ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), display(ExampleDisplay::Both), index(-1), dirty(false),
+        block(0), line(0), wordpos(-1), common(nullptr), current(-1), hovered(-1), interactible(true), jpwidth(-1), trwidth(-1)
 {
     //setBackgroundRole(QPalette::Base);
     setAutoFillBackground(false);
@@ -503,6 +504,22 @@ void ZExampleStrip::setCurrentSentence(int which)
     updateSentence();
 }
 
+bool ZExampleStrip::hasInteraction() const
+{
+    return interactible;
+}
+
+void ZExampleStrip::setInteraction(bool allow)
+{
+    if (interactible == allow)
+        return;
+    interactible = allow;
+
+    if (!interactible)
+        hovered = -1;
+    update();
+}
+
 bool ZExampleStrip::event(QEvent *e)
 {
     if (e->type() == ZExPopupDestroyedEvent::Type())
@@ -604,12 +621,12 @@ void ZExampleStrip::mousePressEvent(QMouseEvent *e)
 {
     base::mousePressEvent(e);
 
-    if (!e->isAccepted())
+    if (!e->isAccepted() && interactible)
     {
         if (hovered != -1 && hovered != wordrect.size())
             selectForm(0, hovered);
-        e->accept();
     }
+    e->accept();
 }
 
 void ZExampleStrip::mouseDoubleClickEvent(QMouseEvent *e)
@@ -632,7 +649,7 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
     if (e->isAccepted())
     {
         const QRect r = contentsRect();
-        int hpos = r.contains(e->pos()) ? wordrect.size() : -1;
+        int hpos = interactible && r.contains(e->pos()) ? wordrect.size() : -1;
 
         // Mouse cursor was in a word rectangle, but it's now over the scroll bar. Update the
         // hovered rectangle and the dotted strip below the words.
@@ -650,7 +667,7 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
     }
     e->accept();
 
-    if (index == -1)
+    if (index == -1 || !interactible)
         return;
 
     int hpos = -1;

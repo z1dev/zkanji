@@ -42,6 +42,11 @@ public:
     ExampleDisplay displayed() const;
     void setDisplayed(ExampleDisplay disp);
 
+    // Whether changing currently shown word by clicking inside the text area is allowed.
+    bool hasInteraction() const;
+    // Allow or deny changing currently shown word by clicking inside the text area.
+    void setInteraction(bool allow);
+
     // Allows changes to the displayed sentence after calling lock(). If the dictionary and
     // word indexes are specified, tries to update the display of the current sentence to use
     // that word as a base. If the current sentence is not found for that word, equals to

@@ -108,6 +108,11 @@ public:
     // Changes the sentence being displayed for the current word. The value should be between
     // 0 and sentenceCount() - 1. 
     void setCurrentSentence(int which);
+
+    // Whether changing currently shown word by clicking inside the text area is allowed.
+    bool hasInteraction() const;
+    // Allow or deny changing currently shown word by clicking inside the text area.
+    void setInteraction(bool allow);
 protected:
     virtual bool event(QEvent *e) override;
 
@@ -193,6 +198,8 @@ private:
     // this value is -1. If it is over the strip but not over a rectangle, the value is
     // wordrect.size().
     int hovered;
+
+    bool interactible;
 
     // Width of the Japanese text when drawn on the strip. Passed to scrollMax() when
     // requested.

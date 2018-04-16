@@ -236,6 +236,9 @@ public:
     bool examplesVisible() const;
     // Set the visibility of the button for the word examples and the examples panel.
     void setExamplesVisible(bool shown);
+    // Set whether to allow or prevent the word examples panel to switch to another word by
+    // clicking inside the text area.
+    void setExamplesInteraction(bool allow);
 
     // Returns whether the button to set the display mode of the dictionary to multi line is
     // visible or not.

@@ -104,6 +104,16 @@ void ExampleWidget::setDisplayed(ExampleDisplay disp)
     ui->strip->setDisplayed(disp);
 }
 
+bool ExampleWidget::hasInteraction() const
+{
+    return ui->strip->hasInteraction();
+}
+
+void ExampleWidget::setInteraction(bool allow)
+{
+    ui->strip->setInteraction(allow);
+}
+
 void ExampleWidget::unlock(Dictionary *d, int windex, int wordpos, int wordform)
 {
     locked = false;

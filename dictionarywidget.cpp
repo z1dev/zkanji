@@ -904,6 +904,11 @@ void DictionaryWidget::setExamplesVisible(bool shown)
         ui->examples->setItem(nullptr, 0);
 }
 
+void DictionaryWidget::setExamplesInteraction(bool allow)
+{
+    ui->examples->setInteraction(allow);
+}
+
 bool DictionaryWidget::multilineVisible() const
 {
     return ui->multilineButton->isVisibleTo(this);
