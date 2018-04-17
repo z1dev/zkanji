@@ -786,7 +786,7 @@ void GlobalUI::minimizeToTray()
     //#ifdef Q_OS_WIN
     //    trayicon->setIcon(QIcon(":/program.ico"));
     //#else
-    trayicon->setIcon(QIcon(":/programicon.svg"));
+    trayicon->setIcon(QIcon(":/programico2.svg"));
     //#endif
     trayicon->setToolTip("zkanji");
     trayicon->show();

@@ -1650,4 +1650,7 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\programico.ico" />
+  </ItemGroup>
 </Project>

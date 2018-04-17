@@ -96,7 +96,7 @@
             </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
-              <normaloff>:/book.svg</normaloff>:/book.svg</iconset>
+              <normaloff>:/togroup.svg</normaloff>:/togroup.svg</iconset>
             </property>
             <property name="iconSize">
              <size>

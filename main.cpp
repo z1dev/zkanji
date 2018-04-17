@@ -771,7 +771,7 @@ int main(int argc, char **argv)
     }
 
 #ifdef Q_OS_WIN
-    QIcon prgico(":/program.ico");
+    QIcon prgico(":/programico.ico");
     a.setWindowIcon(prgico);
 #endif
 
