@@ -77,6 +77,9 @@ protected:
 
     // Handles the default button.
     virtual void keyPressEvent(QKeyEvent *e) override;
+
+    // Position the dialog window to the center of the parent or the center of the screen.
+    virtual void showEvent(QShowEvent *e) override;
 private:
     QEventLoop *loop;
     ModalResult res;

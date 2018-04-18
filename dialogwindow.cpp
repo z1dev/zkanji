@@ -6,7 +6,12 @@
 
 #include <QPushButton>
 #include <QtEvents>
+#include <QDesktopWidget>
+#include <QApplication>
+#include <QWindow>
 #include "dialogwindow.h"
+#include <popupdict.h>
+#include <popupkanjisearch.h>
 
 #ifdef Q_OS_LINUX
 #include "stayontop_x11.h"
@@ -216,6 +221,51 @@ void DialogWindow::keyPressEvent(QKeyEvent *e)
     }
 
     base::keyPressEvent(e);
+}
+
+void DialogWindow::showEvent(QShowEvent *e)
+{
+    if (!e->spontaneous() && !testAttribute(Qt::WA_Moved) && parentWidget() != nullptr)
+    {
+        Qt::WindowStates  state = windowState();
+
+        // Position the window
+
+        // Part of Qt still in development. Uncomment when QPA becomes available (if ever.)
+
+        //if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme())
+        //    if (theme->themeHint(QPlatformTheme::WindowAutoPlacement).toBool())
+        //        return;
+
+        // Center window above the parent or if the parent is the locked popup dictionary or
+        // popup kanji search, center of screen.
+
+        int screen = qApp->desktop()->screenNumber(parentWidget());
+        QRect scr = qApp->desktop()->availableGeometry(screen);
+
+        QPoint mid;
+        if (parentWidget() != PopupDictionary::getInstance() && parentWidget() != PopupKanjiSearch::getInstance())
+            mid = parentWidget()->frameGeometry().center();
+        else
+            mid = scr.center();
+
+        screen = qApp->desktop()->screenNumber(parentWidget());
+
+        if (QWindow *w = windowHandle())
+            w->setScreen(QGuiApplication::screens().at(screen));
+
+        QRect fg = frameGeometry();
+        move(
+            std::max(scr.left(), std::min(mid.x() - fg.width() / 2, scr.left() + scr.width() - fg.width())),
+            std::max(scr.top(), std::min(mid.y() - fg.height() / 2, scr.top() + scr.height() - fg.height()))
+        );
+
+        // End window positioning.
+
+        setAttribute(Qt::WA_Moved, false);
+        if (state != windowState())
+            setWindowState(state);
+    }
 }
 
 
