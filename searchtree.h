@@ -112,6 +112,8 @@ public:
 
     // Returns a child node at the deepest possible level, which could store the passed string.
     TextNode* searchContainer(const QChar *str, int strlength);
+    // Returns a child node at the deepest possible level, which could store the passed string.
+    const TextNode* searchContainer(const QChar *str, int strlength) const;
 
     // Adds every line in this branch, whose node's label matches str. The result might contain
     // invalid finds (the word is longer than the label and doesn't match str), duplicates
@@ -202,16 +204,16 @@ public:
     // incremented by one.
     //void expand(const QString &str, int index, bool insert);
 
-    // Removes a word from every node with the passed line index. If the word
-    // is deleted, all other indices are decremented by one.
+    // Removes a word from every node with the passed line index. If the word is deleted, all
+    // higher indices are decremented by one.
     void removeLine(int line, bool deleted);
 
-    // Executes a function with every TextNode in the tree. Data will be
-    // passed to the function as second argument.
+    // Executes a function with every TextNode in the tree. Data will be/ passed to the
+    // function as second argument.
     void walkthrough(intptr_t data, std::function<void(TextNode*, intptr_t)> func);
 
-    // Returns a list of line indexes that were in the node that holds
-    // the line index of text c.
+    // Returns a list of line indexes that were in the node that holds the line index of text
+    // c.
     void getSiblings(std::vector<int> &result, const QChar *c, int clen = -1);
 protected:
     virtual void loadLegacy(QDataStream &stream, int version);
@@ -223,6 +225,11 @@ protected:
     // same way on every system. Returns whether the container is an exact match for the
     // string.
     bool findContainer(const QChar *str, int strlength, TextNode* &result);
+    // Searches for a TextNode which matches the passed string, and updates result to point to
+    // it. The string must be all lowercase with a generic lowercase function that works the
+    // same way on every system. Returns whether the container is an exact match for the
+    // string.
+    bool findContainer(const QChar *str, int strlength, const TextNode* &result) const;
 
     // Creates a root node. The caller must make sure no node with the
     // starting character of ch exists, or a duplicate will be added.

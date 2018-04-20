@@ -8,6 +8,7 @@
 #define EXAMPLEWIDGET_H
 
 #include <QWidget>
+#include <QBasicTimer>
 
 namespace Ui {
     class ExampleWidget;
@@ -17,6 +18,8 @@ class Dictionary;
 struct ExampleSentenceData;
 class QXmlStreamWriter;
 class QXmlStreamReader;
+class QToolButton;
+
 enum class ExampleDisplay : uchar;
 class ExampleWidget : public QWidget
 {
@@ -52,6 +55,10 @@ public:
     // that word as a base. If the current sentence is not found for that word, equals to
     // calling this without arguments and then calling setItem().
     void unlock(Dictionary *d = nullptr, int windex = -1, int wordpos = -1, int wordform = -1);
+
+protected:
+    bool eventFilter(QObject *o, QEvent *e) override;
+    bool event(QEvent *e) override;
 private slots:
     void onReset();
     void stripChanged();
@@ -60,12 +67,18 @@ private slots:
     void on_prevButton_clicked();
     void on_nextButton_clicked();
     void on_indexEdit_textEdited(const QString &text);
+    void on_linkButton_clicked(bool checked);
 private:
     Ui::ExampleWidget *ui;
 
     // When set calling setItem or any other function won't change the
     // displayed sentence. Call lock() to set and unlock() to unset.
     bool locked;
+
+    // Used for auto repeat right-clicks.
+    QBasicTimer repeattimer;
+    // The button being down by the mouse.
+    QToolButton *repeatbutton;
 
     typedef QWidget base;
 };

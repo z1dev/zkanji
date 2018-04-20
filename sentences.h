@@ -12,8 +12,7 @@
 #include "fastarray.h"
 #include "smartvector.h"
 
-// Structure storing word data for a single sentence in an examples data
-// block.
+// Structure storing word data for a single sentence in an examples data block.
 struct ExampleWordsData
 {
     struct Form
@@ -41,6 +40,7 @@ struct ExampleSentenceData
 struct ExampleBlock
 {
     ushort block;
+    // Size of block with sentences and word forms in bytes.
     int size;
     smartvector<ExampleSentenceData> lines;
 };
@@ -54,7 +54,7 @@ public:
     Sentences();
     ~Sentences();
 
-    void close();
+    void reset();
     void load(const QString &filename);
 
     // The date when the sentences data file was built.
@@ -62,26 +62,29 @@ public:
     // The version string of the program the sentences database was built with.
     QString programVersion() const;
 
-    // Returns a copy of a sentence data from the passed block and line.
-    // Sentences can be unloaded at any time, so a direct pointer can't be
-    // returned here.
+    // Returns a copy of a sentence data from the passed block and line. Sentences can be
+    // unloaded at any time, so a direct pointer can't be returned here.
     ExampleSentenceData getSentence(ushort block, uchar line);
+
+    const std::vector<std::pair<int, int>> &getList() const;
+
+    bool isLoaded() const;
 private:
     void loadBlock(ushort index, ExampleBlock &block);
 
-    // Helper function for loadBlock. Takes two bytes from arr at pos
-    // and returns them as a short value. Pos is incremented by 2.
-    // The bytes should be in little endian order in the array.
+    // Helper function for loadBlock. Takes two bytes from arr at pos and returns them as a
+    // short value. Pos is incremented by 2. The bytes should be in little endian order in the
+    // array.
     quint16 getShort(const QByteArray &arr, int &pos);
 
-    // Helper function for loadBlock. Takes four bytes from arr at pos
-    // and returns them as an int value. Pos is incremented by 4.
-    // The bytes should be in little endian order in the array.
+    // Helper function for loadBlock. Takes four bytes from arr at pos and returns them as an
+    // int value. Pos is incremented by 4. The bytes should be in little endian order in the
+    // array.
     qint32 getInt(const QByteArray &arr, int &pos);
 
-    // Helper function for loadBlock. Reads the length of a UTF-8 sring
-    // and the string itself, converts it to 2 byte unicode and returns it as
-    // a QCharString. Updates pos to point after the last used character.
+    // Helper function for loadBlock. Reads the length of a UTF-8 sring and the string itself,
+    // converts it to 2 byte unicode and returns it as a QCharString. Updates pos to point
+    // after the last used character.
     QCharString getByteArrayString(const QByteArray &arr, int &pos);
 
     QFile f;
@@ -89,6 +92,9 @@ private:
 
     // Number of bytes all the loaded blocks take.
     int usedsize;
+
+    // Whether the sentences data file has been correctly loaded.
+    bool loaded;
 
     // Date and time when the sentences data was built and saved.
     QDateTime creation;
@@ -99,6 +105,9 @@ private:
     std::vector<int> blockpos;
 
     std::list<ExampleBlock> blocks;
+
+    // Sentence ids in order.
+    std::vector<std::pair<int, int>> ids;
 };
 
 namespace ZKanji

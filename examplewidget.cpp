@@ -10,29 +10,40 @@
 #include "ui_examplewidget.h"
 #include "zevents.h"
 #include "globalui.h"
+#include "words.h"
 
 //-------------------------------------------------------------
 
 
-ExampleWidget::ExampleWidget(QWidget *parent) : base(parent), ui(new Ui::ExampleWidget), locked(false)
+ExampleWidget::ExampleWidget(QWidget *parent) : base(parent), ui(new Ui::ExampleWidget), locked(false), repeatbutton(nullptr)
 {
     ui->setupUi(this);
 
     QFontMetrics fm(ui->cntLabel->font(), this);
-    int w = fm.averageCharWidth() * 8; // boundingRect(QStringLiteral("9999")
-    int h = fm.height();
-    ui->indexEdit->setMaximumSize(QSize(w + 15, h + 6));
-    ui->indexEdit->setMinimumSize(ui->indexEdit->maximumSize());
-    ui->prevButton->setMaximumSize(QSize(h + 3, h + 6));
-    ui->nextButton->setMaximumSize(QSize(h + 3, h + 6));
-    //ui->jptrButton->setMaximumHeight(h + ui->indexEdit->maximumHeight() + ui->indexWidget->layout()->spacing() + 6);
-    //ui->jptrButton->setMinimumHeight(ui->jptrButton->minimumHeight());
-    //ui->jpButton->setMaximumHeight((ui->jptrButton->maximumHeight() - ui->gridLayout->verticalSpacing()) / 2);
-    //ui->trButton->setMaximumHeight(ui->jpButton->maximumHeight());
-    //int btnh = h * 2 /*(ui->prevButton->maximumHeight() + h)*/ + 6;
-    //ui->jptrButton->setMinimumHeight(btnh);
-    //ui->jpButton->setMinimumHeight(btnh);
-    //ui->trButton->setMinimumHeight(btnh);
+    int w = fm.averageCharWidth(); // boundingRect(QStringLiteral("9999")
+    //int h = fm.height();
+
+    //ui->indexEdit->setMaximumSize(QSize(w + 15, h + 6));
+    //ui->indexEdit->setMinimumSize(ui->indexEdit->maximumSize());
+
+    ui->indexEdit->setMaximumWidth(w * 5 + 15);
+    ui->indexEdit->setMinimumWidth(w * 5 + 15);
+    ui->cntLabel->setMaximumWidth(w * 8 + 15);
+    ui->cntLabel->setMinimumWidth(w * 8 + 15);
+
+    ui->prevButton->setMinimumHeight(ui->indexEdit->sizeHint().height());
+    ui->prevButton->setMaximumHeight(ui->indexEdit->sizeHint().height());
+    ui->nextButton->setMinimumHeight(ui->indexEdit->sizeHint().height());
+    ui->nextButton->setMaximumHeight(ui->indexEdit->sizeHint().height());
+
+    ui->prevButton->setMaximumWidth(ui->prevButton->sizeHint().height());
+    ui->nextButton->setMaximumWidth(ui->prevButton->sizeHint().height());
+
+    //ui->jptrButton->setFixedSize(QSize(ui->indexEdit->sizeHint().height(), ui->indexEdit->sizeHint().height()));
+    //ui->linkButton->setFixedSize(QSize(ui->indexEdit->sizeHint().height(), ui->indexEdit->sizeHint().height()));
+
+    //ui->prevButton->setMaximumSize(QSize(h + 3, h + 6));
+    //ui->nextButton->setMaximumSize(QSize(h + 3, h + 6));
     adjustSize();
 
     ui->cntLabel->setText(QStringLiteral("-"));
@@ -44,9 +55,9 @@ ExampleWidget::ExampleWidget(QWidget *parent) : base(parent), ui(new Ui::Example
     connect(gUI, &GlobalUI::sentencesReset, this, &ExampleWidget::onReset);
     connect(ui->strip, &ZExampleStrip::sentenceChanged, this, &ExampleWidget::stripChanged);
     connect(ui->strip, &ZExampleStrip::wordSelected, this, &ExampleWidget::wordSelected);
-    //connect(ui->jptrButton, &QToolButton::clicked, this, &ExampleWidget::jptrToggled);
-    //connect(ui->jpButton, &QToolButton::clicked, this, &ExampleWidget::on_jptrButton_toggled);
-    //connect(ui->trButton, &QToolButton::clicked, this, &ExampleWidget::on_jptrButton_toggled);
+
+    ui->prevButton->installEventFilter(this);
+    ui->nextButton->installEventFilter(this);
 }
 
 ExampleWidget::~ExampleWidget()
@@ -123,6 +134,66 @@ void ExampleWidget::unlock(Dictionary *d, int windex, int wordpos, int wordform)
     ui->strip->setItem(d, windex, wordpos, wordform);
 }
 
+bool ExampleWidget::eventFilter(QObject *o, QEvent *e)
+{
+    if ((o == ui->prevButton || o == ui->nextButton ) && (e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonRelease || e->type() == QEvent::MouseButtonDblClick))
+    {
+        QMouseEvent *me = (QMouseEvent*)e;
+        if (me->button() == Qt::RightButton)
+        {
+            if (e->type() == QEvent::MouseButtonPress || e->type() == QEvent::MouseButtonDblClick)
+            {
+                repeatbutton = (QToolButton*)o;
+                if (repeatbutton == ui->prevButton)
+                    ui->strip->showPreviousLinkedSentence();
+                else
+                    ui->strip->showNextLinkedSentence();
+
+                repeattimer.start(repeatbutton->autoRepeatDelay(), this);
+            }
+            else
+            {
+                repeattimer.stop();
+                repeatbutton = nullptr;
+            }
+            return true;
+        }
+    }
+
+    if ((o == ui->prevButton || o == ui->nextButton) && e->type() == QEvent::MouseMove && repeatbutton != nullptr && !repeattimer.isActive() && repeatbutton->rect().contains(repeatbutton->mapFromGlobal(QCursor::pos())))
+    {
+        repeattimer.start(repeatbutton->autoRepeatInterval(), this);
+        QTimerEvent te(repeattimer.timerId());
+        //qApp->sendEvent(this, &te);
+        event(&te);
+    }
+
+
+    return base::eventFilter(o, e);
+}
+
+bool ExampleWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::Timer)
+    {
+        QTimerEvent *te = (QTimerEvent*)e;
+        if (te->timerId() == repeattimer.timerId())
+        {
+            repeattimer.stop();
+            if (repeatbutton != nullptr && repeatbutton->rect().contains(repeatbutton->mapFromGlobal(QCursor::pos())))
+            {
+                if (repeatbutton == ui->prevButton)
+                    ui->strip->showPreviousLinkedSentence();
+                else
+                    ui->strip->showNextLinkedSentence();
+                repeattimer.start(repeatbutton->autoRepeatInterval(), this);
+            }
+        }
+    }
+
+    return base::event(e);
+}
+
 void ExampleWidget::onReset()
 {
     ui->strip->setItem(nullptr, -1);
@@ -142,6 +213,10 @@ void ExampleWidget::stripChanged()
     ui->indexEdit->setEnabled(ui->strip->sentenceCount() != 0);
     ui->prevButton->setEnabled(ui->strip->currentSentence() > 0);
     ui->nextButton->setEnabled(ui->strip->currentSentence() < ui->strip->sentenceCount() - 1);
+    ui->linkButton->setEnabled(ui->strip->sentenceCount() != 0);
+
+    const WordCommonsExample *ex = ui->strip->currentExample();
+    ui->linkButton->setChecked(ex != nullptr && ui->strip->sentenceCount() != 0 && ZKanji::wordexamples.isExample(ui->strip->dictionary()->wordEntry(ui->strip->wordIndex())->kanji.data(), ui->strip->dictionary()->wordEntry(ui->strip->wordIndex())->kana.data(), ex->block * 100 + ex->line));
     unlock();
 }
 
@@ -187,6 +262,14 @@ void ExampleWidget::on_indexEdit_textEdited(const QString &text)
     int ix = text.toInt(&ok);
     if (ok)
         ui->strip->setCurrentSentence(ix - 1);
+}
+
+void ExampleWidget::on_linkButton_clicked(bool checked)
+{
+    const WordCommonsExample *ex = ui->strip->currentExample();
+    if (ex == nullptr)
+        return;
+    ZKanji::wordexamples.linkExample(ui->strip->dictionary()->wordEntry(ui->strip->wordIndex())->kanji.data(), ui->strip->dictionary()->wordEntry(ui->strip->wordIndex())->kana.data(), ex->block * 100 + ex->line, checked);
 }
 
 

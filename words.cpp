@@ -37,6 +37,7 @@
 #include "globalui.h"
 #include "zstrings.h"
 #include "datasettings.h"
+#include "sentences.h"
 
 // WARNING: none of these strings should be longer than 255 bytes.
 
@@ -45,7 +46,7 @@ extern char ZKANJI_PROGRAM_VERSION[];
 static char ZKANJI_BASE_FILE_VERSION[] = "002";
 static char ZKANJI_DICTIONARY_FILE_VERSION[] = "001";
 
-static char ZKANJI_GROUP_FILE_VERSION[] = "001";
+static char ZKANJI_GROUP_FILE_VERSION[] = "002";
 
 const QChar GLOSS_SEP_CHAR = QChar(0x0082);
 
@@ -54,6 +55,7 @@ namespace ZKanji
 {
     WordCommonsTree commons;
     OriginalWordsList originals;
+    WordExamplesTree wordexamples;
 
     const int popularFreqLimit = 2500;
     const int mediumFreqLimit = 500;
@@ -2623,6 +2625,258 @@ bool WordCommonsTree::insertIndex(const QChar *kanji, const QChar *kana, int &in
 //-------------------------------------------------------------
 
 
+WordExamplesTree::WordExamplesTree() : base()
+{
+
+}
+
+WordExamplesTree::~WordExamplesTree()
+{
+}
+
+void WordExamplesTree::clear()
+{
+    list.clear();
+    base::clear();
+}
+
+void WordExamplesTree::load(QDataStream &stream)
+{
+    clear();
+
+    qint32 siz;
+    stream >> siz;
+    if (siz < 0)
+        throw ZException("Invalid size of word examples.");
+
+    if (siz == 0)
+        return;
+
+    list.reserve(siz);
+    for (int ix = 0; ix != siz; ++ix)
+    {
+        WordExamples *wex = new WordExamples;
+
+        stream >> make_zstr(wex->kanji, ZStrFormat::Byte);
+        stream >> make_zstr(wex->kana, ZStrFormat::Byte);
+
+        int siz2;
+        stream >> (qint32)siz2;
+        wex->data.resize(siz2);
+        for (int iy = 0; iy != siz2; ++iy)
+        {
+            stream >> (qint32)std::get<0>(wex->data[iy]);
+            stream >> (qint32)std::get<1>(wex->data[iy]);
+            std::get<2>(wex->data[iy]) = -1;
+        }
+
+        list.push_back(wex);
+    }
+
+    base::load(stream);
+}
+
+void WordExamplesTree::save(QDataStream &stream) const
+{
+    stream << (qint32)list.size();
+    if (list.empty())
+        return;
+
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    {
+        WordExamples *wex = list[ix];
+        stream << make_zstr(wex->kanji, ZStrFormat::Byte);
+        stream << make_zstr(wex->kana, ZStrFormat::Byte);
+
+        stream << (qint32)wex->data.size();
+        for (int iy = 0, siz2 = wex->data.size(); iy != siz2; ++iy)
+        {
+            stream << (qint32)std::get<0>(wex->data[iy]);
+            stream << (qint32)std::get<1>(wex->data[iy]);
+        }
+    }
+
+    base::save(stream);
+}
+
+bool WordExamplesTree::isKana() const
+{
+    return true;
+}
+
+bool WordExamplesTree::isReversed() const
+{
+    return false;
+}
+
+void WordExamplesTree::reset()
+{
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int iy = 0, siz2 = list[ix]->data.size(); iy != siz2; ++iy)
+            std::get<2>(list[ix]->data[iy]) = -1;
+}
+
+void WordExamplesTree::rebuild()
+{
+    const auto &ids = ZKanji::sentences.getList();
+    if (ids.empty())
+    {
+        reset();
+        return;
+    }
+
+    std::vector<int> order;
+    order.resize(ids.size());
+    std::iota(order.begin(), order.end(), 0);
+    std::sort(order.begin(), order.end(), [&ids](int a, int b) {
+        int dif = ids[a].first - ids[b].first;
+        if (dif != 0)
+            return dif < 0;
+        return ids[a].second < ids[b].second;
+    });
+
+    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    {
+        auto &arr = list[ix]->data;
+        auto pos = order.begin();
+        for (int iy = 0, siz2 = arr.size(); iy != siz2; ++iy)
+        {
+            auto it = std::lower_bound(pos, order.end(), arr[iy], [&ids](int o, const std::tuple<int, int, int> &val) {
+                int dif = ids[o].first - std::get<0>(val);
+                if (dif != 0)
+                    return dif < 0;
+                return ids[o].second < std::get<1>(val);
+            });
+
+            if (ids[*it].first == std::get<0>(arr[iy]) && ids[*it].second == std::get<1>(arr[iy]))
+                std::get<2>(arr[iy]) = *it;
+            else
+                std::get<2>(arr[iy]) = -1;
+            pos = it;
+        }
+    }
+
+    base::rebuild();
+}
+
+void WordExamplesTree::linkExample(const QChar *kanji, const QChar *kana, int exampleindex, bool set)
+{
+    int wix = findWordIndex(kanji, kana);
+    if (wix == -1 && !set)
+        return;
+
+    const auto &ids = ZKanji::sentences.getList();
+
+    if (wix == -1)
+    {
+        WordExamples *wex = new WordExamples;
+        wex->kanji.copy(kanji);
+        wex->kana.copy(kana);
+        wex->data.resize(1);
+        std::get<0>(wex->data[0]) = ids[exampleindex].first;
+        std::get<1>(wex->data[0]) = ids[exampleindex].second;
+        std::get<2>(wex->data[0]) = exampleindex;
+        list.push_back(wex);
+        doExpand(list.size() - 1);
+
+        ZKanji::dictionary(0)->setToUserModified();
+        return;
+    }
+
+    WordExamples *wex = list[wix];
+
+    auto &arr = wex->data;
+
+    const std::pair<int, int> &id = ids[exampleindex];
+    auto it = std::lower_bound(arr.begin(), arr.end(), id, [](const std::tuple<int, int, int> &ex, const std::pair<int, int> &id) {
+        int dif = std::get<0>(ex) - id.first;
+        if (dif != 0)
+            return dif < 0;
+        return std::get<1>(ex) < id.second;
+    });
+
+    bool match = it != arr.end() && std::get<0>(*it) == id.first && std::get<1>(*it) == id.second;
+    if (match == set)
+        return;
+
+    ZKanji::dictionary(0)->setToUserModified();
+
+    if (set)
+    {
+        std::tuple<int, int, int> val = std::tuple<int, int, int>(id.first, id.second, exampleindex);
+        arr.insert(it - arr.begin(), val);
+        return;
+    }
+
+    arr.erase(it - arr.begin());
+
+    if (arr.empty())
+    {
+        list.erase(list.begin() + wix);
+        removeLine(wix, true);
+    }
+}
+
+bool WordExamplesTree::isExample(const QChar *kanji, const QChar *kana, int exampleindex) const
+{
+    int wix = findWordIndex(kanji, kana);
+    if (wix == -1)
+        return false;
+    const WordExamples *wex = list[wix];
+    for (int ix = 0, siz = wex->data.size(); ix != siz; ++ix)
+        if (std::get<2>(wex->data[ix]) == exampleindex)
+            return true;
+    return false;
+}
+
+bool WordExamplesTree::hasExample(const QChar *kanji, const QChar *kana) const
+{
+    return findWordIndex(kanji, kana) != -1;
+}
+
+void WordExamplesTree::doGetWord(int index, QStringList &texts) const
+{
+    texts << romanize(list[index]->kana.data());
+}
+
+int WordExamplesTree::size() const
+{
+    return list.size();
+}
+
+int WordExamplesTree::findWordIndex(const QChar *kanji, const QChar *kana, const QChar *romaji) const
+{
+    if (kanji == nullptr || kana == nullptr)
+        return -1;
+
+    QString r;
+    if (romaji == nullptr)
+    {
+        r = romanize(kana);
+        romaji = r.constData();
+    }
+
+    const TextNode *n;
+    findContainer(romaji, qcharlen(romaji), n);
+
+    if (n == nullptr)
+        return -1;
+
+    for (int ix = 0; ix != n->lines.size(); ++ix)
+    {
+        WordExamples *dat = list[n->lines[ix]];
+        if (dat->kanji != kanji || dat->kana != kana)
+            continue;
+        return n->lines[ix];
+    }
+
+    return -1;
+}
+
+
+//-------------------------------------------------------------
+
+
 Dictionary::Dictionary() : mod(false), usermod(false), dtree(this, false, false), ktree(this, true, false), btree(this, true, true), wordstudydefs(this), studydecks(new StudyDeckList)
 {
     groups = new Groups(this);
@@ -3146,7 +3400,7 @@ void Dictionary::loadUserDataFile(const QString &filename)
     else
     {
         clearUserData();
-        loadUserData(stream);
+        loadUserData(stream, version);
     }
 
     usermod = false;
@@ -3154,7 +3408,7 @@ void Dictionary::loadUserDataFile(const QString &filename)
     emit dictionaryReset();
 }
 
-void Dictionary::loadUserData(QDataStream &stream)
+void Dictionary::loadUserData(QDataStream &stream, int version)
 {
     QDateTime dictdate;
     stream >> make_zdate(dictdate);
@@ -3231,6 +3485,9 @@ void Dictionary::loadUserData(QDataStream &stream)
             else
                 cloneWordData(index, &w, true, false);
         }
+
+        if (version >= 2)
+            ZKanji::wordexamples.load(stream);
     }
 
 #if TIMED_LOAD == 1
@@ -3756,6 +4013,8 @@ Error Dictionary::saveUserData(const QString &filename)
                     stream << (uint16_t)d.attrib.dialects;
                 }
             }
+
+            ZKanji::wordexamples.save(stream);
         }
         else
             stream << (quint8)0;

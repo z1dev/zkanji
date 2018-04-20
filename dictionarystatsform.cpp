@@ -77,6 +77,9 @@ bool StatsThread::checkTerminate()
 
 bool StatsThread::calculateEntries()
 {
+    if (dict->entryCount() == 0)
+        return true;
+
     if (checkTerminate())
         return false;
 
@@ -383,7 +386,10 @@ void DictionaryStatsForm::updateData()
 
     Dictionary *d = ZKanji::dictionary(0);
     ui->baseLabel->setText(tr("The base dictionary was built for zkanji %1 on %2.").arg(d->programVersion()).arg(formatDate(d->baseDate())));
-    ui->exampleLabel->setText(tr("The example sentences database was imported in zkanji %1 on %2.").arg(ZKanji::sentences.programVersion()).arg(formatDate(ZKanji::sentences.creationDate())));
+    if (ZKanji::sentences.isLoaded())
+        ui->exampleLabel->setText(tr("The example sentences database was imported in zkanji %1 on %2.").arg(ZKanji::sentences.programVersion()).arg(formatDate(ZKanji::sentences.creationDate())));
+    else
+        ui->exampleLabel->setText(tr("No example sentences database loaded."));
     d = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
     ui->buildLabel->setText(tr("The selected dictionary was last saved in zkanji %1 on %2.").arg(d->programVersion()).arg(formatDate(d->lastWriteDate())));
 

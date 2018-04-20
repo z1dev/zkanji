@@ -504,6 +504,66 @@ void ZExampleStrip::setCurrentSentence(int which)
     updateSentence();
 }
 
+void ZExampleStrip::showPreviousLinkedSentence()
+{
+    if (index == -1 || common == nullptr || current == 0)
+        return;
+
+    if (!ZKanji::wordexamples.hasExample(common->kanji.data(), common->kana.data()))
+    {
+        setCurrentSentence(current - 1);
+        return;
+    }
+
+    int pos = current - 1;
+    while (pos != -1)
+    {
+        const WordCommonsExample &we = common->examples[pos];
+        if (ZKanji::wordexamples.isExample(common->kanji.data(), common->kana.data(), we.block * 100 + we.line))
+            break;
+        --pos;
+    }
+
+    if (pos != -1)
+        setCurrentSentence(pos);
+}
+
+void ZExampleStrip::showNextLinkedSentence()
+{
+    if (index == -1 || common == nullptr)
+        return;
+
+    int cnt = sentenceCount();
+
+    if (current == cnt)
+        return;
+
+    if (!ZKanji::wordexamples.hasExample(common->kanji.data(), common->kana.data()))
+    {
+        setCurrentSentence(current + 1);
+        return;
+    }
+
+    int pos = current + 1;
+    while (pos != cnt)
+    {
+        const WordCommonsExample &we = common->examples[pos];
+        if (ZKanji::wordexamples.isExample(common->kanji.data(), common->kana.data(), we.block * 100 + we.line))
+            break;
+        ++pos;
+    }
+
+    if (pos != cnt)
+        setCurrentSentence(pos);
+}
+
+const WordCommonsExample* ZExampleStrip::currentExample() const
+{
+    if (index == -1 || common == nullptr)
+        return nullptr;
+    return &common->examples[current];
+}
+
 bool ZExampleStrip::hasInteraction() const
 {
     return interactible;
@@ -518,6 +578,16 @@ void ZExampleStrip::setInteraction(bool allow)
     if (!interactible)
         hovered = -1;
     update();
+}
+
+Dictionary* ZExampleStrip::dictionary() const
+{
+    return dict;
+}
+
+int ZExampleStrip::wordIndex() const
+{
+    return index;
 }
 
 bool ZExampleStrip::event(QEvent *e)

@@ -605,10 +605,10 @@ void fastarray<T, S>::append(const fastarray<T, S> &other)
     if (other.empty())
         return;
 
-    size_type cnt = s;
+    //size_type cnt = s;
 #ifdef _DEBUG
     // Size too big, will overflow
-    if (cnt && cnt + other.size() <= cnt)
+    if (s && s + other.size() <= s)
         throw "Overflow of array sizes.";
 #endif
 

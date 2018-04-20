@@ -31,7 +31,7 @@
 
 
 extern char ZKANJI_PROGRAM_VERSION[];
-static char ZKANJI_EXAMPLES_FILE_VERSION[] = "001";
+static char ZKANJI_EXAMPLES_FILE_VERSION[] = "002";
 
 // When changed: also update exportDictionary() in words.cpp.
 static const char JMDictInfoText[] = "This program uses a compilation of the <a href=\"http://www.edrdg.org/jmdict/j_jmdict.html\">JMdict</a> "
@@ -610,8 +610,9 @@ bool DictImport::doImportExamples()
     // # is for comments.
     // There are A and B lines starting with the characters "A:" or "B:". A lines contain the
     // example sentences, Japanese first, followed by the TAB character and the English
-    // sentence. At the end of the line the #ID=XXXX_XXXX string represents a unique id
-    // (ignored by this import.)
+    // sentence. At the end of the line the #ID=XXXX_XXXX string represents a unique id.
+    // The first part of the ID is the English sentence identifier, the second part is the
+    // Japanese sentence identifier.
     // B lines paired with the A lines contain the Japanese words found in the previous
     // sentence. Each word can be followed by some data in () or [] or {}. Data in [] is
     // ignored. Text inside () is the kana form of the word where necessary. Data in {} is the
@@ -620,21 +621,25 @@ bool DictImport::doImportExamples()
 
     // examples.zkj notes:
     //
-    // Warning: file versions before 2015 are not supported.
+    // Warning: file versions before 2018 are not supported.
     //
     // The file starts with a short header describing the file version, and the time the file
     // was written. After this a 32 bit integer holding the number of bytes taken up by the
     // example sentences data, then the data. 
     // The example sentences data is written in blocks, each block holds at most 100
-    // sentences. Each block of data is compressed separately with zLib via Qt's
-    // QByteArray::qCompress. The resulting compressed data is prepended by a 32bit unsigned
-    // integer in big-endian order which is the size in bytes of the data uncompressed. (This
-    // is done by qCompress.) A sentence in a data block contains the Japanese and the English
-    // version, and a list of words in the Japanese sentence. A single word in the sentence is
-    // represented by the word's position, length as found in the sentence, paired with one or
-    // more kanji and kana. After the sentences blocks is a list of the block positions and
-    // their compressed sizes. This is followed by the word data written in the word commons
-    // tree. These are compressed the same way.
+    // sentences. (Exactly 100 apart from the last block.) Each block of data is compressed
+    // separately with zLib via Qt's QByteArray::qCompress. The resulting compressed data is
+    // prepended by a 32bit unsigned integer in little-endian order which is the size in bytes
+    // of the compressed data. (This is done by qCompress.) A sentence in a data block
+    // contains the Japanese and the English version, and a list of words in the Japanese
+    // sentence. A single word in the sentence is represented by the word's position, length
+    // as found in the sentence, paired with one or more kanji and kana. After the sentences
+    // blocks is a list of the block positions and their compressed sizes. This is followed by
+    // the word data written in the word commons tree. These are compressed the same way.
+    // After the end of the positions is a compressed list of sentence IDs in the order they
+    // are in the blocks.
+    //
+    // See details in sentences.cpp.
 
     if (!setInfoText(tr("Opening examples.utf...")))
         return false;
@@ -686,10 +691,18 @@ bool DictImport::doImportExamples()
     QString line;
     bool Aline = true;
 
-    // The Japanese sentence.
+    // The Japanese sentence
     QString jpn;
-    // The English sentence.
+    // Japanese sentence id
+    int id_jp;
+
+    // The English sentence
     QString trans;
+    // English sentence id
+    int id_tr;
+
+    // Japanese and English id pairs in order they are found in the imported and created data.
+    std::vector<std::pair<int, int>> ids;
 
     // Index of the current block. Incremented at every 100 sentences.
     ushort blockix = 0;
@@ -703,6 +716,8 @@ bool DictImport::doImportExamples()
 
     if (!setInfoText(tr("Processing data...")))
         return false;
+
+    QSet<std::pair<int, int>> idtaken;
 
     while (file.getLine(line))
     {
@@ -731,7 +746,18 @@ bool DictImport::doImportExamples()
             int idpos = line.indexOf("#ID=");
             trans = line.mid(tabpos + 1, idpos - tabpos - 1);
 
-            if (!jpn.isEmpty() && !trans.isEmpty())
+            bool ok = false;
+            auto ids = line.midRef(idpos + 4).split('_');
+            if (ids.size() == 2)
+            {
+                // In the WWWJDIC format the Japanese id comes second. When switching to the
+                // Tatoeba format, swap the ids.
+                id_jp = ids.at(1).toInt(&ok);
+                if (ok)
+                    id_tr = ids.at(0).toInt(&ok);
+            }
+
+            if (!jpn.isEmpty() && !trans.isEmpty() && ok && !idtaken.contains(std::make_pair(id_jp, id_tr)))
                 Aline = false;
             continue;
         }
@@ -768,8 +794,7 @@ bool DictImport::doImportExamples()
 
             // The written form of the word as specified.
             const QChar *kanjiform = nullptr;
-            // The kana form of the word if specified or if the word consist
-            // only of kana.
+            // The kana form of the word if specified or if the word consist only of kana.
             const QChar *kanaform = nullptr;
             // The form of the word as found in the example sentence.
             const QChar *exform = nullptr;
@@ -782,9 +807,9 @@ bool DictImport::doImportExamples()
             // Position of the word in the example sentence.
             int expos = -1;
 
-            // Look for kanji in the word. If not found, the kana and kanji
-            // form is the same. If found and there's a kana representation
-            // between (), that's the hiragana form.
+            // Look for kanji in the word. If not found, the kana and kanji form is the same.
+            // If found and there's a kana representation between (), that's the hiragana
+            // form.
             bool haskanji = false;
             for (int ix = 0; ix != kanjisiz && !haskanji; ++ix)
                 haskanji = !KANA(kanjiform[ix].unicode());
@@ -932,7 +957,12 @@ bool DictImport::doImportExamples()
         if (words.empty() || words.size() > 255)
             continue;
 
+        std::pair<int, int> sid = std::make_pair(id_jp, id_tr);
+        idtaken.insert(sid);
+        ids.push_back(sid);
+
         doImportExamplesSentenceHelper(buff, jpn, trans, words);
+
         words.clear();
 
         ++sentenceix;
@@ -971,9 +1001,8 @@ bool DictImport::doImportExamples()
     buff.clear();
 
     quint32 filepos = of.pos();
-    // Seek back to the front of the file to write the position where the
-    // data structure will be saved.
-    // File starts with 6 byte id and a quint64 sized date.
+    // Seek back to the front of the file to write the position where the data structure will
+    // be saved. File starts with 6 byte id and a quint64 sized date.
     of.seek(startpos);
     ostream << filepos;
 
@@ -1020,6 +1049,19 @@ bool DictImport::doImportExamples()
     }
 
     QByteArray data = qCompress(buff.data(), buff.size());
+    ostream << (qint32)data.size();
+    ostream.writeRawData(data.constData(), data.size());
+
+    // The IDs at the end.
+    buff.resize(ids.size() * 8);
+    bpos = 0;
+    for (int ix = 0, siz = ids.size(); ix != siz; ++ix)
+    {
+        addInt(buff.data(), bpos, ids[ix].first);
+        addInt(buff.data(), bpos, ids[ix].second);
+    }
+
+    data = qCompress(buff.data(), buff.size());
     ostream << (qint32)data.size();
     ostream.writeRawData(data.constData(), data.size());
 

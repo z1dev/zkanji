@@ -15,6 +15,7 @@
 class Dictionary;
 class ZExampleStrip;
 struct WordCommons;
+struct WordCommonsExample;
 
 enum class ExampleDisplay : uchar { Japanese, Translated, Both };
 
@@ -109,10 +110,20 @@ public:
     // 0 and sentenceCount() - 1. 
     void setCurrentSentence(int which);
 
+    void showPreviousLinkedSentence();
+    void showNextLinkedSentence();
+
+    const WordCommonsExample* currentExample() const;
+
     // Whether changing currently shown word by clicking inside the text area is allowed.
     bool hasInteraction() const;
     // Allow or deny changing currently shown word by clicking inside the text area.
     void setInteraction(bool allow);
+
+    // Last dictionary  passed to setItem.
+    Dictionary* dictionary() const;
+    // Last word index passed to setItem.
+    int wordIndex() const;
 protected:
     virtual bool event(QEvent *e) override;
 

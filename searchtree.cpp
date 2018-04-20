@@ -301,6 +301,52 @@ TextNode* TextNodeList::searchContainer(const QChar *str, int length)
     return node2;
 }
 
+ const TextNode* TextNodeList::searchContainer(const QChar *str, int length) const
+{
+    const TextNode *node1, *node2 = nullptr;
+
+    if (length == -1)
+        length = qcharlen(str);
+
+    //node1 = nodeSearch(c);
+    int mid, n;
+    int min = 0;
+    int max = list.size() - 1;
+    QChar *label;
+    int lblen;
+
+    while (max >= min)
+    {
+        mid = (min + max) / 2;
+
+        label = list[mid]->label.data();
+        lblen = qcharlen(label);
+        n = qcharncmp(label, str, std::min(lblen, length)); //GenCompareIN
+        if (length < lblen && n == 0)
+            n = 1;
+
+        if (n > 0)
+            max = mid - 1;
+        else if (n < 0)
+            min = mid + 1;
+        else
+            break;
+    }
+
+    if (min > max)
+        return nullptr;
+
+    node1 = list[mid];
+
+    while (node1)
+    {
+        node2 = node1;
+        node1 = node1->nodes.searchContainer(str, length);
+    }
+
+    return node2;
+}
+
 void TextNodeList::collectLines(std::vector<int> &result, const QChar *str, int length)
 {
     if (length == -1)
@@ -540,6 +586,78 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, TextNode* &
     if (length == slen && !qcharncmp(str, result->label.data(), length)) //!GenCompareI(selected->label, c);
     {
         cache = result;
+        return true;
+    }
+    return false;
+}
+
+bool TextSearchTreeBase::findContainer(const QChar *str, int length, const TextNode* &result) const
+{
+    if (str == nullptr || length == 0) // Error
+        throw "Replace throws with some other thingy.";
+
+    if (length == -1)
+        length = qcharlen(str);
+
+    result = cache;
+    const TextNode *n;
+
+    QChar cfirst = str[0];
+
+    if (result == nullptr || (result != nullptr && result->label[0] != cfirst))
+    {
+        int min = 0, mid, max = nodes.size() - 1;
+        int cmp;
+        while (min <= max)
+        {
+            mid = (max + min) / 2;
+            cmp = cfirst.unicode() - nodes.items(mid)->label[0].unicode();
+
+            if (cmp < 0)
+                max = mid - 1;
+            else if (cmp > 0)
+                min = mid + 1;
+            else
+                break;
+        }
+        if (min > max)
+        {
+            result = nullptr;
+            return false;
+        }
+
+        result = nodes.items(mid);
+
+        if (length == 1)
+        {
+            cache = const_cast<TextNode*>(result);
+            return true; // Exact match
+        }
+    }
+
+    int slen = result->label.size();
+
+    // Get out of selected node while it's not a container of the searched one.
+    while (slen > length || qcharncmp(str, result->label.data(), slen)) // GenCompareIN
+    {
+        if (!result->parent)
+            return false;
+        result = result->parent;
+        slen = result->label.size();
+    }
+    if (length == slen && !qcharncmp(str, result->label.data(), length)) // GenCompareI
+        return true;
+
+    n = result->nodes.searchContainer(str, length);
+    if (n)
+    {
+        result = n;
+        slen = result->label.size();
+    }
+
+    if (length == slen && !qcharncmp(str, result->label.data(), length)) //!GenCompareI(selected->label, c);
+    {
+        cache = const_cast<TextNode*>(result);
         return true;
     }
     return false;

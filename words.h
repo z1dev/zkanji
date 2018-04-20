@@ -180,8 +180,8 @@ signals:
     // Signaled after a filter was moved.
     void filterMoved(int index, int to);
 private:
-    // Returns whether the passed word matches the filter at index. Commons must be set
-    // if it's needed (to look up JLPT of word).
+    // Returns whether the passed word matches the filter at index. Commons must be set if
+    // it's needed (to look up JLPT of word).
     bool domatch(const WordEntry *w, const WordCommons *commons, int index) const;
 
     std::vector<WordAttributeFilter> list;
@@ -261,10 +261,10 @@ public:
     // conflicting words added before.
     bool createModified(int windex, WordEntry *w);
 
-    // If the word with windex was user modified and found in this list, its data is copied
-    // to w, and then it's removed. Returns whether the word was successfully reverted. When
-    // the result is false, the list is not changed. The w entry must correspond to the item
-    // in this list, but it is not checked.
+    // If the word with windex was user modified and found in this list, its data is copied to
+    // w, and then it's removed. Returns whether the word was successfully reverted. When the
+    // result is false, the list is not changed. The w entry must correspond to the item in
+    // this list, but it is not checked.
     bool revertModified(int windex, WordEntry *w);
 
     // Decrements every stored word's index if they have a value above windex. Removes the
@@ -397,15 +397,14 @@ public:
     // Returns a list of words starting with the search string. If exact is true, the word
     // can't be longer than the romanized search. If sameform is true, the kana/kanji or
     // lower/upper case of the original search must match the word.
-    // The search string should be in Japanese form for kana trees, and not reversed.
-    // Pass a list for the results in result. Pass a list of word indexes in wordpool to limit
-    // the possible results to the words in that list. This list must be sorted.
+    // The search string should be in Japanese form for kana trees, and not reversed. Pass a
+    // list for the results in result. Pass a list of word indexes in wordpool to limit the
+    // possible results to the words in that list. This list must be sorted.
     void findWords(std::vector<int> &result, QString search, bool exact, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize = 0);
     // Returns whether the result of findWords() would hold windex with the passed arguments.
     // Filter conditions and word filtering list are not supported. This function can be fast
-    // for a single value, but it's slow to use in place of findWords().
-    // Pass a boolean value's address in found to check whether the given windex was found in
-    // the tree.
+    // for a single value, but it's slow to use in place of findWords(). Pass a boolean
+    // value's address in found to check whether the given windex was found in the tree.
     bool wordMatches(int windex, QString search, bool exact, bool sameform, uint infsize = 0, bool *found = nullptr);
 
 
@@ -413,11 +412,10 @@ public:
     virtual bool isReversed() const override;
     Dictionary* dictionary() const;
 
-    // Notifies the tree that the dictionary has a new word that must be
-    // added. The word must already be in the dictionary so the tree can
-    // access its strings.
-    // Set inserted to true if the word was added in the middle of the words
-    // list of the owner dictionary.
+    // Notifies the tree that the dictionary has a new word that must be added. The word must
+    // already be in the dictionary so the tree can access its strings.
+    // Set inserted to true if the word was added in the middle of the words list of the owner
+    // dictionary.
     void expandWith(int windex, bool inserted = false);
 protected:
     // Should return the word index for the given line index stored in the tree. Used in
@@ -470,10 +468,9 @@ public:
     // Creates an exact copy of src, apart from the owner dictionary, which is unchanged.
     void copy(StudyDefinitionTree *src);
 
-    // Updates the definition list's word indexes by the changes mapping and
-    // rebuilds the tree. If multiple definitions are changed to the same
-    // new word index, the first one is kept and the rest will be lost.
-    // Definitions with a new index of -1 are removed.
+    // Updates the definition list's word indexes by the changes mapping and rebuilds the
+    // tree. If multiple definitions are changed to the same new word index, the first one is
+    // kept and the rest will be lost. Definitions with a new index of -1 are removed.
     void applyChanges(std::map<int, int> &changes);
 
     // Called when a word was removed from the dictionary.
@@ -481,8 +478,8 @@ public:
 
     // Number of definitions stored.
     virtual int size() const override;
-    // Returns the user definition of an item with the passed word index. If
-    // not defined for the word, null is returned.
+    // Returns the user definition of an item with the passed word index. If not defined for
+    // the word, null is returned.
     const QCharString* itemDef(int windex) const;
     // Updates the user given definition of the word. Returns whether change was necessary.
     bool setDefinition(int windex, QString def);
@@ -531,6 +528,7 @@ struct WordCommons
 
     // JLPT N level. 0 means no N level is specified for the word.
     uchar jlptn;
+
     fastarray<WordCommonsExample, ushort> examples;
 };
 
@@ -595,14 +593,68 @@ protected:
     virtual void doGetWord(int index, QStringList &texts) const override;
     virtual int size() const override;
 private:
-    typedef TextSearchTreeBase base;
-
     smartvector<WordCommons> list;
 
     // Stores the index where a word with the kanji and kana is found or would be inserted to
     // if not found, when the tree has a sorted list. Returns false if the word was found at
     // index and shouldn't be inserted again.
     bool insertIndex(const QChar *kanji, const QChar *kana, int &index) const;
+
+    typedef TextSearchTreeBase base;
+};
+
+struct WordExamples
+{
+    QCharString kanji;
+    QCharString kana;
+
+    // Stores the examples selected by the user for the word. The original IDs are saved to be
+    // able to restore them even when the examples and the dictionary has been rebuilt. The
+    // last value is the current index in all the available example sentences, loaded when the
+    // sentences load. If a sentence is not found, this value is -1
+    // [ Japanese ID, English ID, current example index]
+    fastarray<std::tuple<int, int, int>> data;
+};
+
+// Holds example sentences linked to words.
+class WordExamplesTree : public TextSearchTreeBase
+{
+public:
+    WordExamplesTree();
+    virtual ~WordExamplesTree();
+
+    virtual void clear() override;
+
+    void load(QDataStream &stream);
+    void save(QDataStream &stream) const;
+
+    virtual bool isKana() const override;
+    virtual bool isReversed() const override;
+
+    // Removes the current example index from the stored data, but keeps the original linked
+    // sentence IDs intact.
+    void reset();
+
+    // Resets the data then goes through every word trying to find the current example index.
+    void rebuild();
+
+    // Links or unlinks the example to the word depending on the value of `set`.
+    void linkExample(const QChar *kanji, const QChar *kana, int exampleindex, bool set);
+    // Returns whether the example is linked to the word.
+    bool isExample(const QChar *kanji, const QChar *kana, int exampleindex) const;
+    // Returns whether the passed kanji and kana pair has any examples linked to them.
+    bool hasExample(const QChar *kanji, const QChar *kana) const;
+protected:
+    virtual void doGetWord(int index, QStringList &texts) const override;
+    virtual int size() const override;
+private:
+    smartvector<WordExamples> list;
+
+    // Searches the tree and returns the index to the data exactly matching the passed kanji
+    // and kana. Returns null when no such word was found.
+    int findWordIndex(const QChar *kanji, const QChar *kana, const QChar *romaji = nullptr) const;
+
+    typedef TextSearchTreeBase base;
 };
 
 // Additional data for kanji in each dictionary. 
@@ -699,13 +751,13 @@ public:
     void load(QDataStream &stream);
 
     void loadUserDataLegacy(QDataStream &stream, int version);
-    void loadUserData(QDataStream &stream);
+    void loadUserData(QDataStream &stream, int version);
 
     void clearUserData();
 
     // Returns the last write date of the dictionary. For the base dictionary this is the date
-    // of generation from JMdict. Pass the name of a zkj or zkdict file.
-    // On error an invalid date is returned.
+    // of generation from JMdict. Pass the name of a zkj or zkdict file. On error an invalid
+    // date is returned.
     static QDateTime fileWriteDate(const QString &filename);
 
     //void clear();
@@ -716,12 +768,11 @@ public:
     // Updates its long-term deck data, setting correct/wrong answer ratio.
     //void fixStudyData();
 
-    // Saves the base file with the given name.
-    // Returns false if there was an error.
+    // Saves the base file with the given name and returns false if there was an error.
     Error saveBase(const QString &filename);
 
-    // Saves the dictionary with the given name. Returns false if there was an error. Updates
-    // modified status to false.
+    // Saves the dictionary with the given name and returns false if there was an error.
+    // Updates modified status to false.
     Error save(const QString &filename);
 
     // Saves the user data, including changed dictionary words for the main dictionary.
@@ -1160,6 +1211,7 @@ namespace ZKanji
 {
     extern WordCommonsTree commons;
     extern OriginalWordsList originals;
+    extern WordExamplesTree wordexamples;
 
     // Minimum frequency needed to mark a word as popular.
     extern const int popularFreqLimit;

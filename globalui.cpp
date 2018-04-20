@@ -1167,7 +1167,7 @@ void GlobalUI::importExamples()
         return;
     }
 
-    ZKanji::sentences.close();
+    ZKanji::sentences.reset();
     if ((QFileInfo().exists(ZKanji::appFolder() + "/data/examples.zkj") && !QFile::remove(ZKanji::appFolder() + "/data/examples.zkj")) || !QFile::copy(ZKanji::userFolder() + "/data/examples.zkj2", ZKanji::appFolder() + "/data/examples.zkj"))
     {
         if (QFileInfo().exists(ZKanji::userFolder() + "/data/examples.zkj2"))
@@ -1189,6 +1189,9 @@ void GlobalUI::importExamples()
     if (QFileInfo().exists(ZKanji::userFolder() + "/data/examples.zkj2") && !QFile::remove(ZKanji::userFolder() + "/data/examples.zkj2"))
     {
         diform.hide();
+
+        emit sentencesReset();
+
         hideguard.release();
 
         QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("The example sentences data has been updated but the temporary examples.zkj2 couldn't be removed from the user data folder."));

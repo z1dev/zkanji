@@ -13,7 +13,7 @@
 //-------------------------------------------------------------
 
 
-Sentences::Sentences() : usedsize(0)
+Sentences::Sentences() : usedsize(0), loaded(false)
 {
     ;
 }
@@ -23,29 +23,25 @@ Sentences::~Sentences()
     ;
 }
 
-void Sentences::close()
+void Sentences::reset()
 {
-    if (!f.isOpen())
-        return;
+    if (f.isOpen())
+        f.close();
 
-    f.close();
     blockpos.clear();
     blocks.clear();
+    ids.clear();
+    usedsize = 0;
     creation = QDateTime();
+    loaded = false;
+
+    ZKanji::commons.clearExamplesData();
+    ZKanji::wordexamples.reset();
 }
 
 void Sentences::load(const QString &filename)
 {
-    if (f.isOpen())
-    {
-        f.close();
-        blockpos.clear();
-        blocks.clear();
-        usedsize = 0;
-        creation = QDateTime();
-    }
-
-    ZKanji::commons.clearExamplesData();
+    reset();
 
     // File Format:
     // Header: 3 bytes id: "zex" + 3 bytes version number ('0' padded formatted string)
@@ -56,7 +52,7 @@ void Sentences::load(const QString &filename)
     // Example blocks until the structure description. (The structure description lists the
     //          number and starting position of these blocks.)
     // Each block is zlib compressed. The compressed blocks are prefixed by the size of the
-    //          uncompressed data: 32 bit unsigned big endian integer.
+    //          compressed data: 32 bit unsigned little endian integer.
     // (This block is passed to QByteArray:qUncompress, see Qt docs.)
     // Uncompressed block format:
     // There is no count of sentences present in a block. Reading must continue until the end
@@ -93,6 +89,15 @@ void Sentences::load(const QString &filename)
     // 1byte unsigned int: word index.
     // The sentences data ends at the end of the uncompress data.
     //
+    // Sentence IDs list:
+    // In the Tatoeba project, each sentence has two int sized IDs, one for the Japanese and
+    // the other for the translated sentence. Both must be saved to identify an example.
+    // The data is compressed in a single block and loaded when the examples data loads.
+    // The uncompressed format is:
+    // 4 bytes: little endian unsigned Japanese sentence ID
+    // 4 bytes: little endian unsigned English sentence ID
+    // This is repeated for every sentence until the end of the uncompressed data.
+    //
     // 4 byte unsigned integer: the size of the sentences file. If this doesn't match the file
     // position after this is read the file was corrupted.
 
@@ -114,7 +119,7 @@ void Sentences::load(const QString &filename)
             return;
 
         int ver = atol(tmp + 3);
-        if (ver != 1)
+        if (ver != 2)
             return;
 
         stream >> make_zdate(creation);
@@ -124,6 +129,8 @@ void Sentences::load(const QString &filename)
         stream >> stpos;
 
         f.seek(stpos);
+
+        // Reading blocks structure data.
 
         qint32 i;
         stream >> i;
@@ -153,32 +160,50 @@ void Sentences::load(const QString &filename)
             for (int ix = 0; ix != dat->examples.size(); ++ix)
             {
                 WordCommonsExample &e = dat->examples[ix];
-                dat->examples[ix].block = getShort(data, pos);
-                dat->examples[ix].line = data.at(pos++);
-                dat->examples[ix].wordindex = data.at(pos++);
+                e.block = getShort(data, pos);
+                e.line = data.at(pos++);
+                e.wordindex = data.at(pos++);
             }
         }
 
         ZKanji::commons.rebuild(true);
 
+        // Reading ids.
+
+        stream >> i;
+
+        data.resize(i);
+        stream.readRawData(data.data(), i);
+        data = qUncompress(data);
+
+        if ((data.size() % (sizeof(int) * 2)) != 0)
+            throw ZException("Invalid example sentences data ID block size.");
+
+        pos = 0;
+
+        ids.resize(data.size() / (sizeof(int) * 2));
+        for (int ix = 0, siz = ids.size(); ix != siz; ++ix)
+            ids[ix] = std::make_pair(getInt(data, pos), getInt(data, pos));
+
         quint32 ui;
         stream >> ui;
         if (f.pos() != ui)
-        {
-            blockpos.clear();
-            blocks.clear();
-            usedsize = 0;
-            creation = QDateTime();
-            ZKanji::commons.clearExamplesData();
-        }
+            reset();
+        else
+            loaded = true;
+
+        ZKanji::wordexamples.rebuild();
     }
     catch (...)
     {
         usedsize = 0;
         blockpos.clear();
         blocks.clear();
+        ids.clear();
         creation = QDateTime();
         ZKanji::commons.clearExamplesData();
+        ZKanji::wordexamples.reset();
+        f.close();
         QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "The example sentences data file is corrupted."));
     }
 }
@@ -223,6 +248,16 @@ ExampleSentenceData Sentences::getSentence(ushort block, uchar line)
     blocks.push_front(std::move(newblock));
 
     return *blocks.front().lines[line];
+}
+
+const std::vector<std::pair<int, int>>& Sentences::getList() const
+{
+    return ids;
+}
+
+bool Sentences::isLoaded() const
+{
+    return loaded;
 }
 
 void Sentences::loadBlock(ushort index, ExampleBlock &block)
