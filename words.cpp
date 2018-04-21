@@ -2660,13 +2660,16 @@ void WordExamplesTree::load(QDataStream &stream)
         stream >> make_zstr(wex->kanji, ZStrFormat::Byte);
         stream >> make_zstr(wex->kana, ZStrFormat::Byte);
 
-        int siz2;
-        stream >> (qint32)siz2;
+        qint32 siz2;
+        stream >> siz2;
         wex->data.resize(siz2);
         for (int iy = 0; iy != siz2; ++iy)
         {
-            stream >> (qint32)std::get<0>(wex->data[iy]);
-            stream >> (qint32)std::get<1>(wex->data[iy]);
+            qint32 i;
+            stream >> i;
+            std::get<0>(wex->data[iy]) = i;
+            stream >> i;
+            std::get<1>(wex->data[iy]) = i;
             std::get<2>(wex->data[iy]) = -1;
         }
 
