@@ -29,6 +29,7 @@ class QXmlStreamWriter;
 class QXmlStreamReader;
 class QPainter;
 class QMainWindow;
+class QLabel;
 
 // Called at program initialization after the user data has loaded,
 // to create the models for each data view.
@@ -123,7 +124,11 @@ int fixedLabelWidth(QLabel *label);
 // Updates the layout of a widget for each parent of QLabels to have the size policy set to
 // QLayout::SetMinimumSize which ensures that word wrapping labels fit and get resized
 // correctly.
-void fixWrapLabelsHeight(QWidget *form, int labelwidth);
+void fixWrapLabelsHeight(QWidget *form, int labelwidth
+#ifdef _DEBUG
+    , QSet<QString> *fixed = nullptr, QSet<QString> *notfixed = nullptr
+#endif
+);
 
 void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1);
 

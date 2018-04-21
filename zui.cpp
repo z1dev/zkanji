@@ -495,32 +495,58 @@ int fixedLabelWidth(QLabel *label)
     return label->fontMetrics().width(label->text());
 }
 
-void fixWrapLabelsHeight(QWidget *form, int labelwidth)
+void fixWrapLabelsHeight(QWidget *form, int labelwidth
+#ifdef _DEBUG
+    , QSet<QString> *fixed, QSet<QString> *notfixed
+#endif
+)
 {
-    QList<QWidget*> widgs = form->findChildren<QWidget*>();
-    for (QWidget *w : widgs)
+    updateWindowGeometry(form);
+
+    QList<QWidget*> widgets = form->findChildren<QWidget*>();
+    for (QWidget *w : widgets)
     {
         if (w->layout() != nullptr)
             //if (dynamic_cast<QFormLayout*>(w->layout()) != nullptr || dynamic_cast<QVBoxLayout*>(w->layout()) != nullptr)
             w->layout()->setSizeConstraint(QLayout::SetMinimumSize);
     }
 
+    updateWindowGeometry(form);
     form->adjustSize();
+    updateWindowGeometry(form);
 
-    QList<QLabel*> children = form->findChildren<QLabel*>();
-    for (QLabel *ch : children)
+    QList<QLabel*> labels = form->findChildren<QLabel*>();
+    for (QLabel *l : labels)
     {
-        if (!ch->wordWrap())
+        if (!l->wordWrap() || !l->isVisibleTo(form))
+        {
+#ifdef _DEBUG
+            if (notfixed != nullptr)
+                notfixed->insert(l->objectName());
+#endif
             continue;
-        ch->setMinimumWidth(labelwidth <= 0 ? ch->width() : labelwidth);
-        ch->setMaximumWidth(labelwidth <= 0 ? ch->width() : labelwidth);
-        ch->setMinimumHeight(ch->height());
-        //ch->setMaximumHeight(ch->height());
-        QSizePolicy sp = ch->sizePolicy();
-        sp.setHorizontalPolicy(QSizePolicy::Fixed);
+        }
+
+        QSizePolicy sp = l->sizePolicy();
+        sp.setHorizontalPolicy(QSizePolicy::Minimum);
         sp.setVerticalPolicy(QSizePolicy::Fixed);
-        ch->setSizePolicy(sp);
+        l->setSizePolicy(sp);
+
+        l->setMinimumWidth(labelwidth <= 0 ? l->width() : labelwidth);
+        l->setMaximumWidth(labelwidth <= 0 ? l->width() : labelwidth);
+        l->setMinimumHeight(l->sizeHint().height());
+
+#ifdef _DEBUG
+        if (fixed != nullptr)
+            fixed->insert(l->objectName());
+#endif
     }
+
+#ifdef _DEBUG
+    if (notfixed != nullptr && fixed != nullptr)
+        for (auto it = fixed->begin(); it != fixed->end(); ++it)
+            notfixed->remove(*it);
+#endif
 }
 
 void helper_createStatusWidget(QWidget *w, QLabel *lb1, QString lbstr1, double sizing1)

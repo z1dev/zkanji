@@ -70,11 +70,13 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     connect(ui->radsList, &QListWidget::currentRowChanged, this, &RadicalForm::radsRowChanged);
     connect(ui->radsList, &QListWidget::itemDoubleClicked, this, &RadicalForm::radsDoubleClicked);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
+    updateWindowGeometry(this);
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
     showHidePrevSel();
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
+    updateWindowGeometry(this);
 
     ui->expandWidget->installEventFilter(this);
 
@@ -338,7 +340,8 @@ void RadicalForm::clearSelection()
 void RadicalForm::showHidePrevSel()
 {
     if (expandsize == -1)
-        expandsize = ui->expandWidget->height();
+        expandsize = ui->expandWidget->isVisible() ? ui->expandWidget->height() : ui->expandWidget->sizeHint().height();
+
     int oldexp = expandsize;
 
     int gridsize = ui->gridWidget->height();
@@ -351,9 +354,10 @@ void RadicalForm::showHidePrevSel()
         ui->splitter->refresh();
         ui->splitter->updateGeometry();
 
-        ui->gridWidget->layout()->activate();
-        centralWidget()->layout()->activate();
-        layout()->activate();
+        updateWindowGeometry(this);
+        //ui->gridWidget->layout()->activate();
+        //centralWidget()->layout()->activate();
+        //layout()->activate();
 
         if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
         {

@@ -300,16 +300,30 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     if (!QSystemTrayIcon::isSystemTrayAvailable())
         ui->minimizeCBox->setEnabled(false);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
-    for (int ix = ui->pagesStack->count() - 1; ix != -1; --ix)
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
+
+#ifdef _DEBUG
+    QSet<QString> fx, nfx;
+#endif
+    for (int ix = 0, siz = ui->pagesStack->count(); ix != siz; ++ix)
+    {
         ui->pagesStack->setCurrentIndex(ix);
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+        //updateWindowGeometry(this);
+
+        fixWrapLabelsHeight(this, -1/*200*/
+#ifdef _DEBUG
+            ,&fx, &nfx
+#endif
+        );
+    }
+
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
+
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    fixWrapLabelsHeight(this, -1/*200*/);
     adjustSize();
 
     ui->pagesTree->expandAll();

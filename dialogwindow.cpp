@@ -225,7 +225,7 @@ void DialogWindow::keyPressEvent(QKeyEvent *e)
 
 void DialogWindow::showEvent(QShowEvent *e)
 {
-    if (!e->spontaneous() && !testAttribute(Qt::WA_Moved) && parentWidget() != nullptr)
+    if (!e->spontaneous() && !testAttribute(Qt::WA_Moved))
     {
         Qt::WindowStates  state = windowState();
 
@@ -240,16 +240,17 @@ void DialogWindow::showEvent(QShowEvent *e)
         // Center window above the parent or if the parent is the locked popup dictionary or
         // popup kanji search, center of screen.
 
-        int screen = qApp->desktop()->screenNumber(parentWidget());
+        int screen = parentWidget() != nullptr ? qApp->desktop()->screenNumber(parentWidget()) : qApp->desktop()->isVirtualDesktop() ? qApp->desktop()->screenNumber(QCursor::pos()) : qApp->desktop()->screenNumber(this);
         QRect scr = qApp->desktop()->availableGeometry(screen);
 
         QPoint mid;
-        if (parentWidget() != PopupDictionary::getInstance() && parentWidget() != PopupKanjiSearch::getInstance())
+        if (parentWidget() != nullptr && parentWidget() != PopupDictionary::getInstance() && parentWidget() != PopupKanjiSearch::getInstance())
             mid = parentWidget()->frameGeometry().center();
         else
             mid = scr.center();
 
-        screen = qApp->desktop()->screenNumber(parentWidget());
+        if (parentWidget() != nullptr)
+            screen = qApp->desktop()->screenNumber(parentWidget());
 
         if (QWindow *w = windowHandle())
             w->setScreen(QGuiApplication::screens().at(screen));

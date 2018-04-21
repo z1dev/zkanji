@@ -31,6 +31,7 @@ protected:
     virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
+    virtual void showEvent(QShowEvent *e) override;
 private:
     // Generates a list of syllables to be shown and restarts the test.
     void reset();

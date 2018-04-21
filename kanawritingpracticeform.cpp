@@ -90,17 +90,17 @@ KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent,
     connect(ui->drawArea, &RecognizerArea::changed, this, &KanaWritingPracticeForm::candidatesChanged);
     connect(ui->candidateScroller, &ZItemScroller::itemClicked, this, &KanaWritingPracticeForm::candidateClicked);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
     int siz = Settings::scaled(220);
     ui->drawArea->setFixedSize(QSize(siz, siz));
     ui->kanjiView->setFixedSize(QSize(siz, siz));
     fixWrapLabelsHeight(this, -1);
-    adjustSize();
-    setFixedSize(size());
+    //adjustSize();
+    //setFixedSize(size());
 
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -128,9 +128,9 @@ void KanaWritingPracticeForm::exec()
 {
     reset();
 
-    QRect r = frameGeometry();
-    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
-    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
+    //QRect r = frameGeometry();
+    //QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    //move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
 
     gUI->hideAppWindows();
     show();
@@ -294,6 +294,13 @@ bool KanaWritingPracticeForm::eventFilter(QObject *o, QEvent *e)
     }
 
     return base::eventFilter(o, e);
+}
+
+void KanaWritingPracticeForm::showEvent(QShowEvent *e)
+{
+    adjustSize();
+    setFixedSize(size());
+    base::showEvent(e);
 }
 
 void KanaWritingPracticeForm::reset()

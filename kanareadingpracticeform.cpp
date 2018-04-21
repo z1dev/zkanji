@@ -100,13 +100,13 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent,
 
     connect(ui->abortButton, &QPushButton::clicked, this, &DialogWindow::closeAbort);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
     fixWrapLabelsHeight(this, -1);
-    adjustSize();
-    setFixedSize(size());
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    //adjustSize();
+    //setFixedSize(size());
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -129,9 +129,9 @@ void KanaReadingPracticeForm::exec()
 {
     reset();
 
-    QRect r = frameGeometry();
-    QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
-    move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
+    //QRect r = frameGeometry();
+    //QRect sr = qApp->desktop()->screenGeometry((QWidget*)gUI->mainForm());
+    //move(sr.left() + (sr.width() - r.width()) / 2, sr.top() + (sr.height() - r.height()) / 2);
 
     gUI->hideAppWindows();
     show();
@@ -226,6 +226,13 @@ void KanaReadingPracticeForm::keyPressEvent(QKeyEvent *e)
         answered(true);
     else
         answered(false);
+}
+
+void KanaReadingPracticeForm::showEvent(QShowEvent *e)
+{
+    adjustSize();
+    setFixedSize(size());
+    base::showEvent(e);
 }
 
 void KanaReadingPracticeForm::reset()

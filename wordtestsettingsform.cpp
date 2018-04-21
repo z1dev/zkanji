@@ -857,14 +857,16 @@ WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
 
     gUI->scaleWidget(this);
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-    show();
-    for (int ix = ui->settingsTabs->count() - 1; ix != -1; --ix)
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //show();
+    for (int ix = 0, siz = ui->settingsTabs->count(); ix != siz; ++ix)
+    {
         ui->settingsTabs->setCurrentIndex(ix);
-    hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
-
-    fixWrapLabelsHeight(this, -1/*500*/);
+        fixWrapLabelsHeight(this, -1/*500*/);
+        //updateWindowGeometry(this);
+    }
+    //hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     setWindowTitle(tr("Word test settings") + QString(" - %1").arg(group->name()));
 
@@ -893,65 +895,28 @@ void WordTestSettingsForm::exec()
 {
     // Modifies sizes of some widgets and shows the window.
 
-    setAttribute(Qt::WA_DontShowOnScreen);
-
-    base::show();
+    //setAttribute(Qt::WA_DontShowOnScreen);
+    //base::show();
 
     ui->settingsTabs->setCurrentIndex(0);
-    layout()->update();
-    layout()->activate();
+    updateWindowGeometry(this);
+    //layout()->update();
+    //layout()->activate();
 
     ui->settingsTabs->setCurrentIndex(1);
     ui->methodStack->setCurrentWidget(ui->gradualPage);
-
-    layout()->update();
-    layout()->activate();
-
-    //ui->methodPage->layout()->update();
-    //ui->methodPage->layout()->activate();
-
-    //ui->methodStack->layout()->update();
-    //ui->methodStack->layout()->activate();
-
-    //ui->singlePage->layout()->update();
-    //ui->singlePage->layout()->activate();
-
-    //ui->gradualPage->layout()->update();
-    //ui->gradualPage->layout()->activate();
-
+    updateWindowGeometry(this);
 
     //layout()->update();
-    //ui->methodPage->layout()->update();
-    //ui->methodStack->layout()->update();
-    //ui->singlePage->layout()->update();
-    //ui->gradualPage->layout()->update();
-
-    //layout()->activate();
-    //ui->methodPage->layout()->activate();
-    //ui->methodStack->layout()->activate();
-    //ui->singlePage->layout()->activate();
-    //ui->gradualPage->layout()->activate();
-
-    //ui->singlePage->layout()->update();
-    //ui->gradualPage->layout()->update();
-    //ui->methodStack->layout()->update();
-    //ui->methodPage->layout()->update();
-    //layout()->update();
-
-    //ui->singlePage->layout()->activate();
-    //ui->gradualPage->layout()->activate();
-    //ui->methodStack->layout()->activate();
-    //ui->methodPage->layout()->activate();
     //layout()->activate();
 
-
-    int w = mmax(ui->timerBox->width(), ui->timeLimitBox->width(), ui->wordsBox->width());
+    int w = mmax(ui->timerBox->sizeHint().width(), ui->timeLimitBox->sizeHint().width(), ui->wordsBox->sizeHint().width());
 
     ui->timerBox->setMinimumWidth(w);
     ui->timeLimitBox->setMinimumWidth(w);
     ui->wordsBox->setMinimumWidth(w);
 
-    w = mmax(ui->initCBox->width(), ui->increaseCBox->width(), ui->roundCBox->width()/*, ui->timerCBox->width(), ui->timeLimitEdit->width(), ui->wordsEdit->width()*/);
+    w = mmax(ui->initCBox->sizeHint().width(), ui->increaseCBox->sizeHint().width(), ui->roundCBox->sizeHint().width()/*, ui->timerCBox->width(), ui->timeLimitEdit->width(), ui->wordsEdit->width()*/);
 
     ui->initCBox->setMinimumWidth(w);
     ui->increaseCBox->setMinimumWidth(w);
@@ -962,7 +927,7 @@ void WordTestSettingsForm::exec()
 
     //ui->singleSpacer->changeSize(ui->methodLabel->width(), 1, QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    w = mmax(ui->wordLabel->width(), ui->minLabel->width(), ui->secLabel->width());
+    w = mmax(ui->wordLabel->sizeHint().width(), ui->minLabel->sizeHint().width(), ui->secLabel->sizeHint().width());
     ui->wordLabel->setMinimumWidth(w);
     ui->minLabel->setMinimumWidth(w);
     ui->secLabel->setMinimumWidth(w);
@@ -1024,8 +989,8 @@ void WordTestSettingsForm::exec()
 
     ui->settingsTabs->setCurrentIndex(0);
 
-    base::hide();
-    setAttribute(Qt::WA_DontShowOnScreen, false);
+    //base::hide();
+    //setAttribute(Qt::WA_DontShowOnScreen, false);
 
     setAttribute(Qt::WA_DeleteOnClose);
 

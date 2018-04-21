@@ -40,6 +40,7 @@ public slots:
 protected:
     virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *o, QEvent *e) override;
+    virtual void showEvent(QShowEvent *e) override;
 private:
     // Generates a list of syllables to be shown and restarts the test.
     void reset();
