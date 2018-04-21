@@ -1917,7 +1917,7 @@ void KanjiSearchWidget::on_allButton_clicked(bool checked)
 void KanjiSearchWidget::radicalsCButtonClicked()
 {
     ui->radicalsCButton->setEnabled(false);
-    radform = new RadicalForm(this);
+    radform = new RadicalForm(window());
     connect(radform, &RadicalForm::selectionChanged, this, &KanjiSearchWidget::radicalsChanged);
     connect(radform, &RadicalForm::groupingChanged, this, &KanjiSearchWidget::radicalGroupingChanged);
     connect(radform, &RadicalForm::resultIsOk, this, &KanjiSearchWidget::radicalsOk);
