@@ -76,8 +76,8 @@ namespace FormStates
     bool emptyState(const KanjiInfoData &data)
     {
         return !data.siz.isValid() && data.grid == true && data.sod == true && data.words == false && data.similar == false &&
-            data.parts == false && data.partof == false && data.shadow == false && data.numbers == false && data.dir == false &&
-            data.speed == 3 && data.toph == -1 && data.dicth == -1 && data.refdict == false && emptyState(data.dict);
+            data.parts == false && data.partof == false && data.loop == false && data.shadow == false && data.numbers == false &&
+            data.dir == false && data.speed == 3 && data.toph == -1 && data.dicth == -1 && data.refdict == false && emptyState(data.dict);
     }
 
     bool emptyState(const WordStudyListFormDataItems &data)
@@ -504,6 +504,7 @@ namespace FormStates
         writer.writeAttribute("similar", data.similar ? True : False);
         writer.writeAttribute("parts", data.parts ? True : False);
         writer.writeAttribute("partof", data.partof ? True : False);
+        writer.writeAttribute("loop", data.loop ? True : False);
         writer.writeAttribute("shadow", data.shadow ? True : False);
         writer.writeAttribute("numbers", data.numbers ? True : False);
         writer.writeAttribute("direction", data.dir ? True : False);
@@ -608,6 +609,7 @@ namespace FormStates
         data.parts = reader.attributes().value("parts") == True;
         data.partof = reader.attributes().value("partof") == True;
         data.shadow = reader.attributes().value("shadow") == True;
+        data.loop = reader.attributes().value("loop") == True;
         data.numbers = reader.attributes().value("numbers") == True;
         data.dir = reader.attributes().value("direction") == True;
 

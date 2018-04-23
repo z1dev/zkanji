@@ -122,6 +122,7 @@ struct KanjiInfoData
     bool parts = false;
     bool partof = false;
 
+    bool loop = false;
     bool shadow = false;
     bool numbers = false;
     bool dir = false;

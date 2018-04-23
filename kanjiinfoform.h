@@ -66,6 +66,7 @@ public:
     //void appendData() const;
 protected:
     virtual bool event(QEvent *e) override;
+    virtual bool eventFilter(QObject *o, QEvent *e) override;
 
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;
@@ -83,13 +84,14 @@ private:
     // Sets the size of the kanjiview to have the same width and height.
     void restrictKanjiViewSize();
 private slots:
+    void on_loopButton_clicked(bool checked);
     void on_playButton_clicked(bool checked);
     void on_pauseButton_clicked(bool checked);
     void on_stopButton_clicked(bool checked);
     void on_rewindButton_clicked();
     void on_backButton_clicked();
     void on_foreButton_clicked();
-    void on_endButton_clicked();
+    //void on_endButton_clicked();
 
     void on_sodButton_clicked(bool checked);
 
@@ -126,9 +128,9 @@ private slots:
 
     void wordSelChanged();
 private:
-    // Reads an SVG image file as text, replacing the black color (#000000) with the current
-    // text color, and setting the result as icon for the passed widget.
-    void loadColorIcon(QAbstractButton *w, QString name, QColor col);
+    // Reads an SVG image file as text, replacing the black color (#000000) with the passed
+    // color, and returning it as an icon of size siz.
+    QIcon loadColorIcon(QString name, QColor col, QSize siz);
 
     // Displays the form's context menu at the specified global position.
     void showContextMenu(QPoint pos);

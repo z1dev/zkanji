@@ -30,7 +30,7 @@ const double kanjiRectMul = 0.87;
 const double partcountdiv = 75.0;
 
 ZKanjiDiagram::ZKanjiDiagram(QWidget *parent) : base(parent), kindex(INT_MIN), showstrokes(false), showradical(false), showdiagram(true), showgrid(false),
-        showshadow(false), shownumbers(false), showdir(false), drawspeed(3), strokepos(0), partcnt(0), partpos(0), delaycnt(0), drawnpos(0)
+        showshadow(false), shownumbers(false), showdir(false), drawspeed(3), strokepos(0), partcnt(0), partpos(0), delaycnt(0), drawnpos(0), loop(false)
 {
     setAutoFillBackground(false);
     setAttribute(Qt::WA_OpaquePaintEvent);
@@ -206,6 +206,16 @@ bool ZKanjiDiagram::paused() const
     return strokepos != ZKanji::elements()->strokeCount(kindex < 0 ? (-1 - kindex) : ZKanji::kanjis[kindex]->element, 0);
 }
 
+bool ZKanjiDiagram::looping() const
+{
+    return loop;
+}
+
+void ZKanjiDiagram::setLooping(bool val)
+{
+    loop = val;
+}
+
 void ZKanjiDiagram::play()
 {
     if (kindex == INT_MIN || (kindex >= 0 && !showdiagram))
@@ -250,10 +260,11 @@ void ZKanjiDiagram::stop()
     if (kindex == INT_MIN || ZKanji::elements()->size() == 0)
         return;
 
+    bool running = timer.isActive();
     timer.stop();
 
     int elem = kindex < 0 ? (-1 - kindex) : ZKanji::kanjis[kindex]->element;
-    if (strokepos != ZKanji::elements()->strokeCount(elem, 0))
+    if (strokepos != ZKanji::elements()->strokeCount(elem, 0) || (loop && running))
     {
         strokepos = ZKanji::elements()->strokeCount(elem, 0);
 
@@ -334,15 +345,27 @@ void ZKanjiDiagram::next()
         return;
 
     int elem = kindex < 0 ? -1 - kindex : ZKanji::kanjis[kindex]->element;
-    if (strokepos == ZKanji::elements()->strokeCount(elem, 0) - 1)
+    int strokecnt = ZKanji::elements()->strokeCount(elem, 0);
+    if (strokepos == strokecnt - 1)
     {
-        stop();
-        return;
+        if (!loop)
+        {
+            stop();
+            return;
+        }
+        else
+        {
+            strokepos = strokecnt;
+            partpos = 0;
+            delaycnt = 0;
+        }
     }
-
-    strokepos = strokepos + 1;
-    partpos = 0;
-    delaycnt = 0;
+    else
+    {
+        strokepos = strokepos + 1;
+        partpos = 0;
+        delaycnt = 0;
+    }
 
     QRect r = rect();
     int siz = std::min(r.width(), r.height()) * kanjiRectMul;
@@ -352,9 +375,10 @@ void ZKanjiDiagram::next()
 
     stroke->fill(qRgba(0, 0, 0, 0));
 
-    partcnt = ZKanji::elements()->strokePartCount(elem, 0, strokepos, QRectF(0, 0, siz, siz), siz / partcountdiv, parts);
+    if (strokepos != strokecnt)
+        partcnt = ZKanji::elements()->strokePartCount(elem, 0, strokepos, QRectF(0, 0, siz, siz), siz / partcountdiv, parts);
 
-    emit strokeChanged(strokepos, strokepos == ZKanji::elements()->strokeCount(elem, 0));
+    emit strokeChanged(strokepos, !loop && strokepos == ZKanji::elements()->strokeCount(elem, 0));
 
     update();
 }
@@ -366,13 +390,21 @@ bool ZKanjiDiagram::event(QEvent *e)
         QTimerEvent *te = (QTimerEvent*)e;
         if (te->timerId() == timer.timerId())
         {
+            int elem = kindex < 0 ? -1 - kindex : ZKanji::kanjis[kindex]->element;
+
+            if (!loop && strokepos == ZKanji::elements()->strokeCount(elem, 0))
+            {
+                delaycnt = 0;
+                timer.stop();
+                emit strokeChanged(strokepos, true);
+                return true;
+            }
+
             if (delaycnt != 0)
             {
                 --delaycnt;
                 return true;
             }
-
-            int elem = kindex < 0 ? -1 - kindex : ZKanji::kanjis[kindex]->element;
 
             bool resized = false;
             QRect r = rect();
@@ -384,7 +416,17 @@ bool ZKanjiDiagram::event(QEvent *e)
                 resized = true;
             }
 
+            if (loop && strokepos == ZKanji::elements()->strokeCount(elem, 0))
+            {
+                strokepos = 0;
+                drawnpos = 0;
+                partpos = 0;
+                image.reset();
+                emit strokeChanged(strokepos, false);
+            }
+
             ++partpos;
+
             QPainter p;
             p.begin(stroke.get());
             p.setRenderHint(QPainter::Antialiasing);
@@ -411,6 +453,8 @@ bool ZKanjiDiagram::event(QEvent *e)
                 // Copy finished stroke to image.
 
                 QPainter pt;
+                if (image == nullptr || image.get()->isNull())
+                    updateImage();
                 pt.begin(image.get());
                 pt.drawImage(0, 0, *stroke.get());
                 pt.end();
@@ -434,9 +478,21 @@ bool ZKanjiDiagram::event(QEvent *e)
                 else
                 {
                     stroke.reset();
-                    delaycnt = 0;
-                    timer.stop();
-                    emit strokeChanged(strokepos, true);
+                    if (!loop)
+                    {
+                        delaycnt = 0;
+                        timer.stop();
+                    }
+                    else
+                    {
+                        numrects.clear();
+                        delaycnt = 32;
+
+                        QRect r = rect();
+                        int siz = std::min(r.width(), r.height()) * kanjiRectMul;
+                        partcnt = ZKanji::elements()->strokePartCount(elem, 0, 0, QRectF(0, 0, siz, siz), siz / partcountdiv, parts);
+                    }
+                    emit strokeChanged(strokepos, !loop);
                 }
             }
 
@@ -464,7 +520,7 @@ namespace ZKanji
 
 void ZKanjiDiagram::paintEvent(QPaintEvent *e)
 {
-    // Size, the kanji should take up inside the drawing, between 0 and 1.
+    // Size the kanji should take up inside the drawing. Between 0 and 1.
     const double kanjifontsize = kanjiRectMul;
     const int gridpadding = 6;
 
@@ -684,7 +740,7 @@ void ZKanjiDiagram::updateImage()
     if (drawnpos == strokepos && image && image->width() == siz)
         return;
 
-    if (!image || image->width() != siz)
+    if (!image || image->isNull() || image->width() != siz)
     {
         image.reset(new QImage(siz, siz, QImage::Format_ARGB32_Premultiplied));
 
@@ -762,7 +818,7 @@ void ZKanjiDiagram::updateImage()
 
 void ZKanjiDiagram::addNumberRect(int strokeix, StrokeDirection dir, QPoint pt)
 {
-    if (!image)
+    if (!image || image->isNull())
         return;
 
     double pw = ZKanji::elements()->basePenWidth(std::min(image->width(), image->height()));

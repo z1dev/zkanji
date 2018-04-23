@@ -62,6 +62,11 @@ public:
     bool playing() const;
     bool paused() const;
 
+    // Whether playback starts over when the last stroke is drawn.
+    bool looping() const;
+    // Set whether playback starts over when the last stroke is drawn.
+    void setLooping(bool val);
+
     void play();
     void pause();
     void stop();
@@ -137,6 +142,9 @@ private:
     // strokes are drawn on image before displaying it. If it's larger than strokepos, the
     // image is first cleared and every stroke is repainted.
     int drawnpos;
+
+    // True when the stroke order diagram animation should repeat playing after it finished.
+    bool loop;
 
     typedef QWidget base;
 };

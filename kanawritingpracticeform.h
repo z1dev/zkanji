@@ -37,6 +37,8 @@ public slots:
     void on_prevButton_clicked();
     void on_nextButton_clicked();
     void on_revealButton_clicked();
+
+    void settingsChanged();
 protected:
     virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *o, QEvent *e) override;

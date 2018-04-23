@@ -40,8 +40,8 @@ ZEVENT(InfoResizeEvent)
 //-------------------------------------------------------------
 
 
-KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiInfoForm), dict(nullptr), ignoreresize(false), dicth(-1),
-        simmodel(new SimilarKanjiScrollerModel), partsmodel(new KanjiScrollerModel), partofmodel(new KanjiScrollerModel)
+KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiInfoForm), dict(nullptr), ignoreresize(false),
+        dicth(-1), simmodel(new SimilarKanjiScrollerModel), partsmodel(new KanjiScrollerModel), partofmodel(new KanjiScrollerModel)
 {
     ui->setupUi(this);
     ui->dictWidget->showStatusBar();
@@ -153,6 +153,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
 
     connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &KanjiInfoForm::wordSelChanged);
 
+    //ui->playButton->installEventFilter(this);
+
     settingsChanged();
 }
 
@@ -202,6 +204,7 @@ void KanjiInfoForm::saveState(KanjiInfoData &data) const
 
     data.sod = ui->sodButton->isChecked();
     data.grid = ui->gridButton->isChecked();
+    data.loop = ui->loopButton->isChecked();
     data.shadow = ui->shadowButton->isChecked();
     data.numbers = ui->numberButton->isChecked();
     data.dir = ui->dirButton->isChecked();
@@ -226,6 +229,9 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     ui->sodButton->setChecked(ZKanji::elements()->size() != 0 && data.sod);
     ui->sodButton->setEnabled(ZKanji::elements()->size() != 0 && kindex >= 0);
     ui->gridButton->setChecked(data.grid);
+    ui->loopButton->setChecked(data.loop);
+    on_loopButton_clicked(data.loop);
+
     ui->shadowButton->setChecked(data.shadow);
     ui->numberButton->setChecked(data.numbers);
     ui->dirButton->setChecked(data.dir);
@@ -647,6 +653,29 @@ bool KanjiInfoForm::event(QEvent *e)
     return base::event(e);
 }
 
+bool KanjiInfoForm::eventFilter(QObject *o, QEvent *e)
+{
+    //if (o == ui->playButton && ui->playButton->isEnabled() && ui->playButton->isVisibleTo(this) && e->type() == QEvent::MouseButtonDblClick && ui->kanjiView->playing())
+    //{
+    //    QMouseEvent *me = (QMouseEvent*)e;
+    //    if (me->button() == Qt::LeftButton)
+    //    {
+    //        if (ui->kanjiView->looping())
+    //        {
+    //            ui->kanjiView->setLooping(false);
+    //            ui->playButton->setIcon(playico);
+    //        }
+    //        else
+    //        {
+    //            ui->kanjiView->setLooping(true);
+    //            ui->playButton->setIcon(repeatico);
+    //        }
+    //    }
+    //}
+
+    return base::eventFilter(o, e);
+}
+
 void KanjiInfoForm::contextMenuEvent(QContextMenuEvent *e)
 {
     showContextMenu(e->globalPos());
@@ -713,6 +742,11 @@ void KanjiInfoForm::restrictKanjiViewSize()
     ui->kanjiView->setMaximumWidth(ui->kanjiView->height());
 }
 
+void KanjiInfoForm::on_loopButton_clicked(bool checked)
+{
+    ui->kanjiView->setLooping(checked);
+}
+
 void KanjiInfoForm::on_playButton_clicked(bool checked)
 {
     if (!checked)
@@ -735,6 +769,8 @@ void KanjiInfoForm::on_stopButton_clicked(bool checked)
         return;
 
     ui->kanjiView->stop();
+    //ui->kanjiView->setLooping(false);
+    //ui->playButton->setIcon(playico);
 }
 
 void KanjiInfoForm::on_rewindButton_clicked()
@@ -752,10 +788,10 @@ void KanjiInfoForm::on_foreButton_clicked()
     ui->kanjiView->next();
 }
 
-void KanjiInfoForm::on_endButton_clicked()
-{
-    ui->kanjiView->stop();
-}
+//void KanjiInfoForm::on_endButton_clicked()
+//{
+//    ui->kanjiView->stop();
+//}
 
 void KanjiInfoForm::on_sodButton_clicked(bool checked)
 {
@@ -1042,10 +1078,15 @@ void KanjiInfoForm::strokeChanged(int index, bool ended)
     ui->countLabel->setText(QStringLiteral("<span style=\"font-weight: bold; font-size: %2pt;\">%1</span>").arg(index, 2, 10, QChar('0')).arg(Settings::scaled(ui->countLabel->font().pointSize())));
 
     if (ended)
+    {
         ui->stopButton->setChecked(true);
+        //ui->kanjiView->setLooping(false);
+        //ui->playButton->setIcon(playico);
+    }
     else if (!ui->kanjiView->playing())
         ui->pauseButton->setChecked(true);
 }
+
 
 //void testFuriganaReadingTest();
 void KanjiInfoForm::readingFilterClicked(bool checked)
@@ -1135,13 +1176,16 @@ void KanjiInfoForm::settingsChanged()
     radf.setPointSize(10);
     ui->radSymLabel->setFont(radf);
 
-    loadColorIcon(ui->playButton, ":/playbtn.svg", qApp->palette().color(QPalette::Text));
-    loadColorIcon(ui->pauseButton, ":/playpausebtn.svg", qApp->palette().color(QPalette::Text));
-    loadColorIcon(ui->stopButton, ":/playstopbtn.svg", qApp->palette().color(QPalette::Text));
-    loadColorIcon(ui->rewindButton, ":/playfrwbtn.svg", qApp->palette().color(QPalette::Text));
-    loadColorIcon(ui->backButton, ":/playsteprwbtn.svg", qApp->palette().color(QPalette::Text));
-    loadColorIcon(ui->foreButton, ":/playstepfwdbtn.svg", qApp->palette().color(QPalette::Text));
-    loadColorIcon(ui->endButton, ":/playffwdbtn.svg", qApp->palette().color(QPalette::Text));
+    QSize siz = ui->playButton->iconSize();
+    
+    ui->loopButton->setIcon(loadColorIcon(":/repeatplaybtn.svg", qApp->palette().color(QPalette::Text), siz));
+    ui->playButton->setIcon(loadColorIcon(":/playbtn.svg", qApp->palette().color(QPalette::Text), siz));
+    ui->pauseButton->setIcon(loadColorIcon(":/playpausebtn.svg", qApp->palette().color(QPalette::Text), siz));
+    ui->stopButton->setIcon(loadColorIcon(":/playstopbtn.svg", qApp->palette().color(QPalette::Text), siz));
+    ui->rewindButton->setIcon(loadColorIcon(":/playfrwbtn.svg", qApp->palette().color(QPalette::Text), siz));
+    ui->backButton->setIcon(loadColorIcon(":/playsteprwbtn.svg", qApp->palette().color(QPalette::Text), siz));
+    ui->foreButton->setIcon(loadColorIcon(":/playstepfwdbtn.svg", qApp->palette().color(QPalette::Text), siz));
+    //ui->endButton->setIcon(loadColorIcon(":/playffwdbtn.svg", qApp->palette().color(QPalette::Text), siz));
 }
 
 void KanjiInfoForm::dictionaryReset()
@@ -1174,10 +1218,9 @@ void KanjiInfoForm::wordSelChanged()
     exampleSelButton->setChecked(siz != 0 && siz == sel);
 }
 
-void KanjiInfoForm::loadColorIcon(QAbstractButton *w, QString name, QColor col)
+QIcon KanjiInfoForm::loadColorIcon(QString name, QColor col, QSize siz)
 {
-    QIcon ico(QPixmap::fromImage(loadColorSVG(name, w->iconSize(), qRgb(0, 0, 0), col)));
-    w->setIcon(ico);
+    return QIcon(QPixmap::fromImage(loadColorSVG(name, siz, qRgb(0, 0, 0), col)));
 }
 
 void KanjiInfoForm::showContextMenu(QPoint pos)

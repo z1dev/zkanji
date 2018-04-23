@@ -79,5 +79,6 @@
         <file>pin.svg</file>
         <file>wordselect.svg</file>
         <file>programico2.svg</file>
+        <file>repeatplaybtn.svg</file>
     </qresource>
 </RCC>

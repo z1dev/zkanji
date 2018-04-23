@@ -494,6 +494,74 @@
               <number>0</number>
              </property>
              <item>
+              <widget class="QToolButton" name="loopButton">
+               <property name="toolTip">
+                <string>Play stroke order animation. Double-click to auto repeat</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="Resources/resources.qrc">
+                 <normaloff>:/repeatplaybtn.svg</normaloff>:/repeatplaybtn.svg</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>13</width>
+                 <height>13</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>false</bool>
+               </property>
+               <property name="autoRaise">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>1</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="Line" name="line_10">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_7">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>1</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
               <widget class="QToolButton" name="playButton">
                <property name="toolTip">
                 <string>Play stroke order animation</string>
@@ -606,7 +674,7 @@
              <item>
               <widget class="QToolButton" name="rewindButton">
                <property name="toolTip">
-                <string>Rewind kanji animation to start</string>
+                <string>Rewind animation to start</string>
                </property>
                <property name="text">
                 <string/>
@@ -703,29 +771,6 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="endButton">
-               <property name="toolTip">
-                <string>Forward to complete kanji</string>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="Resources/resources.qrc">
-                 <normaloff>:/playffwdbtn.svg</normaloff>:/playffwdbtn.svg</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>13</width>
-                 <height>13</height>
-                </size>
-               </property>
-               <property name="autoRaise">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -741,7 +786,7 @@
             </layout>
            </item>
            <item>
-            <widget class="Line" name="line_4">
+            <widget class="Line" name="line_9">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>

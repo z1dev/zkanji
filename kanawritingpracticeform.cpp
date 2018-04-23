@@ -90,6 +90,8 @@ KanaWritingPracticeForm::KanaWritingPracticeForm(QWidget *parent) : base(parent,
     connect(ui->drawArea, &RecognizerArea::changed, this, &KanaWritingPracticeForm::candidatesChanged);
     connect(ui->candidateScroller, &ZItemScroller::itemClicked, this, &KanaWritingPracticeForm::candidateClicked);
 
+    connect(gUI, &GlobalUI::settingsChanged, this, &KanaWritingPracticeForm::settingsChanged);
+
     //setAttribute(Qt::WA_DontShowOnScreen);
     //show();
     int siz = Settings::scaled(220);
@@ -264,6 +266,17 @@ void KanaWritingPracticeForm::on_revealButton_clicked()
         ui->stack->setCurrentIndex(0);
         ui->kanjiView->stop();
     }
+}
+
+void KanaWritingPracticeForm::settingsChanged()
+{
+    stopico = QIcon(QPixmap::fromImage(loadColorSVG(":/playstopbtn.svg", ui->revealButton->iconSize(), qRgb(0, 0, 0), qApp->palette().color(QPalette::Text))));
+    playico = QIcon(QPixmap::fromImage(loadColorSVG(":/playbtn.svg", ui->revealButton->iconSize(), qRgb(0, 0, 0), qApp->palette().color(QPalette::Text))));
+
+    if (ui->stack->currentIndex() == 1)
+        ui->revealButton->setIcon(stopico);
+    else
+        ui->revealButton->setIcon(playico);
 }
 
 bool KanaWritingPracticeForm::event(QEvent *e)
