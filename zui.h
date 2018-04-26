@@ -30,6 +30,7 @@ class QXmlStreamReader;
 class QPainter;
 class QMainWindow;
 class QLabel;
+class QByteArray;
 
 // Called at program initialization after the user data has loaded,
 // to create the models for each data view.
@@ -259,14 +260,33 @@ QImage loadColorSVG(QString name, QSize size, QColor ori, QColor col);
 enum class Flags { FromJapanese, ToJapanese, Flag, Browse };
 namespace ZKanji
 {
-    // Returns a pixmap rendering of a country flag for the dictionary named dictname, with
-    // the passed size. The flags argument specifies the type of flag image returned, which
-    // can be paired with the Japanese flag.
+    // Returns a pixmap rendering of an image specified for the dictionary named dictname,
+    // with the passed size. The flags argument specifies the type of flag image returned,
+    // which can be paired with the Japanese flag.
     QPixmap dictionaryFlag(QSize size, QString dictname, Flags flag);
-    // Returns a pixmap rendering of a country flag at the default icon size for menus.
+    // Returns a pixmap rendering of an image for a dictionary at the default icon size for
+    // menus.
     QPixmap dictionaryMenuFlag(const QString &dictname);
-    // Erases all cached data of the country flag for the dictionary named dictname.
+    // Erases all cached image data of the dictionary named dictname.
     void eraseDictionaryFlag(const QString &dictname);
+
+    // Caches a data array, which must contain a valid SVG image file as the flag image of the
+    // dictionary. This image will be returned by dictionaryFlag() and similar functions after
+    // the call. Returns whether the array was a valid image. If returns false, no new flag
+    // is assigned to the dictionary.
+    bool assignDictionaryFlag(const QByteArray &data, const QString &dictname);
+    // Clears saved data of the dictonary flag image. Calls to dictionaryFlag() and similar
+    // functions will result in the default image afterwards, unless assignDictionaryFlag() is
+    // called again.
+    void unassignDictionaryFlag(const QString &dictname);
+    // Fills result with the cached dictionary flag image set by assignDictionaryFlag() if
+    // it's found. Returns true on success.
+    bool getCustomDictionaryFlag(const QString &dictname, QByteArray &result);
+    // Updates the custom dictionary flag cache to reflect the changed name of a dictionary.
+    // The new name shouldn't conflict with other names.
+    void changeDictionaryFlagName(const QString &oldname, const QString &dictname);
+    // Returns whether an dictionary has a flag assigned to it with assignDictionaryFlag().
+    bool dictionaryHasCustomFlag(const QString &dictname);
 }
 
 // Mixes the rgb components of color a and color b separately, returning the result. Color a

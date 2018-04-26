@@ -39,7 +39,8 @@ protected slots:
     void handleAdded();
     void handleRemoved(int index, int order);
     void handleMoved(int from, int to);
-    void handleRenamed(int index, int order);
+    void handleRenamed(const QString &oldname, int index, int order);
+    void handleFlagChanged(int index, int order);
 private:
     ZListView *view;
     // Set to true if the dictionary order has changed since the form was shown.
@@ -52,8 +53,11 @@ class DictionaryEditorForm : public DialogWindow
 {
     Q_OBJECT
 public:
-    DictionaryEditorForm(QWidget *parent = nullptr);
     virtual ~DictionaryEditorForm();
+
+    // Shows the single instance of the form, or brings the existing instance to the
+    // foreground.
+    static void execute();
 public slots:
     void on_upButton_clicked(bool checked);
     void on_downButton_clicked(bool checked);
@@ -64,6 +68,15 @@ public slots:
 protected:
     virtual void closeEvent(QCloseEvent *e) override;
 private:
+    DictionaryEditorForm(QWidget *parent = nullptr);
+
+    DictionaryEditorForm(const DictionaryEditorForm &) = delete;
+    DictionaryEditorForm(DictionaryEditorForm &&) = delete;
+    DictionaryEditorForm& operator=(const DictionaryEditorForm &) = delete;
+    DictionaryEditorForm& operator=(DictionaryEditorForm &&) = delete;
+
+    static DictionaryEditorForm *instance;
+
     Ui::DictionaryEditorForm *ui;
 
     DictionaryEditorModel *model;

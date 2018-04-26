@@ -934,14 +934,21 @@ void GlobalUI::signalDictionaryMoved(int from, int to)
     emit dictionaryMoved(from, to);
 }
 
-void GlobalUI::signalDictionaryRenamed(int index, int orderindex)
+void GlobalUI::signalDictionaryRenamed(const QString &oldname, int index, int orderindex)
 {
     //// Signalling dictionary actions can only occure after the program has started. The flag
     //// images are not filled until that.
     //if (flagimg.empty())
     //    return;
 
-    emit dictionaryRenamed(index, orderindex);
+    ZKanji::changeDictionaryFlagName(oldname, ZKanji::dictionary(index)->name());
+
+    emit dictionaryRenamed(oldname, index, orderindex);
+}
+
+void GlobalUI::signalDictionaryFlagChange(int index)
+{
+    emit dictionaryFlagChanged(index, ZKanji::dictionaryOrder(index));
 }
 
 void GlobalUI::timerEvent(QTimerEvent *e)

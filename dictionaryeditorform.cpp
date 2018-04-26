@@ -27,6 +27,7 @@ DictionaryEditorModel::DictionaryEditorModel(ZListView *view, QWidget *parent) :
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &DictionaryEditorModel::handleRemoved);
     connect(gUI, &GlobalUI::dictionaryMoved, this, &DictionaryEditorModel::handleMoved);
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &DictionaryEditorModel::handleRenamed);
+    connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &DictionaryEditorModel::handleFlagChanged);
 }
 
 DictionaryEditorModel::~DictionaryEditorModel()
@@ -153,7 +154,12 @@ void DictionaryEditorModel::handleMoved(int from, int to)
     signalRowsMoved({ { from, from } }, to);
 }
 
-void DictionaryEditorModel::handleRenamed(int index, int order)
+void DictionaryEditorModel::handleRenamed(const QString &oldname, int index, int order)
+{
+    emit dataChanged(base::index(order, 0), base::index(order, columnCount() - 1));
+}
+
+void DictionaryEditorModel::handleFlagChanged(int index, int order)
 {
     emit dataChanged(base::index(order, 0), base::index(order, columnCount() - 1));
 }
@@ -161,6 +167,17 @@ void DictionaryEditorModel::handleRenamed(int index, int order)
 
 //-------------------------------------------------------------
 
+
+DictionaryEditorForm* DictionaryEditorForm::instance = nullptr;
+
+void DictionaryEditorForm::execute()
+{
+    if (instance == nullptr)
+        instance = new DictionaryEditorForm(gUI->activeMainForm());
+    instance->show();
+    instance->raise();
+    instance->activateWindow();
+}
 
 DictionaryEditorForm::DictionaryEditorForm(QWidget *parent) : base(parent), ui(new Ui::DictionaryEditorForm)
 {
@@ -182,6 +199,7 @@ DictionaryEditorForm::DictionaryEditorForm(QWidget *parent) : base(parent), ui(n
 
 DictionaryEditorForm::~DictionaryEditorForm()
 {
+    instance = nullptr;
     delete ui;
 }
 
@@ -260,7 +278,8 @@ void DictionaryEditorForm::closeEvent(QCloseEvent *e)
 
 void editDictionaries()
 {
-    (new DictionaryEditorForm(gUI->activeMainForm()))->show();
+    DictionaryEditorForm::execute();
+    //(new DictionaryEditorForm(gUI->activeMainForm()))->show();
 }
 
 

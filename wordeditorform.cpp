@@ -291,6 +291,8 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
     connect(applyBtn, &QAbstractButton::clicked, this, &WordEditorForm::applyClicked);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordEditorForm::dictionaryToBeRemoved);
+    connect(gUI, &GlobalUI::dictionaryRenamed, this, &WordEditorForm::dictionaryRenamed);
+    connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &WordEditorForm::dictionaryFlagChanged);
 
     entry.reset(new WordEntry);
     original.reset(new WordEntry);
@@ -767,6 +769,18 @@ void WordEditorForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary
 {
     if (d == dict)
         close();
+}
+
+void WordEditorForm::dictionaryRenamed(const QString &oldname, int index, int orderindex)
+{
+    if (dict == ZKanji::dictionary(index))
+        ui->dictLabel->setText(dict->name());
+}
+
+void WordEditorForm::dictionaryFlagChanged(int index, int order)
+{
+    if (dict == ZKanji::dictionary(index))
+        ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), dict->name(), Flags::Flag));
 }
 
 void WordEditorForm::reset()

@@ -10,6 +10,8 @@
 #include "zdictionariesmodel.h"
 #include "words.h"
 #include "globalui.h"
+#include "zui.h"
+#include "generalsettings.h"
 
 
 //-------------------------------------------------------------
@@ -22,6 +24,7 @@ DictionariesModel::DictionariesModel(QObject *parent) : base(parent)
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &DictionariesModel::dictionaryRemoved);
     connect(gUI, &GlobalUI::dictionaryMoved, this, &DictionariesModel::dictionaryMoved);
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &DictionariesModel::dictionaryRenamed);
+    connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &DictionariesModel::dictionaryFlagChanged);
 }
 
 int DictionariesModel::columnCount(const QModelIndex &parent) const
@@ -40,9 +43,9 @@ QVariant DictionariesModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole)
         return  ZKanji::dictionary(row)->name();
 
-    if (row == 0)
-        return QIcon(":/flagen.svg");
-    return QIcon(":/flaggen.svg");
+    //if (row == 0)
+    //    return QIcon(":/flagen.svg");
+    return ZKanji::dictionaryMenuFlag(/*QSize(Settings::scaled(18), Settings::scaled(18)),*/ ZKanji::dictionary(row)->name()/*, Flags::Flag*/);  //QIcon(":/flaggen.svg");
 }
 
 QModelIndex DictionariesModel::index(int row, int column, const QModelIndex &parent) const
@@ -84,7 +87,12 @@ void DictionariesModel::dictionaryMoved(int from, int to)
     endMoveRows();
 }
 
-void DictionariesModel::dictionaryRenamed(int index, int order)
+void DictionariesModel::dictionaryRenamed(const QString &oldname, int index, int order)
+{
+    emit dataChanged(createIndex(order, 0), createIndex(order, columnCount() - 1));
+}
+
+void DictionariesModel::dictionaryFlagChanged(int index, int order)
 {
     emit dataChanged(createIndex(order, 0), createIndex(order, columnCount() - 1));
 }

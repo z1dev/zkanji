@@ -24,12 +24,18 @@ public:
     void exec(Dictionary *d);
 public slots:
     void accept();
-    void checkRemoved(int index, int orderindex, void *oldaddress);
+    void dictionaryRemoved(int index, int order, void *oldaddress);
+    void dictionaryRenamed(const QString &oldname, int index, int order);
     void dictionaryReset();
+
+    void on_browseButton_clicked();
+    void on_removeButton_clicked();
 private:
     Ui::DictionaryTextForm *ui;
 
     Dictionary *dict;
+    QByteArray flagdata;
+    bool flagerased;
 
     typedef DialogWindow base;
 };

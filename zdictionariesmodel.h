@@ -32,7 +32,8 @@ public slots:
     void dictionaryToBeRemoved(int index, int order);
     void dictionaryRemoved(int index, int order);
     void dictionaryMoved(int from, int to);
-    void dictionaryRenamed(int index, int order);
+    void dictionaryRenamed(const QString &oldname, int index, int order);
+    void dictionaryFlagChanged(int index, int order);
 private:
     typedef QAbstractItemModel  base;
 };

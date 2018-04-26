@@ -16,6 +16,8 @@
 #include <QXmlStreamReader>
 #include <QPainter>
 #include <QPainterPath>
+#include <QByteArray>
+#include <QSvgRenderer>
 
 #include <cmath>
 #include <memory>
@@ -40,6 +42,8 @@
 #include "zkanalineedit.h"
 #include "studysettings.h"
 #include "colorsettings.h"
+#include "globalui.h"
+
 
 //-------------------------------------------------------------
 
@@ -963,6 +967,7 @@ bool operator<(const std::pair<QSize, Flags> &a, const std::pair<QSize, Flags> &
 namespace ZKanji
 {
     static std::map<QString, std::map<std::pair<QSize, Flags>, QPixmap>> flagcache;
+    static std::map<QString, QByteArray> customflags;
     QPixmap dictionaryFlag(QSize siz, QString dictname, Flags flag)
     {
         if (flag == Flags::Browse)
@@ -1004,10 +1009,22 @@ namespace ZKanji
         if (flag == Flags::FromJapanese)
             sr.load(QStringLiteral(":/flagjp.svg"));
         else
-            sr.load(dictflag);
+        {
+            auto cit = customflags.find(dictname);
+            if (cit != customflags.end())
+            {
+                if (!sr.load(cit->second))
+                    cit = customflags.end();
+            }
+            if (cit == customflags.end())
+                sr.load(dictflag);
+        }
 
         if (flag == Flags::Flag)
         {
+            // When changing way of calculating size and position, update
+            // on_browseButton_clicked() in dictionarytextform.cpp too.
+
             sr.render(&p, QRectF(0, s * 0.0625, s, s));
             p.end();
 
@@ -1019,7 +1036,16 @@ namespace ZKanji
         sr.render(&p, QRectF(0, 0, s * 0.73, s * 0.73));
 
         if (flag == Flags::FromJapanese)
-            sr.load(dictflag);
+        {
+            auto cit = customflags.find(dictname);
+            if (cit != customflags.end())
+            {
+                if (!sr.load(cit->second))
+                    cit = customflags.end();
+            }
+            if (cit == customflags.end())
+                sr.load(dictflag);
+        }
         else
             sr.load(QStringLiteral(":/flagjp.svg"));
 
@@ -1045,6 +1071,62 @@ namespace ZKanji
             flagcache.erase(it);
     }
 
+    bool assignDictionaryFlag(const QByteArray &data, const QString &dictname)
+    {
+        QSvgRenderer r(data);
+        if (!r.isValid())
+            return false;
+
+        customflags[dictname] = data;
+        flagcache.erase(dictname);
+
+        gUI->signalDictionaryFlagChange(ZKanji::dictionaryIndex(dictname));
+
+        return true;
+    }
+
+    void unassignDictionaryFlag(const QString &dictname)
+    {
+        auto it = customflags.find(dictname);
+        if (it == customflags.end())
+            return;
+
+        customflags.erase(it);
+        flagcache.erase(dictname);
+
+        gUI->signalDictionaryFlagChange(ZKanji::dictionaryIndex(dictname));
+    }
+
+    bool getCustomDictionaryFlag(const QString &dictname, QByteArray &result)
+    {
+        auto it = customflags.find(dictname);
+        if (it == customflags.end())
+            return false;
+        result = it->second;
+        return true;
+    }
+
+    void changeDictionaryFlagName(const QString &oldname, const QString &dictname)
+    {
+        auto it = customflags.find(oldname);
+        if (it != customflags.end())
+        {
+            customflags[dictname] = it->second;
+            customflags.erase(it);
+        }
+
+        auto it2 = flagcache.find(oldname);
+        if (it2 != flagcache.end())
+        {
+            flagcache[dictname] = it2->second;
+            flagcache.erase(it2);
+        }
+    }
+
+    bool dictionaryHasCustomFlag(const QString &dictname)
+    {
+        return customflags.find(dictname) != customflags.end();
+    }
 }
 
 QColor mixColors(const QColor &a, const QColor &b, double a_part)

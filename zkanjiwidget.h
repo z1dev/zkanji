@@ -132,7 +132,8 @@ private slots:
     void dictionaryAdded();
     void dictionaryRemoved(int index, int order);
     void dictionaryMoved(int from, int to);
-    void dictionaryRenamed(int index, int order);
+    void dictionaryRenamed(const QString &oldname, int index, int order);
+    void dictionaryFlagChanged(int index, int order);
 private:
     // Changes what's displayed in the window, depending on the passed action. The action
     // must be one of the actions in the modeMenu.

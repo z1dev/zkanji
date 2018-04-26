@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji</string>
+   <string>zkanji - Create or delete dictionaries</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -30,16 +30,6 @@
     <property name="bottomMargin">
      <number>6</number>
     </property>
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Create or delete dictionaries, or change their order.</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
@@ -123,7 +113,7 @@
          <string>Change the text displayed when opening the dictionary information</string>
         </property>
         <property name="text">
-         <string>Edit about-text</string>
+         <string>Edit information</string>
         </property>
         <property name="icon">
          <iconset resource="Resources/resources.qrc">

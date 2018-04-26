@@ -38,6 +38,7 @@
 #include "zstrings.h"
 #include "datasettings.h"
 #include "sentences.h"
+#include "zui.h"
 
 // WARNING: none of these strings should be longer than 255 bytes.
 
@@ -284,9 +285,11 @@ namespace ZKanji
     {
         if (dictionaries[index]->name() == str)
             return;
+
+        QString oldname = dictionaries[index]->name();
         dictionaries[index]->setName(str);
 
-        gUI->signalDictionaryRenamed(index, dictionaryOrder(index));
+        gUI->signalDictionaryRenamed(oldname, index, dictionaryOrder(index));
     }
 
     void changeDictionaryOrder(const std::list<quint8> &order)
@@ -3161,7 +3164,7 @@ void Dictionary::load(QDataStream &stream)
     stream.readRawData(tmp, 3);
 
     int version = strtol(tmp, nullptr, 10);
-    if (version == 0)
+    if (version <= 0)
         throw ZException("Invalid or corrupted dictionary file version number.");
 
     stream >> make_zdate(writedate);
@@ -3347,6 +3350,13 @@ void Dictionary::load(QDataStream &stream)
         abcde[ix] = i32;
         dstream >> i32;
         aiueo[ix] = i32;
+    }
+
+    if (!dstream.atEnd())
+    {
+        QByteArray arr;
+        dstream >> arr;
+        ZKanji::assignDictionaryFlag(arr, dictname);
     }
 
 #if TIMED_LOAD == 1
@@ -3938,14 +3948,27 @@ Error Dictionary::save(const QString &filename)
 
         errorcode = 10;
 
-        data = qCompress(data);
+        // The dictionary flag SVG image data if present. This must come at the end of the
+        // uncompressed data, because it is missing for dictionaries with no image.
+
+        QByteArray flagdata;
+
+        if (ZKanji::getCustomDictionaryFlag(dictname, flagdata))
+        {
+            // Writes quint32 array size, and the bytes after
+            dstream << flagdata;
+        }
 
         errorcode = 11;
+
+        data = qCompress(data);
+
+        errorcode = 12;
 
         stream << (quint32)data.size();
         stream.writeRawData(data.data(), data.size());
 
-        errorcode = 12;
+        errorcode = 13;
 
         stream << (quint32)(f.pos() + 4);
 
@@ -4623,7 +4646,10 @@ QString Dictionary::infoText() const
 
 void Dictionary::setInfoText(QString text)
 {
+    if (info == text)
+        return;
     info = text;
+    setToModified();
 }
 
 void Dictionary::swapDictionaries(Dictionary *src, std::map<int, int> &changes)

@@ -112,6 +112,7 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &ZKanjiWidget::dictionaryRemoved);
     connect(gUI, &GlobalUI::dictionaryMoved, this, &ZKanjiWidget::dictionaryMoved);
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &ZKanjiWidget::dictionaryRenamed);
+    connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &ZKanjiWidget::dictionaryFlagChanged);
 
     for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
         connect(dictmenu.addAction(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
@@ -125,6 +126,7 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
 
     //s.setWidth(s.width() - _triS - _triPH);
     //s.setHeight(s.height() - _triPV);
+
     ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
 
     dictmenu.setButton(ui->dictButton);
@@ -651,9 +653,26 @@ void ZKanjiWidget::dictionaryMoved(int from, int to)
     connect(action, &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
 }
 
-void ZKanjiWidget::dictionaryRenamed(int index, int order)
+void ZKanjiWidget::dictionaryRenamed(const QString &oldname, int index, int order)
 {
-    dictmenu.actions().at(order)->setText(ZKanji::dictionary(ZKanji::dictionaryPosition(order))->name());
+    dictmenu.actions().at(order)->setText(ZKanji::dictionary(index/*ZKanji::dictionaryPosition(order)*/)->name());
+}
+
+void ZKanjiWidget::dictionaryFlagChanged(int index, int order)
+{
+    if (index == dictindex)
+    {
+        int _iconW = Settings::scaled(qApp->style()->pixelMetric(QStyle::PM_SmallIconSize));
+        int _iconH = _iconW;
+
+        QSize s = QSize(_iconW, _iconH);
+        QSize ts = triangleSize(QSize(_iconW, _iconH));
+        ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
+
+        dictmenu.actions().at(order)->setIcon(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(index)->name()));
+        //        connect(dictmenu.addAction(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
+
+    }
 }
 
 void ZKanjiWidget::setModeByAction()

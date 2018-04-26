@@ -105,6 +105,7 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
 
     connect(gUI, &GlobalUI::settingsChanged, this, &DictionaryWidget::settingsChanged);
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &DictionaryWidget::dictionaryRemoved);
+    connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &DictionaryWidget::dictionaryFlagChanged);
 
     if (dict != nullptr)
         connect(dict, &Dictionary::dictionaryReset, this, &DictionaryWidget::dictionaryReset);
@@ -1423,6 +1424,16 @@ void DictionaryWidget::dictionaryRemoved(int index, int order, void *oldaddress)
     ui->jpCBox->setDictionary(nullptr);
     ui->browseEdit->setDictionary(nullptr);
     updateWords();
+}
+
+void DictionaryWidget::dictionaryFlagChanged(int index, int order)
+{
+    if (ZKanji::dictionary(index) != dict)
+        return;
+
+    ui->jpButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), dict->name(), Flags::FromJapanese)));
+    ui->enButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), dict->name(), Flags::ToJapanese)));
+    ui->browseButton->setIcon(QIcon(ZKanji::dictionaryFlag(ui->jpButton->iconSize(), QString(), Flags::Browse)));
 }
 
 CommandCategories DictionaryWidget::activeCategory() const

@@ -181,9 +181,10 @@ private slots:
     void startDockDrag();
 
     void dictionaryAdded();
-    void dictionaryRemoved(int index, int orderindex, void *oldaddress);
+    void dictionaryRemoved(int index, int order, void *oldaddress);
     void dictionaryMoved(int from, int to);
-    void dictionaryRenamed(int index, int orderindex);
+    void dictionaryRenamed(const QString &oldname, int index, int order);
+    void dictionaryFlagChanged(int index, int order);
 
     void menuwidgetDestroyed(QObject *o);
 private:

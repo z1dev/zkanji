@@ -111,6 +111,7 @@ ZKanjiForm::ZKanjiForm(bool mainform, QWidget *parent) : base(parent, parent != 
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &ZKanjiForm::dictionaryRemoved);
     connect(gUI, &GlobalUI::dictionaryMoved, this, &ZKanjiForm::dictionaryMoved);
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &ZKanjiForm::dictionaryRenamed);
+    connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &ZKanjiForm::dictionaryFlagChanged);
 
     updateMainMenu();
 
@@ -1343,12 +1344,12 @@ void ZKanjiForm::dictionaryAdded()
     gUI->insertCommandAction(dictmap, dictmenu, ZKanji::dictionaryCount() - 1, ZKanji::dictionary(ix)->name(), ix < 9 ? QKeySequence(Qt::ALT + (Qt::Key_1 + ix)) : QKeySequence(), ix, true, dictgroup)->setIcon(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ix)->name()));
 }
 
-void ZKanjiForm::dictionaryRemoved(int index, int orderindex, void *oldaddress)
+void ZKanjiForm::dictionaryRemoved(int index, int order, void *oldaddress)
 {
     if (dictmap == nullptr)
         return;
 
-    QAction *a = dictmenu->actions().at(orderindex);
+    QAction *a = dictmenu->actions().at(order);
     dictmenu->removeAction(a);
     dictmap->removeMappings(a);
     dictgroup->removeAction(a);
@@ -1356,7 +1357,7 @@ void ZKanjiForm::dictionaryRemoved(int index, int orderindex, void *oldaddress)
 
     // addCommandAction(dictmap, dictmenu, ZKanji::dictionary(dix)->name(), ix < 9 ? QKeySequence(Qt::ALT + (Qt::Key_1 + ix)) : QKeySequence(), dix, true, dictgroup);
 
-    for (int ix = orderindex, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
+    for (int ix = order, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
     {
         int dix = ZKanji::dictionaryPosition(ix);
         a = dictmenu->actions().at(ix);
@@ -1395,10 +1396,16 @@ void ZKanjiForm::dictionaryMoved(int from, int to)
     }
 }
 
-void ZKanjiForm::dictionaryRenamed(int index, int orderindex)
+void ZKanjiForm::dictionaryRenamed(const QString &oldname, int index, int order)
 {
-    QAction *a = dictmenu->actions().at(orderindex);
+    QAction *a = dictmenu->actions().at(order);
     a->setText(ZKanji::dictionary(index)->name());
+}
+
+void ZKanjiForm::dictionaryFlagChanged(int index, int order)
+{
+    QAction *a = dictmenu->actions().at(order);
+    a->setIcon(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(index)->name()));
 }
 
 void ZKanjiForm::menuwidgetDestroyed(QObject *o)

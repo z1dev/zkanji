@@ -117,7 +117,9 @@ signals:
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
     void dictionaryRemoved(int index, int orderindex, void *oldaddress);
     void dictionaryMoved(int from, int to);
-    void dictionaryRenamed(int index, int orderindex);
+    void dictionaryRenamed(const QString &oldname, int index, int orderindex);
+
+    void dictionaryFlagChanged(int index, int orderindex);
 public:
     static GlobalUI* instance();
     ~GlobalUI();
@@ -269,7 +271,9 @@ public:
     void signalDictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
     void signalDictionaryRemoved(int index, int orderindex, void *oldaddress);
     void signalDictionaryMoved(int from, int to);
-    void signalDictionaryRenamed(int index, int orderindex);
+    void signalDictionaryRenamed(const QString &oldname, int index, int orderindex);
+
+    void signalDictionaryFlagChange(int index);
 protected:
     virtual void timerEvent(QTimerEvent *e) override;
     virtual bool event(QEvent *e) override;

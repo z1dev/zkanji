@@ -324,6 +324,7 @@ private slots:
     // owner's responsibility to react to dictionary resets.
     void dictionaryReset();
     void dictionaryRemoved(int index, int order, void *oldaddress);
+    void dictionaryFlagChanged(int index, int order);
 
     void on_jpBeforeButton_clicked(bool checked);
     void on_jpAfterButton_clicked(bool checked);
