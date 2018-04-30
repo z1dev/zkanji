@@ -33,6 +33,10 @@ ZTreeView::ZTreeView(QWidget *parent) : base(parent), alldeselect(false)
     connect(gUI, &GlobalUI::settingsChanged, this, &ZTreeView::settingsChanged);
 
     Settings::updatePalette(this);
+
+    header()->setVisible(false);
+    setUniformRowHeights(true);
+    setSelectionBehavior(QAbstractItemView::SelectItems);
 }
 
 ZTreeView::~ZTreeView()
@@ -53,6 +57,8 @@ void ZTreeView::setModel(ZAbstractTreeModel *model)
 
     if (oldselmodel && oldselmodel != selectionModel())
         oldselmodel->deleteLater();
+    header()->setStretchLastSection(false);
+    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 
 TreeItem* ZTreeView::currentItem() const
@@ -352,7 +358,6 @@ void ZTreeView::dropEvent(QDropEvent *e)
 
 GroupTreeView::GroupTreeView(QWidget *parent) : base(parent), state(State::Idle), cachepos(nullptr), edititem(nullptr), dragdest(nullptr), dragpos(DragPos::Undefined)
 {
-    header()->setVisible(false);
     setDropIndicatorShown(false);
 }
 

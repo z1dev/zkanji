@@ -613,6 +613,9 @@
             <property name="checked">
              <bool>true</bool>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
@@ -642,15 +645,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZComboBox</class>

@@ -65,31 +65,36 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
     ui->dictWidget->setWordDragEnabled(true);
     connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &WordGroupWidget::wordSelectionChanged);
 
-    delButton = new QToolButton(this);
-    delButton->setIconSize(QSize(18, 18));
-    delButton->setIcon(QIcon(QStringLiteral(":/delmark.svg")));
-    delButton->setAutoRaise(true);
-    delButton->setEnabled(false);
-    ui->dictWidget->addFrontWidget(delButton, true);
-    connect(delButton, &QToolButton::clicked, this, &WordGroupWidget::delButtonClicked);
+    //delButton = new QToolButton(this);
+    //delButton->setIconSize(QSize(18, 18));
+    //delButton->setIcon(QIcon(QStringLiteral(":/delmark.svg")));
+    //delButton->setAutoRaise(true);
+    //delButton->setEnabled(false);
+    //ui->dictWidget->addFrontWidget(delButton, true);
+    //connect(delButton, &QToolButton::clicked, this, &WordGroupWidget::delButtonClicked);
 
-    downButton = new QToolButton(this);
-    downButton->setIconSize(QSize(18, 18));
-    downButton->setIcon(QIcon(QStringLiteral(":/downmark.svg")));
-    downButton->setAutoRaise(true);
-    downButton->setEnabled(false);
-    downButton->setAutoRepeat(true);
-    ui->dictWidget->addFrontWidget(downButton);
-    connect(downButton, &QToolButton::clicked, this, &WordGroupWidget::downButtonClicked);
+    //downButton = new QToolButton(this);
+    //downButton->setIconSize(QSize(18, 18));
+    //downButton->setIcon(QIcon(QStringLiteral(":/downmark.svg")));
+    //downButton->setAutoRaise(true);
+    //downButton->setEnabled(false);
+    //downButton->setAutoRepeat(true);
+    //ui->dictWidget->addFrontWidget(downButton);
+    //connect(downButton, &QToolButton::clicked, this, &WordGroupWidget::downButtonClicked);
 
-    upButton = new QToolButton(this);
-    upButton->setIconSize(QSize(18, 18));
-    upButton->setIcon(QIcon(QStringLiteral(":/upmark.svg")));
-    upButton->setAutoRaise(true);
-    upButton->setEnabled(false);
-    upButton->setAutoRepeat(true);
-    ui->dictWidget->addFrontWidget(upButton);
-    connect(upButton, &QToolButton::clicked, this, &WordGroupWidget::upButtonClicked);
+    //upButton = new QToolButton(this);
+    //upButton->setIconSize(QSize(18, 18));
+    //upButton->setIcon(QIcon(QStringLiteral(":/upmark.svg")));
+    //upButton->setAutoRaise(true);
+    //upButton->setEnabled(false);
+    //upButton->setAutoRepeat(true);
+    //ui->dictWidget->addFrontWidget(upButton);
+    //connect(upButton, &QToolButton::clicked, this, &WordGroupWidget::upButtonClicked);
+
+    QFrame *line = new QFrame(this);
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    ui->dictWidget->addFrontWidget(line);
 
     ui->splitter->setSizes({ 150, 250 });
     ui->splitter->setStretchFactor(0, 0);
@@ -219,9 +224,9 @@ void WordGroupWidget::on_groupWidget_selectionChanged()
 
 void WordGroupWidget::wordSelectionChanged()
 {
-    delButton->setEnabled(group != nullptr && ui->dictWidget->selectionSize() != 0);
-    upButton->setEnabled(group != nullptr && !ui->dictWidget->filtered() && ui->dictWidget->hasSelection() && !ui->dictWidget->rowSelected(0) && ui->dictWidget->continuousSelection());
-    downButton->setEnabled(group != nullptr && !ui->dictWidget->filtered() && ui->dictWidget->hasSelection() && !ui->dictWidget->rowSelected(ui->dictWidget->rowCount() - 1) && ui->dictWidget->continuousSelection());
+    ui->delButton->setEnabled(group != nullptr && ui->dictWidget->selectionSize() != 0);
+    ui->upButton->setEnabled(group != nullptr && !ui->dictWidget->filtered() && ui->dictWidget->hasSelection() && !ui->dictWidget->rowSelected(0) && ui->dictWidget->continuousSelection());
+    ui->downButton->setEnabled(group != nullptr && !ui->dictWidget->filtered() && ui->dictWidget->hasSelection() && !ui->dictWidget->rowSelected(ui->dictWidget->rowCount() - 1) && ui->dictWidget->continuousSelection());
 }
 
 void WordGroupWidget::studyButtonClicked()
@@ -271,7 +276,7 @@ void WordGroupWidget::printButtonClicked()
     }
 }
 
-void WordGroupWidget::delButtonClicked()
+void WordGroupWidget::on_delButton_clicked()
 {
     std::vector<int> indexes;
     ui->dictWidget->selectedRows(indexes);
@@ -281,7 +286,7 @@ void WordGroupWidget::delButtonClicked()
     group->remove(ranges);
 }
 
-void WordGroupWidget::upButtonClicked()
+void WordGroupWidget::on_upButton_clicked()
 {
     std::vector<int> indexes;
     ui->dictWidget->selectedRows(indexes);
@@ -291,7 +296,7 @@ void WordGroupWidget::upButtonClicked()
     group->move(ranges, ranges[0]->first - 1);
 }
 
-void WordGroupWidget::downButtonClicked()
+void WordGroupWidget::on_downButton_clicked()
 {
     std::vector<int> indexes;
     ui->dictWidget->selectedRows(indexes);

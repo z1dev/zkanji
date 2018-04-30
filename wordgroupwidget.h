@@ -45,9 +45,9 @@ private slots:
     void on_hideButton_clicked();
     void studyButtonClicked();
     void printButtonClicked();
-    void delButtonClicked();
-    void upButtonClicked();
-    void downButtonClicked();
+    void on_delButton_clicked();
+    void on_upButton_clicked();
+    void on_downButton_clicked();
     void appWindowsVisibilityChanged(bool shown);
 private:
     void updateStudyDisplay();
@@ -56,9 +56,9 @@ private:
 
     QToolButton *studyButton;
     QToolButton *printButton;
-    QToolButton *delButton;
-    QToolButton *upButton;
-    QToolButton *downButton;
+    //QToolButton *delButton;
+    //QToolButton *upButton;
+    //QToolButton *downButton;
 
     WordGroup *group;
 

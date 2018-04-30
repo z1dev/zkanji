@@ -1117,7 +1117,7 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
 
     filterMenu.clear();
 
-    a = filterMenu.addAction("Show all filters");
+    a = filterMenu.addAction(tr("Sho&w all filters"));
     a->setEnabled(!ui->strokeEdit->isVisible() || !ui->meaningEdit->isVisible() || !ui->readingEdit->isVisible() ||
         !ui->jlptEdit->isVisible() || !ui->radicalsCButton->isVisible() || !ui->jouyouCBox->isVisible() ||
         !ui->skip1Edit->isVisible() || !ui->indexEdit->isVisible());
@@ -1127,7 +1127,7 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
         filterMap.setMapping(a, 0);
     }
 
-    a = filterMenu.addAction("Hide all filters");
+    a = filterMenu.addAction(tr("&Hide all filters"));
     a->setEnabled(ui->strokeEdit->isVisible() || ui->meaningEdit->isVisible() || ui->readingEdit->isVisible() ||
         ui->jlptEdit->isVisible() || ui->radicalsCButton->isVisible() || ui->jouyouCBox->isVisible() ||
         ui->skip1Edit->isVisible() || ui->indexEdit->isVisible());
@@ -1139,49 +1139,49 @@ void KanjiSearchWidget::contextMenuEvent(QContextMenuEvent *e)
 
     filterMenu.addSeparator();
 
-    a = filterMenu.addAction("Stroke count filter");
+    a = filterMenu.addAction(tr("Stroke &count filter"));
     a->setCheckable(true);
     a->setChecked(ui->strokeEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 2);
 
-    a = filterMenu.addAction("JLPT level filter");
+    a = filterMenu.addAction(tr("&JLPT level filter"));
     a->setCheckable(true);
     a->setChecked(ui->jlptEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 3);
 
-    a = filterMenu.addAction("Meaning filter");
+    a = filterMenu.addAction(tr("&Meaning filter"));
     a->setCheckable(true);
     a->setChecked(ui->meaningEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 4);
 
-    a = filterMenu.addAction("Reading filter");
+    a = filterMenu.addAction(tr("Rea&ding filter"));
     a->setCheckable(true);
     a->setChecked(ui->readingEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 5);
 
-    a = filterMenu.addAction("Jouyou grade filter");
+    a = filterMenu.addAction(tr("Jouyou &grade filter"));
     a->setCheckable(true);
     a->setChecked(ui->jouyouCBox->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 6);
 
-    a = filterMenu.addAction("Radicals filter");
+    a = filterMenu.addAction(tr("R&adicals filter"));
     a->setCheckable(true);
     a->setChecked(ui->radicalsCButton->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 7);
 
-    a = filterMenu.addAction("Index filter");
+    a = filterMenu.addAction(tr("&Index filter"));
     a->setCheckable(true);
     a->setChecked(ui->indexEdit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));
     filterMap.setMapping(a, 8);
 
-    a = filterMenu.addAction("SKIP code filter");
+    a = filterMenu.addAction(tr("&SKIP code filter"));
     a->setCheckable(true);
     a->setChecked(ui->skip1Edit->isVisible());
     connect(a, SIGNAL(triggered(bool)), &filterMap, SLOT(map()));

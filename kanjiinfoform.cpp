@@ -1242,7 +1242,7 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
     connect(a, &QAction::triggered, this, &KanjiInfoForm::addToGroup);
     a->setEnabled(ui->kanjiView->kanjiIndex() >= 0);
     menu.addSeparator();
-    QMenu *sub = menu.addMenu("Panels");
+    QMenu *sub = menu.addMenu(tr("Panels"));
     a = sub->addAction(tr("Words"));
     a->setCheckable(true);
     a->setChecked(ui->wordsButton->isChecked());
@@ -1309,7 +1309,7 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
         if (ui->sodButton->isChecked())
         {
             menu.addSeparator();
-            QMenu *sub = menu.addMenu("Diagram options");
+            QMenu *sub = menu.addMenu(tr("Diagram options"));
             a = sub->addAction(tr("Indicator shadows"));
             a->setCheckable(true);
             a->setChecked(ui->shadowButton->isChecked());

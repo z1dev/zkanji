@@ -131,7 +131,7 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
 
     dictmenu.setButton(ui->dictButton);
 
-    connect(dockmenu.addAction("Float"), &QAction::triggered, this, &ZKanjiWidget::floatToWindow);
+    connect(dockmenu.addAction(tr("&Float")), &QAction::triggered, this, &ZKanjiWidget::floatToWindow);
 
     ui->modeButton->setIconSize(ts);
     ui->modeButton->setPopupMode(QToolButton::InstantPopup);
@@ -446,7 +446,7 @@ void ZKanjiWidget::addDockAction(QMenu *dest)
     //if (!dest->isEmpty())
     dest->addSeparator();
     //if (onmain)
-    connect(dest->addAction("Float"), &QAction::triggered, this, &ZKanjiWidget::floatToWindow);
+    connect(dest->addAction(tr("&Float")), &QAction::triggered, this, &ZKanjiWidget::floatToWindow);
     dest->addSeparator();
     //else
     //{

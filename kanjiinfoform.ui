@@ -255,6 +255,9 @@
          <property name="checked">
           <bool>true</bool>
          </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -273,6 +276,9 @@
           <string>Words</string>
          </property>
          <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoRaise">
           <bool>true</bool>
          </property>
         </widget>
@@ -300,6 +306,9 @@
            <property name="checkable">
             <bool>true</bool>
            </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -313,6 +322,9 @@
            <property name="checkable">
             <bool>true</bool>
            </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -324,6 +336,9 @@
             <string>Part of</string>
            </property>
            <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
@@ -496,7 +511,7 @@
              <item>
               <widget class="QToolButton" name="loopButton">
                <property name="toolTip">
-                <string>Play stroke order animation. Double-click to auto repeat</string>
+                <string>Auto-repeat animation</string>
                </property>
                <property name="text">
                 <string/>
