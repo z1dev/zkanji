@@ -1160,8 +1160,8 @@ bool DictImport::doImportDict()
         if (!QFileInfo::exists(path + "/JLPTNData.txt") || (!QFileInfo::exists(path + "/JMdict") && !QFileInfo::exists(path + "/JMdict_e")) || !QFileInfo::exists(path + "/kanjidic") || !QFileInfo::exists(path + "/kanjiorder.txt") ||
             !QFileInfo::exists(path + "/radkelement.txt") || !QFileInfo::exists(path + "/radkfile") || !QFileInfo::exists(path + "/zradfile.txt"))
         {
-            setErrorText("Required file missing to complete full dictionary import. Make sure you have each of the following:\n\n"
-                "JLPTNData.txt\n" "JMdict OR JMdict_e\n" "kanjidic\n" "kanjiorder.txt\n" "radkelement.txt\n" "radkfile\n" "zradfile.txt");
+            setErrorText(tr("Required file missing to complete full dictionary import. Make sure you have each of the following:") +
+                "\n\n" "JLPTNData.txt\n" "JMdict OR JMdict_e\n" "kanjidic\n" "kanjiorder.txt\n" "radkelement.txt\n" "radkfile\n" "zradfile.txt");
             return false;
         }
 
@@ -2154,7 +2154,7 @@ bool DictImport::importJLPTN(Dictionary *dict)
 
             if (parts.size() != 3 && parts.size() != 4)
             {
-                setErrorText("Invalid file format.");
+                setErrorText(tr("Invalid file format."));
                 return false;
             }
 
@@ -2165,7 +2165,7 @@ bool DictImport::importJLPTN(Dictionary *dict)
                 ushort c = kanji.at(ix).unicode();
                 if (!UNICODE_J(c) && !KANJI(c))
                 {
-                    setErrorText("Invalid file format.");
+                    setErrorText(tr("Invalid file format."));
                     return false;
                 }
             }
@@ -2180,14 +2180,14 @@ bool DictImport::importJLPTN(Dictionary *dict)
 
                 if ((!VALIDKANA(c) && !MIDDOT(c)) || (ix != 0 && DASH(c) && !KANA(kana.at(ix - 1).unicode())))
                 {
-                    setErrorText("Invalid file format.");
+                    setErrorText(tr("Invalid file format."));
                     return false;
                 }
             }
 
             if (!haskana)
             {
-                setErrorText("Invalid file format.");
+                setErrorText(tr("Invalid file format."));
                 return false;
             }
 
@@ -2197,7 +2197,7 @@ bool DictImport::importJLPTN(Dictionary *dict)
 
             if (!ok || N < 1 || N > 5)
             {
-                setErrorText("Invalid file format.");
+                setErrorText(tr("Invalid file format."));
                 return false;
             }
 
@@ -2211,7 +2211,7 @@ bool DictImport::importJLPTN(Dictionary *dict)
         {
             if (str.size() != 2 || !KANJI(str.at(0).unicode()) || str.at(1).unicode() - '0' < 0 || str.at(1).unicode() - '0' > 5)
             {
-                setErrorText("Invalid file format.");
+                setErrorText(tr("Invalid file format."));
                 return false;
             }
 
@@ -2983,7 +2983,7 @@ bool DictImport::doImportUserData()
                 int tabpos = str.indexOf('\t');
                 if (tabpos < 3)
                 {
-                    setErrorText("Invalid line format. Tab character expected.");
+                    setErrorText(tr("Invalid line format. TAB character expected."));
                     return false;
                 }
 
@@ -2995,7 +2995,7 @@ bool DictImport::doImportUserData()
 
                 if (pos != tabpos)
                 {
-                    setErrorText(tr("Invalid line format. Expected TAB after word."));
+                    setErrorText(tr("Invalid line format. TAB character expected after word."));
                     return false;
                 }
 
@@ -3037,7 +3037,7 @@ bool DictImport::doImportUserData()
 
                 if (str.size() < 6 || str.at(1) != ' ')
                 {
-                    setErrorText("Incorrect line format in kanji word examples listing.");
+                    setErrorText(tr("Incorrect line format in kanji word examples listing."));
                     return false;
                 }
 
@@ -3045,7 +3045,7 @@ bool DictImport::doImportUserData()
 
                 if (kindex == -1)
                 {
-                    setErrorText("Unrecognized kanji in kanji word examples listing.");
+                    setErrorText(tr("Unrecognized kanji in kanji word examples listing."));
                     return false;
                 }
 
@@ -3071,7 +3071,7 @@ bool DictImport::doImportUserData()
                     {
                         if (dict->wordEntry(windex)->kanji.find(str.at(0)) == -1)
                         {
-                            setErrorText("Word listed as example for kanji doesn't contain the kanji.");
+                            setErrorText(tr("Word listed as example for kanji doesn't contain the kanji."));
                             return false;
                         }
                         dict->addKanjiExample(kindex, windex);
@@ -3125,7 +3125,7 @@ bool DictImport::doImportUserData()
 
                     if (kindex == -1)
                     {
-                        setErrorText("Unrecognized kanji or invalid character in kanji listing.");
+                        setErrorText(tr("Unrecognized kanji or invalid character in kanji listing."));
                         return false;
                     }
 
@@ -3259,7 +3259,7 @@ bool DictImport::importRadFiles()
 
         if ((parts.size() != 2 && parts.size() != 3) || parts.at(0).size() != 1 || parts.at(0).at(0).unicode() < 0x30ce || parts.at(0).at(0).unicode() > 0xff5c)
         {
-            setErrorText("Invalid radkelement file.");
+            setErrorText(tr("Invalid radkelement file."));
             return false;
         }
 
@@ -3271,7 +3271,7 @@ bool DictImport::importRadFiles()
 
         if (!ok)
         {
-            setErrorText("Invalid element index number. It's not a number.");
+            setErrorText(tr("Invalid element index number. It's not a number."));
             return false;
         }
 
@@ -3315,7 +3315,7 @@ bool DictImport::importRadFiles()
             // TODO: check the radical and see if it matches an array of radicals (to be created).
             if ((parts.size() != 3 && parts.size() != 4) || parts.at(0).size() != 1 || parts.at(1).size() != 1)
             {
-                setErrorText("Bad file format.");
+                setErrorText(tr("Bad file format."));
                 return false;
             }
 
@@ -3324,7 +3324,7 @@ bool DictImport::importRadFiles()
 
             if (!ok || scnt < 1 || scnt > 20)
             {
-                setErrorText("Bad file format.");
+                setErrorText(tr("Bad file format."));
                 return false;
             }
 
@@ -3389,7 +3389,7 @@ bool DictImport::importRadFiles()
 
             if (parts.size() < 4)
             {
-                setErrorText("Bad line format.");
+                setErrorText(tr("Bad line format."));
                 return false;
             }
 
@@ -3398,7 +3398,7 @@ bool DictImport::importRadFiles()
 
             if (!ok || val < 1 || val > 214)
             {
-                setErrorText("Invalid data.");
+                setErrorText(tr("Invalid data."));
                 return false;
             }
 
@@ -3410,7 +3410,7 @@ bool DictImport::importRadFiles()
 
             if (!ok || val < 1 || val > 17)
             {
-                setErrorText("Invalid data.");
+                setErrorText(tr("Invalid data."));
                 return false;
             }
 
@@ -3426,7 +3426,7 @@ bool DictImport::importRadFiles()
                 {
                     if (!VALIDKANA(parts.at(ix).at(iy).unicode()))
                     {
-                        setErrorText("Radical name invalid.");
+                        setErrorText(tr("Radical name invalid."));
                         return false;
                     }
                 }
@@ -3476,12 +3476,12 @@ void DictImport::setErrorText(const QString &str)
     if (file.isOpen())
     {
         QString fname = QFileInfo(file.fileName()).fileName();
-        ui->infoEdit->appendPlainText(fname % " Line number: " % QString::number(file.lineNumber()) % " Error:" % str);
+        ui->infoEdit->appendPlainText(fname % " " % tr("Line number:") % " " % QString::number(file.lineNumber()) % " " % tr("Error:") % str);
 
         file.close();
     }
     else
-        ui->infoEdit->appendPlainText("Error: " % str);
+        ui->infoEdit->appendPlainText(tr("Error:") % " " % str);
 
     step = -1;
 

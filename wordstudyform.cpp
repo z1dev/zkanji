@@ -95,7 +95,7 @@ bool ChoiceLabel::isActive()
 void ChoiceLabel::setActive(bool a)
 {
     active = a;
-    setStyleSheet(QStringLiteral(""));
+    setStyleSheet(QString());
 }
 
 void ChoiceLabel::enterEvent(QEvent *e)
@@ -108,7 +108,7 @@ void ChoiceLabel::enterEvent(QEvent *e)
 void ChoiceLabel::leaveEvent(QEvent *e)
 {
     if (active)
-        setStyleSheet(QStringLiteral(""));
+        setStyleSheet(QString());
     base::leaveEvent(e);
 }
 
@@ -1095,11 +1095,11 @@ bool WordStudyForm::showNext()
 
     // Remove color and strikeout
     QFont tmpfont = ui->kanjiLabel->font();
-    ui->kanjiLabel->setStyleSheet(QStringLiteral(""));
+    ui->kanjiLabel->setStyleSheet(QString());
     ui->kanjiLabel->setFont(tmpfont);
-    ui->kanaLabel->setStyleSheet(QStringLiteral(""));
+    ui->kanaLabel->setStyleSheet(QString());
     ui->kanaLabel->setFont(tmpfont);
-    ui->meaningLabel->setStyleSheet(QStringLiteral(""));
+    ui->meaningLabel->setStyleSheet(QString());
     ui->meaningLabel->setFont(tmpfont);
     ui->meaningLabel->updated();
 
@@ -1243,7 +1243,7 @@ bool WordStudyForm::showNext()
                         str += tr(" / ");
                     str += dictionary()->displayedStudyDefinition(choices[ix]);
                 }
-                ((QLabel*)((QVBoxLayout*)ui->choiceWidget->layout())->itemAt(ix)->widget())->setStyleSheet(QStringLiteral(""));
+                ((QLabel*)((QVBoxLayout*)ui->choiceWidget->layout())->itemAt(ix)->widget())->setStyleSheet(QString());
                 ((QLabel*)((QVBoxLayout*)ui->choiceWidget->layout())->itemAt(ix)->widget())->setFont(tmpfont);
                 ((QLabel*)((QVBoxLayout*)ui->choiceWidget->layout())->itemAt(ix)->widget())->setText(tr("   %1)  %2").arg(ix + 1).arg(str));
 

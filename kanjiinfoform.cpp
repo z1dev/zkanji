@@ -62,7 +62,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     readingFilterButton = new QToolButton(this);
     //readingFilterButton->setText("ReF");
     readingFilterButton->setCheckable(true);
-    readingFilterButton->setToolTip("Only show marked words");
+    readingFilterButton->setToolTip(tr("Only show marked words"));
     readingFilterButton->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
     readingFilterButton->setIcon(QIcon(":/wordselect.svg"));
     readingFilterButton->setAutoRaise(true);
@@ -74,7 +74,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     //exampleSelButton->setText("Sel");
     exampleSelButton->setEnabled(false);
     exampleSelButton->setCheckable(true);
-    exampleSelButton->setToolTip("Mark as example word of kanji");
+    exampleSelButton->setToolTip(tr("Mark as example word of kanji"));
     exampleSelButton->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
     exampleSelButton->setIcon(QIcon(":/paperclip.svg"));
     exampleSelButton->setAutoRaise(true);
@@ -88,7 +88,7 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     readingCBox = new QComboBox(this);
     readingCBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
     readingCBox->setMinimumContentsLength(6);
-    readingCBox->setToolTip("Show words that match selected kanji reading");
+    readingCBox->setToolTip(tr("Show words that match selected kanji reading"));
     ui->dictWidget->addBackWidget(readingCBox);
     
     connect(readingCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readingBoxChanged(int)));
@@ -1335,7 +1335,7 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
             });
 
             sub->addSeparator();
-            //sub = menu.addMenu("Stroke drawing speed");
+            //sub = menu.addMenu(tr("Stroke drawing speed"));
             a = sub->addAction(tr("Slow"));
             a->setCheckable(true);
             a->setChecked(ui->speedSlider->value() == 1);

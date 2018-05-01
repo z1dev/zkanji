@@ -1773,8 +1773,8 @@ void GlobalUI::installShortcuts(bool install)
         return;
     }
 
-    const QString modifiers[3] = { QStringLiteral("Ctrl+Alt+"), QStringLiteral("Alt+"), QStringLiteral("Ctrl+") };
-    const QString shift = QStringLiteral("Shift+");
+    const QString modifiers[3] = { tr("Ctrl+Alt+"), tr("Alt+"), tr("Ctrl+") };
+    const QString shift = tr("Shift+");
 
     if (Settings::shortcuts.fromenable && fromPopupDictShortcut == nullptr)
     {

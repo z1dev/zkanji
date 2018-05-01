@@ -151,7 +151,7 @@ QVariant DeckListModel::data(const QModelIndex &index, int role) const
         {
             QDate date = decks->items(row)->lastDay();
             if (!date.isValid())
-                return QString("Never");
+                return tr("Never");
             return formatDate(date);
         }
         else if (col == 3)

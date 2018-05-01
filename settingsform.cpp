@@ -106,7 +106,7 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
 
     p.setPen(Settings::textColor(this, ColorSettings::Text));
 
-    QString str = toKana(QString("hiraganaKATAKANA"), true) + QChar(0x611f) + QChar(0x3058) + QChar(0x5e79) + QChar(0x4e8b) + QChar(0x6f22) + QChar(0x5b57) + QChar(0x76e3) + QChar(0x4e8b) + QChar(0x5b8c) + QChar(0x6cbb);
+    QString str = toKana(tr("hiraganaKATAKANA"), true) + QChar(0x611f) + QChar(0x3058) + QChar(0x5e79) + QChar(0x4e8b) + QChar(0x6f22) + QChar(0x5b57) + QChar(0x76e3) + QChar(0x4e8b) + QChar(0x5b8c) + QChar(0x6cbb);
 
     // Size the text would take up in a dictionary listing.
     int linesiz = (sizes == FontSettings::Medium ? 19 : sizes == FontSettings::Small ? 17 : sizes == FontSettings::Large ? 24 : 28) - 1;
@@ -1097,7 +1097,7 @@ void SettingsForm::sitesSelChanged(int curr, int prev)
     {
         ignoresitechange = true;
         ui->siteNameEdit->setText(QString());
-        ui->siteUrlEdit->setText(QString("http://"));
+        ui->siteUrlEdit->setText("http://");
         ui->siteLockButton->setChecked(false);
         ignoresitechange = false;
 

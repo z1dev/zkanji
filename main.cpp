@@ -958,7 +958,7 @@ int main(int argc, char **argv)
     }
     catch (...)
     {
-        showSimpleDialog("zkanji", a.tr("An unexpected error occurred. The program will terminate."));
+        showSimpleDialog("zkanji", qApp->translate(0, "An unexpected error occurred. The program will terminate."));
         return 1;
     }
 
