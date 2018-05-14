@@ -463,10 +463,10 @@ void WordEditorForm::closeEvent(QCloseEvent *e)
             // The word is modified but apply is not enabled means the word is in an invalid
             // state. Closing the dialog now can only result in a loss.
             int r = showAndReturn("zkanji", tr("Your current changes to the word are not saved in the dictionary and will be lost."),
-                tr("The word is incomplete and cannot be saved. Select \"%1\" to continue editing the word, or \"%2\" to close the window without saving.").arg(tr("Cancel")).arg(tr("Discard Changes")),
+                tr("The word is incomplete and cannot be saved. Select \"%1\" to continue editing the word, or \"%2\" to close the window without saving.").arg(tr("Cancel")).arg(tr("Discard changes")),
                 {
                     { tr("Cancel"), QMessageBox::RejectRole },
-                    { tr("Discard Changes"), QMessageBox::DestructiveRole }
+                    { tr("Discard changes"), QMessageBox::DestructiveRole }
                 }, 0);
 
             if (r == 0)
@@ -481,11 +481,11 @@ void WordEditorForm::closeEvent(QCloseEvent *e)
         {
             int r = canReset() ? showAndReturn(QStringLiteral("zkanji"), tr("Your current changes to the word are not saved in the dictionary and will be lost."),
                 tr("Select \"%1\" to continue editing the word, \"%2\" to update the dictionary and close the window, or \"%3\" to close the window without saving your changes.")
-                .arg(tr("Cancel")).arg(tr("Save and Close")).arg(tr("Discard Changes")),
+                .arg(tr("Cancel")).arg(tr("Save and close")).arg(tr("Discard changes")),
                 {
                     { tr("Cancel"), QMessageBox::RejectRole },
-                    { tr("Save and Close"), QMessageBox::AcceptRole },
-                    { tr("Discard Changes"), QMessageBox::DestructiveRole }
+                    { tr("Save and close"), QMessageBox::AcceptRole },
+                    { tr("Discard changes"), QMessageBox::DestructiveRole }
                 }, 0) : 2;
             if (r == 0)
             {
@@ -714,7 +714,7 @@ void WordEditorForm::applyClicked()
 
         if (dict->findKanjiKanaWord(entry.get()) != -1)
         {
-            QMessageBox::warning(this, "zkanji", tr("The word cannot be created, as another word with the entered kanji form and kana reading already exists in the dictionary. "));
+            QMessageBox::warning(this, "zkanji", tr("The word cannot be created, as another word with the entered kanji form and kana reading already exists in the dictionary."));
             return;
         }
     }

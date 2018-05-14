@@ -101,7 +101,7 @@ void adjustFontSize(QFont &f, int height, QPainter *p = nullptr/*, QString str*/
 
 // Used in restrictWidgetSize to specify whether the minimum, the maximum or both width
 // restriction sizes should be set.
-enum class AdjustedValue : int { Min, Max, MinMax };
+enum class AdjustedValue { Min, Max, MinMax };
 
 // Updates the minimum and/or maximum width of the passed widget, to fit charnum number of
 // average width characters. The measurement uses the currently set font in the widget.
@@ -182,31 +182,33 @@ int showAndReturn(QString title, QString text, QString details, const std::vecto
 int showAndReturn(QWidget *parent, QString title, QString text, QString details, const std::vector<SARButton> &buttons, int defaultbtn = -1);
 
 
-// Returns a short string representation of the given date time's date
-// portion.
+// Returns a short string representation of the given date time's date portion. The string in
+// unset is returned if the date time is invalid.
 QString formatDate(const QDateTime &d, QString unset = QString());
-// Returns a short string representation of the given date.
+// Returns a short string representation of the given date. The string in unset is returned if
+// the date time is invalid.
 QString formatDate(const QDate &d, QString unset = QString());
-// Returns the string representation of the interval given in milliseconds. 
-// The returned value is in the form of N days, or N months etc.
+// Returns a short string representation of the given date time's date portion.  The string in
+// unset is returned if the date time is invalid.
+QString formatDateTime(const QDateTime &d, QString unset = QString());
+// Returns the string representation of the interval given in milliseconds. The returned value
+// is in the form of N days, or N months etc.
 QString formatSpacing(quint32 msec);
-// Fixes the passed date time to represent the long term study day of
-// the date and returns a short string representation of its date
-// portion.
+// Fixes the passed date time to represent the long term study day of the date and returns a
+// short string representation of its date portion.
 QString fixFormatDate(const QDateTime &d, QString unset);
-// Fixes the passed date time to represent the long term study day of
-// the date and returns a short string representation of its date
-// portion. If the date is on the same study date as today, the string
-// "Today" or its translation is returned instead.
+// Fixes the passed date time to represent the long term study day of the date and returns a
+// short string representation of its date portion. If the date is on the same study date as
+// today, the string "Today" or its translation is returned instead.
 QString fixFormatPastDate(const QDateTime &d);
-// Fixes the passed date time to represent the long term study day of
-// the date and returns a short string representation of its date
-// portion. If the date is in the past, "Due" or a translation is returned.
+// Fixes the passed date time to represent the long term study day of the date and returns a
+// short string representation of its date portion. If the date is in the past, "Due" or a
+// translation is returned.
 QString fixFormatNextDate(const QDateTime &d);
 
-// Returns a modified date time to represent the given day of the long-term
-// study list, by subtracting hours from it. Beware that the time part is
-// not cleared, though its value becomes unusable.
+// Returns a modified date time to represent the given day of the long-term study list, by
+// subtracting hours from it. Beware that the time part is not cleared, though its value
+// becomes unusable.
 QDate ltDay(const QDateTime &d);
 
 
@@ -308,7 +310,7 @@ void deleteSvgImageCache(QString svgpath, int version = -1);
 
 
 // Functions for drawing checkboxes in widgets.
-enum class CheckBoxMouseState : int {
+enum class CheckBoxMouseState {
     None = 0,
     Hover = 1,
     Down = 2,
@@ -391,11 +393,15 @@ public:
         NormalDate,
         // Like a normal date, but corrected to the long-term study day
         DayFixedDate,
-
+        // Date and time in the form of eg. yyyy.MM.dd hh:mm:ss
+        NormalDateTime,
     };
 
     // Returns the format string for a full date corresponding to the current settings.
-    static QString formatString();
+    static QString dateFormatString();
+
+    // Returns the format string for a time corresponding to the current settings.
+    static QString timeFormatString();
 
     // Formats a string for the passed date time in the passed format. Set utc to true if the
     // date should be shown in UTC time instead of local.

@@ -73,9 +73,6 @@
        </property>
        <item>
         <widget class="QToolButton" name="closeButton">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
          <property name="toolTip">
           <string>Close</string>
          </property>
@@ -112,9 +109,6 @@
        </item>
        <item>
         <widget class="QToolButton" name="gridButton">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
          <property name="toolTip">
           <string>Toggle grid to help stroke positioning</string>
          </property>
@@ -141,9 +135,6 @@
        </item>
        <item>
         <widget class="QToolButton" name="generalButton">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
          <property name="toolTip">
           <string>Allow searching for kana or non-kanji characters</string>
          </property>
@@ -183,9 +174,6 @@
        </item>
        <item>
         <widget class="QToolButton" name="prevButton">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
          <property name="toolTip">
           <string>Undo last stroke</string>
          </property>
@@ -209,9 +197,6 @@
        </item>
        <item>
         <widget class="QToolButton" name="nextButton">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
          <property name="toolTip">
           <string>Redo last stroke</string>
          </property>
@@ -235,14 +220,8 @@
        </item>
        <item>
         <widget class="QToolButton" name="clearButton">
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
          <property name="toolTip">
           <string>Erase drawn strokes</string>
-         </property>
-         <property name="text">
-          <string>...</string>
          </property>
          <property name="icon">
           <iconset resource="Resources/resources.qrc">

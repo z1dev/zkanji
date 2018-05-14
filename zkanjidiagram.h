@@ -14,7 +14,7 @@
 
 class QImage;
 class QBasicTimer;
-enum class StrokeDirection : int;
+enum class StrokeDirection;
 
 class ZKanjiDiagram : public QWidget
 {

@@ -12,7 +12,7 @@
 #include "smartvector.h"
 #include "ranges.h"
 
-enum class StatusTypes : int;
+enum class StatusTypes;
 
 // Custom roles for columns in a ZListView. Any model used in the list view can provide these
 // values and they will be used.

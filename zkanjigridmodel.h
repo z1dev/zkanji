@@ -17,7 +17,7 @@ class GroupBase;
 struct Range;
 struct Interval;
 class QMimeData;
-enum class StatusTypes : int;
+enum class StatusTypes;
 
 // A model (data provider) of a list of kanji for ZKanjiGridViews. While not a Qt model,
 // mimics the view/model design, but as it doesn't have to be so general, its functions
@@ -228,7 +228,7 @@ private:
     typedef KanjiGridModel base;
 };
 
-enum class KanjiGridSortOrder : int { Jouyou, JLPT, Freq, Words, WordFreq, Stroke, Rad, Unicode, JISX0208, NoSort };
+enum class KanjiGridSortOrder { Jouyou, JLPT, Freq, Words, WordFreq, Stroke, Rad, Unicode, JISX0208, NoSort };
 
 // Sorting model of a kanji grid model. Only used to provide data for the main kanji grid, and
 // not used for groups. It doesn't support signal forwarding only relevant to group models.

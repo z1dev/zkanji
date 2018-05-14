@@ -1017,7 +1017,7 @@ void StudyDeck::fixResizeCardId(int size)
 {
     if (ids.size() == size)
         return;
-    QString errormsg = qApp->translate("", "The study data is corrupted. The program will work, but there's a high chance that the cards in the long-term study list will have invalid intervals and score.");
+    QString errormsg = qApp->translate("", "The study data is corrupted. There's a high chance that the cards in the long-term study list will have invalid intervals and score.");
     QMessageBox::warning(nullptr, "zkanji", errormsg);
     while (ids.size() > size)
         deleteCard(ids.back());

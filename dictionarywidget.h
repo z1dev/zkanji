@@ -43,7 +43,7 @@ enum class SearchMode : uchar;
 enum class BrowseOrder : uchar;
 
 enum class Inclusion : uchar;
-enum class ListSelectionType : int;
+enum class ListSelectionType;
 
 enum class DictColumnTypes;
 

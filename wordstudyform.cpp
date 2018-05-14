@@ -600,7 +600,7 @@ bool WordStudyForm::eventFilter(QObject *obj, QEvent *e)
         {
             QString str = ui->undoLabel->text();
             int pos = str.indexOf('&');
-            if (pos != -1 && pos < str.size() - 1 && ke->key() == QKeySequence(qApp->translate("QShortcut", "Alt") + "+" + str.at(pos + 1).toUpper()))
+            if (pos != -1 && pos < str.size() - 1 && ke->key() == QKeySequence(QString("Alt+") + str.at(pos + 1).toUpper()))
             {
                 ui->undoCBox->showPopup();
                 return true;

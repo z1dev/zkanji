@@ -286,7 +286,7 @@ DictImport::DictImport(QWidget *parent) : base(parent, false), ui(new Ui::DictIm
     ui->setupUi(this);
     QString s1 = tr("Importing dictionary. This can take several minutes, please wait...");
     QString s2 = tr("You can stop the import if you close this window. No data will be lost or updated.");
-    ui->progressLabel->setText(tr("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
+    ui->progressLabel->setText(QString("<html><head/><body><p><span style=\"font-size:%1pt;\">%2</span></p><p><span style=\"font-size:%3pt;\">%4</span></p></body></html>").arg(Settings::scaled(12)).arg(s1).arg(Settings::scaled(9)).arg(s2));
 
     ui->finishButton->setEnabled(false);
     connect(ui->finishButton, &QPushButton::clicked, this, &DictImport::closeAfterImport);
@@ -390,7 +390,7 @@ bool DictImport::importExamples(QString p, QString o, Dictionary *d)
     outpath = o;
     dict = d;
 
-    setMainText(tr("Importing Example sentences. This can take several minutes, please wait..."));
+    setMainText(tr("Importing example sentences. This can take several minutes, please wait..."));
 
     show();
     adjustSize();
@@ -415,7 +415,7 @@ bool DictImport::importUserData(const QString &p, Dictionary *d, KanjiGroupCateg
     kanjiex = kanjiexamples;
     studymeanings = wordsmeanings;
 
-    setMainText(tr("Importing Example sentences. This can take several minutes, please wait..."));
+    setMainText(tr("Importing example sentences. This can take several minutes, please wait..."));
 
     show();
     adjustSize();

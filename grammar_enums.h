@@ -10,7 +10,7 @@
 #include <QChar>
 
 // Possible recognized inflection types.
-enum class InfTypes : int
+enum class InfTypes
 {
     Masu,
     Mashita,
@@ -49,7 +49,7 @@ enum class InfTypes : int
 
 // Information about a word. Usually its kana or kanji usage.
 // If added more than 8 values, make sure any place that saves/loads or stores this have enough space
-enum class WordInfo : int
+enum class WordInfo
 {
     Ateji,
     Gikun,
@@ -69,7 +69,7 @@ enum class WordInfo : int
 // Changes from OldWordTypes:
 // Removed AuxVerb and AuxAdj. They are replaced with Aux and the correct
 // verb or adjective form.
-enum class WordTypes : int
+enum class WordTypes
 {
     Noun,
 
@@ -117,7 +117,7 @@ enum class WordTypes : int
 };
 
 // Removed KanjiOnly, changed XRated to vulgar
-enum class WordNotes : int
+enum class WordNotes
 {
     /* Others */
     KanaOnly,
@@ -153,7 +153,7 @@ enum class WordNotes : int
     Count
 };
 
-enum class WordFields : int
+enum class WordFields
 {
     Architecture, /* 2015 */
     Business, /* 2015 */

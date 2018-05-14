@@ -1039,13 +1039,13 @@ bool ZKanjiForm::event(QEvent *e)
 
         if (srcw && srcw->dictionary())
         {
-            searchgroup->actions().at(0)->setText(tr("Japanese to %1").arg(srcw->dictionary()->name()));
-            searchgroup->actions().at(1)->setText(tr("%1 to Japanese").arg(srcw->dictionary()->name()));
+            searchgroup->actions().at(0)->setText(tr("&Japanese to %1").arg(srcw->dictionary()->name()));
+            searchgroup->actions().at(1)->setText(tr("%1 &to Japanese").arg(srcw->dictionary()->name()));
         }
         if (grpw && grpw->dictionary())
         {
-            wordsgroup->actions().at(0)->setText(tr("Japanese to %1").arg(grpw->dictionary()->name()));
-            wordsgroup->actions().at(1)->setText(tr("%1 to Japanese").arg(grpw->dictionary()->name()));
+            wordsgroup->actions().at(0)->setText(tr("&Japanese to %1").arg(grpw->dictionary()->name()));
+            wordsgroup->actions().at(1)->setText(tr("%1 &to Japanese").arg(grpw->dictionary()->name()));
         }
 
         if (activewidget)
@@ -1470,25 +1470,25 @@ void ZKanjiForm::fillMainMenu()
 
         QMenu *datamenu = filemenu->addMenu(tr("&Database"));
 
-        a = datamenu->addAction(tr("Import base dictionary..."));
+        a = datamenu->addAction(tr("Import &base dictionary..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::importBaseDict);
-        a = datamenu->addAction(tr("Import example sentences..."));
+        a = datamenu->addAction(tr("Import &example sentences..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::importExamples);
 
         QMenu *inmenu = filemenu->addMenu(tr("&Export/Import"));
 
-        a = inmenu->addAction(tr("Export user data..."));
+        a = inmenu->addAction(tr("Export &user data..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::userExportAction);
 
-        a = inmenu->addAction(tr("Export dictionary..."));
+        a = inmenu->addAction(tr("Export &dictionary..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::dictExportAction);
 
         inmenu->addSeparator();
 
-        a = inmenu->addAction(tr("Import user data..."));
+        a = inmenu->addAction(tr("Import u&ser data..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::userImportAction);
 
-        a = inmenu->addAction(tr("Import dictionary..."));
+        a = inmenu->addAction(tr("Import dic&tionary..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::dictImportAction);
 
         //a = new QAction(tr("Save user data"), this);
@@ -1522,6 +1522,7 @@ void ZKanjiForm::fillMainMenu()
         studymenu->addAction(a);
 
         a = new QAction(tr("Long-term &study lists..."), this);
+        //: Long-term study list menu shortcut
         a->setShortcut(QKeySequence(tr("F5")) /*Qt::CTRL + Qt::Key_S*/);
         connect(a, &QAction::triggered, gUI, &GlobalUI::showDecks);
         studymenu->addAction(a);
@@ -1564,7 +1565,7 @@ void ZKanjiForm::fillMainMenu()
     QSignalMapper *viewmap = new QSignalMapper(this);
     connect(viewmap, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, &ZKanjiForm::setViewMode);
     viewgroup = new QActionGroup(this);
-    gUI->addCommandAction(viewmap, viewmenu, tr("&Dictionary search"), QKeySequence(tr("Ctrl+1")) /*Qt::CTRL + Qt::Key_1*/, 0, true, viewgroup)->setIcon(QIcon(":/magnisearch.svg"));
+    gUI->addCommandAction(viewmap, viewmenu, tr("Dictionary &search"), QKeySequence(tr("Ctrl+1")) /*Qt::CTRL + Qt::Key_1*/, 0, true, viewgroup)->setIcon(QIcon(":/magnisearch.svg"));
     gUI->addCommandAction(viewmap, viewmenu, tr("&Word groups"), QKeySequence(tr("Ctrl+2")), 1, true, viewgroup)->setIcon(QIcon(":/wordgroups.svg"));
     gUI->addCommandAction(viewmap, viewmenu, tr("&Kanji groups"), QKeySequence(tr("Ctrl+3")), 2, true, viewgroup)->setIcon(QIcon(":/kanjigroups.svg"));
     gUI->addCommandAction(viewmap, viewmenu, tr("Kan&ji search"), QKeySequence(tr("Ctrl+4")), 3, true, viewgroup)->setIcon(QIcon(":/kanjisearch.svg"));
@@ -1592,7 +1593,7 @@ void ZKanjiForm::fillMainMenu()
     kanjisearchmenu = menu->addMenu(tr("Kan&ji search"));
     QMenu *kanjisrcsubmenu = kanjisearchmenu->addMenu(tr("&Filters"));
 
-    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("&Reset"), QKeySequence(tr("Ctrl+R")), makeCommand(Commands::ResetKanjiSearch, CommandCategories::SearchCateg), false);
+    gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("&Reset"), QKeySequence(/*tr("Ctrl+R")*/), makeCommand(Commands::ResetKanjiSearch, CommandCategories::SearchCateg), false);
     kanjisrcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("Stroke &count filter"), QKeySequence(tr("1"))/*Qt::Key_1*/, makeCommand(Commands::StrokeFilter, CommandCategories::SearchCateg), true);
     gUI->addCommandAction(commandmap, kanjisrcsubmenu, tr("&JLPT filter"), QKeySequence(tr("2")), makeCommand(Commands::JLPTFilter, CommandCategories::SearchCateg), true);

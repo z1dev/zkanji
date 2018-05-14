@@ -204,7 +204,7 @@ void Sentences::load(const QString &filename)
         ZKanji::commons.clearExamplesData();
         ZKanji::wordexamples.reset();
         f.close();
-        QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "The example sentences data file is corrupted."));
+        QMessageBox::warning(nullptr, "zkanji", qApp->translate("", "The example sentences data file is corrupted."));
     }
 }
 

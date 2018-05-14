@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Kanji Information</string>
+   <string>Kanji information</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -67,7 +67,7 @@
               <bool>true</bool>
              </property>
              <property name="toolTip">
-              <string>Lock displayed data. Other kanji will be displayed in a different window.</string>
+              <string>Lock displayed data. Other kanji will be displayed in a different window</string>
              </property>
              <property name="icon">
               <iconset resource="Resources/resources.qrc">
@@ -105,7 +105,14 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Kanji Information -</string>
+            <string>Kanji information</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string notr="true"> - </string>
            </property>
           </widget>
          </item>
@@ -131,9 +138,25 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>00</string>
+            <string notr="true">00</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>2</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <widget class="QLabel" name="label_3">
@@ -144,7 +167,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string> Radical:</string>
+            <string>Radical:</string>
            </property>
           </widget>
          </item>
@@ -157,14 +180,14 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>00</string>
+            <string notr="true">00</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QLabel" name="radSymLabel">
            <property name="text">
-            <string>I</string>
+            <string notr="true">I</string>
            </property>
           </widget>
          </item>
@@ -752,7 +775,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>00</string>
+                <string notr="true">00</string>
                </property>
                <property name="textFormat">
                 <enum>Qt::RichText</enum>
@@ -1171,15 +1194,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZKanjiDiagram</class>
-   <extends>QWidget</extends>
-   <header>zkanjidiagram.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZItemScroller</class>
    <extends>QWidget</extends>
    <header>zitemscroller.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZKanjiDiagram</class>
+   <extends>QWidget</extends>
+   <header>zkanjidiagram.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1189,6 +1212,27 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>lockButton</tabstop>
+  <tabstop>gridButton</tabstop>
+  <tabstop>sodButton</tabstop>
+  <tabstop>wordsButton</tabstop>
+  <tabstop>simButton</tabstop>
+  <tabstop>partsButton</tabstop>
+  <tabstop>partofButton</tabstop>
+  <tabstop>infoText</tabstop>
+  <tabstop>loopButton</tabstop>
+  <tabstop>playButton</tabstop>
+  <tabstop>pauseButton</tabstop>
+  <tabstop>stopButton</tabstop>
+  <tabstop>rewindButton</tabstop>
+  <tabstop>backButton</tabstop>
+  <tabstop>foreButton</tabstop>
+  <tabstop>shadowButton</tabstop>
+  <tabstop>numberButton</tabstop>
+  <tabstop>dirButton</tabstop>
+  <tabstop>speedSlider</tabstop>
+ </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>

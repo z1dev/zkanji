@@ -172,7 +172,11 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>dictCBox</tabstop>
+  <tabstop>kanjiTree</tabstop>
   <tabstop>wordsTree</tabstop>
+  <tabstop>kanjiBox</tabstop>
+  <tabstop>wordsBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

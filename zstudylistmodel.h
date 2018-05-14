@@ -13,7 +13,7 @@
 class WordDeck;
 struct WordDeckItem;
 
-enum class StatusTypes : int;
+enum class StatusTypes;
 
 enum class WordPartBits : uchar;
 
@@ -54,7 +54,7 @@ enum class DeckRowRoles
     ItemHint,
 };
 
-enum class DeckItemViewModes : int { Queued, Studied, Tested };
+enum class DeckItemViewModes { Queued, Studied, Tested };
 
 class StudyListModel : public DictionaryItemModel
 {

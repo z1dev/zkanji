@@ -14,7 +14,7 @@ class WordGroup;
 
 
 enum class WordStudyMethod : uchar { Gradual, Single };
-enum class WordStudyQuestion : int { Kanji = 0x0001, Kana = 0x0002, Definition = 0x0004, KanjiKana = 0x0008, DefKanji = 0x0010, DefKana = 0x0020 };
+enum class WordStudyQuestion { Kanji = 0x0001, Kana = 0x0002, Definition = 0x0004, KanjiKana = 0x0008, DefKanji = 0x0010, DefKana = 0x0020 };
 enum class WordStudyAnswering : uchar { CorrectWrong, Choices5, Choices8 };
 
 struct WordStudyItem

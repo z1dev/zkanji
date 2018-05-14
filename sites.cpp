@@ -353,7 +353,7 @@ void SitesItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
     QString str;
     if (col == 0)
-        str = tr("-");
+        str = QStringLiteral("-");
     else
         str = tr("Select this and edit above to add a new site.");
 

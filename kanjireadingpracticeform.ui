@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>516</width>
-    <height>403</height>
+    <height>391</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -294,11 +294,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
@@ -309,7 +304,18 @@
    <extends>QTableView</extends>
    <header>zdictionarylistview.h</header>
   </customwidget>
+  <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>wordsTable</tabstop>
+  <tabstop>answerEdit</tabstop>
+  <tabstop>acceptButton</tabstop>
+  <tabstop>nextButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

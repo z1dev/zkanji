@@ -138,7 +138,7 @@
                </font>
               </property>
               <property name="text">
-               <string>*****</string>
+               <string notr="true">*****</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -437,9 +437,6 @@
                  <layout class="QHBoxLayout" name="horizontalLayout_3">
                   <item>
                    <widget class="QToolButton" name="recognizeButton">
-                    <property name="text">
-                     <string>K</string>
-                    </property>
                     <property name="icon">
                      <iconset resource="Resources/resources.qrc">
                       <normaloff>:/kanjipen.svg</normaloff>:/kanjipen.svg</iconset>
@@ -1574,15 +1571,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZKanaLineEdit</class>
@@ -1595,6 +1592,14 @@
    <header>wordstudyform.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>optionsButton</tabstop>
+  <tabstop>recognizeButton</tabstop>
+  <tabstop>kanaAnswerEdit</tabstop>
+  <tabstop>defAnswerEdit</tabstop>
+  <tabstop>resumeButton</tabstop>
+  <tabstop>quitButton</tabstop>
+ </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>

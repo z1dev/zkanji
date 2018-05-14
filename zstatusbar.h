@@ -16,7 +16,7 @@
 // * TitleDouble : A title label and two value labels next to each other.
 // * DoubleValue : No title label and two value labels next to each other.
 // * SingleValue : A single value label that can extend horizontally.
-enum class StatusTypes : int { TitleValue, TitleDouble, DoubleValue, SingleValue };
+enum class StatusTypes { TitleValue, TitleDouble, DoubleValue, SingleValue };
 
 class QSizeGrip;
 class ZStatusLayout : public QLayout

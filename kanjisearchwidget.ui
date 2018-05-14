@@ -87,7 +87,7 @@
             <string>Number of strokes</string>
            </property>
            <property name="text">
-            <string>1</string>
+            <string notr="true">1</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -103,7 +103,7 @@
             <string>JLPT N level</string>
            </property>
            <property name="text">
-            <string>2</string>
+            <string notr="true">2</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -119,7 +119,7 @@
             <string>Kanji meaning</string>
            </property>
            <property name="text">
-            <string>3</string>
+            <string notr="true">3</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -135,7 +135,7 @@
             <string>Kanji reading</string>
            </property>
            <property name="text">
-            <string>4</string>
+            <string notr="true">4</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -151,7 +151,7 @@
             <string>Jouyou grade</string>
            </property>
            <property name="text">
-            <string>5</string>
+            <string notr="true">5</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -167,7 +167,7 @@
             <string>Radicals</string>
            </property>
            <property name="text">
-            <string>6</string>
+            <string notr="true">6</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -183,7 +183,7 @@
             <string>Index search</string>
            </property>
            <property name="text">
-            <string>7</string>
+            <string notr="true">7</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -199,7 +199,7 @@
             <string>SKIP lookup</string>
            </property>
            <property name="text">
-            <string>8</string>
+            <string notr="true">8</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -574,9 +574,6 @@
               </item>
               <item>
                <widget class="QToolButton" name="rStrictButton">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
                 <property name="toolTip">
                  <string>Hiragana for kun and katakana for ON readings</string>
                 </property>
@@ -858,117 +855,117 @@
            </item>
            <item>
             <property name="text">
-             <string>Essential K.</string>
+             <string extracomment="book title">Essential K.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Gakken Kanji Dict.</string>
+             <string extracomment="book title">Gakken Kanji Dict.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>New J-E ch. dict.</string>
+             <string extracomment="book title">New J-E ch. dict.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Rem. the Kanji</string>
+             <string extracomment="book title: Remembering the kanji">Rem. the Kanji</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Rem. the Kanji 6th</string>
+             <string extracomment="book title: Remembering the kanji 6th edition">Rem. the Kanji 6th</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>R. the Kanji (Fr.)</string>
+             <string extracomment="book title: Remembering the kanji French version">R. the Kanji (Fr.)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>A G. to Rem. J. C.</string>
+             <string extracomment="book title: A guide to remembering Japanese Characters">A G. to Rem. J. C.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Mdrn R. J-E C. D.</string>
+             <string extracomment="book title: The Modern Readers' Japanese-English character dictionary">Mdrn R. J-E C. D.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>New Nelson C. D.</string>
+             <string extracomment="book title: New Nelson Character Dictionary">New Nelson C. D.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>S&amp;H D.</string>
+             <string extracomment="book title: Kanji Dictionary by Spahn &amp; Hadamitzky">S&amp;H D.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>S&amp;H K&amp;K</string>
+             <string extracomment="book title: Kanji and Kana by Spahn &amp; Hadamitzky">S&amp;H K&amp;K</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>J.F.B.P.</string>
+             <string extracomment="book title: Japanese For Busy People">J.F.B.P.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Kanji Way</string>
+             <string extracomment="book title">Kanji Way</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>J. Kanji. Flashcards</string>
+             <string extracomment="published title: Japanese Kanji Flashcards">J. Kanji. Flashcards</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Comp K. Guide</string>
+             <string extracomment="book title: The complete guide to Japanese Kanji">Comp K. Guide</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Kodansha Kanji D.</string>
+             <string extracomment="book: Kodansha Kanji Dictionary">Kodansha Kanji D.</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>2001 Kanji</string>
+             <string extracomment="book title: 2001 Kanji">2001 Kanji</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Guide to R&amp;W</string>
+             <string extracomment="book title: Guide to Reading and Writing Japanese">Guide to R&amp;W</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Guide to R&amp;W 3rd</string>
+             <string extracomment="book title: Guide to Reading and Writing Japanese 3rd edition">Guide to R&amp;W 3rd</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>K. in Context</string>
+             <string extracomment="book title: Kanji in Context">K. in Context</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Learners D. (1999)</string>
+             <string extracomment="book title: Learners Dictionary 1999 edition">Learners D. (1999)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Learners D. (2013)</string>
+             <string extracomment="book title: Learners Dictionary 2013 edition">Learners D. (2013)</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Tuttle K. Cards</string>
+             <string extracomment="published title: Tuttle Kanji Cards">Tuttle K. Cards</string>
             </property>
            </item>
           </widget>
@@ -1324,122 +1321,122 @@
         </item>
         <item>
          <property name="text">
-          <string>Essential Kanji</string>
+          <string extracomment="book title">Essential Kanji</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Gakken Kanji Dictionary</string>
+          <string extracomment="book title">Gakken Kanji Dictionary</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>New J-E Character Dictionary</string>
+          <string extracomment="book title">New J-E Character Dictionary</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Remembering the Kanji</string>
+          <string extracomment="book title">Remembering the Kanji</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Remembering the Kanji 6th</string>
+          <string extracomment="book title">Remembering the Kanji 6th</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Remembering the Kanji (Fr.)</string>
+          <string extracomment="book title">Remembering the Kanji (Fr.)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>A Guide to Rem. Japanese Char.</string>
+          <string extracomment="book title">A Guide to Rem. Japanese Char.</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Modern R. J-E Char. Dictionary</string>
+          <string extracomment="book title">Modern R. J-E Char. Dictionary</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>New Nelson Char. Dictionary</string>
+          <string extracomment="book title">New Nelson Char. Dictionary</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Spahn &amp; Hadamitzky Dictionary</string>
+          <string extracomment="book title">Spahn &amp; Hadamitzky Dictionary</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Spahn &amp; Hadamitzky K &amp; K</string>
+          <string extracomment="book title">Spahn &amp; Hadamitzky K &amp; K</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Kanji and Kana (old)</string>
+          <string extracomment="book title">Kanji and Kana (old)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Japanese For Busy People</string>
+          <string extracomment="book title">Japanese For Busy People</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Kanji Way</string>
+          <string extracomment="book title">Kanji Way</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Japanese Kanji Flashcards</string>
+          <string extracomment="book title">Japanese Kanji Flashcards</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Compact Kanji Guide</string>
+          <string extracomment="book title">Compact Kanji Guide</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Kodansha Kanji Dictionary</string>
+          <string extracomment="book title">Kodansha Kanji Dictionary</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>2001 Kanji</string>
+          <string extracomment="book title">2001 Kanji</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Guide to Reading and Writing</string>
+          <string extracomment="book title">Guide to Reading and Writing</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Guide to Reading and Writing 3rd</string>
+          <string extracomment="book title">Guide to Reading and Writing 3rd</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Kanji in Context</string>
+          <string extracomment="book title">Kanji in Context</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Kanji Learners Dictionary (1999)</string>
+          <string extracomment="book title">Kanji Learners Dictionary (1999)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Kanji Learners Dictionary (2013)</string>
+          <string extracomment="book title">Kanji Learners Dictionary (2013)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Tuttle Kanji Cards</string>
+          <string extracomment="book title">Tuttle Kanji Cards</string>
          </property>
         </item>
        </widget>
@@ -1464,15 +1461,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZLineEdit</class>
@@ -1491,6 +1488,38 @@
    <header>kanjisearchwidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>f1Button</tabstop>
+  <tabstop>f2Button</tabstop>
+  <tabstop>f3Button</tabstop>
+  <tabstop>f4Button</tabstop>
+  <tabstop>f5Button</tabstop>
+  <tabstop>f6Button</tabstop>
+  <tabstop>f7Button</tabstop>
+  <tabstop>f8Button</tabstop>
+  <tabstop>allButton</tabstop>
+  <tabstop>resetButton</tabstop>
+  <tabstop>strokeEdit</tabstop>
+  <tabstop>jlptEdit</tabstop>
+  <tabstop>mAfterButton</tabstop>
+  <tabstop>meaningEdit</tabstop>
+  <tabstop>rAfterButton</tabstop>
+  <tabstop>rStrictButton</tabstop>
+  <tabstop>readingEdit</tabstop>
+  <tabstop>okuriganaButton</tabstop>
+  <tabstop>jouyouCBox</tabstop>
+  <tabstop>radicalsCButton</tabstop>
+  <tabstop>indexCBox</tabstop>
+  <tabstop>indexEdit</tabstop>
+  <tabstop>skip1Button</tabstop>
+  <tabstop>skip2Button</tabstop>
+  <tabstop>skip3Button</tabstop>
+  <tabstop>skip4Button</tabstop>
+  <tabstop>skip1Edit</tabstop>
+  <tabstop>skip2Edit</tabstop>
+  <tabstop>sortCBox</tabstop>
+  <tabstop>fromCBox</tabstop>
+ </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>

@@ -47,6 +47,9 @@
      <property name="toolTip">
       <string>Word meaning shown during tests or in printed vocabulary lists</string>
      </property>
+     <property name="text">
+      <string notr="true"/>
+     </property>
     </widget>
    </item>
    <item>

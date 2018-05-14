@@ -331,7 +331,7 @@ void ReadingTestList::loadLegacy(QDataStream &stream)
 void WordDeck::loadLegacy(QDataStream &stream)
 {
     // The original zkanji only had 1 study list and no name was saved with it.
-    name = qApp->translate(0, "Deck %1").arg(1);
+    name = qApp->translate("", "Deck %1").arg(1);
 
     double d;
     //quint32 uval;

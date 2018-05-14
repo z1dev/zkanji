@@ -96,7 +96,7 @@
          </attribute>
          <column>
           <property name="text">
-           <string>1</string>
+           <string notr="true"/>
           </property>
          </column>
          <item>
@@ -233,7 +233,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>6</number>
+             <number>17</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -276,7 +276,7 @@
                 </property>
                 <item>
                  <property name="text">
-                  <string>English (United States)</string>
+                  <string notr="true">English (United States)</string>
                  </property>
                 </item>
                </widget>
@@ -693,25 +693,6 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
-               <widget class="QCheckBox" name="jlptBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>Show or hide suggested JLPT N level of words in search results and other word lists</string>
-                </property>
-                <property name="text">
-                 <string>Suggested JLPT level</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
               <item row="9" column="0">
                <widget class="QLabel" name="jlptPosLabel">
                 <property name="sizePolicy">
@@ -791,11 +772,8 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="toolTip">
-                 <string>Size of the search history in the dictionary</string>
-                </property>
                 <property name="text">
-                 <string>1000</string>
+                 <string notr="true">1000</string>
                 </property>
                 <property name="maxLength">
                  <number>4</number>
@@ -834,10 +812,29 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>4</string>
+                 <string notr="true">4</string>
                 </property>
                 <property name="maxLength">
                  <number>4</number>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0" colspan="2">
+               <widget class="QCheckBox" name="jlptBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Show or hide suggested JLPT N level of words in search results and other word lists</string>
+                </property>
+                <property name="text">
+                 <string>Suggested JLPT level</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -1165,136 +1162,136 @@
                    </sizepolicy>
                   </property>
                   <property name="currentText">
-                   <string>A</string>
+                   <string notr="true">A</string>
                   </property>
                   <item>
                    <property name="text">
-                    <string>A</string>
+                    <string notr="true">A</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>B</string>
+                    <string notr="true">B</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>C</string>
+                    <string notr="true">C</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>D</string>
+                    <string notr="true">D</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>E</string>
+                    <string notr="true">E</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>F</string>
+                    <string notr="true">F</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>G</string>
+                    <string notr="true">G</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>H</string>
+                    <string notr="true">H</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>I</string>
+                    <string notr="true">I</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>J</string>
+                    <string notr="true">J</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>K</string>
+                    <string notr="true">K</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>L</string>
+                    <string notr="true">L</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>M</string>
+                    <string notr="true">M</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>N</string>
+                    <string notr="true">N</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>O</string>
+                    <string notr="true">O</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>P</string>
+                    <string notr="true">P</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Q</string>
+                    <string notr="true">Q</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>R</string>
+                    <string notr="true">R</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>S</string>
+                    <string notr="true">S</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>T</string>
+                    <string notr="true">T</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>U</string>
+                    <string notr="true">U</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>V</string>
+                    <string notr="true">V</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>W</string>
+                    <string notr="true">W</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>X</string>
+                    <string notr="true">X</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Y</string>
+                    <string notr="true">Y</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Z</string>
+                    <string notr="true">Z</string>
                    </property>
                   </item>
                  </widget>
@@ -1369,136 +1366,136 @@
                    </sizepolicy>
                   </property>
                   <property name="currentText">
-                   <string>A</string>
+                   <string notr="true">A</string>
                   </property>
                   <item>
                    <property name="text">
-                    <string>A</string>
+                    <string notr="true">A</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>B</string>
+                    <string notr="true">B</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>C</string>
+                    <string notr="true">C</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>D</string>
+                    <string notr="true">D</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>E</string>
+                    <string notr="true">E</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>F</string>
+                    <string notr="true">F</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>G</string>
+                    <string notr="true">G</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>H</string>
+                    <string notr="true">H</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>I</string>
+                    <string notr="true">I</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>J</string>
+                    <string notr="true">J</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>K</string>
+                    <string notr="true">K</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>L</string>
+                    <string notr="true">L</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>M</string>
+                    <string notr="true">M</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>N</string>
+                    <string notr="true">N</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>O</string>
+                    <string notr="true">O</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>P</string>
+                    <string notr="true">P</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Q</string>
+                    <string notr="true">Q</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>R</string>
+                    <string notr="true">R</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>S</string>
+                    <string notr="true">S</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>T</string>
+                    <string notr="true">T</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>U</string>
+                    <string notr="true">U</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>V</string>
+                    <string notr="true">V</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>W</string>
+                    <string notr="true">W</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>X</string>
+                    <string notr="true">X</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Y</string>
+                    <string notr="true">Y</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Z</string>
+                    <string notr="true">Z</string>
                    </property>
                   </item>
                  </widget>
@@ -1573,136 +1570,136 @@
                    </sizepolicy>
                   </property>
                   <property name="currentText">
-                   <string>A</string>
+                   <string notr="true">A</string>
                   </property>
                   <item>
                    <property name="text">
-                    <string>A</string>
+                    <string notr="true">A</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>B</string>
+                    <string notr="true">B</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>C</string>
+                    <string notr="true">C</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>D</string>
+                    <string notr="true">D</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>E</string>
+                    <string notr="true">E</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>F</string>
+                    <string notr="true">F</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>G</string>
+                    <string notr="true">G</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>H</string>
+                    <string notr="true">H</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>I</string>
+                    <string notr="true">I</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>J</string>
+                    <string notr="true">J</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>K</string>
+                    <string notr="true">K</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>L</string>
+                    <string notr="true">L</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>M</string>
+                    <string notr="true">M</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>N</string>
+                    <string notr="true">N</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>O</string>
+                    <string notr="true">O</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>P</string>
+                    <string notr="true">P</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Q</string>
+                    <string notr="true">Q</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>R</string>
+                    <string notr="true">R</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>S</string>
+                    <string notr="true">S</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>T</string>
+                    <string notr="true">T</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>U</string>
+                    <string notr="true">U</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>V</string>
+                    <string notr="true">V</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>W</string>
+                    <string notr="true">W</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>X</string>
+                    <string notr="true">X</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Y</string>
+                    <string notr="true">Y</string>
                    </property>
                   </item>
                   <item>
                    <property name="text">
-                    <string>Z</string>
+                    <string notr="true">Z</string>
                    </property>
                   </item>
                  </widget>
@@ -1712,7 +1709,7 @@
               <item row="18" column="0" colspan="2">
                <widget class="QLabel" name="label_11">
                 <property name="text">
-                 <string>&lt;p&gt;*System wide key combinations are active when the program is minimized. They bring up a compact dictionary or kanji search window, that stays on top of other windows.&lt;/p&gt;</string>
+                 <string>*System wide key combinations are active when the program is minimized. They bring up a compact dictionary or kanji search window, that stays on top of other windows.</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -2005,7 +2002,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>5</string>
+                   <string notr="true">5</string>
                   </property>
                  </widget>
                 </item>
@@ -2214,7 +2211,7 @@
               <item row="3" column="0" colspan="2">
                <widget class="QLabel" name="label_19">
                 <property name="text">
-                 <string>&lt;p&gt;*During a test the handwriting recognition window will always appear at the positon and size where it was moved last.&lt;/p&gt;</string>
+                 <string>*During a test the handwriting recognition window will always appear at the positon and size where it was moved last.</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -2266,7 +2263,7 @@
               <item row="2" column="0" colspan="2">
                <widget class="QLabel" name="label_26">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;*Unchecking this is not recommended, as user data will only be saved when the program closes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>*Unchecking this is not recommended, as user data will only be saved when the program closes.</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -2292,7 +2289,7 @@
                  <string>Minutes to wait after the data has been last saved to check if there is anything to save</string>
                 </property>
                 <property name="text">
-                 <string>2</string>
+                 <string notr="true">2</string>
                 </property>
                </widget>
               </item>
@@ -2351,7 +2348,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>4</string>
+                 <string notr="true">4</string>
                 </property>
                </widget>
               </item>
@@ -2374,7 +2371,7 @@
                  <string>Only create a fresh backup after this number of days passed since last backup was saved</string>
                 </property>
                 <property name="text">
-                 <string>3</string>
+                 <string notr="true">3</string>
                 </property>
                </widget>
               </item>
@@ -2428,12 +2425,38 @@
               <item row="13" column="0" colspan="2">
                <widget class="QLabel" name="label_31">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The path must exist. A subfolder called &amp;quot;backup&amp;quot; will be created at the specified location when zkanji starts up the next time. Leave it empty, if zkanji is run from a portable drive.&lt;/p&gt;&lt;p&gt;*WARNING: Changing the folder won't copy existing backup files to the new location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>The path must exist. A subfolder called &quot;backup&quot; will be created at the specified location when zkanji starts up the next time. Leave it empty, if zkanji is run from a portable drive.</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
                 </property>
                </widget>
+              </item>
+              <item row="15" column="0" colspan="2">
+               <widget class="QLabel" name="label_147">
+                <property name="text">
+                 <string>*WARNING: Changing the folder won't copy existing backup files to the new location.</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="1">
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>5</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
@@ -2492,7 +2515,7 @@
                 <item row="2" column="1">
                  <widget class="ZLineEdit" name="siteUrlEdit">
                   <property name="text">
-                   <string>http://</string>
+                   <string notr="true">http://</string>
                   </property>
                   <property name="maxLength">
                    <number>2000</number>
@@ -2508,6 +2531,9 @@
                    <widget class="QToolButton" name="siteLockButton">
                     <property name="enabled">
                      <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string notr="true"/>
                     </property>
                     <property name="icon">
                      <iconset resource="Resources/resources.qrc">
@@ -2547,7 +2573,7 @@
                 <item row="0" column="0" colspan="2">
                  <widget class="QLabel" name="label_37">
                   <property name="text">
-                   <string>&lt;p&gt;List web sites where words and kanji can be looked up.&lt;/p&gt;</string>
+                   <string>List web sites where words can be looked up:</string>
                   </property>
                  </widget>
                 </item>
@@ -2593,7 +2619,7 @@
                    <string>Erase web site from list</string>
                   </property>
                   <property name="text">
-                   <string/>
+                   <string notr="true"/>
                   </property>
                   <property name="icon">
                    <iconset resource="Resources/resources.qrc">
@@ -2641,7 +2667,7 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,1">
+             <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,1">
               <property name="spacing">
                <number>4</number>
               </property>
@@ -2798,8 +2824,39 @@
               <item>
                <widget class="QLabel" name="label_47">
                 <property name="text">
-                 <string>&lt;p&gt;Scales everything in the program, including icons and text. The main menu, popup menus and tooltips are unaffected on some platforms. Any other size setting is applied before this scaling.&lt;br/&gt;
-&lt;br/&gt;&lt;b&gt;The program must be restarted for this setting to take effect.&lt;/b&gt;&lt;/p&gt;</string>
+                 <string>Scales everything in the program, including icons and text. The main menu, popup menus and tooltips are unaffected on some platforms.</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>5</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_148">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>The program must be restarted for this setting to take effect.</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -2869,6 +2926,9 @@
                 <property name="toolTip">
                  <string>Font for displaying kanji and kana</string>
                 </property>
+                <property name="currentText">
+                 <string notr="true">Adobe Fan Heiti Std B</string>
+                </property>
                 <property name="writingSystem">
                  <enum>QFontDatabase::Japanese</enum>
                 </property>
@@ -2891,6 +2951,9 @@
                 </property>
                 <property name="toolTip">
                  <string>Font for displaying most non-Japanese text</string>
+                </property>
+                <property name="currentText">
+                 <string notr="true">MS Shell Dlg 2</string>
                 </property>
                </widget>
               </item>
@@ -2916,6 +2979,9 @@
                   </property>
                   <property name="toolTip">
                    <string>Font for smaller text, like word notes in the dictionary</string>
+                  </property>
+                  <property name="currentText">
+                   <string notr="true">MS Shell Dlg 2</string>
                   </property>
                  </widget>
                 </item>
@@ -3137,6 +3203,9 @@
                 <property name="toolTip">
                  <string>Font for displaying kanji in kanji grids, like the kanji search</string>
                 </property>
+                <property name="currentText">
+                 <string notr="true">Adobe Fan Heiti Std B</string>
+                </property>
                 <property name="writingSystem">
                  <enum>QFontDatabase::Japanese</enum>
                 </property>
@@ -3151,7 +3220,7 @@
                  </sizepolicy>
                 </property>
                 <property name="toolTip">
-                 <string>When checked, on some systems the kanji will be smoothed using peculiarities of modern monitors. Uncheck to use traditional anti-aliasing if you don't like that effect</string>
+                 <string>When unchecked, on some systems the kanji will be smoothed using peculiarities of modern monitors. Check to use traditional anti-aliasing if you don't like that effect</string>
                 </property>
                 <property name="text">
                  <string>Disable sub-pixel rendering (where available)</string>
@@ -3182,39 +3251,42 @@
                 <property name="toolTip">
                  <string>Font size of kanji in kanji grids</string>
                 </property>
+                <property name="currentText">
+                 <string notr="true">32</string>
+                </property>
                 <item>
                  <property name="text">
-                  <string>32</string>
+                  <string notr="true">32</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>35</string>
+                  <string notr="true">35</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>38</string>
+                  <string notr="true">38</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>42</string>
+                  <string notr="true">42</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>45</string>
+                  <string notr="true">45</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>56</string>
+                  <string notr="true">56</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>84</string>
+                  <string notr="true">84</string>
                  </property>
                 </item>
                </widget>
@@ -3272,7 +3344,7 @@
               <item row="2" column="0">
                <widget class="QLabel" name="label_118">
                 <property name="text">
-                 <string>Inactive bg.:</string>
+                 <string>Inactive background:</string>
                 </property>
                </widget>
               </item>
@@ -3340,7 +3412,7 @@
               <item row="6" column="0">
                <widget class="QLabel" name="label_121">
                 <property name="text">
-                 <string>Inactive sel. bg.:</string>
+                 <string>Inactive selection background:</string>
                 </property>
                </widget>
               </item>
@@ -3374,7 +3446,7 @@
               <item row="8" column="0">
                <widget class="QLabel" name="label_122">
                 <property name="text">
-                 <string>Inactive sel. text:</string>
+                 <string>Inactive selection text:</string>
                 </property>
                </widget>
               </item>
@@ -3440,7 +3512,7 @@
               <item row="12" column="0">
                <widget class="QLabel" name="label_143">
                 <property name="text">
-                 <string>Small scrollbar bg.:</string>
+                 <string>Small scrollbar background:</string>
                 </property>
                </widget>
               </item>
@@ -3849,7 +3921,7 @@
               <item row="2" column="0">
                <widget class="QLabel" name="label_74">
                 <property name="text">
-                 <string>Unsorted kanji bg.:</string>
+                 <string>Unsorted kanji background:</string>
                 </property>
                </widget>
               </item>
@@ -4029,7 +4101,7 @@
               <item row="14" column="0">
                <widget class="QLabel" name="label_42">
                 <property name="text">
-                 <string>Example word bg.:</string>
+                 <string>Example word background:</string>
                 </property>
                </widget>
               </item>
@@ -4283,7 +4355,7 @@
                    <string>The hour when the daily long-term study test day starts</string>
                   </property>
                   <property name="text">
-                   <string>4</string>
+                   <string notr="true">4</string>
                   </property>
                  </widget>
                 </item>
@@ -4410,7 +4482,7 @@
                    <string>Number of fresh items to include from the queue when a new study session starts</string>
                   </property>
                   <property name="text">
-                   <string>0</string>
+                   <string notr="true">0</string>
                   </property>
                  </widget>
                 </item>
@@ -4480,7 +4552,7 @@
                  <string>Number of fresh items to include from the queue and due items together shouldn't exceed this number</string>
                 </property>
                 <property name="text">
-                 <string>100</string>
+                 <string notr="true">100</string>
                 </property>
                </widget>
               </item>
@@ -4860,7 +4932,7 @@
               <item row="1" column="0" colspan="2">
                <widget class="QLabel" name="label_93">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;*The primary hint is shown as the question for the tested item types. The other hint can also be revealed during the test.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>*The primary hint is shown as the question for the tested item types. The other hint can also be revealed during the test.</string>
                 </property>
                 <property name="wordWrap">
                  <bool>true</bool>
@@ -5010,7 +5082,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>10</string>
+                 <string notr="true">10</string>
                 </property>
                </widget>
               </item>
@@ -5120,7 +5192,7 @@
                  <string>Suspend test after this number of items</string>
                 </property>
                 <property name="text">
-                 <string>60</string>
+                 <string notr="true">60</string>
                 </property>
                </widget>
               </item>
@@ -5152,7 +5224,7 @@
                  <string>Suspend test after this number of minutes</string>
                 </property>
                 <property name="text">
-                 <string>20</string>
+                 <string notr="true">20</string>
                 </property>
                </widget>
               </item>
@@ -5414,19 +5486,22 @@
                 <property name="toolTip">
                  <string>Number of Japanese / definition columns on each page</string>
                 </property>
+                <property name="currentText">
+                 <string notr="true">1</string>
+                </property>
                 <item>
                  <property name="text">
-                  <string>1</string>
+                  <string notr="true">1</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>2</string>
+                  <string notr="true">2</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>3</string>
+                  <string notr="true">3</string>
                  </property>
                 </item>
                </widget>
@@ -5450,7 +5525,7 @@
               <item row="13" column="0" colspan="2">
                <widget class="QLabel" name="label_108">
                 <property name="text">
-                 <string>Decoration:</string>
+                 <string>Customization:</string>
                 </property>
                </widget>
               </item>
@@ -5541,7 +5616,7 @@
               <item row="2" column="0">
                <widget class="QLabel" name="label_106">
                 <property name="text">
-                 <string>Kanji/kana:</string>
+                 <string>Kanji / kana:</string>
                 </property>
                </widget>
               </item>
@@ -5555,6 +5630,9 @@
                 </property>
                 <property name="toolTip">
                  <string>Font for printing kanji and kana</string>
+                </property>
+                <property name="currentText">
+                 <string notr="true">MS Shell Dlg 2</string>
                 </property>
                </widget>
               </item>
@@ -5575,6 +5653,9 @@
                 </property>
                 <property name="toolTip">
                  <string>Font for printing most non-Japanese text</string>
+                </property>
+                <property name="currentText">
+                 <string notr="true">MS Shell Dlg 2</string>
                 </property>
                </widget>
               </item>
@@ -5600,6 +5681,9 @@
                   </property>
                   <property name="toolTip">
                    <string>Font for printing smaller text, like word notes</string>
+                  </property>
+                  <property name="currentText">
+                   <string notr="true">MS Shell Dlg 2</string>
                   </property>
                  </widget>
                 </item>
@@ -5692,6 +5776,12 @@
    <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>DialogWindow</class>
+   <extends>QMainWindow</extends>
+   <header>dialogwindow.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZListBox</class>
    <extends>QTableView</extends>
    <header>zlistbox.h</header>
@@ -5700,12 +5790,6 @@
    <class>ZListView</class>
    <extends>QTableView</extends>
    <header>zlistview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DialogWindow</class>
-   <extends>QMainWindow</extends>
-   <header>dialogwindow.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ZColorComboBox</class>
@@ -5888,7 +5972,7 @@
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

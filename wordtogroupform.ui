@@ -133,6 +133,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GroupWidget</class>
+   <extends>QWidget</extends>
+   <header>groupwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ZStatusBar</class>
    <extends>QStatusBar</extends>
    <header>zstatusbar.h</header>
@@ -144,18 +150,16 @@
    <header>zdictionarylistview.h</header>
   </customwidget>
   <customwidget>
-   <class>GroupWidget</class>
-   <extends>QWidget</extends>
-   <header>groupwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>
    <header>dialogwindow.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>wordsTable</tabstop>
+  <tabstop>switchButton</tabstop>
+ </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>

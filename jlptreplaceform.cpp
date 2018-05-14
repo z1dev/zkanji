@@ -143,7 +143,7 @@ void JLPTReplaceForm::updateButtons()
     }
     else
     {
-        ui->wordEdit->setText(tr("No more words. Press \"Finish\" to continue."));
+        ui->wordEdit->setText(tr("No more words. Press \"%1\" to continue.").arg(tr("Finish")));
         ui->dict->setSearchText(QString());
     }
 

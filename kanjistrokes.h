@@ -518,7 +518,7 @@ struct ElementRepo
 
 struct KanjiEntry;
 
-enum class StrokeDirection : int { Unset, Left, Up, Right, Down, UpLeft, UpRight, DownLeft, DownRight  };
+enum class StrokeDirection { Unset, Left, Up, Right, Down, UpLeft, UpRight, DownLeft, DownRight  };
 
 // Main class for handwriting recognition. Contains model strokes (to match
 // with user drawn strokes), kanji elements (reusable group of strokes), and

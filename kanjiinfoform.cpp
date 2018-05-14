@@ -488,7 +488,9 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
         // Readings of the kanji.
         QStringList rl;
         rl.reserve(ZKanji::kanjiReadingCount(k, true) + 1);
+        //: No reading is selected
         rl.push_back(tr("-"));
+        //: Irregular readings
         rl.push_back(tr("Irreg."));
         for (int ix = 0; ix != k->on.size(); ++ix)
             rl.push_back(k->on[ix].toQString());

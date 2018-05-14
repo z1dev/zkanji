@@ -115,8 +115,11 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;* Changes made to the groups are kept even if you press &amp;quot;Cancel&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>*Changes made to the groups are kept even if you press &quot;Cancel.&quot;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -131,15 +134,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ZDictionaryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>zdictionarycombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>GroupWidget</class>
    <extends>QWidget</extends>
    <header>groupwidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ZDictionaryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>zdictionarycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

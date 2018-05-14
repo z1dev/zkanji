@@ -105,10 +105,10 @@ void ImportReplaceForm::closeEvent(QCloseEvent *e)
 {
     if (ui->missingTable->currentRow() != -1)
     {
-        int r = showAndReturn("zkanji", tr("Replacement was not selected for every word."), tr("Those words will be removed from groups and study data. Are you sure?\nSelect \"%1\" to keep the old dictionary and update your data later.").arg("Abort Update"),
+        int r = showAndReturn("zkanji", tr("Replacement was not selected for every word."), tr("Those words will be removed from groups and study data. Are you sure?\nSelect \"%1\" to keep the old dictionary and update your data later.").arg(tr("Abort update")),
                 { { tr("Yes"), QMessageBox::YesRole },
-                  { tr("Don't Close"), QMessageBox::NoRole },
-                  { tr("Abort Update"), QMessageBox::RejectRole } });
+                  { tr("Don't close"), QMessageBox::NoRole },
+                  { tr("Abort update"), QMessageBox::RejectRole } });
 
         if (r == 1)
         {

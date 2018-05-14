@@ -62,7 +62,7 @@ bool operator==(const WordDefinition &a, const WordDefinition &b);
 
 // General use word flags not stored on disk.
 // InGroup: the word is placed in at least one word group.
-enum class WordRuntimeData : int
+enum class WordRuntimeData
 {
     InGroup
 };
@@ -284,7 +284,7 @@ bool definitionsMatch(WordEntry *e1, WordEntry *e2);
 
 
 class Dictionary;
-enum class InfTypes : int;
+enum class InfTypes;
 
 class WordResultList
 {

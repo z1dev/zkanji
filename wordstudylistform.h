@@ -19,7 +19,7 @@ namespace Ui {
     class WordStudyListForm;
 }
 
-enum class DeckItemViewModes : int;
+enum class DeckItemViewModes;
 class WordDeck;
 class StudyListModel;
 class DictionaryItemModel;
@@ -35,9 +35,9 @@ struct WordStudySorting {
 };
 
 enum class DeckStudyPages { Items, Stats, None };
-enum class DeckStatPages : int { Items, Forecast, Levels, Tests };
-enum class DeckStatIntervals : int { All, Year, HalfYear, Month };
-enum class DeckStatAreaType : int { Items, Forecast };
+enum class DeckStatPages { Items, Forecast, Levels, Tests };
+enum class DeckStatIntervals { All, Year, HalfYear, Month };
+enum class DeckStatAreaType { Items, Forecast };
 
 class QMenu;
 class QAction;

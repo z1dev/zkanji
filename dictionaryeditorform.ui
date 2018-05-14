@@ -38,7 +38,7 @@
       <item>
        <widget class="QToolButton" name="upButton">
         <property name="toolTip">
-         <string>Move dictionary above previous dictionary</string>
+         <string>Move dictionary up</string>
         </property>
         <property name="icon">
          <iconset resource="Resources/resources.qrc">
@@ -61,7 +61,7 @@
       <item>
        <widget class="QToolButton" name="downButton">
         <property name="toolTip">
-         <string>Move dictionary below next dictionary</string>
+         <string>Move dictionary down</string>
         </property>
         <property name="icon">
          <iconset resource="Resources/resources.qrc">
@@ -110,7 +110,7 @@
       <item>
        <widget class="QToolButton" name="editButton">
         <property name="toolTip">
-         <string>Change the text displayed when opening the dictionary information</string>
+         <string>Change dictionary flag and the text displayed when viewing dictionary information</string>
         </property>
         <property name="text">
          <string>Edit information</string>

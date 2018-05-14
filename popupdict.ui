@@ -117,9 +117,6 @@
         </item>
         <item>
          <widget class="QToolButton" name="floatButton">
-          <property name="text">
-           <string>f</string>
-          </property>
           <property name="icon">
            <iconset resource="Resources/resources.qrc">
             <normaloff>:/floatwnd.svg</normaloff>:/floatwnd.svg</iconset>
@@ -137,9 +134,6 @@
         </item>
         <item>
          <widget class="QToolButton" name="pinButton">
-          <property name="text">
-           <string>p</string>
-          </property>
           <property name="icon">
            <iconset resource="Resources/resources.qrc">
             <normaloff>:/closex.svg</normaloff>:/closex.svg</iconset>

@@ -196,7 +196,7 @@
                 <bool>false</bool>
                </property>
                <property name="toolTip">
-                <string>Add parts of selected word to the queue</string>
+                <string>Add parts of selected words to the queue</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -219,7 +219,7 @@
                 <bool>false</bool>
                </property>
                <property name="toolTip">
-                <string>Move studied word back to the queue, clearing its study data</string>
+                <string>Move studied words back to the queue, clearing their study data</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -242,7 +242,7 @@
                 <bool>false</bool>
                </property>
                <property name="toolTip">
-                <string>Remove selected word from the deck, clearing its study data</string>
+                <string>Remove selected words from the deck, clearing their study data</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -440,7 +440,7 @@
           <item row="1" column="5">
            <widget class="QLabel" name="studyTimeLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -454,14 +454,14 @@
           <item row="0" column="5">
            <widget class="QLabel" name="studiedLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
           <item row="0" column="8">
            <widget class="QLabel" name="firstLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -475,7 +475,7 @@
           <item row="2" column="2">
            <widget class="QLabel" name="wordsLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -503,7 +503,7 @@
           <item row="1" column="2">
            <widget class="QLabel" name="queueLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -517,28 +517,28 @@
           <item row="2" column="5">
            <widget class="QLabel" name="studyTimeAvgLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
           <item row="3" column="2">
            <widget class="QLabel" name="kanjiLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
            <widget class="QLabel" name="dueLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
           <item row="3" column="8">
            <widget class="QLabel" name="skippedDaysLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -568,14 +568,14 @@
           <item row="3" column="5">
            <widget class="QLabel" name="answerTimeAvgLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
           <item row="1" column="8">
            <widget class="QLabel" name="lastLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -605,7 +605,7 @@
           <item row="2" column="8">
            <widget class="QLabel" name="testDaysLabel">
             <property name="text">
-             <string>00000000</string>
+             <string notr="true">00000000</string>
             </property>
            </widget>
           </item>
@@ -852,7 +852,7 @@
               <item>
                <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>Interval: </string>
+                 <string>Interval:</string>
                 </property>
                </widget>
               </item>
@@ -951,7 +951,7 @@
               <item>
                <widget class="QLabel" name="label_17">
                 <property name="text">
-                 <string>Interval: </string>
+                 <string>Interval:</string>
                 </property>
                </widget>
               </item>

@@ -58,14 +58,14 @@
        <item>
         <widget class="QLabel" name="dictImgLabel">
          <property name="text">
-          <string>TextLabel</string>
+          <string notr="true">TextLabel</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="dictLabel">
          <property name="text">
-          <string>English</string>
+          <string notr="true">English</string>
          </property>
         </widget>
        </item>
@@ -377,7 +377,7 @@
         <item row="0" column="1">
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Definition text, different translations in their own line:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Definition text, different translations in their own line:</string>
           </property>
          </widget>
         </item>
@@ -430,9 +430,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
+   <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZStatusBar</class>
@@ -441,9 +441,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZLineEdit</class>
+   <class>ZKanaLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
+   <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
    <class>WordAttribWidget</class>

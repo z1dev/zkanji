@@ -17,7 +17,7 @@
 class QStylePainter;
 class ZRect;
 
-enum class RadicalFilterModes : int { Parts, Radicals, NamedRadicals };
+enum class RadicalFilterModes { Parts, Radicals, NamedRadicals };
 struct RadicalFilter
 {
     RadicalFilterModes mode = RadicalFilterModes::Parts;

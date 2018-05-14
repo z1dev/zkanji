@@ -29,14 +29,14 @@ QString Strings::capitalize(const QString &str)
 QString Strings::wordType(uchar type)
 {
     static const QString texts[(int)WordTypes::Count] = {
-        tr("n"),       tr("-ru"),      tr("-u"),           tr("suru"),
-        tr("-suru"),    tr("-aru"),     tr("-kuru"),        tr("-iku"),
-        tr("-ri"),      tr("-zuru"),    tr("tr"),          tr("intr"),
-        tr("a"),       tr("na"),       tr("-to"),          tr("pn-a"),
-        tr("no"),       tr("adv"),     tr("aux"),         tr("pref"),
-        tr("suf"),     tr("conj"),    tr("int"),         tr("exp"),
-        tr("pn"),    tr("par"),     tr("cnt"),         tr("da/desu"),
-        tr("arch v"),  tr("arch a"),  tr("arch -na")
+        qApp->translate("Grammar", "n"),       qApp->translate("Grammar", "-ru"),      qApp->translate("Grammar", "-u"),           qApp->translate("Grammar", "suru"),
+        qApp->translate("Grammar", "-suru"),    qApp->translate("Grammar", "-aru"),     qApp->translate("Grammar", "-kuru"),        qApp->translate("Grammar", "-iku"),
+        qApp->translate("Grammar", "-ri"),      qApp->translate("Grammar", "-zuru"),    qApp->translate("Grammar", "tr"),          qApp->translate("Grammar", "intr"),
+        qApp->translate("Grammar", "a"),       qApp->translate("Grammar", "na"),       qApp->translate("Grammar", "-to"),          qApp->translate("Grammar", "pn-a"),
+        qApp->translate("Grammar", "no"),       qApp->translate("Grammar", "adv"),     qApp->translate("Grammar", "aux"),         qApp->translate("Grammar", "pref"),
+        qApp->translate("Grammar", "suf"),     qApp->translate("Grammar", "conj"),    qApp->translate("Grammar", "int"),         qApp->translate("Grammar", "exp"),
+        qApp->translate("Grammar", "pn"),    qApp->translate("Grammar", "par"),     qApp->translate("Grammar", "cnt"),         qApp->translate("Grammar", "da/desu"),
+        qApp->translate("Grammar", "arch v"),  qApp->translate("Grammar", "arch a"),  qApp->translate("Grammar", "arch -na")
     };
 
     return texts[type];
@@ -45,14 +45,14 @@ QString Strings::wordType(uchar type)
 QString Strings::wordTypeLong(uchar type)
 {
     static const QString texts[(int)WordTypes::Count] = {
-        tr("noun"), tr("ichidan verb"), tr("godan verb"), tr("verb with suru"),
-        tr("-suru verb"), tr("-aru verb"), tr("-kuru verb"), tr("-iku verb"),
-        tr("-ri verb"), tr("-zuru verb"), tr("transitive verb"), tr("intransitive verb"),
-        tr("true adjective (-i)"), tr("adjectival noun (-na)"), tr("taru adjective (-to)"), tr("pre-noun adjective"),
-        tr("may take no"), tr("adverb"), tr("auxiliary"), tr("prefix"),
-        tr("suffix"), tr("conjunction"), tr("interjection"), tr("expression"),
-        tr("pronoun"), tr("particle"), tr("counter"), tr("copula da"),
-        tr("archaic verb"), tr("archaic adjective"), tr("archaic adjectival noun")
+        qApp->translate("Grammar", "noun"), qApp->translate("Grammar", "ichidan verb"), qApp->translate("Grammar", "godan verb"), qApp->translate("Grammar", "verb with suru"),
+        qApp->translate("Grammar", "-suru verb"), qApp->translate("Grammar", "-aru verb"), qApp->translate("Grammar", "-kuru verb"), qApp->translate("Grammar", "-iku verb"),
+        qApp->translate("Grammar", "-ri verb"), qApp->translate("Grammar", "-zuru verb"), qApp->translate("Grammar", "transitive verb"), qApp->translate("Grammar", "intransitive verb"),
+        qApp->translate("Grammar", "true adjective (-i)"), qApp->translate("Grammar", "adjectival noun (-na)"), qApp->translate("Grammar", "taru adjective (-to)"), qApp->translate("Grammar", "pre-noun adjective"),
+        qApp->translate("Grammar", "may take no"), qApp->translate("Grammar", "adverb"), qApp->translate("Grammar", "auxiliary"), qApp->translate("Grammar", "prefix"),
+        qApp->translate("Grammar", "suffix"), qApp->translate("Grammar", "conjunction"), qApp->translate("Grammar", "interjection"), qApp->translate("Grammar", "expression"),
+        qApp->translate("Grammar", "pronoun"), qApp->translate("Grammar", "particle"), qApp->translate("Grammar", "counter"), qApp->translate("Grammar", "copula da"),
+        qApp->translate("Grammar", "archaic verb"), qApp->translate("Grammar", "archaic adjective"), qApp->translate("Grammar", "archaic adjectival noun")
     };
 
     return texts[type];
@@ -61,13 +61,13 @@ QString Strings::wordTypeLong(uchar type)
 QString Strings::wordNote(uchar note)
 {
     static const QString texts[(int)WordNotes::Count] = {
-        tr("kana"),     tr("abbr"),    tr("4k"),   tr("idiom."),
-        tr("obsc"),    tr("obso"),    tr("onom"),    tr("pv."),
-        tr("rare"),     tr("sens"),    tr("col"),     tr("fam."),
-        tr("hon"),     tr("hum"),     tr("pol"),     tr("arch"),
-        tr("poet"),    tr("chl"),     tr("male"),       tr("fem"),
-        tr("joke"),     tr("sl"),      tr("msl"),     tr("der"),
-        tr("vul"),    
+        qApp->translate("Grammar", "kana"),     qApp->translate("Grammar", "abbr"),    qApp->translate("Grammar", "4k"),   qApp->translate("Grammar", "idiom"),
+        qApp->translate("Grammar", "obsc"),    qApp->translate("Grammar", "obso"),    qApp->translate("Grammar", "onom"),    qApp->translate("Grammar", "pv"),
+        qApp->translate("Grammar", "rare"),     qApp->translate("Grammar", "sens"),    qApp->translate("Grammar", "col"),     qApp->translate("Grammar", "fam"),
+        qApp->translate("Grammar", "hon"),     qApp->translate("Grammar", "hum"),     qApp->translate("Grammar", "pol"),     qApp->translate("Grammar", "arch"),
+        qApp->translate("Grammar", "poet"),    qApp->translate("Grammar", "chl"),     qApp->translate("Grammar", "male"),       qApp->translate("Grammar", "fem"),
+        qApp->translate("Grammar", "joke"),     qApp->translate("Grammar", "sl"),      qApp->translate("Grammar", "msl"),     qApp->translate("Grammar", "der"),
+        qApp->translate("Grammar", "vul"),    
     };
 
     return texts[note];
@@ -76,13 +76,13 @@ QString Strings::wordNote(uchar note)
 QString Strings::wordNoteLong(uchar note)
 {
     static const QString texts[(int)WordNotes::Count] = {
-        tr("kana usage (usually no kanji)"), tr("abbreviation"), tr("four kanji idiom"), tr("idiomatism"),
-        tr("obscure usage"), tr("obsolete term"), tr("onomatopoeia"), tr("proverb"),
-        tr("rare word or phrase"), tr("sensitivity"), tr("colloquialism"), tr("familiar language"),
-        tr("honorific language"), tr("humble language"), tr("polite language"), tr("archaic expression"),
-        tr("poetic expression"), tr("children's language"), tr("male language"), tr("female language"),
-        tr("joking style"), tr("slang"), tr("manga slang"), tr("derogatory expression"),
-        tr("vulgar expression"),
+        qApp->translate("Grammar", "kana usage (usually no kanji)"), qApp->translate("Grammar", "abbreviation"), qApp->translate("Grammar", "four kanji idiom"), qApp->translate("Grammar", "idiomatism"),
+        qApp->translate("Grammar", "obscure usage"), qApp->translate("Grammar", "obsolete term"), qApp->translate("Grammar", "onomatopoeia"), qApp->translate("Grammar", "proverb"),
+        qApp->translate("Grammar", "rare word or phrase"), qApp->translate("Grammar", "sensitivity"), qApp->translate("Grammar", "colloquialism"), qApp->translate("Grammar", "familiar language"),
+        qApp->translate("Grammar", "honorific language"), qApp->translate("Grammar", "humble language"), qApp->translate("Grammar", "polite language"), qApp->translate("Grammar", "archaic expression"),
+        qApp->translate("Grammar", "poetic expression"), qApp->translate("Grammar", "children's language"), qApp->translate("Grammar", "male language"), qApp->translate("Grammar", "female language"),
+        qApp->translate("Grammar", "joking style"), qApp->translate("Grammar", "slang"), qApp->translate("Grammar", "manga slang"), qApp->translate("Grammar", "derogatory expression"),
+        qApp->translate("Grammar", "vulgar expression"),
     };
 
     return texts[note];
@@ -91,18 +91,18 @@ QString Strings::wordNoteLong(uchar note)
 QString Strings::wordField(uchar field)
 {
     static const QString texts[(int)WordFields::Count] = {
-        tr("archi"), tr("bus"), tr("comp"), tr("econ"),
-        tr("engi"), tr("fin"), tr("food"), tr("law"),
-        tr("mil"), tr("mus"), 
+        qApp->translate("Grammar", "archi"), qApp->translate("Grammar", "bus"), qApp->translate("Grammar", "comp"), qApp->translate("Grammar", "econ"),
+        qApp->translate("Grammar", "engi"), qApp->translate("Grammar", "fin"), qApp->translate("Grammar", "food"), qApp->translate("Grammar", "law"),
+        qApp->translate("Grammar", "mil"), qApp->translate("Grammar", "mus"), 
         
-        tr("anat"), tr("astr"), tr("biol"), tr("bot"),
-        tr("chem"), tr("geol"), tr("geom"), tr("ling"),
-        tr("math"), tr("med"), tr("phys"), tr("zoo"),
+        qApp->translate("Grammar", "anat"), qApp->translate("Grammar", "astr"), qApp->translate("Grammar", "biol"), qApp->translate("Grammar", "bot"),
+        qApp->translate("Grammar", "chem"), qApp->translate("Grammar", "geol"), qApp->translate("Grammar", "geom"), qApp->translate("Grammar", "ling"),
+        qApp->translate("Grammar", "math"), qApp->translate("Grammar", "med"), qApp->translate("Grammar", "phys"), qApp->translate("Grammar", "zoo"),
 
-        tr("Buddh"), tr("Shinto"),
+        qApp->translate("Grammar", "Buddh"), qApp->translate("Grammar", "Shinto"),
 
-        tr("baseb"), tr("mahj"), tr("m.a."), tr("shogi"),
-        tr("sports"), tr("sumo")
+        qApp->translate("Grammar", "baseb"), qApp->translate("Grammar", "mahj"), qApp->translate("Grammar", "m.a."), qApp->translate("Grammar", "shogi"),
+        qApp->translate("Grammar", "sports"), qApp->translate("Grammar", "sumo")
     };
 
     return texts[field];
@@ -111,18 +111,18 @@ QString Strings::wordField(uchar field)
 QString Strings::wordFieldLong(uchar field)
 {
     static const QString texts[(int)WordFields::Count] = {
-        tr("architecture"), tr("business"), tr("computing"), tr("economy"),
-        tr("engineering"), tr("finance"), tr("food"), tr("law"),
-        tr("military"), tr("music"),
+        qApp->translate("Grammar", "architecture"), qApp->translate("Grammar", "business"), qApp->translate("Grammar", "computing"), qApp->translate("Grammar", "economy"),
+        qApp->translate("Grammar", "engineering"), qApp->translate("Grammar", "finance"), qApp->translate("Grammar", "food"), qApp->translate("Grammar", "law"),
+        qApp->translate("Grammar", "military"), qApp->translate("Grammar", "music"),
 
-        tr("anatomy"), tr("astronomy"), tr("biology"), tr("botany"),
-        tr("chemistry"), tr("geology"), tr("geometry"), tr("linguistics"),
-        tr("mathematics"), tr("medicine"), tr("physics"), tr("zoology"),
+        qApp->translate("Grammar", "anatomy"), qApp->translate("Grammar", "astronomy"), qApp->translate("Grammar", "biology"), qApp->translate("Grammar", "botany"),
+        qApp->translate("Grammar", "chemistry"), qApp->translate("Grammar", "geology"), qApp->translate("Grammar", "geometry"), qApp->translate("Grammar", "linguistics"),
+        qApp->translate("Grammar", "mathematics"), qApp->translate("Grammar", "medicine"), qApp->translate("Grammar", "physics"), qApp->translate("Grammar", "zoology"),
 
-        tr("Buddhism"), tr("Shinto"),
+        qApp->translate("Grammar", "Buddhism"), qApp->translate("Grammar", "Shinto"),
 
-        tr("baseball"), tr("mahjong"), tr("martial arts"), tr("shogi"),
-        tr("sports"), tr("sumo")
+        qApp->translate("Grammar", "baseball"), qApp->translate("Grammar", "mahjong"), qApp->translate("Grammar", "martial arts"), qApp->translate("Grammar", "shogi"),
+        qApp->translate("Grammar", "sports"), qApp->translate("Grammar", "sumo")
     };
 
     return texts[field];
@@ -131,9 +131,9 @@ QString Strings::wordFieldLong(uchar field)
 QString Strings::wordDialect(uchar dia)
 {
     static const QString texts[(int)WordDialects::Count] = {
-        tr("Ho"), tr("Kans"), tr("Kant"), tr("Kyo"),
-        tr("Kyu"), tr("Na"), tr("Os"), tr("Ry"),
-        tr("Tos"), tr("Tou"), tr("Ts"), 
+        qApp->translate("Grammar", "Ho"), qApp->translate("Grammar", "Kans"), qApp->translate("Grammar", "Kant"), qApp->translate("Grammar", "Kyo"),
+        qApp->translate("Grammar", "Kyu"), qApp->translate("Grammar", "Na"), qApp->translate("Grammar", "Os"), qApp->translate("Grammar", "Ry"),
+        qApp->translate("Grammar", "Tos"), qApp->translate("Grammar", "Tou"), qApp->translate("Grammar", "Ts"), 
     };
 
     return texts[dia];
@@ -142,9 +142,9 @@ QString Strings::wordDialect(uchar dia)
 QString Strings::wordDialectLong(uchar dia)
 {
     static const QString texts[(int)WordDialects::Count] = {
-        tr("Hokkaidou dialect"), tr("Kansai dialect"), tr("Kantou dialect"), tr("Kyoto dialect"),
-        tr("Kyuushuu dialect"), tr("Nagano dialect"), tr("Osaka dialect"), tr("Ryuukyuu dialect"),
-        tr("Tosa dialect"), tr("Touhoku dialect"), tr("Tsugaru dialect"),
+        qApp->translate("Grammar", "Hokkaidou dialect"), qApp->translate("Grammar", "Kansai dialect"), qApp->translate("Grammar", "Kantou dialect"), qApp->translate("Grammar", "Kyoto dialect"),
+        qApp->translate("Grammar", "Kyuushuu dialect"), qApp->translate("Grammar", "Nagano dialect"), qApp->translate("Grammar", "Osaka dialect"), qApp->translate("Grammar", "Ryuukyuu dialect"),
+        qApp->translate("Grammar", "Tosa dialect"), qApp->translate("Grammar", "Touhoku dialect"), qApp->translate("Grammar", "Tsugaru dialect"),
     };
 
     return texts[dia];
@@ -153,8 +153,8 @@ QString Strings::wordDialectLong(uchar dia)
 QString Strings::wordInfo(uchar inf)
 {
     static const QString texts[(int)WordInfo::Count] = {
-        tr("ate"), tr("gik"), tr("i.kanji"), tr("i.kana"),
-        tr("i.oku"), tr("o.kanji"), tr("o.kana")
+        qApp->translate("Grammar", "ate"), qApp->translate("Grammar", "gik"), qApp->translate("Grammar", "i.kanji"), qApp->translate("Grammar", "i.kana"),
+        qApp->translate("Grammar", "i.oku"), qApp->translate("Grammar", "o.kanji"), qApp->translate("Grammar", "o.kana")
     };
 
     return texts[inf];
@@ -163,8 +163,8 @@ QString Strings::wordInfo(uchar inf)
 QString Strings::wordInfoLong(uchar inf)
 {
     static const QString texts[(int)WordInfo::Count] = {
-        tr("ateji"), tr("gikun"), tr("irregular kanji"), tr("irregular kana"),
-        tr("irregular okurigana"), tr("outdated kanji"), tr("outdated kana")
+        qApp->translate("Grammar", "ateji"), qApp->translate("Grammar", "gikun"), qApp->translate("Grammar", "irregular kanji"), qApp->translate("Grammar", "irregular kana"),
+        qApp->translate("Grammar", "irregular okurigana"), qApp->translate("Grammar", "outdated kanji"), qApp->translate("Grammar", "outdated kana")
     };
 
     return texts[inf];
@@ -335,10 +335,10 @@ QString Strings::wordJLPTLevel(uchar lv)
 QString Strings::wordAttrib(uchar attr)
 {
     static const QString texts[(int)WordAttribs::Count] = {
-        tr("Word types"), tr("Verb types"), tr("Adjective types"), tr("Archaic"),
-        tr("Word usage"), tr("Relation of speaker and listener"), tr("Style of speech"),
-        tr("Fields of use"), tr("Sciences"), tr("Religion"), tr("Sports"),
-        tr("Dialects"), tr("Character usage"), tr("JLPT level")
+        qApp->translate("Grammar", "Word types"), qApp->translate("Grammar", "Verb types"), qApp->translate("Grammar", "Adjective types"), qApp->translate("Grammar", "Archaic"),
+        qApp->translate("Grammar", "Word usage"), qApp->translate("Grammar", "Relation of speaker and listener"), qApp->translate("Grammar", "Style of speech"),
+        qApp->translate("Grammar", "Fields of use"), qApp->translate("Grammar", "Sciences"), qApp->translate("Grammar", "Religion"), qApp->translate("Grammar", "Sports"),
+        qApp->translate("Grammar", "Dialects"), qApp->translate("Grammar", "Character usage"), qApp->translate("Grammar", "JLPT level")
     };
 
     return texts[attr];
@@ -347,14 +347,14 @@ QString Strings::wordAttrib(uchar attr)
 QString Strings::wordInflection(uchar infl)
 {
     static const QString winflectiontext[] = {
-        tr("polite"), tr("polite past"), tr("polite neg."), tr("polite volitional / tentative"),
-        tr("neg."), tr("passive"), tr("causative"), tr("passive causative"), tr("noun base"),
-        tr("intent"), tr("3rd intent"), tr("appearance"), tr("conjunctive"), tr("past"),
-        tr("-tara conditional"), tr("partial conjunctive"), tr("-ba conditional"), tr("potential"),
-        tr("command"), tr("volitional / tentative"), tr("suru base"), tr("potential / passive"),
-        tr("adverb"), tr("noun adj."), tr("-na adj."), tr("continuous"), tr("must / neg. -ba cond."),
-        tr("finished / bothersome"), tr("without / neg. request"), tr("without / neg. conjunctive"),
-        tr("archaic neg."), tr("imperative"), tr("do in advance / keep ~ing")
+        qApp->translate("Grammar", "polite"), qApp->translate("Grammar", "polite past"), qApp->translate("Grammar", "polite neg."), qApp->translate("Grammar", "polite volitional / tentative"),
+        qApp->translate("Grammar", "neg."), qApp->translate("Grammar", "passive"), qApp->translate("Grammar", "causative"), qApp->translate("Grammar", "passive causative"), qApp->translate("Grammar", "noun base"),
+        qApp->translate("Grammar", "intent"), qApp->translate("Grammar", "3rd intent"), qApp->translate("Grammar", "appearance"), qApp->translate("Grammar", "conjunctive"), qApp->translate("Grammar", "past"),
+        qApp->translate("Grammar", "-tara conditional"), qApp->translate("Grammar", "partial conjunctive"), qApp->translate("Grammar", "-ba conditional"), qApp->translate("Grammar", "potential"),
+        qApp->translate("Grammar", "command"), qApp->translate("Grammar", "volitional / tentative"), qApp->translate("Grammar", "suru base"), qApp->translate("Grammar", "potential / passive"),
+        qApp->translate("Grammar", "adverb", "conjugation"), qApp->translate("Grammar", "noun adj."), qApp->translate("Grammar", "-na adj."), qApp->translate("Grammar", "continuous"), qApp->translate("Grammar", "must / neg. -ba cond."),
+        qApp->translate("Grammar", "finished / bothersome"), qApp->translate("Grammar", "without / neg. request"), qApp->translate("Grammar", "without / neg. conjunctive"),
+        qApp->translate("Grammar", "archaic neg."), qApp->translate("Grammar", "imperative"), qApp->translate("Grammar", "do in advance / keep ~ing")
     };
 
     return winflectiontext[infl];

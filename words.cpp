@@ -319,7 +319,7 @@ namespace ZKanji
                 // TODO: (later) fix in case different base dictionary is implemented.
                 if (d->name().toLower() != QStringLiteral("english"))
                 {
-                    QMessageBox::information(nullptr, "zkanji", qApp->translate(0, "Only the English dictionary can be used as the main dictionary at the moment."), QMessageBox::Ok);
+                    QMessageBox::information(nullptr, "zkanji", qApp->translate("", "Only the English dictionary can be used as the main dictionary at the moment."), QMessageBox::Ok);
                     return;
                 }
 
@@ -336,14 +336,14 @@ namespace ZKanji
                     {
                         if (!QFile::remove(userFolder() + "/data/English.zkdict"))
                         {
-                            QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't save base dictionary in user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
+                            QMessageBox::warning(nullptr, "zkanji", qApp->translate("", "Couldn't save base dictionary in user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
                             continue;
                         }
                     }
 
                     if (!QFile::copy(appFolder() + "/data/English.zkj", userFolder() + "/data/English.zkdict"))
                     {
-                        QMessageBox::warning(nullptr, "zkanji", qApp->translate(0, "Couldn't copy base dictionary to user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
+                        QMessageBox::warning(nullptr, "zkanji", qApp->translate("", "Couldn't copy base dictionary to user folder. Make sure the folder exists and is not read-only, and the old file is not write protected."), QMessageBox::Ok);
                         continue;
                     }
                     d->setToUserModified();
@@ -377,7 +377,7 @@ namespace ZKanji
         QDir dir(path);
         if (!dir.exists())
         {
-            QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("The backup folder specified in the settings does not exist. Please update your settings and restart zkanji, to create a safety backup of the current data files."));
+            QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "The backup folder specified in the settings does not exist. Please update your settings and restart zkanji, to create a safety backup of the current data files."));
             return;
         }
 
@@ -385,7 +385,7 @@ namespace ZKanji
 
         if (!dir.cd("backup"))
         {
-            QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("Couldn't create or access the \"backup\" folder at the data backup location specified in the settings. Please update your settings and restart zkanji, to create a safety backup of the current data files."));
+            QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "Couldn't create or access the \"backup\" folder at the data backup location specified in the settings. Please update your settings and restart zkanji, to create a safety backup of the current data files."));
             return;
         }
 
@@ -430,7 +430,7 @@ namespace ZKanji
 
             if (!dir.removeRecursively())
             {
-                QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("Couldn't delete files and folder of an old backup at the user data backup location. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
+                QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "Couldn't delete files and folder of an old backup at the user data backup location. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
                 return;
             }
             dir.cdUp();
@@ -441,12 +441,12 @@ namespace ZKanji
         QString newdir = QString("%1%2%3").arg(now.date().year(), 4, 10, QChar('0')).arg(now.date().month(), 2, 10, QChar('0')).arg(now.date().day(), 2, 10, QChar('0'));
         if (!dir.mkdir(newdir))
         {
-            QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("Couldn't create folder at the user data backup location. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
+            QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "Couldn't create folder at the user data backup location. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
             return;
         }
         if (!dir.cd(newdir))
         {
-            QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("Couldn't access folder at the user data backup location. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
+            QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "Couldn't access folder at the user data backup location. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
             return;
         }
 
@@ -463,7 +463,7 @@ namespace ZKanji
 
         if (fail)
         {
-            QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("Couldn't create backup of the user data files at the backup location specified in the settings. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
+            QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "Couldn't create backup of the user data files at the backup location specified in the settings. Please fix file access to the backup folder or update your settings and restart zkanji, to create a safety backup of the current data files."));
             return;
         }
     }

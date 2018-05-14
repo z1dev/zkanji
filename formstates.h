@@ -152,9 +152,9 @@ struct KanjiInfoFormData
     KanjiInfoData data;
 };
 
-enum class DeckItemViewModes : int;
-enum class DeckStatPages : int;
-enum class DeckStatIntervals : int;
+enum class DeckItemViewModes;
+enum class DeckStatPages;
+enum class DeckStatIntervals;
 
 struct WordStudyListFormDataItems
 {

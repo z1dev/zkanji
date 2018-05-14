@@ -13,7 +13,7 @@
 #include "smartvector.h"
 
 class QModelIndex;
-enum class InfTypes : int;
+enum class InfTypes;
 enum class SearchMode : uchar;
 enum class SearchWildcard : uchar;
 Q_DECLARE_FLAGS(SearchWildcards, SearchWildcard);

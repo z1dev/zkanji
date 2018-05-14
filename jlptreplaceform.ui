@@ -223,7 +223,7 @@
           </font>
          </property>
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
@@ -274,7 +274,7 @@
           </font>
          </property>
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
@@ -325,7 +325,7 @@
           </font>
          </property>
          <property name="text">
-          <string>0</string>
+          <string notr="true">0</string>
          </property>
         </widget>
        </item>
@@ -351,11 +351,11 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>wordEdit</tabstop>
   <tabstop>undoButton</tabstop>
   <tabstop>skipButton</tabstop>
   <tabstop>useButton</tabstop>
   <tabstop>abortButton</tabstop>
-  <tabstop>wordEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

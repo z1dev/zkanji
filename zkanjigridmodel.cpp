@@ -243,10 +243,13 @@ QString MainKanjiListModel::statusText(int statusindex, int labelindex, int kanj
         switch (statusindex)
         {
         case 0:
+            //: Jouyou grade in status bar
             return tr("G") + ":";
         case 1:
+            //: JLPT N level in status bar
             return tr("N") + ":";
         case 2:
+            //: Kanji frequency in status bar
             return tr("F") + ":";
         default:
             return QString();

@@ -1024,7 +1024,7 @@ void GlobalUI::importBaseDict()
         {
             path = QString();
             if (showAndReturn("zkanji", tr("The selected folder does not contain the required file or the file cannot be read."),
-                tr("\"Retry\" to select another folder with the dictionary file. If you \"Cancel\" the import will be aborted."), {
+                tr("\"%1\" to select another folder with the dictionary file. If you \"%2\" the import will be aborted.").arg(tr("Retry")).arg(tr("Cancel")), {
                     { tr("Retry"), QMessageBox::AcceptRole },
                     { tr("Cancel"), QMessageBox::RejectRole } }) == 1)
                     return;
@@ -1148,7 +1148,7 @@ void GlobalUI::importExamples()
         {
             path = QString();
             if (showAndReturn("zkanji", tr("The selected folder does not contain the required file or the file cannot be read."),
-                tr("\"Retry\" to select another folder with the example sentences file. If you \"Cancel\" the import will be aborted."), {
+                tr("\"%1\" to select another folder with the example sentences file. If you \"%2\" the import will be aborted.").arg(tr("Retry")).arg(tr("Cancel")), {
                     { tr("Retry"), QMessageBox::AcceptRole },
                     { tr("Cancel"), QMessageBox::RejectRole } }) == 1)
                     return;
@@ -1239,7 +1239,7 @@ void GlobalUI::userImportAction()
     if (!f.exec(ZKanji::dictionary(d.result())))
         return;
 
-    QString fname = QFileDialog::getOpenFileName(!mainforms.empty() ? mainforms[0] : nullptr, tr("Open export file"), QString(), QString("%1 (*.zkanji.export)").arg(tr("Export file ")));
+    QString fname = QFileDialog::getOpenFileName(!mainforms.empty() ? mainforms[0] : nullptr, tr("Open export file"), QString(), QString("%1 (*.zkanji.export)").arg(tr("Export file")));
     if (fname.isEmpty())
         return;
 

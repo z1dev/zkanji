@@ -152,7 +152,7 @@
              <string>Limit number of kanji in words. Ranges are allowed. i.e.: 2-4</string>
             </property>
             <property name="text">
-             <string>3</string>
+             <string notr="true">3</string>
             </property>
             <property name="maxLength">
              <number>8</number>
@@ -184,7 +184,7 @@
              <string>Maximum length of listed words when written with kana</string>
             </property>
             <property name="text">
-             <string>8</string>
+             <string notr="true">8</string>
             </property>
             <property name="maxLength">
              <number>8</number>
@@ -216,7 +216,7 @@
              <string>Collect words having higher frequency</string>
             </property>
             <property name="text">
-             <string>1000</string>
+             <string notr="true">1000</string>
             </property>
             <property name="maxLength">
              <number>4</number>
@@ -232,7 +232,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Kanji position and reading must match for every kanji in the words</string>
+             <string>Kanji position and reading must match for every occurrence of kanji</string>
             </property>
             <property name="text">
              <string>Strict position and reading</string>
@@ -464,17 +464,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ZKanjiGridView</class>
-   <extends>QWidget</extends>
-   <header>zkanjigridview.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>DictionaryWidget</class>
    <extends>QWidget</extends>
    <header>dictionarywidget.h</header>
@@ -484,6 +473,17 @@
    <class>ZDictionaryComboBox</class>
    <extends>QComboBox</extends>
    <header>zdictionarycombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZKanjiGridView</class>
+   <extends>QWidget</extends>
+   <header>zkanjigridview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZListBox</class>

@@ -54,7 +54,7 @@ enum class KanjiFromT {
 
 struct KanjiFilterData;
 
-enum class KanjiGridSortOrder : int;
+enum class KanjiGridSortOrder;
 
 // Filters in the order they appear in the "filters" member of kanjiFilterData.
 enum class KanjiFilters : uchar {

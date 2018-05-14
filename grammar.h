@@ -12,11 +12,11 @@
 
 struct KanjiEntry;
 
-enum class InfTypes : int;
-enum class WordInfo : int;
-enum class WordTypes : int;
-enum class WordNotes : int;
-enum class WordFields : int;
+enum class InfTypes;
+enum class WordInfo;
+enum class WordTypes;
+enum class WordNotes;
+enum class WordFields;
 
 // Must be called on startup before anything else zkanji related.
 // Initializes the strings used for deinflecting words.

@@ -10,9 +10,6 @@
     <height>125</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>2</number>
@@ -162,6 +159,9 @@
         <property name="toolTip">
          <string>Display groups with names containing entered text</string>
         </property>
+        <property name="text">
+         <string notr="true"/>
+        </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
         </property>
@@ -185,11 +185,11 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>groupsTree</tabstop>
-  <tabstop>filterEdit</tabstop>
   <tabstop>btnAddCateg</tabstop>
   <tabstop>btnAddGroup</tabstop>
   <tabstop>btnDelGroup</tabstop>
+  <tabstop>groupsTree</tabstop>
+  <tabstop>filterEdit</tabstop>
  </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>

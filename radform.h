@@ -15,7 +15,7 @@ namespace Ui {
     class RadicalForm;
 }
 
-enum class RadicalFilterModes : int;
+enum class RadicalFilterModes;
 class ZVariedModel;
 struct RadicalFilter;
 class QAbstractButton;

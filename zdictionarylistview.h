@@ -313,7 +313,7 @@ private:
     typedef ZListView   base;
 };
 
-enum class InfTypes : int;
+enum class InfTypes;
 class DictionaryListDelegate : public ZListViewItemDelegate
 {
 public:

@@ -165,7 +165,7 @@
           </size>
          </property>
          <property name="text">
-          <string>1</string>
+          <string notr="true">1</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -440,7 +440,7 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

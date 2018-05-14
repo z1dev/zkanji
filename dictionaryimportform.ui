@@ -211,6 +211,13 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>dictCBox</tabstop>
+  <tabstop>fullOption</tabstop>
+  <tabstop>partOption</tabstop>
+  <tabstop>kanjiBox</tabstop>
+  <tabstop>wordBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

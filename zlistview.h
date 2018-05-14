@@ -19,7 +19,7 @@ class ZAbstractTableModel;
 class ListViewHeader;
 class QXmlStreamWriter;
 class QXmlStreamReader;
-enum class CheckBoxMouseState : int;
+enum class CheckBoxMouseState;
 class RangeSelection;
 struct Range;
 struct Interval;
@@ -34,7 +34,7 @@ class ZStatusBar;
 //      control while clicking allows toggling rows, holding shift selects the rows between
 //      the selection pivot and clicked row. The selection is cleared if the control key is
 //      not pressed.
-enum class ListSelectionType : int { None, Single, Toggle, Extended };
+enum class ListSelectionType { None, Single, Toggle, Extended };
 
 // The ZListView can automatically update its row sizes when the global settings changes. The
 // values in the enum specify which setting to take into account when updating the row size.

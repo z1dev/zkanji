@@ -18,7 +18,7 @@
 // -1 * ([element index] + 1)
 // When painting an element, if the element has kanji or unicode character set, it's drawn
 // as text.
-class KanjiScrollerModel : public QObject //: public ZItemScrollerModel
+class KanjiScrollerModel : public QObject
 {
     Q_OBJECT
 signals:

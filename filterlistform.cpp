@@ -817,7 +817,7 @@ int FilterListForm::nameIndex(bool msgbox)
     {
         if (msgbox)
         {
-            QMessageBox::warning(this, QStringLiteral("zkanji"), tr("Please specify a name for the filter!"), QMessageBox::Ok);
+            QMessageBox::warning(this, QStringLiteral("zkanji"), tr("Please specify a name for the filter."), QMessageBox::Ok);
             return 0;
         }
         return -1;
@@ -828,7 +828,7 @@ int FilterListForm::nameIndex(bool msgbox)
     {
         if (msgbox)
         {
-            QMessageBox::warning(this, QStringLiteral("zkanji"), tr("Another filter exists with the same name. Please change the name and try again!"), QMessageBox::Ok);
+            QMessageBox::warning(this, QStringLiteral("zkanji"), tr("Another filter exists with the same name. Please change the name and try again."), QMessageBox::Ok);
             return 0;
         }
     }

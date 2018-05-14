@@ -325,3 +325,5 @@ DISTFILES +=
 
 RESOURCES += \
     Resources/resources.qrc
+
+TRANSLATIONS = zkanji_hu.ts

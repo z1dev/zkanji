@@ -102,10 +102,7 @@
                 <bool>false</bool>
                </property>
                <property name="toolTip">
-                <string>Move above previous filter</string>
-               </property>
-               <property name="text">
-                <string>Delete filter</string>
+                <string>Move filter up</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -131,10 +128,7 @@
                 <bool>false</bool>
                </property>
                <property name="toolTip">
-                <string>Move below next filter</string>
-               </property>
-               <property name="text">
-                <string>Delete filter</string>
+                <string>Move filter down</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">
@@ -161,9 +155,6 @@
                </property>
                <property name="toolTip">
                 <string>Remove filter</string>
-               </property>
-               <property name="text">
-                <string>Delete filter</string>
                </property>
                <property name="icon">
                 <iconset resource="Resources/resources.qrc">

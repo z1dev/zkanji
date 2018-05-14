@@ -670,14 +670,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZKanaLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>zkanalineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ZLineEdit</class>
    <extends>QLineEdit</extends>
    <header>zlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ZKanaLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>zkanalineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ZRadicalGrid</class>
@@ -686,6 +686,24 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>mode1Button</tabstop>
+  <tabstop>mode2Button</tabstop>
+  <tabstop>mode3Button</tabstop>
+  <tabstop>strokeEdit</tabstop>
+  <tabstop>groupButton</tabstop>
+  <tabstop>namesButton</tabstop>
+  <tabstop>searchEdit</tabstop>
+  <tabstop>anyAfterButton</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>clearButton</tabstop>
+  <tabstop>radsUpButton</tabstop>
+  <tabstop>radsDownButton</tabstop>
+  <tabstop>radsRemoveButton</tabstop>
+  <tabstop>radsClearButton</tabstop>
+  <tabstop>radsList</tabstop>
+  <tabstop>prevSelButton</tabstop>
+ </tabstops>
  <resources>
   <include location="Resources/resources.qrc"/>
  </resources>

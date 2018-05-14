@@ -374,7 +374,7 @@ namespace Settings
         QFile f(fname);
         if (!f.open(QIODevice::WriteOnly))
         {
-            QMessageBox::warning(gUI->activeMainForm(), "zkanji", gUI->tr("Couldn't create or overwrite the state settings file. Please make sure you have permission to modify the file %1.").arg(QDir::toNativeSeparators(fname)), QMessageBox::Ok);
+            QMessageBox::warning(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "Couldn't create or overwrite the state settings file. Please make sure you have permission to modify the file %1").arg(QDir::toNativeSeparators(fname)), QMessageBox::Ok);
             return;
         }
 
@@ -544,10 +544,10 @@ namespace Settings
         {
             f.close();
 
-            int r = showAndReturn(gUI->activeMainForm(), "zkanji", gUI->tr("There was an error writing the state settings file."), gUI->tr("Please make sure there's enough disk space to write to %1 and \"%2\".").arg(QDir::toNativeSeparators(ZKanji::userFolder())).arg(gUI->tr("Try again")),
+            int r = showAndReturn(gUI->activeMainForm(), "zkanji", qApp->translate("gUI", "There was an error writing the state settings file."), qApp->translate("gUI", "Please make sure there's enough disk space to write to %1 and \"%2\".").arg(QDir::toNativeSeparators(ZKanji::userFolder())).arg(qApp->translate("gUI", "Try again")),
             {
-                { gUI->tr("Try again"), QMessageBox::AcceptRole },
-                { gUI->tr("Cancel"), QMessageBox::RejectRole }
+                { qApp->translate("gUI", "Try again"), QMessageBox::AcceptRole },
+                { qApp->translate("gUI", "Cancel"), QMessageBox::RejectRole }
             });
             if (r == 0)
                 saveSettingsToFile();
@@ -1207,7 +1207,7 @@ namespace Settings
         {
             if (!f.exists())
                 return;
-            QMessageBox::warning(nullptr, "zkanji", gUI->tr("Couldn't open the state settings file for reading. Please make sure you have permission to access the file %1.").arg(QDir::toNativeSeparators(fname)), QMessageBox::Ok);
+            QMessageBox::warning(nullptr, "zkanji", qApp->translate("gUI", "Couldn't open the state settings file for reading. Please make sure you have permission to access the file %1").arg(QDir::toNativeSeparators(fname)), QMessageBox::Ok);
             return;
         }
 
@@ -1336,20 +1336,20 @@ namespace Settings
             switch (reader.error())
             {
             case QXmlStreamReader::UnexpectedElementError:
-                errorstr = gUI->tr("UnexpectedElementError");
+                errorstr = "UnexpectedElementError";
                 break;
             case QXmlStreamReader::NotWellFormedError:
-                errorstr = gUI->tr("NotWellFormedError");
+                errorstr = "NotWellFormedError";
                 break;
             case QXmlStreamReader::PrematureEndOfDocumentError:
-                errorstr = gUI->tr("PrematureEndOfDocumentError");
+                errorstr = "PrematureEndOfDocumentError";
                 break;
             case QXmlStreamReader::CustomError:
                 errorstr = reader.errorString();
                 break;
             }
 
-            if (QMessageBox::warning(nullptr, "zkanji", gUI->tr("There was an error in states.xml at line %1, position %2, of the type %3. The program can load normally with some settings lost.").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(errorstr), QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Cancel)
+            if (QMessageBox::warning(nullptr, "zkanji", qApp->translate("gUI", "There was an error in states.xml at line %1, position %2, of the type %3. The program can load normally with some settings lost.").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(errorstr), QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Cancel)
                 exit(0);
         }
     }

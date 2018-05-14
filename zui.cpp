@@ -714,6 +714,13 @@ QString formatDate(const QDate &d, QString unset)
     return DateTimeFunctions::format(QDateTime(d), DateTimeFunctions::NormalDate);
 }
 
+QString formatDateTime(const QDateTime &d, QString unset)
+{
+    if (!d.isValid())
+        return unset;
+    return DateTimeFunctions::format(QDateTime(d), DateTimeFunctions::NormalDateTime);
+}
+
 QString formatSpacing(quint32 sec)
 {
     return DateTimeFunctions::formatSpacing(sec);
@@ -1734,18 +1741,27 @@ DateTimeFunctions::~DateTimeFunctions()
 
 }
 
-QString DateTimeFunctions::formatString()
+QString DateTimeFunctions::dateFormatString()
 {
     switch (Settings::general.dateformat)
     {
     case GeneralSettings::DayMonthYear:
+        //: Day.Month.Year order of a date.
         return tr("dd.MM.yyyy");
     case GeneralSettings::MonthDayYear:
+        //: Month.Day.Year order of a date.
         return tr("MM.dd.yyyy");
     case GeneralSettings::YearMonthDay:
     default:
+        //: Year.Month.Day order of a date.
         return tr("yyyy.MM.dd");
     }
+}
+
+QString DateTimeFunctions::timeFormatString()
+{
+    // Hours:Minutes:Seconds AM/PM - Leave out ap to get 24 hour time.
+    return tr("h:m:s ap");
 }
 
 QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
@@ -1760,7 +1776,10 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
     case DayFixedDate:
         dt = QDateTime(getLTDay(dt));
     case NormalDate:
-        return dt.toString(formatString());
+        return dt.toString(dateFormatString());
+    case NormalDateTime:
+        //: "Date, Time" with separator. Eg. 2001.02.03, 12:40:55
+        return tr("%1, %2").arg(dt.toString(dateFormatString())).arg(dt.toString(timeFormatString()));
     }
 
     return QString();
@@ -1768,7 +1787,7 @@ QString DateTimeFunctions::format(QDateTime dt, FormatTypes type, bool utc)
 
 QString DateTimeFunctions::formatDay(QDate dt)
 {
-    return dt.toString(formatString());
+    return dt.toString(dateFormatString());
 }
 
 QString DateTimeFunctions::formatPast(QDateTime dt)
