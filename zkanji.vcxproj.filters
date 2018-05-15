@@ -983,6 +983,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_formstates.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="languages.cpp">
+      <Filter>Code\General\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1643,6 +1646,12 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_kanawritingpracticeform.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="languages.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="languagesettings.h">
+      <Filter>Code\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -47,6 +47,8 @@
 #include "colorsettings.h"
 #include "wordtogroupform.h"
 #include "wordtodictionaryform.h"
+#include "languages.h"
+#include "languagesettings.h"
 
 //// Mode button icon image width.
 //static const int _iconW = 16;
@@ -607,6 +609,9 @@ void GlobalUI::applySettings()
     checkColorTheme();
     //applyStyleSheet();
     emit settingsChanged();
+
+    if (Settings::language != zLang->currentID())
+        zLang->setLanguage(Settings::language);
 }
 
 void GlobalUI::applyStyleSheet()

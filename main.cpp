@@ -36,6 +36,7 @@
 #include "kanjistrokes.h"
 
 #include "grammar_enums.h"
+#include "languages.h"
 
 #ifdef WIN32
 #include <Windows.h>
@@ -852,6 +853,8 @@ int main(int argc, char **argv)
         ZKanji::generateValidUnicode();
 
         ZKanji::setAppFolder(qApp->applicationDirPath());
+
+        zLang->initialize();
 
         loadRecognizerData();
 

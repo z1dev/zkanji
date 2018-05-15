@@ -26,6 +26,7 @@
 #include "kanjisettings.h"
 #include "studysettings.h"
 #include "datasettings.h"
+#include "languagesettings.h"
 #include "zkanjimain.h"
 #include "globalui.h"
 #include "zkanjiform.h"
@@ -119,6 +120,7 @@ namespace Settings
     const QColor stat2ddef = QColor(120, 212, 40);
     const QColor stat3ddef = QColor(232, 160, 0);
 
+    QString language;
 
     FontSettings fonts;
     GeneralSettings general;

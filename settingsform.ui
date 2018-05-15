@@ -233,7 +233,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>17</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -5971,8 +5971,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_3"/>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

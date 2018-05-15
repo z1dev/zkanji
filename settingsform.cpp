@@ -36,6 +36,8 @@
 #include "zkanjimain.h"
 #include "zui.h"
 #include "romajizer.h"
+#include "languages.h"
+#include "languagesettings.h"
 
 
 //-------------------------------------------------------------
@@ -323,6 +325,12 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
 
 
     setAttribute(Qt::WA_DeleteOnClose);
+
+    ui->languageCBox->clear();
+    for (int ix = 0, siz = zLang->count(); ix != siz; ++ix)
+        ui->languageCBox->addItem(zLang->names(ix));
+
+    ui->languageCBox->setCurrentIndex(zLang->currentLanguage());
 
     adjustSize();
 
@@ -1001,6 +1009,8 @@ void SettingsForm::applyClicked()
     if (ui->printInfoStyleCBox->currentIndex() == -1)
         ui->printInfoStyleCBox->setCurrentIndex((int)Settings::fonts.printinfostyle);
     Settings::fonts.printinfostyle = (FontSettings::FontStyle)ui->printInfoStyleCBox->currentIndex();
+
+    Settings::language = zLang->IDs(ui->languageCBox->currentIndex());
 
     gUI->applySettings();
 
