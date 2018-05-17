@@ -217,6 +217,7 @@ protected:
 
     virtual QWidget* captionWidget() const override;
 
+    virtual bool event(QEvent *e) override;
     virtual void hideEvent(QHideEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void keyReleaseEvent(QKeyEvent *e) override;

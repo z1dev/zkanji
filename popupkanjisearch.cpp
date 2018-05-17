@@ -274,6 +274,8 @@ bool PopupKanjiSearch::event(QEvent *e)
         ignoreresize = false;
         return true;
     }
+    else if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
 
     return base::event(e);
 }

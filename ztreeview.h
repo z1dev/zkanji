@@ -69,6 +69,7 @@ protected slots:
     // Forwards the collapsed signal.
     void indexCollapsed(const QModelIndex &index);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void dropEvent(QDropEvent *event) override;
     using QTreeView::edit;
 private:

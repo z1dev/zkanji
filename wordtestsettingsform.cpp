@@ -868,8 +868,6 @@ WordTestSettingsForm::WordTestSettingsForm(WordGroup *group, QWidget *parent) :
     //hide();
     //setAttribute(Qt::WA_DontShowOnScreen, false);
 
-    setWindowTitle(tr("Word test settings") + QString(" - %1").arg(group->name()));
-
     group->studyData().applyScore();
     model = new TestWordsItemModel(group, ui->dictWidget);
 
@@ -953,7 +951,7 @@ void WordTestSettingsForm::exec()
     ui->kanaUsageBox->setChecked(settings.matchkana);
 
     ui->methodCBox->setCurrentIndex(settings.method == WordStudyMethod::Gradual ? 0 : 1);
-    on_methodCBox_currentIndexChanged(ui->methodCBox->currentIndex());
+    //on_methodCBox_currentIndexChanged(ui->methodCBox->currentIndex());
 
     ui->initCBox->setCurrentText(QString::number(settings.gradual.initnum));
     ui->increaseCBox->setCurrentText(QString::number(settings.gradual.incnum));
@@ -994,8 +992,21 @@ void WordTestSettingsForm::exec()
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    setWidgetTexts();
+
     // Warning: if changed to show(), handle word and dictionary changes.
     base::showModal();
+}
+
+bool WordTestSettingsForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setWidgetTexts();
+    }
+
+    return base::event(e);
 }
 
 void WordTestSettingsForm::closeEvent(QCloseEvent *e)
@@ -1113,6 +1124,12 @@ void WordTestSettingsForm::closeEvent(QCloseEvent *e)
 
     e->accept();
     base::closeEvent(e);
+}
+
+void WordTestSettingsForm::setWidgetTexts()
+{
+    setWindowTitle(QString("zkanji - %1: %2").arg(tr("Word test settings")).arg(group->name()));
+    on_methodCBox_currentIndexChanged(ui->methodCBox->currentIndex());
 }
 
 void WordTestSettingsForm::updateStartSave()

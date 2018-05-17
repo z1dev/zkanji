@@ -549,7 +549,7 @@ void FilterListForm::on_downButton_clicked()
 void FilterListForm::on_nameEdit_textEdited(const QString &text)
 {
     filterindex = -1;
-    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
+    updateSaveButton();
     ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!ui->nameEdit->text().isEmpty() && nameIndex(false) == -1);
     ui->filterTable->setCurrentRow(-1);
 }
@@ -576,7 +576,6 @@ void FilterListForm::editInitiated(int row)
             ui->anyButton->setChecked(true);
         if (!ui->nameEdit->hasFocus())
             ui->nameEdit->setText(filter.name);
-        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Save"));
     }
     else
     {
@@ -585,8 +584,9 @@ void FilterListForm::editInitiated(int row)
             ui->nameEdit->setText(QString());
         ui->attribWidget->setChecked(dummy, 0, 0);
         ui->anyButton->setChecked(true);
-        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
     }
+
+    updateSaveButton();
 
     toggleEditor(true);
 
@@ -629,25 +629,9 @@ void FilterListForm::currentRowChanged()
     ui->upButton->setEnabled(curr > 0 && curr < ZKanji::wordfilters().size());
     ui->downButton->setEnabled(curr != -1 && curr < ZKanji::wordfilters().size() - 1);
 
-    //ui->editButton->setEnabled(curr >= 0 && curr < ZKanji::wordfilters().size());
-
-    //if (ui->editWidget->isVisibleTo(this))
-    //    toggleEditor(false);
-
     if (ui->editWidget->isVisibleTo(this) && curr != nameix)
     {
         editInitiated(ui->filterTable->currentRow());
-
-        //if (!ui->nameEdit->hasFocus())
-        //{
-        //    if (filterindex != -1)
-        //    {
-        //        const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
-        //        ui->nameEdit->setText(filter.name);
-        //    }
-        //    else
-        //        ui->nameEdit->setText(QString());
-        //}
     }
 }
 
@@ -678,27 +662,26 @@ void FilterListForm::saveClicked()
     //ui->filterTable->setFocus();
 }
 
-//void FilterListForm::resetClicked()
-//{
-//    if (filterindex != -1)
-//    {
-//        const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
-//        ui->attribWidget->setChecked(filter.attrib, filter.inf, filter.jlpt);
-//        if (filter.matchtype == FilterMatchType::AllMustMatch)
-//            ui->allButton->setChecked(true);
-//        else
-//            ui->anyButton->setChecked(true);
-//        ui->nameEdit->setText(filter.name);
-//    }
-//    else
-//    {
-//        WordDefAttrib dummy;
-//        ui->nameEdit->setText(QString());
-//        ui->attribWidget->setChecked(dummy, 0, 0);
-//        ui->anyButton->setChecked(true);
-//    }
-//    ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(false);
-//}
+void FilterListForm::filterChanged(int index)
+{
+    if (index != filterindex)
+        return;
+
+    ui->nameEdit->setText(ZKanji::wordfilters().items(filterindex).name);
+    //on_nameEdit_textEdited(ui->nameEdit->text());
+    allowApply();
+}
+
+bool FilterListForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        updateSaveButton();
+    }
+
+    return base::event(e);
+}
 
 bool FilterListForm::eventFilter(QObject *o, QEvent *e)
 {
@@ -707,19 +690,6 @@ bool FilterListForm::eventFilter(QObject *o, QEvent *e)
 
     return base::eventFilter(o, e);
 }
-
-//void FilterListForm::changeEvent(QEvent *e)
-//{
-//    if (e->type() == QEvent::ActivationChange)
-//    {
-//        if (qApp->activeWindow() != this && (qApp->activeWindow() == nullptr || qApp->activeWindow()->parent() != this))
-//            deleteLater();
-//        else if (qApp->activeWindow() == this)
-//            ui->addButton->setEnabled(true);
-//    }
-//
-//    base::changeEvent(e);
-//}
 
 void FilterListForm::keyPressEvent(QKeyEvent *e)
 {
@@ -755,6 +725,14 @@ void FilterListForm::closeEvent(QCloseEvent *e)
 
         base::closeEvent(e);
     }
+}
+
+void FilterListForm::updateSaveButton()
+{
+    if (filterindex == -1)
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
+    else
+        ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Save"));
 }
 
 void FilterListForm::toggleEditor(bool show)
@@ -799,16 +777,6 @@ void FilterListForm::toggleEditor(bool show)
         else
             ui->splitter->setSizes({ leftsize - oldwidth - ui->splitter->handleWidth(), oldwidth });
     }
-}
-
-void FilterListForm::filterChanged(int index)
-{
-    if (index != filterindex)
-        return;
-
-    ui->nameEdit->setText(ZKanji::wordfilters().items(filterindex).name);
-    //on_nameEdit_textEdited(ui->nameEdit->text());
-    allowApply();
 }
 
 int FilterListForm::nameIndex(bool msgbox)

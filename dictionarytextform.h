@@ -30,7 +30,11 @@ public slots:
 
     void on_browseButton_clicked();
     void on_removeButton_clicked();
+protected:
+    virtual bool event(QEvent *e) override;
 private:
+    void updateWindowTitle();
+
     Ui::DictionaryTextForm *ui;
 
     Dictionary *dict;

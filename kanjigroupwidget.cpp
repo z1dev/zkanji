@@ -86,6 +86,14 @@ void KanjiGroupWidget::setDictionary(int index)
     ui->groupWidget->setDictionary(ZKanji::dictionary(index));
 }
 
+bool KanjiGroupWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void KanjiGroupWidget::kanjiSelectionChanged()
 {
     bool hassel = ui->kanjiGrid->selCount() != 0;

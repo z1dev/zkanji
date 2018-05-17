@@ -165,6 +165,8 @@ public:
     ~PrintPreviewForm();
 
     void exec(Dictionary *dict, const std::vector<int> &wordlist);
+protected:
+    virtual bool event(QEvent *e) override;
 protected slots:
     void on_printButton_clicked();
     void on_setupButton_clicked();

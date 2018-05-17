@@ -42,7 +42,7 @@ QStringListModel DictionaryWidget::ensearches;
 
 
 DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::DictionaryWidget),
-        dict(ZKanji::dictionaryCount() != 0 ? ZKanji::dictionary(0) : nullptr), model(nullptr), /*browsemodel(nullptr), grp(nullptr), filtermodel(nullptr),*/
+        dict(ZKanji::dictionaryCount() != 0 ? ZKanji::dictionary(0) : nullptr), commandmap(nullptr), model(nullptr), /*browsemodel(nullptr), grp(nullptr), filtermodel(nullptr),*/
         updatepending(false), updateforced(true), savecolumndata(true), listmode(DictSearch), mode(SearchMode::Japanese), browseorder(Settings::dictionary.browseorder)
 {
     ui->setupUi(this);
@@ -1073,6 +1073,13 @@ bool DictionaryWidget::event(QEvent *e)
 
         return true;
     }
+
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        installCommands();
+    }
+
     return base::event(e);
 }
 
@@ -1540,28 +1547,30 @@ void DictionaryWidget::installCommands()
     if (dynamic_cast<ZKanjiForm*>(window()) != nullptr)
         return;
 
-    QSignalMapper *map = new QSignalMapper(this);
-    connect(map, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, &DictionaryWidget::executeCommand);
-    addCommandShortcut(map, Qt::Key_F2, makeCommand(Commands::FromJapanese));
-    addCommandShortcut(map, Qt::Key_F3, makeCommand(Commands::ToJapanese));
-    addCommandShortcut(map, Qt::Key_F4, makeCommand(Commands::BrowseJapanese));
-    addCommandShortcut(map, Qt::Key_F5, makeCommand(Commands::ToggleExamples));
-    addCommandShortcut(map, Qt::Key_F6, makeCommand(Commands::ToggleAnyStart));
-    addCommandShortcut(map, Qt::Key_F7, makeCommand(Commands::ToggleAnyEnd));
-    addCommandShortcut(map, Qt::Key_F8, makeCommand(Commands::ToggleDeinflect));
-    addCommandShortcut(map, Qt::Key_F9, makeCommand(Commands::ToggleStrict));
-    addCommandShortcut(map, QKeySequence(tr("Ctrl+F")), makeCommand(Commands::ToggleFilter));
-    addCommandShortcut(map, QKeySequence(tr("Ctrl+Shift+F")), makeCommand(Commands::EditFilters));
-    addCommandShortcut(map, Qt::Key_F10, makeCommand(Commands::ToggleMultiline));
+    delete commandmap;
+    commandmap = new QSignalMapper(this);
+    connect(commandmap, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, &DictionaryWidget::executeCommand);
+
+    addCommandShortcut(Qt::Key_F2, makeCommand(Commands::FromJapanese));
+    addCommandShortcut(Qt::Key_F3, makeCommand(Commands::ToJapanese));
+    addCommandShortcut(Qt::Key_F4, makeCommand(Commands::BrowseJapanese));
+    addCommandShortcut(Qt::Key_F5, makeCommand(Commands::ToggleExamples));
+    addCommandShortcut(Qt::Key_F6, makeCommand(Commands::ToggleAnyStart));
+    addCommandShortcut(Qt::Key_F7, makeCommand(Commands::ToggleAnyEnd));
+    addCommandShortcut(Qt::Key_F8, makeCommand(Commands::ToggleDeinflect));
+    addCommandShortcut(Qt::Key_F9, makeCommand(Commands::ToggleStrict));
+    addCommandShortcut(QKeySequence(tr("Ctrl+F")), makeCommand(Commands::ToggleFilter));
+    addCommandShortcut(QKeySequence(tr("Ctrl+Shift+F")), makeCommand(Commands::EditFilters));
+    addCommandShortcut(Qt::Key_F10, makeCommand(Commands::ToggleMultiline));
 }
 
-void DictionaryWidget::addCommandShortcut(QSignalMapper *map, const QKeySequence &keyseq, int command)
+void DictionaryWidget::addCommandShortcut(const QKeySequence &keyseq, int command)
 {
     QAction *a = new QAction(this);
     a->setShortcut(keyseq);
     //a->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    connect(a, &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
-    map->setMapping(a, command);
+    connect(a, &QAction::triggered, commandmap, (void (QSignalMapper::*)())&QSignalMapper::map);
+    commandmap->setMapping(a, command);
     addAction(a);
 }
 

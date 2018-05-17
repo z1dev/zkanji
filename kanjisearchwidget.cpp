@@ -628,7 +628,10 @@ KanjiSearchWidget::KanjiSearchWidget(QWidget *parent) : base(parent), ui(new Ui:
 
     connect(ui->radicalsCButton, &ZComboButton::clicked, this, &KanjiSearchWidget::radicalsCButtonClicked);
     connect(ui->radicalsCButton, static_cast<void (ZComboButton::*)(int)>(&ZComboButton::currentIndexChanged), this, &KanjiSearchWidget::radicalSelected);
+
+    //: No radicals filter selected
     ui->radicalsCButton->addItem(tr("None"));
+
     for (int ix = 0, siz = m.size(); ix != siz; ++ix)
         ui->radicalsCButton->addItem(m.filterText(ix));
 
@@ -1090,6 +1093,17 @@ void KanjiSearchWidget::reset()
     ui->indexEdit->setText(QString());
 
     filterKanji();
+}
+
+bool KanjiSearchWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        ui->radicalsCButton->setItemText(0, tr("None"));
+    }
+
+    return base::event(e);
 }
 
 void KanjiSearchWidget::showEvent(QShowEvent *e)

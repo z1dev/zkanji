@@ -464,6 +464,10 @@ bool WordDeckForm::event(QEvent *e)
             on_deckTable_rowSelectionChanged();
         return true;
     }
+    else if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+    }
 
     return base::event(e);
 }

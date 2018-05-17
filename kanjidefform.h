@@ -32,6 +32,8 @@ public slots:
     void ok();
 
     void dictionaryRemoved(int index, int orderindex, void *oldaddress);
+protected:
+    virtual bool event(QEvent *e) override;
 private:
     void updateKanji();
     void updateDictionary();

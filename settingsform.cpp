@@ -1295,6 +1295,28 @@ void SettingsForm::printCBoxChanged()
     ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->printInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
 }
 
+bool SettingsForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+
+        ui->kanjiRef1CBox->setItemText(0, tr("None"));
+        ui->kanjiRef2CBox->setItemText(0, tr("None"));
+        ui->kanjiRef3CBox->setItemText(0, tr("None"));
+        ui->kanjiRef4CBox->setItemText(0, tr("None"));
+        for (int ix = 1, siz = ZKanji::kanjiReferenceCount(); ix != siz; ++ix)
+        {
+            ui->kanjiRef1CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+            ui->kanjiRef2CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+            ui->kanjiRef3CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+            ui->kanjiRef4CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+        }
+    }
+
+    return base::event(e);
+}
+
 bool SettingsForm::eventFilter(QObject *o, QEvent *e)
 {
     if (o == ui->kanjiPreview && e->type() == QEvent::Paint)

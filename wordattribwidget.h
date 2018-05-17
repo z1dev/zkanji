@@ -103,6 +103,9 @@ struct WordDefAttrib;
 class WordAttribWidget : public QWidget
 {
     Q_OBJECT
+signals:
+    // Signaled when the state of any checkbox in the word attrib tree changes.
+    void changed();
 public:
     WordAttribWidget(QWidget *parent = nullptr);
     ~WordAttribWidget();
@@ -156,9 +159,8 @@ public:
     void setInfoBits(uchar bits, bool select);
     // Selects or deselects all jlpt matching the passed bits.
     void setJlptBits(uchar bits, bool select);
-signals:
-    // Signaled when the state of any checkbox in the word attrib tree changes.
-    void changed();
+protected:
+    virtual bool event(QEvent *e) override;
 private:
     void textChanged(const QString &str);
 

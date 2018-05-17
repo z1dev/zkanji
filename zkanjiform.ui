@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>zkanji α</string>
+   <string notr="true">zkanji α</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>
  </widget>

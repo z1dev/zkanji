@@ -19,7 +19,7 @@
 //-------------------------------------------------------------
 
 
-WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), addButton(nullptr), expandsize(-1)
+WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), dindex(-1), addButton(nullptr), expandsize(-1)
 {
     ui->setupUi(this);
 
@@ -36,7 +36,7 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToDictionaryForm::dictionaryToBeRemoved);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToDictionaryForm::on_cancelButton_clicked);
-    addButton = ui->buttonBox->addButton(tr("Create word"), QDialogButtonBox::ButtonRole::AcceptRole);
+    addButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::ButtonRole::AcceptRole);
     connect(addButton, &QPushButton::clicked, this, &WordToDictionaryForm::on_addButton_clicked);
 }
 
@@ -60,10 +60,7 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial, 
 
     // Set fixed width to the add button.
 
-    QFontMetrics mcs = addButton->fontMetrics();
-    int dif = std::abs(mcs.boundingRect(tr("Create word")).width() - mcs.boundingRect(tr("Add meanings")).width());
-    addButton->setMinimumWidth(addButton->sizeHint().width() + dif);
-    addButton->setMaximumWidth(addButton->minimumWidth());
+    setButtonText();
 
     // Show the original word on top.
 
@@ -101,6 +98,17 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial, 
     //expandsize = ui->splitter->sizes().at(1);
 
     show();
+}
+
+bool WordToDictionaryForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setButtonText();
+    }
+
+    return base::event(e);
 }
 
 void WordToDictionaryForm::closeEvent(QCloseEvent *e)
@@ -179,7 +187,7 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
             if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
                 resize(s);
         }
-        addButton->setText(tr("Create word"));
+        setButtonText();
     }
     else
     {
@@ -193,7 +201,7 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
         ui->meaningsTable->setMultiLine(true);
         ui->meaningsTable->setModel(model);
 
-        addButton->setText(tr("Add meanings"));
+        setButtonText();
 
         if (!ui->meaningsWidget->isVisibleTo(this))
         {
@@ -247,6 +255,23 @@ void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dict
 {
     if (d == dict || ZKanji::dictionaryCount() == 1)
         close();
+}
+
+void WordToDictionaryForm::setButtonText()
+{
+    addButton->setMinimumWidth(0);
+    addButton->setMaximumWidth(QWIDGETSIZE_MAX);
+
+    if (dindex == -1)
+        addButton->setText(tr("Create word"));
+    else
+        addButton->setText(tr("Add meanings"));
+
+    QFontMetrics mcs = addButton->fontMetrics();
+    int dif = std::abs(mcs.boundingRect(tr("Create word")).width() - mcs.boundingRect(tr("Add meanings")).width());
+
+    addButton->setMinimumWidth(addButton->sizeHint().width() + dif);
+    addButton->setMaximumWidth(addButton->minimumWidth());
 }
 
 

@@ -340,6 +340,11 @@ bool DictionaryStatsForm::event(QEvent *e)
             return true;
         }
     }
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        updateBaseLabels();
+    }
 
     return base::event(e);
 }
@@ -385,13 +390,8 @@ void DictionaryStatsForm::updateData()
     stopThreads();
 
     Dictionary *d = ZKanji::dictionary(0);
-    ui->baseLabel->setText(tr("The base dictionary was built for zkanji %1 on %2.").arg(d->programVersion()).arg(formatDateTime(d->baseDate())));
-    if (ZKanji::sentences.isLoaded())
-        ui->exampleLabel->setText(tr("The example sentences database was imported in zkanji %1 on %2.").arg(ZKanji::sentences.programVersion()).arg(formatDateTime(ZKanji::sentences.creationDate())));
-    else
-        ui->exampleLabel->setText(tr("No example sentences database loaded."));
     d = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
-    ui->buildLabel->setText(tr("The selected dictionary was last saved in zkanji %1 on %2.").arg(d->programVersion()).arg(formatDateTime(d->lastWriteDate())));
+    updateBaseLabels();
 
     ui->kanjiNumLabel->setText(QString::number(ZKanji::kanjis.size()));
     int cnt = 0;
@@ -449,9 +449,9 @@ void DictionaryStatsForm::updateData()
         return;
     }
 
-    ui->entryUniqueLabel->setText(tr("?"));
-    ui->defUniqueLabel->setText(tr("?"));
-    ui->kanjiGrpNumLabel->setText(tr("?"));
+    ui->entryUniqueLabel->setText("...");
+    ui->defUniqueLabel->setText("...");
+    ui->kanjiGrpNumLabel->setText("...");
 
     startThreads(d);
 }
@@ -482,6 +482,18 @@ void DictionaryStatsForm::startThreads(Dictionary *d)
     QThreadPool::globalInstance()->start(thread.get());
 
     timer.start(100, this);
+}
+
+void DictionaryStatsForm::updateBaseLabels()
+{
+    Dictionary *d = ZKanji::dictionary(0);
+    ui->baseLabel->setText(tr("The base dictionary was built for zkanji %1 on %2.").arg(d->programVersion()).arg(formatDateTime(d->baseDate())));
+    if (ZKanji::sentences.isLoaded())
+        ui->exampleLabel->setText(tr("The example sentences database was imported in zkanji %1 on %2.").arg(ZKanji::sentences.programVersion()).arg(formatDateTime(ZKanji::sentences.creationDate())));
+    else
+        ui->exampleLabel->setText(tr("No example sentences database loaded."));
+    d = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
+    ui->buildLabel->setText(tr("The selected dictionary was last saved in zkanji %1 on %2.").arg(d->programVersion()).arg(formatDateTime(d->lastWriteDate())));
 }
 
 void DictionaryStatsForm::updateLabels(const StatResult &r)

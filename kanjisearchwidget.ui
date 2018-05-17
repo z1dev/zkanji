@@ -673,6 +673,9 @@
            <property name="maxVisibleItems">
             <number>12</number>
            </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
            <item>
             <property name="text">
              <string>Any</string>
@@ -827,6 +830,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
            </property>
            <item>
             <property name="text">
@@ -1175,6 +1181,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="sortCBox">
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
         <item>
          <property name="text">
           <string>Jouyou grade</string>
@@ -1292,7 +1301,7 @@
       <item>
        <widget class="QComboBox" name="fromCBox">
         <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+         <enum>QComboBox::AdjustToContents</enum>
         </property>
         <item>
          <property name="text">

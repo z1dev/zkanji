@@ -732,6 +732,14 @@ QWidget* RecognizerForm::captionWidget() const
     return ui->buttonWidget;
 }
 
+bool RecognizerForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void RecognizerForm::hideEvent(QHideEvent *e)
 {
     base::hideEvent(e);

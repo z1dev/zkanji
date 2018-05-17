@@ -59,6 +59,14 @@ void DefinitionWidget::setWords(Dictionary *d, const std::vector<int> &words)
     update();
 }
 
+bool DefinitionWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void DefinitionWidget::on_defResetButton_clicked(bool)
 {
     ignorechange = true;

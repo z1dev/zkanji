@@ -339,7 +339,7 @@ private:
     // not placed on a zkanji form. For example when it's in its own dialog.
     void installCommands();
     // Adds a single command action to the widget.
-    void addCommandShortcut(QSignalMapper *map, const QKeySequence &keyseq, int command);
+    void addCommandShortcut(const QKeySequence &keyseq, int command);
 
     void updateSearchMode();
 
@@ -394,6 +394,8 @@ private:
     // The model currently set as the model in the words list, either directly, or indirectly
     // as a source model in the filtermodel. A model is never deleted by this reference.
     DictionaryItemModel *model;
+
+    QSignalMapper *commandmap;
 
     // Provides items to be listed in the widget's words table when searching the dictionary.
     std::unique_ptr<DictionarySearchResultItemModel> searchmodel;

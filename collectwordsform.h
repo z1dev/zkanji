@@ -78,6 +78,8 @@ public:
     virtual int statusSize(int statusindex, int labelindex) const override;
     virtual bool statusAlignRight(int statusindex) const override;
 protected:
+    virtual void setColumnTexts() override;
+
     virtual void orderChanged(const std::vector<int> &ordering) override;
     virtual bool addNewEntry(int windex, int &position) override;
     virtual void entryAddedPosition(int pos) override;

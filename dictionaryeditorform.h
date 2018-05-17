@@ -66,6 +66,7 @@ public slots:
     void on_delButton_clicked(bool checked);
     void on_dictView_currentRowChanged(int curr, int prev);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
 private:
     DictionaryEditorForm(QWidget *parent = nullptr);

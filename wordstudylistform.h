@@ -25,6 +25,8 @@ class StudyListModel;
 class DictionaryItemModel;
 class Dictionary;
 class QMenu;
+class QPushButton;
+class QAction;
 struct WordStudyListFormData;
 struct WordStudyListFormDataItems;
 struct WordStudyListFormDataStats;
@@ -39,8 +41,6 @@ enum class DeckStatPages { Items, Forecast, Levels, Tests };
 enum class DeckStatIntervals { All, Year, HalfYear, Month };
 enum class DeckStatAreaType { Items, Forecast };
 
-class QMenu;
-class QAction;
 enum class DictColumnTypes;
 enum class WordParts : uchar;
 
@@ -180,6 +180,7 @@ public:
     // Removes the study data for the selected items, like they were not tested before.
     void resetItems(const std::vector<int> &items);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
     //virtual bool eventFilter(QObject *o, QEvent *e) override;
@@ -212,6 +213,8 @@ protected slots:
     void dictReset();
     void dictRemoved(int index, int orderindex, void *oldaddress);
 private:
+    void setButtonText();
+
     // Saves the column sizes and visibility for the current mode from the dictionary view.
     void saveColumns();
     // Restores the column sizes and visibility for the current mode to the dictionary view.
@@ -236,6 +239,9 @@ private:
 
     Dictionary *dict;
     WordDeck *deck;
+
+    QPushButton *startButton;
+    QPushButton *closeButton;
 
     bool itemsinited;
     bool statsinited;

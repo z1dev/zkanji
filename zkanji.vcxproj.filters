@@ -986,6 +986,12 @@
     <ClCompile Include="languages.cpp">
       <Filter>Code\General\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_languages.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_languages.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1399,6 +1405,9 @@
     <CustomBuild Include="formstates.h">
       <Filter>Code\General\Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="languages.h">
+      <Filter>Code\General\Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kanji.h">
@@ -1646,9 +1655,6 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_kanawritingpracticeform.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="languages.h">
-      <Filter>Code\General\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="languagesettings.h">
       <Filter>Code\Settings</Filter>

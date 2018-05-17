@@ -38,10 +38,12 @@ WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::Wor
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToGroupForm::dictionaryToBeRemoved);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToGroupForm::close);
-    acceptButton = ui->buttonBox->addButton(tr("Add to group"), QDialogButtonBox::AcceptRole);
+    acceptButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
     acceptButton->setDefault(true);
     acceptButton->setEnabled(false);
     connect(acceptButton, &QPushButton::clicked, this, &WordToGroupForm::accept);
+
+    setButtonText();
 
     ui->wordsTable->assignStatusBar(ui->listStatus);
 }
@@ -124,6 +126,17 @@ void WordToGroupForm::exec(Dictionary *d, const std::vector<int> &indexes, Group
     show();
 }
 
+bool WordToGroupForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setButtonText();
+    }
+
+    return base::event(e);
+}
+
 void WordToGroupForm::closeEvent(QCloseEvent *e)
 {
     FormStates::saveDialogSplitterState("WordToGroup", this, ui->splitter);
@@ -169,6 +182,11 @@ void WordToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictionar
         close();
     if (ZKanji::dictionaryCount() < 3)
         ui->switchButton->setVisible(false);
+}
+
+void WordToGroupForm::setButtonText()
+{
+    acceptButton->setText(tr("Add to group"));
 }
 
 

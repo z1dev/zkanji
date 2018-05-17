@@ -742,6 +742,18 @@ void PrintPreviewForm::exec(Dictionary *d, const std::vector<int> &wordlist)
     show();
 }
 
+bool PrintPreviewForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        if (Settings::print.doublepage)
+            preview->updatePreview();
+    }
+
+    return base::event(e);
+}
+
 void PrintPreviewForm::on_printButton_clicked()
 {
     QPrintDialog dlg(&printer, this);

@@ -128,6 +128,9 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="toolTip">
+                 <string>Move up</string>
+                </property>
                 <property name="icon">
                  <iconset resource="Resources/resources.qrc">
                   <normaloff>:/upmark.svg</normaloff>:/upmark.svg</iconset>
@@ -151,6 +154,9 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="toolTip">
+                 <string>Move down</string>
+                </property>
                 <property name="icon">
                  <iconset resource="Resources/resources.qrc">
                   <normaloff>:/downmark.svg</normaloff>:/downmark.svg</iconset>
@@ -173,6 +179,9 @@
                <widget class="QToolButton" name="delButton">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                 <string>Remove selected</string>
                 </property>
                 <property name="icon">
                  <iconset resource="Resources/resources.qrc">

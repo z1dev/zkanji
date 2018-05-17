@@ -91,6 +91,7 @@ public:
     // group widget. 
     void addControlWidget(QWidget *widget, bool rightAlign = false);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
 private:

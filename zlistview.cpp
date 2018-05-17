@@ -1279,6 +1279,10 @@ bool ZListView::event(QEvent *e)
 
     //    return true;
     //}
+
+    if (e->type() == QEvent::LanguageChange)
+        updateStatus();
+
     return base::event(e);
 }
 

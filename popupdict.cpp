@@ -200,6 +200,8 @@ bool PopupDictionary::event(QEvent *e)
         doPopup(pe->screen(), pe->from());
         return true;
     }
+    else if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
 
     return base::event(e);
 }

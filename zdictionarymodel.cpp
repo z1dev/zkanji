@@ -27,8 +27,14 @@
 #include "generalsettings.h"
 #include "zstatusbar.h"
 #include "zstrings.h"
+#include "zevents.h"
+#include "languages.h"
+
 
 //-------------------------------------------------------------
+
+
+ZEVENT(ColumnTextEvent)
 
 
 DictionaryItemModel::DictionaryItemModel(QObject *parent) : base(parent), connected(false)
@@ -38,16 +44,34 @@ DictionaryItemModel::DictionaryItemModel(QObject *parent) : base(parent), connec
 #if SHOWDEBUGCOLUMN
         { (int)ColumnTypes::DEBUGIndex, Qt::AlignLeft, false, true, 61, QString() },
 #endif
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), tr("Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(70), tr("Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), tr("Definition") }
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), QString() },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(70), QString() },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QString() }
     });
+
+    // Setting the text of the columns. To override the column creation in derived classes,
+    // set the columns with setColumns in the constructor, which will replace those above, and
+    // override setColumnTexts() to change their text.
+    qApp->postEvent(this, new ColumnTextEvent);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &DictionaryItemModel::dictionaryToBeRemoved);
 }
 
 DictionaryItemModel::~DictionaryItemModel()
 {
+}
+
+void DictionaryItemModel::setColumnTexts()
+{
+#if SHOWDEBUGCOLUMN
+    setColumnText(2, tr("Written"));
+    setColumnText(3, tr("Kana"));
+    setColumnText(4, tr("Definition"));
+#else
+    setColumnText(1, tr("Written"));
+    setColumnText(2, tr("Kana"));
+    setColumnText(3, tr("Definition"));
+#endif;
 }
 
 WordGroup* DictionaryItemModel::wordGroup() const
@@ -108,6 +132,13 @@ void DictionaryItemModel::removeColumn(int index)
     cols.resize(tmp.size() - 1);
     for (int ix = 0; ix != tmp.size() - 1; ++ix)
         cols[ix] = tmp[ix + (ix >= index ? 1 : 0)];
+}
+
+void DictionaryItemModel::setColumnText(int index, const QString &str)
+{
+    if (index < 0 || index >= cols.size())
+        throw "Kill the program. Wrong index for column text setter.";
+    cols[index].text = str;
 }
 
 int DictionaryItemModel::columnByType(int columntype, int n)
@@ -391,6 +422,14 @@ int DictionaryItemModel::statusSize(int statusindex, int labelindex) const
 bool DictionaryItemModel::statusAlignRight(int statusindex) const
 {
     return false;
+}
+
+bool DictionaryItemModel::event(QEvent *e)
+{
+    if (e->type() == ColumnTextEvent::Type() || e->type() == QEvent::LanguageChange)
+        setColumnTexts();
+
+    return base::event(e);
 }
 
 //QStringList DictionaryItemModel::mimeTypes() const
@@ -1726,6 +1765,7 @@ QMimeData* DictionaryEntryItemModel::mimeData(const QModelIndexList& indexes) co
 
 DictionaryGroupItemModel::DictionaryGroupItemModel(QObject *parent) : base(parent), group(nullptr)
 {
+    connect(zLang, &Languages::languageChanged, this, &DictionaryGroupItemModel::setColumnTexts);
 }
 
 DictionaryGroupItemModel::~DictionaryGroupItemModel()

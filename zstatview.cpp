@@ -104,6 +104,14 @@ int ZStatView::columnAt(int x) const
     return std::upper_bound(colpos.begin(), colpos.end(), x) - colpos.begin();
 }
 
+bool ZStatView::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        onModelChanged();
+
+    return base::event(e);
+}
+
 void ZStatView::mouseMoveEvent(QMouseEvent *e)
 {
     base::mouseMoveEvent(e);

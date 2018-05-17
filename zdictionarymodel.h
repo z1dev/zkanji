@@ -124,6 +124,7 @@ public:
     void setColumns(const std::vector<DictColumnData> &columns);
     void addColumn(const DictColumnData &column);
     void removeColumn(int index);
+    void setColumnText(int index, const QString &str);
     // Returns the index of the Nth column with the passed type.
     int columnByType(int columntype, int n = 0);
 
@@ -146,6 +147,9 @@ public:
     virtual int statusSize(int statusindex, int labelindex) const override;
     virtual bool statusAlignRight(int statusindex) const override;
 protected:
+    virtual bool event(QEvent *e) override;
+    virtual void setColumnTexts();
+
     // Creates the connections for word data change and removal to the current dictionary.
     void connect();
     // Releases all connections to the current dictionary.

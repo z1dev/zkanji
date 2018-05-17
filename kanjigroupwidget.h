@@ -34,6 +34,8 @@ public:
 
     // Called when the user data has been loaded and the form is ready to display it.
     void setDictionary(int index);
+protected:
+    virtual bool event(QEvent *e) override;
 private:
     Ui::KanjiGroupWidget *ui;
 

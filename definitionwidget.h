@@ -22,6 +22,8 @@ public:
     virtual ~DefinitionWidget();
 
     void setWords(Dictionary *d, const std::vector<int> &words);
+protected:
+    virtual bool event(QEvent *e) override;
 protected slots:
     void dictEntryRemoved(int windex);
     void dictEntryChanged(int windex, bool studydef);

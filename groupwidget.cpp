@@ -158,6 +158,14 @@ void GroupWidget::addControlWidget(QWidget *widget, bool rightAlign)
     }
 }
 
+bool GroupWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void GroupWidget::keyPressEvent(QKeyEvent *e)
 {
     if (ui->groupsTree->currentItem() != nullptr && !ui->groupsTree->currentCompleted(false))

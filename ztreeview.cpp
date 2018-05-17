@@ -309,6 +309,18 @@ void ZTreeView::indexCollapsed(const QModelIndex &index)
     emit collapsed((TreeItem*)index.internalPointer());
 }
 
+bool ZTreeView::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        // Update first column width on translation change. Since the column is stretched,
+        // setting the size to 1 forces a recalculation of the contents.
+        header()->resizeSection(0, 1);
+    }
+
+    return base::event(e);
+}
+
 void ZTreeView::dropEvent(QDropEvent *e)
 {
     base::dropEvent(e);

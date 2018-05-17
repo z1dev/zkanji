@@ -87,9 +87,12 @@ public slots:
 
     void on_addButton_clicked();
 protected:
+    virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *o, QEvent *e) override;
     //virtual void showEvent(QShowEvent *event) override;
 private:
+    // Set text on the show/hide history button.
+    void setButtonText();
     // Switches between the parts and radicals display.
     void updateMode();
     // Sets the radical grid's filter settings depending on

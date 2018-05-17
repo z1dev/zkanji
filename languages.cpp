@@ -91,26 +91,40 @@ bool Languages::setLanguage(int ix)
     {
         busy = true;
         qApp->removeTranslator(qttranslator.get());
+        qApp->removeTranslator(qtbasetranslator.get());
         busy = false;
         qApp->removeTranslator(translator.get());
 
         qttranslator.reset();
+        qtbasetranslator.reset();
         translator.reset();
         current = ix;
+
+        emit languageChanged();
 
         return true;
     }
 
     std::unique_ptr<QTranslator> dummy(new QTranslator);
     std::unique_ptr<QTranslator> qtdummy(new QTranslator);
-    if (!qtdummy->load(QString("qt_%1").arg(list[ix].second), ZKanji::appFolder() + QString("/lang")))
+    std::unique_ptr<QTranslator> qtbasedummy(new QTranslator);
+    if (QFile::exists(ZKanji::appFolder() + QString("/lang/qt_%1.qm").arg(list[ix].second)) && !qtdummy->load(QString("qt_%1").arg(list[ix].second), ZKanji::appFolder() + QString("/lang")))
+        return false;
+    if (QFile::exists(ZKanji::appFolder() + QString("/lang/qtbase_%1.qm").arg(list[ix].second)) && !qtbasedummy->load(QString("qtbase_%1").arg(list[ix].second), ZKanji::appFolder() + QString("/lang")))
         return false;
     if (!dummy->load(QString("zkanji_%1").arg(list[ix].second), ZKanji::appFolder() + QString("/lang")))
         return false;
 
     busy = true;
-    if (!qApp->installTranslator(qtdummy.get()))
+    if (!qtdummy->isEmpty() && !qApp->installTranslator(qtdummy.get()))
     {
+        busy = false;
+        return false;
+    }
+    if (!qtbasedummy->isEmpty() && !qApp->installTranslator(qtbasedummy.get()))
+    {
+        if (!qtdummy->isEmpty())
+            qApp->removeTranslator(qtdummy.get());
         busy = false;
         return false;
     }
@@ -119,19 +133,26 @@ bool Languages::setLanguage(int ix)
     if (!qApp->installTranslator(dummy.get()))
     {
         busy = true;
-        qApp->removeTranslator(qtdummy.get());
+        if (!qtdummy->isEmpty())
+            qApp->removeTranslator(qtdummy.get());
+        if (!qtbasedummy->isEmpty())
+            qApp->removeTranslator(qtbasedummy.get());
         busy = false;
         return false;
     }
 
     busy = true;
     qApp->removeTranslator(qttranslator.get());
+    qApp->removeTranslator(qtbasetranslator.get());
     qApp->removeTranslator(translator.get());
     busy = false;
 
     qttranslator = std::move(qtdummy);
+    qtbasetranslator = std::move(qtbasedummy);
     translator = std::move(dummy);
     current = ix;
+
+    emit languageChanged();
 
     return true;
 }
@@ -151,6 +172,29 @@ QString Languages::currentID()
     return list[current].second;
 }
 
+QString Languages::translate(const char *context, const char *key, const char *disambiguation)
+{
+    if (current == 0 || translator == nullptr)
+        return key;
+
+    return qApp->translate(context, key, disambiguation);
+}
+
+QString Languages::translate(const char *context, const QString &key, const char *disambiguation)
+{
+    if (current == 0 || translator == nullptr)
+        return key;
+
+    return qApp->translate(context, key.toLatin1(), disambiguation);
+}
+
+QString Languages::translate(const QString &context, const QString &key, const char *disambiguation)
+{
+    if (current == 0 || translator == nullptr)
+        return key;
+
+    return qApp->translate(context.toLatin1(), key.toLatin1(), disambiguation);
+}
 
 bool Languages::eventFilter(QObject *o, QEvent *e)
 {

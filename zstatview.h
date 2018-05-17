@@ -36,6 +36,7 @@ public:
     // inside the drawn area or no column is found there.
     int columnAt(int x) const;
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void mouseMoveEvent(QMouseEvent *e) override;
 
     virtual void changeEvent(QEvent *e) override;

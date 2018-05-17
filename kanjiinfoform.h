@@ -73,6 +73,8 @@ protected:
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void hideEvent(QHideEvent *e) override;
 private:
+    void translateUI();
+
     // Creates labels with kanji reference numbers and puts them in the reference layout.
     //void createRefLabels();
     // Refreshes the displayed reference texts to match the current kanji.

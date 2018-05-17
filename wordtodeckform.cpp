@@ -27,9 +27,9 @@
 WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, const std::vector<int> &list, QObject *parent) : base(parent), dict(dict), deck(deck)
 {
     setColumns({
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), tr("Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), tr("Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), tr("Definition") }
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QString() },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QString() },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QString() }
     });
 
     std::vector<int> indexes = list;
@@ -114,6 +114,13 @@ WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, con
 WordsToDeckItemModel::~WordsToDeckItemModel()
 {
 
+}
+
+void WordsToDeckItemModel::setColumnTexts()
+{
+    setColumnText(0, tr("Written"));
+    setColumnText(1, tr("Kana"));
+    setColumnText(2, tr("Definition"));
 }
 
 bool WordsToDeckItemModel::hasBoxChecked() const
@@ -635,7 +642,6 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
     //restrictWidgetSize(ui->decksCBox, 16, AdjustedValue::Min);
 
     okbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
-    okbutton->setText(tr("Add to study deck"));
     cancelbutton = ui->buttonBox->button(QDialogButtonBox::Cancel);
     connect(okbutton, &QPushButton::clicked, this, &WordToDeckForm::okButtonClicked);
     connect(cancelbutton, &QPushButton::clicked, this, &WordToDeckForm::close);
@@ -675,12 +681,11 @@ void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std
     }
     else
     {
-        ui->decksCBox->addItem(tr("Deck 1"));
+        // Placeholder text added. Translated in setWidgetTexts().
+        ui->decksCBox->addItem(QString());
         ui->decksCBox->setCurrentIndex(0);
     }
     ui->decksCBox->setEnabled(!dict->wordDecks()->empty());
-
-    setWindowTitle(QString("zkanji - %1").arg(tr("Add words to deck")));
 
     model = new WordsToDeckItemModel(dict, deck, indexes, this);
     if (model->rowCount() == 0)
@@ -697,6 +702,8 @@ void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std
 
     updateOkButton();
 
+    setWidgetTexts();
+
     //setWindowModality(Qt::ApplicationModal);
 
     // Warning: if changing from showModal() to show(), make sure word or dictionary changes
@@ -704,11 +711,16 @@ void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std
     showModal();
 }
 
-//void WordToDeckForm::closeEvent(QCloseEvent *e)
-//{
-//    FormStates::saveDialogSize("WordToDeck", this);
-//    base::closeEvent(e);
-//}
+bool WordToDeckForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setWidgetTexts();
+    }
+
+    return base::event(e);
+}
 
 void WordToDeckForm::showEvent(QShowEvent *e)
 {
@@ -811,6 +823,16 @@ void WordToDeckForm::updateOkButton()
 {
     okbutton->setEnabled(model->hasBoxChecked());
 }
+
+void WordToDeckForm::setWidgetTexts()
+{
+    setWindowTitle(QString("zkanji - %1").arg(tr("Add words to deck")));
+    okbutton->setText(tr("Add to study deck"));
+
+    if (deck == nullptr)
+        ui->decksCBox->setItemText(0, tr("Deck 1"));
+}
+
 
 //-------------------------------------------------------------
 

@@ -27,7 +27,8 @@ class QPushButton;
 class GroupPickerForm : public DialogWindow
 {
     Q_OBJECT
-
+signals:
+    void groupSelected(Dictionary *dict, GroupBase *selection);
 public:
     // Creates a modal group picker form and shows it on screen. Returns the selected group.
     // Pass true in showdicts to show the dictionary combo box. Otherwise the dictionary for
@@ -43,14 +44,16 @@ public:
     void setDictionary(Dictionary *dict);
     void setMode(GroupWidget::Modes mode);
     void setInstructions(const QString &instructions);
-signals:
-    void groupSelected(Dictionary *dict, GroupBase *selection);
+protected:
+    virtual bool event(QEvent *e) override;
 private:
     GroupPickerForm() = delete;
     GroupPickerForm(const GroupPickerForm&) = delete;
     GroupPickerForm(GroupPickerForm&&) = delete;
     GroupPickerForm(bool categories, QWidget *parent = nullptr);
     GroupPickerForm(GroupWidget::Modes mode, bool categories, QWidget *parent = nullptr);
+
+    void setButtonText();
 
     Ui::GroupPickerForm *ui;
 

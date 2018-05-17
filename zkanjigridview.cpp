@@ -1501,22 +1501,6 @@ void ZKanjiGridView::contextMenuEvent(QContextMenuEvent *e)
     if (e->reason() != QContextMenuEvent::Mouse || selCount() == 0)
         return;
 
-    /*
-    a = popup->addAction(tr("Kanji information..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::showKanjiInfo);
-    popup->addSeparator();
-    a = popup->addAction(tr("Add to group..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::kanjiToGroup);
-    a = popup->addAction(tr("Collect words..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::collectWords);
-    popup->addSeparator();
-    a = popup->addAction(tr("Edit definition..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::definitionEdit);
-    popup->addSeparator();
-    a = popup->addAction(tr("Copy to clipboard"));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::copyKanji);
-    a = popup->addAction(tr("Append to clipboard"));
-    */
     popup->actions().at(0)->setEnabled(selCount() == 1);
 
     popup->popup(e->globalPos());

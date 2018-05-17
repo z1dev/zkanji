@@ -256,24 +256,16 @@ void RadicalForm::on_addButton_clicked()
     ui->searchEdit->setText(QString());
 }
 
-//void RadicalForm::showEvent(QShowEvent *event)
-//{
-//    if (ui->prevSelButton->text().isEmpty())
-//    {
-//        if (expandsize != -1)
-//        {
-//            hide();
-//            showHidePrevSel();
-//            setAttribute(Qt::WA_DontShowOnScreen, false);
-//            show();
-//            return;
-//        }
-//        sizeinited = true;
-//        QShowEvent *e = new QShowEvent();
-//        qApp->postEvent(this, e);
-//    }
-//    base::showEvent(event);
-//}
+bool RadicalForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setButtonText();
+    }
+
+    return base::event(e);
+}
 
 bool RadicalForm::eventFilter(QObject *o, QEvent *e)
 {
@@ -283,6 +275,14 @@ bool RadicalForm::eventFilter(QObject *o, QEvent *e)
             expandsize = ui->expandWidget->height();
     }
     return base::eventFilter(o, e);
+}
+
+void RadicalForm::setButtonText()
+{
+    if (ui->expandWidget->isVisibleTo(this))
+        ui->prevSelButton->setText(tr("Hide filter history") + QStringLiteral(" <<"));
+    else
+        ui->prevSelButton->setText(tr("Show filter history") + QStringLiteral(" >>"));
 }
 
 void RadicalForm::updateSettings()
@@ -349,7 +349,6 @@ void RadicalForm::showHidePrevSel()
     QSize s = size();
     if (ui->expandWidget->isVisibleTo(this))
     {
-        ui->prevSelButton->setText(tr("Show filter history") + QStringLiteral(" >>"));
         ui->expandWidget->hide();
         ui->splitter->refresh();
         ui->splitter->updateGeometry();
@@ -367,7 +366,6 @@ void RadicalForm::showHidePrevSel()
     }
     else
     {
-        ui->prevSelButton->setText(tr("Hide filter history") + QStringLiteral(" <<"));
         if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
         {
             s.setHeight(s.height() + ui->splitter->handleWidth() + expandsize);
@@ -380,6 +378,8 @@ void RadicalForm::showHidePrevSel()
         else
             ui->splitter->setSizes({ gridsize - oldexp - ui->splitter->handleWidth(), oldexp });
     }
+
+    setButtonText();
 }
 
 void RadicalForm::updateSelectionText(const QString &str)

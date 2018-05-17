@@ -22,7 +22,6 @@ class ZStatusBar;
 class WordGroupWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     WordGroupWidget(QWidget *parent = 0);
     ~WordGroupWidget();
@@ -35,6 +34,8 @@ public:
     //void makeModeSpace(const QSize &size);
 
     void setDictionary(int index);
+protected:
+    virtual bool event(QEvent *e) override;
 private slots:
     //void on_groupWidget_currentItemChanged(GroupBase *current);
     void on_groupWidget_selectionChanged();
@@ -51,6 +52,8 @@ private slots:
     void appWindowsVisibilityChanged(bool shown);
 private:
     void updateStudyDisplay();
+
+    void retranslate();
 
     Ui::WordGroupWidget *ui;
 

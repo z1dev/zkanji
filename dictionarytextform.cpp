@@ -61,7 +61,7 @@ void DictionaryTextForm::exec(Dictionary *d)
 
     dict = d;
     ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), dict->name(), Flags::Flag));
-    setWindowTitle(tr("zkanji - Edit information: %1").arg(dict->name()));
+    updateWindowTitle();
     ui->infoText->setPlainText(dict->infoText());
 
     connect(d, &Dictionary::dictionaryReset, this, &DictionaryTextForm::dictionaryReset);
@@ -153,6 +153,22 @@ void DictionaryTextForm::on_removeButton_clicked()
     flagerased = true;
 
     ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), "", Flags::Flag));
+}
+
+bool DictionaryTextForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        updateWindowTitle();
+    }
+
+    return base::event(e);
+}
+
+void DictionaryTextForm::updateWindowTitle()
+{
+    setWindowTitle(tr("zkanji - Edit information: %1").arg(dict->name()));
 }
 
 

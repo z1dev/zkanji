@@ -143,7 +143,8 @@ SOURCES += \
     stayontop_x11.cpp \
     zstatview.cpp \
     zdictionarycombobox.cpp \
-    zstatusbar.cpp
+    zstatusbar.cpp \
+	languages.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -271,7 +272,8 @@ HEADERS += \
     zabstractstatmodel.h \
     zstatview.h \
     zdictionarycombobox.h \
-    zstatusbar.h
+    zstatusbar.h \
+	languages.h
 
 FORMS += \
     collectwordsform.ui \

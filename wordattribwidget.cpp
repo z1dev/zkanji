@@ -962,6 +962,14 @@ void WordAttribWidget::setJlptBits(uchar bits, bool select)
         jlpt &= ~bits;
 }
 
+bool WordAttribWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void WordAttribWidget::textChanged(const QString &str)
 {
     listmodel->setFilterText(str);

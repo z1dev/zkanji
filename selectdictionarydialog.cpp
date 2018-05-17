@@ -43,7 +43,8 @@ int SelectDictionaryDialog::exec(QString labelstring, int firstselected, QString
     setFixedSize(size());
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
-
+    
+    // Add handling of translation changes when showing non-modal.
     showModal();
 
     if (modalResult() == ModalResult::Cancel)

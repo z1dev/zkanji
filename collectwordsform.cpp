@@ -130,9 +130,9 @@ CollectedWordListModel::CollectedWordListModel(QObject *parent) : base(parent), 
     setColumns({
         { (int)CollectedColumnTypes::Checked, Qt::AlignHCenter, ColumnAutoSize::NoAuto, false, checkBoxSize().width() + 8, QString() },
         { (int)DictColumnTypes::Frequency, Qt::AlignHCenter, ColumnAutoSize::NoAuto, false, -1, QString() },
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), tr("Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), tr("Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), tr("Definition") }
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), QString() },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::Auto, true, Settings::scaled(50), QString() },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QString() }
     });
 }
 
@@ -246,6 +246,13 @@ bool CollectedWordListModel::statusAlignRight(int statusindex) const
         return base::statusAlignRight(statusindex - 1);
 
     return false;
+}
+
+void CollectedWordListModel::setColumnTexts()
+{
+    setColumnText(2, tr("Written"));
+    setColumnText(3, tr("Kana"));
+    setColumnText(4, tr("Definition"));
 }
 
 void CollectedWordListModel::orderChanged(const std::vector<int> &ordering)

@@ -26,6 +26,7 @@ public:
     void exec(Dictionary *d, int windex, GroupBase *initialSelection = nullptr, bool updatelastdiag = false);
     void exec(Dictionary *d, const std::vector<int> &indexes, GroupBase *initialSelection = nullptr, bool updatelastdiag = false);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
 private slots:
     // Click slot for the button for adding word to a group.
@@ -38,6 +39,8 @@ private slots:
     void dictionaryAdded();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
+    void setButtonText();
+
     Ui::WordToGroupForm *ui;
 
     Dictionary *dict;

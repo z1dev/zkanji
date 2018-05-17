@@ -50,60 +50,61 @@ void StudyListModel::updateColData()
     scale = Settings::general.scale;
     queuedata = {
         //: Index number (in the order words were added to tests)
-        { (int)DeckColumnTypes::Index, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "#") },
+        { (int)DeckColumnTypes::Index, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Date when added to long term study list
-        { (int)DeckColumnTypes::AddedDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "Added") },
-        { (int)DeckColumnTypes::Priority, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Priority") },
+        { (int)DeckColumnTypes::AddedDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
+        { (int)DeckColumnTypes::Priority, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Studied and hint parts of a word in the long term study list
-        { (int)DeckColumnTypes::StudiedPart, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QT_TRANSLATE_NOOP("StudyListModel", "Studied") },
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QT_TRANSLATE_NOOP("StudyListModel", "Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QT_TRANSLATE_NOOP("StudyListModel", "Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QT_TRANSLATE_NOOP("StudyListModel", "Definition") }
+        { (int)DeckColumnTypes::StudiedPart, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QString() },
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QString() },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QString() },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QString() }
     };
+
     studieddata = {
-        { (int)DeckColumnTypes::Index, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "#") },
-        { (int)DeckColumnTypes::AddedDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "Added") },
+        { (int)DeckColumnTypes::Index, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
+        { (int)DeckColumnTypes::AddedDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
         //: Study level of a word in the long term study list. Higher is better
-        { (int)DeckColumnTypes::Level, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Level") },
+        { (int)DeckColumnTypes::Level, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Number of times a word was shown in the long term study list
-        { (int)DeckColumnTypes::Tries, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Tries") },
+        { (int)DeckColumnTypes::Tries, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: First study date in the long term study list
-        { (int)DeckColumnTypes::FirstDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "First") },
+        { (int)DeckColumnTypes::FirstDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
         //: Last study date in the long term study list
-        { (int)DeckColumnTypes::LastDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "Last") },
+        { (int)DeckColumnTypes::LastDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
         //: Next study date in the long term study list
-        { (int)DeckColumnTypes::NextDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "Next") },
+        { (int)DeckColumnTypes::NextDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
         //: Study interval in the long term study list
-        { (int)DeckColumnTypes::Interval, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(65), QT_TRANSLATE_NOOP("StudyListModel", "Interval") },
+        { (int)DeckColumnTypes::Interval, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(65), QString() },
         //: Study interval multiplier in the long term study list
-        { (int)DeckColumnTypes::Multiplier, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QT_TRANSLATE_NOOP("StudyListModel", "Multiplier") },
-        { (int)DeckColumnTypes::StudiedPart, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QT_TRANSLATE_NOOP("StudyListModel", "Studied") },
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QT_TRANSLATE_NOOP("StudyListModel", "Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QT_TRANSLATE_NOOP("StudyListModel", "Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QT_TRANSLATE_NOOP("StudyListModel", "Definition") }
+        { (int)DeckColumnTypes::Multiplier, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QString() },
+        { (int)DeckColumnTypes::StudiedPart, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QString() },
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QString() },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QString() },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QString() }
     };
 
     testeddata = {
-        { (int)DeckColumnTypes::Index, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "#") },
-        { (int)DeckColumnTypes::AddedDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "Added") },
+        { (int)DeckColumnTypes::Index, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
+        { (int)DeckColumnTypes::AddedDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
         //: Old study level of a word in the long term study list. Higher is better
-        { (int)DeckColumnTypes::OldLevel, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Old Lv.") },
-        { (int)DeckColumnTypes::Level, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Level") },
+        { (int)DeckColumnTypes::OldLevel, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
+        { (int)DeckColumnTypes::Level, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Number of retries in a single test in the long term study list
-        { (int)DeckColumnTypes::RetryCount, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Retried") },
+        { (int)DeckColumnTypes::RetryCount, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Number of wrong anwsers in a single test in the long term study list
-        { (int)DeckColumnTypes::WrongCount, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Wrong") },
+        { (int)DeckColumnTypes::WrongCount, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Number of "easy" anwsers in a single test in the long term study list
-        { (int)DeckColumnTypes::EasyCount, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Easy") },
-        { (int)DeckColumnTypes::NextDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QT_TRANSLATE_NOOP("StudyListModel", "Next") },
-        { (int)DeckColumnTypes::Interval, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(65), QT_TRANSLATE_NOOP("StudyListModel", "Interval") },
-        { (int)DeckColumnTypes::OldMultiplier, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QT_TRANSLATE_NOOP("StudyListModel", "Old mul.") },
+        { (int)DeckColumnTypes::EasyCount, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
+        { (int)DeckColumnTypes::NextDate, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(75), QString() },
+        { (int)DeckColumnTypes::Interval, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(65), QString() },
+        { (int)DeckColumnTypes::OldMultiplier, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(50), QString() },
         //: Old study interval multiplier in the long term study list
-        { (int)DeckColumnTypes::Multiplier, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QT_TRANSLATE_NOOP("StudyListModel", "Multiplier") },
-        { (int)DeckColumnTypes::StudiedPart, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QT_TRANSLATE_NOOP("StudyListModel", "Studied") },
-        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QT_TRANSLATE_NOOP("StudyListModel", "Written") },
-        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QT_TRANSLATE_NOOP("StudyListModel", "Kana") },
-        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QT_TRANSLATE_NOOP("StudyListModel", "Definition") }
+        { (int)DeckColumnTypes::Multiplier, Qt::AlignRight, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QString() },
+        { (int)DeckColumnTypes::StudiedPart, Qt::AlignHCenter, ColumnAutoSize::NoAuto, true, Settings::scaled(45), QString() },
+        { (int)DictColumnTypes::Kanji, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(80), QString() },
+        { (int)DictColumnTypes::Kana, Qt::AlignLeft, ColumnAutoSize::NoAuto, true, Settings::scaled(100), QString() },
+        { (int)DictColumnTypes::Definition, Qt::AlignLeft, ColumnAutoSize::NoAuto, false, Settings::scaled(6400), QString() }
     };
 }
 
@@ -192,9 +193,9 @@ int StudyListModel::defaultColumnWidth(DeckItemViewModes mode, int columnindex)
     return -1;
 }
 
-StudyListModel::StudyListModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), mode(DeckItemViewModes::Studied), kanjion(true), kanaon(true), defon(true)
+StudyListModel::StudyListModel(WordDeck *deck, QObject *parent) : base(parent), deck(deck), mode(DeckItemViewModes::Queued), kanjion(true), kanaon(true), defon(true)
 {
-    setViewMode(DeckItemViewModes::Queued);
+    setColumns(queueData());
     connect();
 
     connect(deck, &WordDeck::itemsQueued, this, &StudyListModel::itemsQueued);
@@ -216,6 +217,7 @@ void StudyListModel::reset()
         setColumns(studiedData());
     else if (mode == DeckItemViewModes::Tested)
         setColumns(testedData());
+    setColumnTexts();
     fillList(list);
     endResetModel();
 }
@@ -234,6 +236,7 @@ void StudyListModel::setViewMode(DeckItemViewModes newmode)
         setColumns(studiedData());
     else if (mode == DeckItemViewModes::Tested)
         setColumns(testedData());
+    setColumnTexts();
     fillList(list);
 
     endResetModel();
@@ -859,6 +862,54 @@ int StudyListModel::statusSize(int statusindex, int labelindex) const
 bool StudyListModel::statusAlignRight(int statusindex) const
 {
     return false;
+}
+
+void StudyListModel::setColumnTexts()
+{
+    if (mode == DeckItemViewModes::Queued)
+    {
+        setColumnText(0, tr("#"));
+        setColumnText(1, tr("Added"));
+        setColumnText(2, tr("Priority"));
+        setColumnText(3, tr("Studied"));
+        setColumnText(4, tr("Written"));
+        setColumnText(5, tr("Kana"));
+        setColumnText(6, tr("Definition"));
+    }
+    else if (mode == DeckItemViewModes::Studied)
+    {
+        setColumnText(0, tr("#"));
+        setColumnText(1, tr("Added"));
+        setColumnText(2, tr("Level"));
+        setColumnText(3, tr("Tries"));
+        setColumnText(4, tr("First"));
+        setColumnText(5, tr("Last"));
+        setColumnText(6, tr("Next"));
+        setColumnText(7, tr("Interval"));
+        setColumnText(8, tr("Multiplier"));
+        setColumnText(9, tr("Studied"));
+        setColumnText(10, tr("Written"));
+        setColumnText(11, tr("Kana"));
+        setColumnText(12, tr("Definition"));
+    }
+    else if (mode == DeckItemViewModes::Tested)
+    {
+        setColumnText(0, tr("#"));
+        setColumnText(1, tr("Added"));
+        setColumnText(2, tr("Old Lv."));
+        setColumnText(3, tr("Level"));
+        setColumnText(4, tr("Retried"));
+        setColumnText(5, tr("Wrong"));
+        setColumnText(6, tr("Easy"));
+        setColumnText(7, tr("Next"));
+        setColumnText(8, tr("Interval"));
+        setColumnText(9, tr("Old mul."));
+        setColumnText(10, tr("Multiplier"));
+        setColumnText(11, tr("Studied"));
+        setColumnText(12, tr("Written"));
+        setColumnText(13, tr("Kana"));
+        setColumnText(14, tr("Definition"));
+    }
 }
 
 void StudyListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)

@@ -11,11 +11,8 @@
 
 enum class InfTypes;
 
-// Using a struct instead of namespace to make the Qt tr functions work (which require an
-// object.)
 namespace Strings
 {
-
     QString capitalize(const QString &str);
 
     QString wordType(uchar type);

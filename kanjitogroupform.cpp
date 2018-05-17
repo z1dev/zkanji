@@ -31,10 +31,12 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &KanjiToGroupForm::dictionaryToBeRemoved);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &KanjiToGroupForm::close);
-    acceptButton = ui->buttonBox->addButton(tr("Add to group"), QDialogButtonBox::AcceptRole);
+    acceptButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
     acceptButton->setDefault(true);
     acceptButton->setEnabled(false);
     connect(acceptButton, &QPushButton::clicked, this, &KanjiToGroupForm::accept);
+
+    setButtonText();
 
     //dictCBox = new ZDictionaryComboBox(this);
     //ui->groupWidget->addControlWidget(dictCBox, true);
@@ -91,6 +93,17 @@ void KanjiToGroupForm::exec(Dictionary *d, const std::vector<ushort> kindexes, G
     show();
 }
 
+bool KanjiToGroupForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setButtonText();
+    }
+
+    return base::event(e);
+}
+
 void KanjiToGroupForm::closeEvent(QCloseEvent *e)
 {
     FormStates::saveDialogSplitterState("KanjiToGroup", this, ui->splitter);
@@ -120,6 +133,11 @@ void KanjiToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictiona
 {
     if (d == dict)
         close();
+}
+
+void KanjiToGroupForm::setButtonText()
+{
+    acceptButton->setText(tr("Add to group"));
 }
 
 

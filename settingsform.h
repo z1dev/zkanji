@@ -126,7 +126,8 @@ public slots:
     void printBoxToggled();
     void printCBoxChanged();
 protected:
-    bool eventFilter(QObject *o, QEvent *e) override;
+    virtual bool event(QEvent *e) override;
+    virtual bool eventFilter(QObject *o, QEvent *e) override;
 private:
     // Updates se and ss to contain the selection start and selection end. The end of the
     // selection can be in front of the start, which is the cursor position.

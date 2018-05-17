@@ -550,11 +550,13 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidge
 
     ui->dictWidget->setSaveColumnData(false);
 
-    QPushButton *startButton = ui->buttonBox->addButton(tr("Start the test"), QDialogButtonBox::AcceptRole);
-    QPushButton *closeButton = ui->buttonBox->button(QDialogButtonBox::Close);
+    startButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
+    closeButton = ui->buttonBox->button(QDialogButtonBox::Close);
 
     connect(startButton, &QPushButton::clicked, this, &WordStudyListForm::startTest);
     connect(closeButton, &QPushButton::clicked, this, &WordStudyListForm::close);
+
+    setButtonText();
 
     queuesort = { 0, Qt::AscendingOrder };
     studiedsort = { 0, Qt::AscendingOrder };
@@ -813,6 +815,17 @@ void WordStudyListForm::resetItems(const std::vector<int> &items)
         deck->resetCardStudyData(items);
 }
 
+bool WordStudyListForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setButtonText();
+    }
+
+    return base::event(e);
+}
+
 void WordStudyListForm::closeEvent(QCloseEvent *e)
 {
     if (itemsinited)
@@ -844,104 +857,6 @@ void WordStudyListForm::keyPressEvent(QKeyEvent *e)
 
     base::keyPressEvent(e);
 }
-
-//bool WordStudyListForm::eventFilter(QObject *o, QEvent *e)
-//{
-//    if (o == ui->statChart && e->type() == QEvent::Resize && ui->statChart->chart() != nullptr && ui->statChart->chart()->axisY() != nullptr)
-//    {
-//        ((QValueAxis*)ui->statChart->chart()->axisY())->setTickCount(std::max(2, ui->statChart->height() / TickSpacing));
-//        ((QValueAxis*)ui->statChart->chart()->axisY())->applyNiceNumbers();
-//
-//        if (ui->itemsButton->isChecked() || ui->forecastButton->isChecked())
-//            autoXAxisTicks();
-//            //((QDateTimeAxis*)ui->statChart->chart()->axisX())->setTickCount(std::max(2, ui->statChart->width() / TickSpacing));
-//    }
-//
-//    if (o == ui->statChart->viewport() && e->type() == QEvent::MouseMove && ui->statChart->chart() != nullptr && ui->statChart->chart()->axisY() != nullptr)
-//    {
-//        QMouseEvent *me = (QMouseEvent*)e;
-//        if ((int)me->buttons() != 0)
-//            return base::eventFilter(o, e);
-//
-//        switch (statpage)
-//        {
-//        case DeckStatPages::Items:
-//        {
-//            QPointF pos = ui->statChart->chart()->mapToValue(me->pos());
-//            QLineSeries *s1 = ((QAreaSeries*)ui->statChart->chart()->series().at(0))->upperSeries();
-//            QLineSeries *s2 = ((QAreaSeries*)ui->statChart->chart()->series().at(1))->upperSeries();
-//            QLineSeries *s3 = ((QAreaSeries*)ui->statChart->chart()->series().at(2))->upperSeries();
-//
-//            if (ui->statChart->chart()->plotArea().contains(me->pos()) && !s1->pointsVector().isEmpty() && s1->pointsVector().at(s1->pointsVector().size() - 1).x() >= pos.x())
-//            {
-//                // Find values in the line series at the date at pos.x().
-//                auto it = std::upper_bound(s1->pointsVector().cbegin(), s1->pointsVector().cend(), pos, [](const QPointF &a, const QPointF &b) { return a.x() < b.x(); });
-//                int ix = std::max((it - s1->pointsVector().cbegin()) - 1, 0);
-//                int itemcount = s1->pointsVector().at(ix).y();
-//                int learnedcount = s1->pointsVector().at(ix).y() - s2->pointsVector().at(ix).y();
-//                int testcount = s3->pointsVector().at(ix).y();
-//
-//                QDateTime dt = QDateTime::fromMSecsSinceEpoch(s1->pointsVector().at(ix).x());
-//
-//                QPoint pt = me->globalPos();
-//                //pt.ry() += 8;
-//                QLabel *contents = new QLabel();
-//                contents->setText(tr("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(dt.date())));
-//                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
-//            }
-//            else
-//                ZToolTip::hideNow();
-//            break;
-//        }
-//        case DeckStatPages::Forecast:
-//        {
-//            QPointF pos = ui->statChart->chart()->mapToValue(me->pos());
-//            QLineSeries *s = ((QAreaSeries*)ui->statChart->chart()->series().at(0))->upperSeries();
-//
-//            if (ui->statChart->chart()->plotArea().contains(me->pos()) && !s->pointsVector().isEmpty() && s->pointsVector().at(s->pointsVector().size() - 1).x() >= pos.x())
-//            {
-//                // Find values in the line series at the date at pos.x().
-//                auto it = std::upper_bound(s->pointsVector().cbegin(), s->pointsVector().cend(), pos, [](const QPointF &a, const QPointF &b) { return a.x() < b.x(); });
-//                int ix = std::max((it - s->pointsVector().cbegin()) - 1, 0);
-//                int itemcount = s->pointsVector().at(ix).y();
-//
-//                QDateTime dt = QDateTime::fromMSecsSinceEpoch(s->pointsVector().at(ix).x());
-//
-//                QPoint pt = me->globalPos();
-//                //pt.ry() += 8;
-//                QLabel *contents = new QLabel();
-//                contents->setText(tr("Item count: %1\n%2").arg(itemcount).arg(DateTimeFunctions::formatDay(dt.date())));
-//                ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
-//            }
-//            else
-//                ZToolTip::hideNow();
-//            break;
-//        }
-//        //case DeckStatPages::Levels:
-//        //{
-//        //    QRectF r = ui->statChart->chart()->plotArea();
-//        //    int level = int((me->pos().x() - r.left()) / (r.width() / 12)) + 1;
-//        //    QBarSet *s = ((QBarSeries*)ui->statChart->chart()->series().at(0))->barSets().at(0);
-//        //    if (r.contains(me->pos()) && level >= 1 && level <= s->count())
-//        //    {
-//        //        int itemcount = s->at(level - 1);
-//        //        QPoint pt = me->globalPos();
-//        //        //pt.ry() += 8;
-//        //        QLabel *contents = new QLabel();
-//        //        contents->setText(tr("Item count: %1\nLevel: %2").arg(itemcount).arg(level));
-//        //        ZToolTip::show(pt, contents, ui->statChart->viewport(), ui->statChart->viewport()->rect(), INT_MAX, /*ZToolTip::isShown() ? 0 : -1*/ 0);
-//        //    }
-//        //    else
-//        //        ZToolTip::hideNow();
-//        //    break;
-//        //}
-//
-//        /* end switch */
-//        }
-//    }
-//
-//    return base::eventFilter(o, e);
-//}
 
 void WordStudyListForm::on_tabWidget_currentChanged(int index)
 {
@@ -1381,203 +1296,6 @@ void WordStudyListForm::on_testsButton_clicked()
     showStat(DeckStatPages::Tests);
 }
 
-//void WordStudyListForm::dictContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
-//{
-//    int ix = ui->dictWidget->view()->rowAt(pos.y());
-//    if (ix < 0)
-//        return;
-//
-//    bool queue = model->viewMode() == DeckItemViewModes::Queued;
-//    //WordDeckItem *item = nullptr;
-//
-//    QMenu m;
-//    QAction *a = nullptr;
-//    QMenu *sub = nullptr;
-//
-//    std::vector<int> rowlist;
-//    ui->dictWidget->selectedRows(rowlist);
-//    if (rowlist.empty())
-//        rowlist.push_back(ix);
-//    for (int ix = 0, siz = rowlist.size(); ix != siz; ++ix)
-//        rowlist[ix] = ui->dictWidget->view()->model()->data(ui->dictWidget->view()->model()->index(rowlist[ix], 0), (int)DeckRowRoles::DeckIndex).toInt();
-//
-//    // Single item clicked. Even if selection is 0, the mouse was over a row.
-//    if (rowlist.size() < 2)
-//    {
-//        if (rowlist.size() == 1)
-//            ix = rowlist.front();
-//        else
-//            ix = ui->dictWidget->view()->model()->rowData(ix, (int)DeckRowRoles::DeckIndex).toInt();
-//        //item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
-//    }
-//
-//    if (queue)
-//    {
-//        sub = new QMenu(tr("Priority"), &m);
-//
-//        QActionGroup *prioritygroup = new QActionGroup(sub);
-//        prioritygroup->addAction(sub->addAction(QString(tr("Highest") + "\tShift+9")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Very high") + "\tShift+8")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("High") + "\tShift+7")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Higher") + "\tShift+6")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Medium") + "\tShift+5")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Lower") + "\tShift+4")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Low") + "\tShift+3")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Very low") + "\tShift+2")));
-//        prioritygroup->addAction(sub->addAction(QString(tr("Lowest") + "\tShift+1")));
-//        prioritygroup->setExclusive(false);
-//
-//        QSet<uchar> priset;
-//        deck->queuedPriorities(rowlist, priset);
-//
-//        for (uchar ix = 0; ix != 9; ++ix)
-//        {
-//            a = prioritygroup->actions().at(ix);
-//            if (priset.contains(9 - ix))
-//            {
-//                a->setCheckable(true);
-//                a->setChecked(true);
-//            }
-//        }
-//
-//        connect(prioritygroup, &QActionGroup::triggered, this, [this, &rowlist](QAction *action)
-//        {
-//            int priority = action->actionGroup()->actions().indexOf(action);
-//            deck->setQueuedPriority(rowlist, 9 - priority);
-//        });
-//
-//        m.addMenu(sub);
-//        m.addSeparator();
-//    }
-//
-//
-//    uchar hintset;
-//    uchar selset;
-//    deck->itemHints(rowlist, queue, hintset, selset);
-//
-//    sub = new QMenu(tr("Primary hint"));
-//    QActionGroup *hintgroup = new QActionGroup(sub);
-//    QAction *defa = nullptr;
-//    hintgroup->addAction(defa = a = sub->addAction(tr("Default")));
-//    hintgroup->setExclusive(false);
-//    a->setCheckable(true);
-//    if (selset & (int)WordPartBits::Default)
-//        a->setChecked(a);
-//    QAction *kanjia = nullptr;
-//    if (hintset & (int)WordPartBits::Kanji)
-//    {
-//        hintgroup->addAction(kanjia = a = sub->addAction(tr("Written")));
-//        a->setCheckable(true);
-//        if (selset & (int)WordPartBits::Kanji)
-//            a->setChecked(a);
-//    }
-//    QAction *kanaa = nullptr;
-//    if (hintset & (int)WordPartBits::Kana)
-//    {
-//        hintgroup->addAction(kanaa = a = sub->addAction(tr("Kana")));
-//        a->setCheckable(true);
-//        if (selset & (int)WordPartBits::Kana)
-//            a->setChecked(a);
-//    }
-//    QAction *defna = nullptr;
-//    if (hintset & (int)WordPartBits::Definition)
-//    {
-//        hintgroup->addAction(defna = a = sub->addAction(tr("Definition")));
-//        a->setCheckable(true);
-//        if (selset & (int)WordPartBits::Definition)
-//            a->setChecked(a);
-//    }
-//
-//    connect(hintgroup, &QActionGroup::triggered, this, [this, &rowlist, queue, defa, kanjia, kanaa, defna](QAction *action)
-//    {
-//        deck->setItemHints(rowlist, queue, action == kanjia ? WordParts::Kanji : action == kanaa ? WordParts::Kana : action == defna ? WordParts::Definition : WordParts::Default);
-//    });
-//
-//    m.addMenu(sub);
-//
-//    a = m.addAction(tr("Add question..."));
-//    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked) {
-//        std::vector<int> wordlist;
-//        deck->itemsToWords(rowlist, queue, wordlist);
-//        addQuestions(wordlist);
-//    });
-//    m.addSeparator();
-//
-//    StudyDeck *study = deck->getStudyDeck();
-//
-//    a = m.addAction(tr("Remove..."));
-//    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked){
-//        removeItems(rowlist, queue);
-//    });
-//
-//    if (!queue)
-//    {
-//        a = m.addAction(tr("Back to queue..."));
-//        connect(a, &QAction::triggered, this, [this, &rowlist](bool checked){
-//            requeueItems(rowlist);
-//        });
-//
-//        m.addSeparator();
-//
-//        sub = new QMenu(tr("Study options"));
-//        if (rowlist.size() < 2)
-//        {
-//            a = sub->addAction(tr("Level+") + QString(" (%1)").arg(formatSpacing(study->increasedSpacing(deck->studiedItems(ix)->cardid))));
-//            connect(a, &QAction::triggered, this, [this, &rowlist, ix, study](bool checked) {
-//                deck->increaseSpacingLevel(ix);
-//            });
-//            a = sub->addAction(tr("Level-") + QString(" (%1)").arg(formatSpacing(study->decreasedSpacing(deck->studiedItems(ix)->cardid))));
-//            connect(a, &QAction::triggered, this, [this, &rowlist, ix, study](bool checked) {
-//                deck->decreaseSpacingLevel(ix);
-//            });
-//        }
-//        else
-//        {
-//            a = sub->addAction(tr("Level+"));
-//            a->setEnabled(false);
-//            a = sub->addAction(tr("Level-"));
-//            a->setEnabled(false);
-//        }
-//        sub->addSeparator();
-//
-//        a = sub->addAction(tr("Reset study data"));
-//        connect(a, &QAction::triggered, this, [this, &rowlist/*, item*/, study](bool checked) {
-//            if (QMessageBox::question(this, "zkanji", tr("All study data, including past statistics, item level and difficulty will be reset for the selected items. The items will be shown like they were new the next time the test starts. Consider moving the items back to the queue instead.\n\nDo you want to reset the study data?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
-//            {
-//                deck->resetCardStudyData(rowlist);
-//            }
-//        });
-//
-//        m.addMenu(sub);
-//        m.addSeparator();
-//    }
-//    a = m.addAction(tr("Add to group..."));
-//    connect(a, &QAction::triggered, this, [this, &rowlist, queue](bool checked) {
-//        std::vector<int> indexes;
-//        QSet<int> added;
-//        for (int ix : rowlist)
-//        {
-//            WordDeckItem *item = queue ? (WordDeckItem*)deck->queuedItems(ix) : (WordDeckItem*)deck->studiedItems(ix);
-//            if (added.contains(item->data->index))
-//                continue;
-//            indexes.push_back(item->data->index);
-//            added << item->data->index;
-//        }
-//
-//        WordGroup *group = (WordGroup*)GroupPickerForm::select(GroupWidget::Words, tr("Select a word group for the words of the selected items."), dict, false, false, this);
-//        if (group == nullptr)
-//            return;
-//        
-//        int r = group->add(indexes);
-//        if (r == 0)
-//            QMessageBox::information(this, "zkanji", tr("No new words from the selected items were added to the group."), QMessageBox::Ok);
-//        else
-//            QMessageBox::information(this, "zkanji", tr("%1 words from the selected items were added to the group.").arg(r), QMessageBox::Ok);
-//    });
-//
-//    a = m.exec(globalpos);
-//}
-
 void WordStudyListForm::dictReset()
 {
     if (!itemsinited)
@@ -1594,6 +1312,11 @@ void WordStudyListForm::dictRemoved(int index, int orderindex, void *oldaddress)
 {
     if (dict == oldaddress)
         close();
+}
+
+void WordStudyListForm::setButtonText()
+{
+    startButton->setText(tr("Start the test"));
 }
 
 void WordStudyListForm::saveColumns()

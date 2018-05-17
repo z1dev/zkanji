@@ -44,7 +44,6 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
     studyButton->setIcon(testsettingsico);
     studyButton->setAutoRaise(true);
     studyButton->setEnabled(false);
-    studyButton->setToolTip(tr("Study with group..."));
     connect(studyButton, &QToolButton::clicked, this, &WordGroupWidget::studyButtonClicked);
 
     printButton = new QToolButton(this);
@@ -52,7 +51,6 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
     printButton->setIcon(QIcon(QStringLiteral(":/print.svg")));
     printButton->setAutoRaise(true);
     printButton->setEnabled(false);
-    printButton->setToolTip(tr("Print preview..."));
     connect(printButton, &QToolButton::clicked, this, &WordGroupWidget::printButtonClicked);
 
     ui->groupWidget->addButtonWidget(studyButton);
@@ -106,6 +104,8 @@ WordGroupWidget::WordGroupWidget(QWidget *parent) : base(parent), ui(new Ui::Wor
 
     connect(ui->continueButton2, &QPushButton::clicked, this, &WordGroupWidget::on_continueButton_clicked);
     connect(ui->abortButton2, &QPushButton::clicked, this, &WordGroupWidget::on_abortButton_clicked);
+
+    retranslate();
 }
 
 WordGroupWidget::~WordGroupWidget()
@@ -158,6 +158,17 @@ void WordGroupWidget::setDictionary(int index)
 {
     ui->dictWidget->setDictionary(index);
     ui->groupWidget->setDictionary(ZKanji::dictionary(index));
+}
+
+bool WordGroupWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        retranslate();
+    }
+
+    return base::event(e);
 }
 
 //void WordGroupWidget::on_groupWidget_currentItemChanged(GroupBase *current)
@@ -329,6 +340,12 @@ void WordGroupWidget::updateStudyDisplay()
             ui->groupStack->setCurrentWidget(ui->dictPage);
         ui->testButtonsWidget->show();
     }
+}
+
+void WordGroupWidget::retranslate()
+{
+    studyButton->setToolTip(tr("Study with group..."));
+    printButton->setToolTip(tr("Print preview..."));
 }
 
 void WordGroupWidget::on_showButton_clicked()

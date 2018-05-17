@@ -109,6 +109,8 @@ public:
     virtual QString statusText(int statusindex, int labelindex, int rowpos) const override;
     virtual int statusSize(int statusindex, int labelindex) const override;
     virtual bool statusAlignRight(int statusindex) const override;
+protected:
+    virtual void setColumnTexts() override;
 protected slots:;
     virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override;
     virtual void entryChanged(int windex, bool studydef) override;

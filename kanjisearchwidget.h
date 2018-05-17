@@ -155,6 +155,7 @@ public:
 public slots:
     void reset();
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void showEvent(QShowEvent *e) override;
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
     virtual void resizeEvent(QResizeEvent *e) override;

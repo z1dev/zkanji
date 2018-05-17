@@ -62,7 +62,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     readingFilterButton = new QToolButton(this);
     //readingFilterButton->setText("ReF");
     readingFilterButton->setCheckable(true);
-    readingFilterButton->setToolTip(tr("Only show marked words"));
     readingFilterButton->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
     readingFilterButton->setIcon(QIcon(":/wordselect.svg"));
     readingFilterButton->setAutoRaise(true);
@@ -74,7 +73,6 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     //exampleSelButton->setText("Sel");
     exampleSelButton->setEnabled(false);
     exampleSelButton->setCheckable(true);
-    exampleSelButton->setToolTip(tr("Mark as example word of kanji"));
     exampleSelButton->setIconSize(QSize(Settings::scaled(18), Settings::scaled(18)));
     exampleSelButton->setIcon(QIcon(":/paperclip.svg"));
     exampleSelButton->setAutoRaise(true);
@@ -88,8 +86,9 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     readingCBox = new QComboBox(this);
     readingCBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
     readingCBox->setMinimumContentsLength(6);
-    readingCBox->setToolTip(tr("Show words that match selected kanji reading"));
     ui->dictWidget->addBackWidget(readingCBox);
+
+    translateUI();
     
     connect(readingCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(readingBoxChanged(int)));
 
@@ -489,7 +488,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
         QStringList rl;
         rl.reserve(ZKanji::kanjiReadingCount(k, true) + 1);
         //: No reading is selected
-        rl.push_back(tr("-"));
+        rl.push_back("-");
         //: Irregular readings
         rl.push_back(tr("Irreg."));
         for (int ix = 0; ix != k->on.size(); ++ix)
@@ -641,7 +640,7 @@ bool KanjiInfoForm::event(QEvent *e)
     }
     if (e->type() == QEvent::Show)
         ui->infoText->verticalScrollBar()->triggerAction(QScrollBar::SliderToMinimum);
-    if (e->type() == QEvent::WindowActivate || e->type() == QEvent::WindowDeactivate)
+    else if (e->type() == QEvent::WindowActivate || e->type() == QEvent::WindowDeactivate)
     {
         int oldpos = ui->infoText->verticalScrollBar()->value();
         ui->infoText->setPlainText(QString());
@@ -650,6 +649,11 @@ bool KanjiInfoForm::event(QEvent *e)
         ui->infoText->document()->setDefaultStyleSheet(QString("body { font-size: %1pt; color: %2; }").arg(Settings::scaled(10)).arg(Settings::textColor(this, ColorSettings::Text).name()));
         ui->infoText->document()->setHtml(ZKanji::kanjiInfoText(dict, ui->kanjiView->kanjiIndex()));
         ui->infoText->verticalScrollBar()->setValue(oldpos);
+    }
+    else if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        translateUI();
     }
 
     return base::event(e);
@@ -725,6 +729,16 @@ void KanjiInfoForm::hideEvent(QHideEvent *e)
         saveState(FormStates::kanjiinfo);
 
     base::hideEvent(e);
+}
+
+void KanjiInfoForm::translateUI()
+{
+    readingFilterButton->setToolTip(tr("Only show marked words"));
+    exampleSelButton->setToolTip(tr("Mark as example word of kanji"));
+    readingCBox->setToolTip(tr("Show words that match selected kanji reading"));
+
+    if (readingCBox->count() > 1)
+        readingCBox->setItemText(1, tr("Irreg."));
 }
 
 void KanjiInfoForm::_resized(bool post)

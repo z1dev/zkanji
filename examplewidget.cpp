@@ -190,6 +190,10 @@ bool ExampleWidget::event(QEvent *e)
             }
         }
     }
+    else if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+    }
 
     return base::event(e);
 }

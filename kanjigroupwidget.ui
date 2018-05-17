@@ -94,7 +94,7 @@
              <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Move selected kanji left</string>
+             <string>Move left</string>
             </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
@@ -120,7 +120,7 @@
              <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Move selected kanji right</string>
+             <string>Move right</string>
             </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">
@@ -146,7 +146,7 @@
              <bool>false</bool>
             </property>
             <property name="toolTip">
-             <string>Remove selected kanji from group</string>
+             <string>Remove selected</string>
             </property>
             <property name="icon">
              <iconset resource="Resources/resources.qrc">

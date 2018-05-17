@@ -14,6 +14,10 @@
 
 class Languages : public QObject
 {
+    Q_OBJECT
+signals:
+    // Signal for objects that can't use the LanguageChange notification event for a reason.
+    void languageChanged();
 public:
     static Languages* getInstance();
     ~Languages();
@@ -42,6 +46,18 @@ public:
     int currentLanguage();
     // Language ID currently installed in the application.
     QString currentID();
+
+    // Returns the translated text with the current language, or the original text if it's
+    // either not found or the language is the default English at index 0.
+    QString translate(const char *context, const char *key, const char *disambiguation = nullptr);
+    // Returns the translated text with the current language, or the original text if it's
+    // either not found or the language is the default English at index 0.
+    // Warning: The key is converted to Latin1 string.
+    QString translate(const char *context, const QString &key, const char *disambiguation = nullptr);
+    // Returns the translated text with the current language, or the original text if it's
+    // either not found or the language is the default English at index 0.
+    // Warning: The context and key are converted to Latin1 string.
+    QString translate(const QString &context, const QString &key, const char *disambiguation = nullptr);
 protected:
     virtual bool eventFilter(QObject *o, QEvent *e) override;
 private:
@@ -63,6 +79,8 @@ private:
 
     // Translator object for all qt strings.
     std::unique_ptr<QTranslator> qttranslator;
+    // Translator object for all qt base strings.
+    std::unique_ptr<QTranslator> qtbasetranslator;
     // Translator object for custom strings.
     std::unique_ptr<QTranslator> translator;
 

@@ -42,6 +42,8 @@ public:
 
     //virtual void removeAt(int index) override;
 protected:
+    virtual void setColumnTexts() override;
+
     //virtual void orderChanged(const std::vector<int> &ordering) override;
     //virtual bool addNewEntry(int windex, int &position) override;
     //virtual void entryAddedPosition(int pos) override;
@@ -126,7 +128,7 @@ public:
 
     void exec(WordDeck *studydeck, Dictionary *dictionary, const std::vector<int> &indexes);
 protected:
-    //virtual void closeEvent(QCloseEvent *e) override;
+    virtual bool event(QEvent *e) override;
     virtual void showEvent(QShowEvent *e) override;
 protected slots:
     // Connected to the model's dataChanged to look for CheckState changes.
@@ -140,6 +142,9 @@ protected slots:
 private:
     // Updates the enabled state of the ok button depending on the check boxes.
     void updateOkButton();
+
+    // Changes text on buttons depending on current language.
+    void setWidgetTexts();
 
     Ui::WordToDeckForm *ui;
 

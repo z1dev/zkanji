@@ -133,6 +133,7 @@ public slots:
     // Closes the editor without asking to save changes, leaving the word unchanged.
     void uncheckedClose();
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
 private slots:
     // Checks the text of the kanji, kana, frequency and definition edit boxes, and enables or
@@ -185,6 +186,9 @@ private:
     bool canReset() const;
 
     void updateDictionaryLabels();
+
+    // Translate text of buttons
+    void setTranslatedTexts();
 
     Ui::WordEditorForm *ui;
 

@@ -121,15 +121,16 @@ public:
 
     void exec();
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
 private:
-    // Enables or disables the start and save buttons depending on the
-    // current selection.
+    void setWidgetTexts();
+    // Enables or disables the start and save buttons depending on the current selection.
     void updateStartSave();
 
-    // Returns true if the "Exclude" button is shown for words instead of
-    // "Include" when index is -1. Otherwise returns whether the exclude
-    // button would show for the given displayCBox index.
+    // Returns true if the "Exclude" button is shown for words instead of "Include" when index
+    // is -1. Otherwise returns whether the exclude button would show for the given
+    // displayCBox index.
     //bool hasExclude(int index = -1);
 
     Ui::WordTestSettingsForm *ui;

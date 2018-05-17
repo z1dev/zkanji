@@ -264,6 +264,14 @@ void DictionaryEditorForm::on_dictView_currentRowChanged(int curr, int prev)
     ui->delButton->setEnabled(curr != -1 && ZKanji::dictionaryPosition(curr) != 0);
 }
 
+bool DictionaryEditorForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void DictionaryEditorForm::closeEvent(QCloseEvent *e)
 {
     if (model->orderChanged())

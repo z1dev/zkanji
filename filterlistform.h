@@ -97,7 +97,6 @@ signals:
     // Signaled when the "word in example" or "word in group" condition changes.
     void conditionChanged();
 public slots:
-    //void on_addButton_clicked();
     void on_editButton_clicked(bool checked);
     void on_delButton_clicked();
     void on_upButton_clicked();
@@ -111,14 +110,16 @@ public slots:
 
     void discardClicked();
     void saveClicked();
-    //void resetClicked();
     void filterChanged(int index);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *o, QEvent *e) override;
-    //virtual void changeEvent(QEvent *e) override;
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
 private:
+    // Retranslates button texts.
+    void updateSaveButton();
+
     // Shows or hides the filter editor while resizing the window.
     void toggleEditor(bool show);
 

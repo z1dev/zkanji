@@ -118,6 +118,14 @@ void KanjiDefinitionForm::dictionaryRemoved(int index, int orderindex, void *old
 		close();
 }
 
+bool KanjiDefinitionForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+        ui->retranslateUi(this);
+
+    return base::event(e);
+}
+
 void KanjiDefinitionForm::updateKanji()
 {
     if (model == nullptr)

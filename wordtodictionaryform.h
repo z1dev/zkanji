@@ -29,6 +29,7 @@ public:
 
     void exec(Dictionary *d, int windex, Dictionary *initialSel = nullptr, bool updatelastdiag = false);
 protected:
+    virtual bool event(QEvent *e) override;
     virtual void closeEvent(QCloseEvent *e) override;
 private slots:
     // Click slot for the button for adding word to a group.
@@ -48,6 +49,8 @@ private slots:
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
+    void setButtonText();
+
     Ui::WordToDictionaryForm *ui;
 
     DictionariesProxyModel *proxy;

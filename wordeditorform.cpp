@@ -242,8 +242,6 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
     cancelBtn = ui->buttonBox->button(QDialogButtonBox::Discard);
     applyBtn = ui->buttonBox->button(QDialogButtonBox::Apply);
 
-    okBtn->setText(tr("Save and close"));
-
     ui->attribWidget->setShowGlobal(false);
 
     ZFlowLayout *attribLayout = new ZFlowLayout(ui->wordAttribWidget);
@@ -263,14 +261,15 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
         QSizePolicy pol = box->sizePolicy();
         pol.setHorizontalPolicy(QSizePolicy::Fixed);
         box->setSizePolicy(pol);
-        box->setText(Strings::wordInfoLong(ix));
+        //box->setText(Strings::wordInfoLong(ix));
         box->setCheckState(Qt::Unchecked);
-
 
         connect(box, &QCheckBox::toggled, this, &WordEditorForm::wordChanged);
 
         attribLayout->addWidget(box);
     }
+
+    setTranslatedTexts();
 
     installRecognizer(ui->kanjiButton, ui->kanjiEdit);
     ui->kanjiEdit->setValidator(&japaneseValidator());
@@ -452,6 +451,17 @@ void WordEditorForm::uncheckedClose()
     close();
 }
 
+bool WordEditorForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setTranslatedTexts();
+    }
+
+    return base::event(e);
+}
+
 void WordEditorForm::closeEvent(QCloseEvent *e)
 {
     if (canReset())
@@ -525,7 +535,7 @@ void WordEditorForm::checkInput()
     resetBtn->setEnabled(canReset());
     okBtn->setEnabled(valid && canReset());
     okBtn->setDefault(okBtn->isEnabled());
-    cancelBtn->setText(!canReset() ? tr("Close") : tr("Discard"));
+    setTranslatedTexts();
     if (!okBtn->isEnabled())
         cancelBtn->setDefault(true);
     applyBtn->setEnabled(valid && canReset());
@@ -857,6 +867,18 @@ void WordEditorForm::updateDictionaryLabels()
     ui->dictLabel->setText(dict->name());
 }
 
+void WordEditorForm::setTranslatedTexts()
+{
+    okBtn->setText(tr("Save and close"));
+    cancelBtn->setText(!canReset() ? tr("Close") : tr("Discard"));
+
+    for (int ix = 0, siz = ui->wordAttribWidget->layout()->count(); ix != siz; ++ix)
+    {
+        QCheckBox *box = dynamic_cast<QCheckBox*>(ui->wordAttribWidget->layout()->itemAt(ix)->widget());
+        if (box != nullptr)
+            box->setText(Strings::wordInfoLong(ix));
+    }
+}
 
 //-------------------------------------------------------------
 

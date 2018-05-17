@@ -52,7 +52,8 @@ GroupPickerForm::GroupPickerForm(bool onlycategories, QWidget *parent) : base(pa
     if (onlycategories)
         ui->groupWidget->showOnlyCategories();
 
-    selectButton = ui->buttonBox->addButton(tr("Select group"), QDialogButtonBox::AcceptRole);
+    selectButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
+    setButtonText();
     connect(selectButton, &QPushButton::clicked, this, &GroupPickerForm::selectClicked);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &GroupPickerForm::close);
@@ -73,7 +74,8 @@ GroupPickerForm::GroupPickerForm(GroupWidget::Modes mode, bool onlycategories, Q
     if (onlycategories)
         ui->groupWidget->showOnlyCategories();
 
-    selectButton = ui->buttonBox->addButton(tr("Select group"), QDialogButtonBox::AcceptRole);
+    selectButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
+    setButtonText();
     connect(selectButton, &QPushButton::clicked, this, &GroupPickerForm::selectClicked);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &GroupPickerForm::close);
@@ -110,6 +112,23 @@ void GroupPickerForm::setInstructions(const QString &instructions)
         ui->instructionLabel->show();
         ui->instructionLabel->setText(instructions);
     }
+}
+
+bool GroupPickerForm::event(QEvent *e)
+{
+    if (e->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        setButtonText();
+    }
+
+    return base::event(e);
+}
+
+void GroupPickerForm::setButtonText()
+{
+    if (selectButton != nullptr)
+        selectButton->setText(tr("Select group"));
 }
 
 void GroupPickerForm::selectClicked()
