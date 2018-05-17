@@ -273,7 +273,8 @@ HEADERS += \
     zstatview.h \
     zdictionarycombobox.h \
     zstatusbar.h \
-	languages.h
+	languages.h \
+	languagesettings.h
 
 FORMS += \
     collectwordsform.ui \
