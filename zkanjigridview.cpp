@@ -41,7 +41,7 @@
 //-------------------------------------------------------------
 
 
-ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullptr), connected(false), dict(ZKanji::dictionary(0)), popup(nullptr), status(nullptr),
+ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullptr), connected(false), dict(ZKanji::dictionary(0))/*, popup(nullptr)*/, status(nullptr),
         state(State::None), cellsize(Settings::scaled(std::ceil(Settings::fonts.kanjifontsize / 0.7))), autoscrollmargin(24), cols(0), rows(0), mousedown(false),
         current(-1), selpivot(-1), selection(new RangeSelection), kanjitipcell(-1), kanjitipkanji(-1), dragind(-1)
 {
@@ -57,27 +57,24 @@ ZKanjiGridView::ZKanjiGridView(QWidget *parent) : base(parent), itemmodel(nullpt
 
     setMouseTracking(true);
 
-    popup = new QMenu(this);
-    QAction *a;
+    //popup = new QMenu(this);
+    //QAction *a;
 
-    // WARNING: Update the context menu event to enable/disable the correct menu items when
-    // this changes.
-
-    a = popup->addAction(tr("Kanji information..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::showKanjiInfo);
-    popup->addSeparator();
-    a = popup->addAction(tr("Add to group..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::kanjiToGroup);
-    a = popup->addAction(tr("Collect words..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::collectWords);
-    popup->addSeparator();
-    a = popup->addAction(tr("Edit definition..."));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::definitionEdit);
-    popup->addSeparator();
-    a = popup->addAction(tr("Copy to clipboard"));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::copyKanji);
-    a = popup->addAction(tr("Append to clipboard"));
-    connect(a, &QAction::triggered, this, &ZKanjiGridView::appendKanji);
+    //a = popup->addAction(tr("Kanji information..."));
+    //connect(a, &QAction::triggered, this, &ZKanjiGridView::showKanjiInfo);
+    //popup->addSeparator();
+    //a = popup->addAction(tr("Add to group..."));
+    //connect(a, &QAction::triggered, this, &ZKanjiGridView::kanjiToGroup);
+    //a = popup->addAction(tr("Collect words..."));
+    //connect(a, &QAction::triggered, this, &ZKanjiGridView::collectWords);
+    //popup->addSeparator();
+    //a = popup->addAction(tr("Edit definition..."));
+    //connect(a, &QAction::triggered, this, &ZKanjiGridView::definitionEdit);
+    //popup->addSeparator();
+    //a = popup->addAction(tr("Copy to clipboard"));
+    //connect(a, &QAction::triggered, this, &ZKanjiGridView::copyKanji);
+    //a = popup->addAction(tr("Append to clipboard"));
+    //connect(a, &QAction::triggered, this, &ZKanjiGridView::appendKanji);
 
     connect(gUI, &GlobalUI::settingsChanged, this, &ZKanjiGridView::settingsChanged);
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &ZKanjiGridView::dictionaryToBeRemoved);
@@ -1501,9 +1498,29 @@ void ZKanjiGridView::contextMenuEvent(QContextMenuEvent *e)
     if (e->reason() != QContextMenuEvent::Mouse || selCount() == 0)
         return;
 
-    popup->actions().at(0)->setEnabled(selCount() == 1);
+    QMenu popup;
+    QAction *a;
 
-    popup->popup(e->globalPos());
+    a = popup.addAction(tr("Kanji information..."));
+    connect(a, &QAction::triggered, this, &ZKanjiGridView::showKanjiInfo);
+    popup.addSeparator();
+    a = popup.addAction(tr("Add to group..."));
+    connect(a, &QAction::triggered, this, &ZKanjiGridView::kanjiToGroup);
+    a = popup.addAction(tr("Collect words..."));
+    connect(a, &QAction::triggered, this, &ZKanjiGridView::collectWords);
+    popup.addSeparator();
+    a = popup.addAction(tr("Edit definition..."));
+    connect(a, &QAction::triggered, this, &ZKanjiGridView::definitionEdit);
+    popup.addSeparator();
+    a = popup.addAction(tr("Copy to clipboard"));
+    connect(a, &QAction::triggered, this, &ZKanjiGridView::copyKanji);
+    a = popup.addAction(tr("Append to clipboard"));
+    connect(a, &QAction::triggered, this, &ZKanjiGridView::appendKanji);
+
+
+    popup.actions().at(0)->setEnabled(selCount() == 1);
+
+    popup.exec(e->globalPos());
 
     e->accept();
 }

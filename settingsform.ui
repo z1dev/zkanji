@@ -52,7 +52,7 @@
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>9</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QTreeWidget" name="pagesTree">
@@ -5971,8 +5971,8 @@
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup_3"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

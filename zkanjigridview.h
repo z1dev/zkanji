@@ -236,7 +236,7 @@ private:
     Dictionary *dict;
 
     // Context menu shown for kanji.
-    QMenu *popup;
+    //QMenu *popup;
 
     ZStatusBar *status;
 
