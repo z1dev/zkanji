@@ -10514,463 +10514,540 @@ Biztos törlődjön?</translation>
 <context>
     <name>ZKanjiForm</name>
     <message>
-        <location filename="../zkanjiform.cpp" line="1042"/>
-        <location filename="../zkanjiform.cpp" line="1047"/>
-        <location filename="../zkanjiform.cpp" line="1638"/>
+        <location filename="../zkanjiform.cpp" line="1046"/>
+        <location filename="../zkanjiform.cpp" line="1051"/>
+        <location filename="../zkanjiform.cpp" line="1761"/>
+        <location filename="../zkanjiform.cpp" line="1832"/>
         <source>&amp;Japanese to %1</source>
         <oldsource>Japanese to %1</oldsource>
         <translation>&amp;Japán / %1</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1043"/>
-        <location filename="../zkanjiform.cpp" line="1048"/>
-        <location filename="../zkanjiform.cpp" line="1639"/>
+        <location filename="../zkanjiform.cpp" line="1047"/>
+        <location filename="../zkanjiform.cpp" line="1052"/>
+        <location filename="../zkanjiform.cpp" line="1762"/>
+        <location filename="../zkanjiform.cpp" line="1836"/>
         <source>%1 &amp;to Japanese</source>
         <oldsource>%1 to Japanese</oldsource>
         <translation>%1 / Japá&amp;n</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1469"/>
+        <location filename="../zkanjiform.cpp" line="1451"/>
+        <location filename="../zkanjiform.cpp" line="1609"/>
         <source>&amp;File</source>
         <translation>&amp;Fájl</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1471"/>
+        <location filename="../zkanjiform.cpp" line="1453"/>
         <source>&amp;Database</source>
         <translation>&amp;Adatbázis</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1473"/>
+        <location filename="../zkanjiform.cpp" line="1455"/>
+        <location filename="../zkanjiform.cpp" line="1615"/>
         <source>Import &amp;base dictionary...</source>
         <oldsource>Import base dictionary...</oldsource>
         <translation>&amp;Alapszótár importálása...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1475"/>
+        <location filename="../zkanjiform.cpp" line="1457"/>
+        <location filename="../zkanjiform.cpp" line="1617"/>
         <source>Import &amp;example sentences...</source>
         <oldsource>Import example sentences...</oldsource>
         <translation>&amp;Példamondatok importálása...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1478"/>
+        <location filename="../zkanjiform.cpp" line="1460"/>
+        <location filename="../zkanjiform.cpp" line="1620"/>
         <source>&amp;Export/Import</source>
-        <translation></translation>
+        <translation>&amp;Exportálás/Importálás</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1480"/>
+        <location filename="../zkanjiform.cpp" line="1462"/>
+        <location filename="../zkanjiform.cpp" line="1623"/>
         <source>Export &amp;user data...</source>
         <oldsource>Export user data...</oldsource>
         <translation>&amp;Felhasználó adatok exportálása...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1483"/>
+        <location filename="../zkanjiform.cpp" line="1465"/>
+        <location filename="../zkanjiform.cpp" line="1625"/>
         <source>Export &amp;dictionary...</source>
         <oldsource>Export dictionary...</oldsource>
         <translation>&amp;Szótár exportálása...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1488"/>
+        <location filename="../zkanjiform.cpp" line="1470"/>
+        <location filename="../zkanjiform.cpp" line="1630"/>
         <source>Import u&amp;ser data...</source>
         <oldsource>Import user data...</oldsource>
         <translation>F&amp;elhasználó adatok importálása...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1491"/>
+        <location filename="../zkanjiform.cpp" line="1473"/>
+        <location filename="../zkanjiform.cpp" line="1632"/>
         <source>Import dic&amp;tionary...</source>
         <oldsource>Import dictionary...</oldsource>
         <translation>S&amp;zótár importálása...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1500"/>
+        <location filename="../zkanjiform.cpp" line="1478"/>
+        <location filename="../zkanjiform.cpp" line="1637"/>
         <source>&amp;Settings...</source>
         <translation>&amp;Beállítások...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1512"/>
+        <location filename="../zkanjiform.cpp" line="1484"/>
+        <location filename="../zkanjiform.cpp" line="1642"/>
         <source>E&amp;xit</source>
         <translation>&amp;Kilép</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1517"/>
+        <location filename="../zkanjiform.cpp" line="1488"/>
         <source>S&amp;tudy</source>
         <translation>&amp;Tanulás</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1519"/>
+        <location filename="../zkanjiform.cpp" line="1490"/>
+        <location filename="../zkanjiform.cpp" line="1647"/>
         <source>Hiragana/Katakana &amp;practice...</source>
         <translation>Hiragana/Katakana &amp;gyakorlás...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1524"/>
+        <location filename="../zkanjiform.cpp" line="1494"/>
+        <location filename="../zkanjiform.cpp" line="1650"/>
         <source>Long-term &amp;study lists...</source>
         <translation>&amp;Hosszú távú tanulás...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1526"/>
-        <source>F5</source>
-        <extracomment>Long-term study list menu shortcut</extracomment>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../zkanjiform.cpp" line="1533"/>
+        <location filename="../zkanjiform.cpp" line="1502"/>
+        <location filename="../zkanjiform.cpp" line="1654"/>
         <source>&amp;Dictionary</source>
         <translation>Szótá&amp;r</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1546"/>
+        <location filename="../zkanjiform.cpp" line="1515"/>
+        <location filename="../zkanjiform.cpp" line="1659"/>
         <source>&amp;Manage dictionaries...</source>
         <translation>Szótárak &amp;kezelése...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1549"/>
+        <location filename="../zkanjiform.cpp" line="1518"/>
+        <location filename="../zkanjiform.cpp" line="1662"/>
         <source>Dictionary &amp;information...</source>
         <translation>&amp;Szótárinformáció...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1563"/>
+        <location filename="../zkanjiform.cpp" line="1532"/>
+        <location filename="../zkanjiform.cpp" line="1664"/>
         <source>&amp;View</source>
         <translation>&amp;Nézet</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1568"/>
-        <location filename="../zkanjiform.cpp" line="1583"/>
+        <location filename="../zkanjiform.cpp" line="1537"/>
+        <location filename="../zkanjiform.cpp" line="1552"/>
+        <location filename="../zkanjiform.cpp" line="1667"/>
+        <location filename="../zkanjiform.cpp" line="1690"/>
         <source>Dictionary &amp;search</source>
         <oldsource>&amp;Dictionary search</oldsource>
         <translation>Szótári &amp;keresés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1568"/>
+        <location filename="../zkanjiform.cpp" line="1537"/>
+        <location filename="../zkanjiform.cpp" line="1668"/>
         <source>Ctrl+1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1569"/>
+        <location filename="../zkanjiform.cpp" line="1538"/>
+        <location filename="../zkanjiform.cpp" line="1671"/>
         <source>&amp;Word groups</source>
         <translation>S&amp;zócsoportok</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1569"/>
+        <location filename="../zkanjiform.cpp" line="1538"/>
+        <location filename="../zkanjiform.cpp" line="1672"/>
         <source>Ctrl+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1570"/>
+        <location filename="../zkanjiform.cpp" line="1539"/>
+        <location filename="../zkanjiform.cpp" line="1675"/>
         <source>&amp;Kanji groups</source>
         <translation>K&amp;andzsi csoportok</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1570"/>
+        <location filename="../zkanjiform.cpp" line="1539"/>
+        <location filename="../zkanjiform.cpp" line="1676"/>
         <source>Ctrl+3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1571"/>
-        <location filename="../zkanjiform.cpp" line="1593"/>
+        <location filename="../zkanjiform.cpp" line="1540"/>
+        <location filename="../zkanjiform.cpp" line="1562"/>
+        <location filename="../zkanjiform.cpp" line="1679"/>
+        <location filename="../zkanjiform.cpp" line="1696"/>
         <source>Kan&amp;ji search</source>
         <translation>Kan&amp;dzsi keresés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1571"/>
+        <location filename="../zkanjiform.cpp" line="1540"/>
+        <location filename="../zkanjiform.cpp" line="1680"/>
         <source>Ctrl+4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1575"/>
+        <location filename="../zkanjiform.cpp" line="1544"/>
+        <location filename="../zkanjiform.cpp" line="1685"/>
         <source>&amp;New window</source>
         <translation>Ú&amp;j ablak</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1587"/>
+        <location filename="../zkanjiform.cpp" line="1556"/>
+        <location filename="../zkanjiform.cpp" line="1693"/>
         <source>&amp;Word group</source>
         <translation>S&amp;zócsoportok</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1594"/>
+        <location filename="../zkanjiform.cpp" line="1563"/>
+        <location filename="../zkanjiform.cpp" line="1699"/>
         <source>&amp;Filters</source>
         <translation>Szű&amp;rők</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1596"/>
+        <location filename="../zkanjiform.cpp" line="1565"/>
+        <location filename="../zkanjiform.cpp" line="1702"/>
         <source>&amp;Reset</source>
         <translation>&amp;Alaphelyzet</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1598"/>
+        <location filename="../zkanjiform.cpp" line="1567"/>
+        <location filename="../zkanjiform.cpp" line="1707"/>
         <source>Stroke &amp;count filter</source>
         <translation>&amp;Vonássorrend szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1598"/>
+        <location filename="../zkanjiform.cpp" line="1567"/>
         <source>1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1599"/>
+        <location filename="../zkanjiform.cpp" line="1568"/>
+        <location filename="../zkanjiform.cpp" line="1710"/>
         <source>&amp;JLPT filter</source>
         <translation>&amp;JLPT szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1599"/>
+        <location filename="../zkanjiform.cpp" line="1568"/>
         <source>2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1600"/>
+        <location filename="../zkanjiform.cpp" line="1569"/>
+        <location filename="../zkanjiform.cpp" line="1713"/>
         <source>&amp;Meaning filter</source>
         <translation>Jelen&amp;tés szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1600"/>
+        <location filename="../zkanjiform.cpp" line="1569"/>
         <source>3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1601"/>
+        <location filename="../zkanjiform.cpp" line="1570"/>
+        <location filename="../zkanjiform.cpp" line="1716"/>
         <source>Rea&amp;ding filter</source>
         <translation>&amp;Olvasat szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1601"/>
+        <location filename="../zkanjiform.cpp" line="1570"/>
         <source>4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1602"/>
+        <location filename="../zkanjiform.cpp" line="1571"/>
+        <location filename="../zkanjiform.cpp" line="1719"/>
         <source>Jouyou &amp;grade filter</source>
         <translation>&amp;Dzsójó osztály szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1602"/>
+        <location filename="../zkanjiform.cpp" line="1571"/>
         <source>5</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1604"/>
+        <location filename="../zkanjiform.cpp" line="1573"/>
+        <location filename="../zkanjiform.cpp" line="1724"/>
         <source>R&amp;adicals filter</source>
         <translation>&amp;Gyök szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1604"/>
+        <location filename="../zkanjiform.cpp" line="1573"/>
         <source>6</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1606"/>
+        <location filename="../zkanjiform.cpp" line="1575"/>
+        <location filename="../zkanjiform.cpp" line="1729"/>
         <source>&amp;Index filter</source>
         <translation>&amp;Index szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1606"/>
+        <location filename="../zkanjiform.cpp" line="1575"/>
         <source>7</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1607"/>
+        <location filename="../zkanjiform.cpp" line="1576"/>
+        <location filename="../zkanjiform.cpp" line="1732"/>
         <source>&amp;SKIP filter</source>
         <translation>&amp;SKIP szűrő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1607"/>
+        <location filename="../zkanjiform.cpp" line="1576"/>
         <source>8</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1612"/>
+        <location filename="../zkanjiform.cpp" line="1581"/>
+        <location filename="../zkanjiform.cpp" line="1738"/>
         <source>&amp;Kanji group</source>
         <translation>K&amp;andzsi csoportok</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1615"/>
+        <location filename="../zkanjiform.cpp" line="1584"/>
+        <location filename="../zkanjiform.cpp" line="1741"/>
         <source>&amp;Help</source>
         <translation>&amp;Súgó</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1619"/>
+        <location filename="../zkanjiform.cpp" line="1594"/>
+        <location filename="../zkanjiform.cpp" line="1752"/>
         <source>Dock</source>
         <translation>Dokkolás</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1620"/>
+        <location filename="../zkanjiform.cpp" line="1595"/>
+        <location filename="../zkanjiform.cpp" line="1753"/>
         <source>F9</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1626"/>
+        <location filename="../zkanjiform.cpp" line="1586"/>
+        <location filename="../zkanjiform.cpp" line="1743"/>
         <source>&amp;About</source>
         <translation>&amp;Névjegy</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1629"/>
+        <location filename="../zkanjiform.cpp" line="1496"/>
+        <location filename="../zkanjiform.cpp" line="1651"/>
+        <source>Ctrl+L</source>
+        <extracomment>Long-term study list menu shortcut</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../zkanjiform.cpp" line="1589"/>
+        <location filename="../zkanjiform.cpp" line="1746"/>
         <source>About &amp;Qt</source>
         <translation>&amp;Qt névjegye</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1636"/>
+        <location filename="../zkanjiform.cpp" line="1759"/>
+        <location filename="../zkanjiform.cpp" line="1829"/>
         <source>&amp;Mode</source>
         <translation>&amp;Mód</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1641"/>
+        <location filename="../zkanjiform.cpp" line="1764"/>
+        <location filename="../zkanjiform.cpp" line="1841"/>
         <source>&amp;Browse Japanese</source>
         <translation>&amp;Böngészés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1645"/>
+        <location filename="../zkanjiform.cpp" line="1768"/>
+        <location filename="../zkanjiform.cpp" line="1846"/>
         <source>&amp;Options</source>
         <translation>&amp;Beállítások</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1649"/>
+        <location filename="../zkanjiform.cpp" line="1772"/>
+        <location filename="../zkanjiform.cpp" line="1853"/>
         <source>E&amp;xample sentences</source>
         <translation>&amp;Példamondatok</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1654"/>
+        <location filename="../zkanjiform.cpp" line="1777"/>
+        <location filename="../zkanjiform.cpp" line="1859"/>
         <source>Any &amp;start of word</source>
         <translation>Tetszőlegesen &amp;kezdődő szó</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1655"/>
+        <location filename="../zkanjiform.cpp" line="1778"/>
+        <location filename="../zkanjiform.cpp" line="1861"/>
         <source>Any &amp;end of word</source>
         <translation>Tetszőlegesen &amp;végződő szó</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1659"/>
+        <location filename="../zkanjiform.cpp" line="1782"/>
+        <location filename="../zkanjiform.cpp" line="1866"/>
         <source>&amp;Deinflect search</source>
         <translation>&amp;Ragozatlan keresés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1660"/>
+        <location filename="../zkanjiform.cpp" line="1783"/>
+        <location filename="../zkanjiform.cpp" line="1868"/>
         <source>Strict &amp;match</source>
         <translation>&amp;Megkülönböztetés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1664"/>
+        <location filename="../zkanjiform.cpp" line="1787"/>
+        <location filename="../zkanjiform.cpp" line="1873"/>
         <source>&amp;Filtering</source>
         <translation>&amp;Szűrés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1664"/>
+        <location filename="../zkanjiform.cpp" line="1787"/>
         <source>Ctrl+F</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1665"/>
+        <location filename="../zkanjiform.cpp" line="1788"/>
+        <location filename="../zkanjiform.cpp" line="1875"/>
         <source>Edi&amp;t filters</source>
         <translation>Szűrő szerkesz&amp;tő</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1665"/>
+        <location filename="../zkanjiform.cpp" line="1788"/>
         <source>Ctrl+Shift+F</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1669"/>
+        <location filename="../zkanjiform.cpp" line="1792"/>
+        <location filename="../zkanjiform.cpp" line="1880"/>
         <source>Se&amp;parate meanings</source>
         <translation>&amp;Jelentések külön sorba</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1675"/>
+        <location filename="../zkanjiform.cpp" line="1798"/>
+        <location filename="../zkanjiform.cpp" line="1885"/>
         <source>Add word to &amp;group...</source>
         <translation>Szavak &amp;csoportba...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1675"/>
+        <location filename="../zkanjiform.cpp" line="1798"/>
         <source>Ctrl+Enter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1676"/>
+        <location filename="../zkanjiform.cpp" line="1799"/>
+        <location filename="../zkanjiform.cpp" line="1887"/>
         <source>Add word to &amp;study deck...</source>
         <translation>Szavak tanuló &amp;pakliba...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1677"/>
+        <location filename="../zkanjiform.cpp" line="1800"/>
+        <location filename="../zkanjiform.cpp" line="1889"/>
         <source>Add word to &amp;dictionary...</source>
         <translation>S&amp;zavak szótárba...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1679"/>
+        <location filename="../zkanjiform.cpp" line="1802"/>
+        <location filename="../zkanjiform.cpp" line="1894"/>
         <source>&amp;Edit word...</source>
         <translation>Szó szerkesz&amp;tő...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1682"/>
+        <location filename="../zkanjiform.cpp" line="1803"/>
+        <location filename="../zkanjiform.cpp" line="1896"/>
         <source>De&amp;lete word</source>
         <translation>Szó tör&amp;lés</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1683"/>
+        <location filename="../zkanjiform.cpp" line="1804"/>
+        <location filename="../zkanjiform.cpp" line="1898"/>
         <source>&amp;Revert to original</source>
         <translation>&amp;Eredeti szót visszaállít</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1691"/>
+        <location filename="../zkanjiform.cpp" line="1809"/>
+        <location filename="../zkanjiform.cpp" line="1905"/>
         <source>&amp;New word to dictionary...</source>
         <translation>Új szó &amp;rögzítése...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1696"/>
+        <location filename="../zkanjiform.cpp" line="1813"/>
         <source>&amp;Clipboard</source>
         <translation>&amp;Vágólap</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1698"/>
+        <location filename="../zkanjiform.cpp" line="1815"/>
+        <location filename="../zkanjiform.cpp" line="1912"/>
         <source>&amp;Copy word</source>
         <translation>Szó &amp;vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1700"/>
+        <location filename="../zkanjiform.cpp" line="1817"/>
+        <location filename="../zkanjiform.cpp" line="1917"/>
         <source>Copy &amp;word written form</source>
         <translation>Í&amp;rott alak vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1701"/>
+        <location filename="../zkanjiform.cpp" line="1818"/>
+        <location filename="../zkanjiform.cpp" line="1919"/>
         <source>&amp;Append word written form</source>
         <translation>Íro&amp;tt alakot vágólaphoz ad</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1703"/>
+        <location filename="../zkanjiform.cpp" line="1820"/>
+        <location filename="../zkanjiform.cpp" line="1924"/>
         <source>C&amp;opy word kana form</source>
         <translation>&amp;Kana alak vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1704"/>
+        <location filename="../zkanjiform.cpp" line="1821"/>
+        <location filename="../zkanjiform.cpp" line="1926"/>
         <source>A&amp;ppend word kana</source>
         <translation>K&amp;ana alakot vágólaphoz ad</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1706"/>
+        <location filename="../zkanjiform.cpp" line="1823"/>
+        <location filename="../zkanjiform.cpp" line="1931"/>
         <source>Cop&amp;y word definition</source>
         <translation>&amp;Meghatározás vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1712"/>
+        <location filename="../zkanjiform.cpp" line="1936"/>
+        <location filename="../zkanjiform.cpp" line="1951"/>
         <source>Kanji &amp;information</source>
         <translation>Kandzsi &amp;információ</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1714"/>
+        <location filename="../zkanjiform.cpp" line="1938"/>
+        <location filename="../zkanjiform.cpp" line="1956"/>
         <source>Add kanji to &amp;group...</source>
         <translation>Kandzsi &amp;csoportba...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1715"/>
+        <location filename="../zkanjiform.cpp" line="1939"/>
+        <location filename="../zkanjiform.cpp" line="1958"/>
         <source>Collect kanji &amp;words...</source>
         <translation>Kandzsi szavak &amp;gyűjtése...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1717"/>
+        <location filename="../zkanjiform.cpp" line="1941"/>
+        <location filename="../zkanjiform.cpp" line="1963"/>
         <source>&amp;Edit kanji definition...</source>
         <translation>Kandzsik &amp;jelentései...</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1719"/>
+        <location filename="../zkanjiform.cpp" line="1943"/>
+        <location filename="../zkanjiform.cpp" line="1968"/>
         <source>&amp;Copy to clipboard</source>
         <translation>&amp;Vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjiform.cpp" line="1720"/>
+        <location filename="../zkanjiform.cpp" line="1944"/>
+        <location filename="../zkanjiform.cpp" line="1970"/>
         <source>A&amp;ppend to clipboard</source>
         <translation>Vágólaphoz &amp;adás</translation>
     </message>
@@ -10978,43 +11055,43 @@ Biztos törlődjön?</translation>
 <context>
     <name>ZKanjiGridView</name>
     <message>
-        <location filename="../zkanjigridview.cpp" line="66"/>
+        <location filename="../zkanjigridview.cpp" line="1504"/>
         <source>Kanji information...</source>
         <translation>Kandzsi információ...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="69"/>
+        <location filename="../zkanjigridview.cpp" line="1507"/>
         <source>Add to group...</source>
         <translation>Kandzsi csoportba...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="71"/>
+        <location filename="../zkanjigridview.cpp" line="1509"/>
         <source>Collect words...</source>
         <translation>Szavak gyűjtése...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="74"/>
+        <location filename="../zkanjigridview.cpp" line="1512"/>
         <source>Edit definition...</source>
         <translation>Kandzsik jelentései...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="77"/>
+        <location filename="../zkanjigridview.cpp" line="1515"/>
         <source>Copy to clipboard</source>
         <translation>Vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="79"/>
+        <location filename="../zkanjigridview.cpp" line="1517"/>
         <source>Append to clipboard</source>
         <translation>Vágólaphoz ad</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1231"/>
+        <location filename="../zkanjigridview.cpp" line="1228"/>
         <source>Ctrl+D</source>
         <comment>Deselect</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1231"/>
+        <location filename="../zkanjigridview.cpp" line="1228"/>
         <source>Ctrl+Shift+A</source>
         <comment>Deselect</comment>
         <translation type="unfinished"></translation>

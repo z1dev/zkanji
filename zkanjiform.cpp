@@ -956,7 +956,11 @@ void ZKanjiForm::showDictionaryInfo()
 
 bool ZKanjiForm::event(QEvent *e)
 {
-    if (e->type() == SetDictEvent::Type())
+    if (e->type() == QEvent::LanguageChange)
+    {
+        retranslateMainMenu();
+    }
+    else if (e->type() == SetDictEvent::Type())
     {
         QList<ZKanjiWidget*> widgets = findChildren<ZKanjiWidget*>();
         int index = ((SetDictEvent*)e)->index();
@@ -1051,30 +1055,6 @@ bool ZKanjiForm::event(QEvent *e)
         if (activewidget)
             ((QAction*)dictmap->mapping(activewidget->dictionaryIndex()))->setChecked(true);
     }
-
-    //switch (e->type())
-    //{
-    //case QEvent::NonClientAreaMouseButtonPress:
-    //    downnonclient = !mainform && dockingAllowed();
-    //    framerect = frameGeometry();
-    //    break;
-    //case QEvent::NonClientAreaMouseButtonRelease:
-    //    downnonclient = false;
-    //    if (!dockmoving)
-    //        break;
-    //    dockmoving = false;
-    //    p = QCursor::pos();
-    //    if (validDockPos(p))
-    //    {
-    //        //((ZKanjiWidget*)centralWidget()->layout()->itemAt(0)->widget())->setContextMenuPolicy(Qt::DefaultContextMenu);
-
-    //        ((ZKanjiForm*)gUI->mainForm())->dockAt(gUI->mainForm()->centralWidget()->mapFromGlobal(p), this);
-    //        deleteLater();
-    //    }
-    //    else
-    //        ((ZKanjiForm*)gUI->mainForm())->hideDockOverlay();
-    //    break;
-    //}
 
     return base::event(e);
 }
@@ -1464,6 +1444,8 @@ void ZKanjiForm::fillMainMenu()
 
     QAction *a;
 
+    // Warning: update retranslateMainMenu() when changing menu item text or item order, or
+    // when adding and removing items. Keyboard shortcuts should be translated as well.
     if (mainform)
     {
         QMenu *filemenu = menu->addMenu(tr("&File"));
@@ -1491,41 +1473,28 @@ void ZKanjiForm::fillMainMenu()
         a = inmenu->addAction(tr("Import dic&tionary..."));
         connect(a, &QAction::triggered, gUI, &GlobalUI::dictImportAction);
 
-        //a = new QAction(tr("Save user data"), this);
-        //connect(a, &QAction::triggered, gUI, &GlobalUI::saveUserData);
-        //filemenu->addAction(a);
-
         filemenu->addSeparator();
 
-        a = new QAction(tr("&Settings..."), this);
+        a = filemenu->addAction(tr("&Settings..."));
         a->setShortcut(QKeySequence::Preferences);
         connect(a, &QAction::triggered, gUI, &GlobalUI::showSettingsWindow);
-        filemenu->addAction(a);
-
-        //a = new QAction(tr("Save settings"), this);
-        //a->setShortcut(Qt::CTRL + Qt::Key_O);
-        //connect(a, &QAction::triggered, gUI, &GlobalUI::saveSettings);
-        //filemenu->addAction(a);
 
         filemenu->addSeparator();
 
-        a = new QAction(tr("E&xit"), this);
+        a = filemenu->addAction(tr("E&xit"));
         a->setShortcut(QKeySequence::Quit);
         connect(a, &QAction::triggered, gUI, &GlobalUI::quit);
-        filemenu->addAction(a);
 
         QMenu *studymenu = menu->addMenu(tr("S&tudy"));
 
-        a = new QAction(tr("Hiragana/Katakana &practice..."), this);
+        a = studymenu->addAction(tr("Hiragana/Katakana &practice..."));
         //a->setShortcut(Qt::CTRL + Qt::Key_S);
         connect(a, &QAction::triggered, gUI, &GlobalUI::practiceKana);
-        studymenu->addAction(a);
 
-        a = new QAction(tr("Long-term &study lists..."), this);
+        a = studymenu->addAction(tr("Long-term &study lists..."));
         //: Long-term study list menu shortcut
-        a->setShortcut(QKeySequence(tr("F5")) /*Qt::CTRL + Qt::Key_S*/);
+        a->setShortcut(QKeySequence(tr("Ctrl+L")) /*Qt::CTRL + Qt::Key_S*/);
         connect(a, &QAction::triggered, gUI, &GlobalUI::showDecks);
-        studymenu->addAction(a);
     }
 
     // Dictionary main menu item.
@@ -1560,7 +1529,7 @@ void ZKanjiForm::fillMainMenu()
 
     // View main menu item.
 
-    QMenu *viewmenu = menu->addMenu(tr("&View"));
+    viewmenu = menu->addMenu(tr("&View"));
 
     QSignalMapper *viewmap = new QSignalMapper(this);
     connect(viewmap, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, &ZKanjiForm::setViewMode);
@@ -1612,7 +1581,13 @@ void ZKanjiForm::fillMainMenu()
     kanjigroupmenu = menu->addMenu(tr("&Kanji group"));
     fillKanjiMenu(commandmap, kanjigroupmenu, CommandCategories::GroupCateg);
 
-    QMenu *helpmenu = menu->addMenu(tr("&Help"));
+    helpmenu = menu->addMenu(tr("&Help"));
+
+    a = helpmenu->addAction(tr("&About"));
+    connect(a, &QAction::triggered, gUI, &GlobalUI::showAbout);
+
+    a = helpmenu->addAction(tr("About &Qt"));
+    connect(a, &QAction::triggered, qApp, &QApplication::aboutQt);
 
     if (!mainform)
     {
@@ -1622,13 +1597,162 @@ void ZKanjiForm::fillMainMenu()
 
         connect(a, &QAction::triggered, this, &ZKanjiForm::startDockDrag);
     }
+}
 
-    a = helpmenu->addAction(tr("&About"));
-    connect(a, &QAction::triggered, gUI, &GlobalUI::showAbout);
+void ZKanjiForm::retranslateMainMenu()
+{
+    QMenuBar *menu = menuBar();
 
-    a = helpmenu->addAction(tr("About &Qt"));
-    connect(a, &QAction::triggered, qApp, &QApplication::aboutQt);
+    if (mainform)
+    {
+        QAction *filemenu = menu->actions().at(0);
+        filemenu->setText(tr("&File"));
 
+        QAction *datamenu = filemenu->menu()->actions().at(0);
+        datamenu->setText(tr("&Database"));
+
+        QAction *a = datamenu->menu()->actions().at(0);
+        a->setText(tr("Import &base dictionary..."));
+        a = datamenu->menu()->actions().at(1);
+        a->setText(tr("Import &example sentences..."));
+
+        QAction *inmenu = filemenu->menu()->actions().at(1);
+        inmenu->setText(tr("&Export/Import"));
+
+        a = inmenu->menu()->actions().at(0);
+        a->setText(tr("Export &user data..."));
+        a = inmenu->menu()->actions().at(1);
+        a->setText(tr("Export &dictionary..."));
+
+        // inmenu action 2 is separator
+
+        a = inmenu->menu()->actions().at(3);
+        a->setText(tr("Import u&ser data..."));
+        a = inmenu->menu()->actions().at(4);
+        a->setText(tr("Import dic&tionary..."));
+
+        // filemenu action 2 is separator
+
+        a = filemenu->menu()->actions().at(3);
+        a->setText(tr("&Settings..."));
+
+        // filemenu action 4 is separator
+
+        a = filemenu->menu()->actions().at(5);
+        a->setText(tr("E&xit"));
+
+        QAction *studymenu = menu->actions().at(1);
+        studymenu->setText(tr("S&tudy"));
+
+        a = studymenu->menu()->actions().at(0);
+        a->setText(tr("Hiragana/Katakana &practice..."));
+
+        a = studymenu->menu()->actions().at(1);
+        a->setText(tr("Long-term &study lists..."));
+        a->setShortcut(QKeySequence(tr("Ctrl+L")));
+    }
+
+    dictmenu->menuAction()->setText(tr("&Dictionary"));
+
+    // dictmenu action X is separator (X is number of dictionaries)
+
+    QAction *a = dictmenu->actions().at(ZKanji::dictionaryCount() + 1);
+    a->setText(tr("&Manage dictionaries..."));
+
+    a = dictmenu->actions().at(ZKanji::dictionaryCount() + 2);
+    a->setText(tr("Dictionary &information..."));
+
+    viewmenu->menuAction()->setText(tr("&View"));
+
+    a = viewmenu->actions().at(0);
+    a->setText(tr("Dictionary &search"));
+    a->setShortcut(QKeySequence(tr("Ctrl+1")));
+
+    a = viewmenu->actions().at(1);
+    a->setText(tr("&Word groups"));
+    a->setShortcut(QKeySequence(tr("Ctrl+2")));
+
+    a = viewmenu->actions().at(2);
+    a->setText(tr("&Kanji groups"));
+    a->setShortcut(QKeySequence(tr("Ctrl+3")));
+
+    a = viewmenu->actions().at(3);
+    a->setText(tr("Kan&ji search"));
+    a->setShortcut(QKeySequence(tr("Ctrl+4")));
+
+    // viewmenu action 4 is separator
+
+    a = viewmenu->actions().at(5);
+    a->setText(tr("&New window"));
+    a->setShortcut(QKeySequence::New);
+
+    // viewmenu action 6 is separator ? not needed as last item?
+
+    wordsearchmenu->menuAction()->setText(tr("Dictionary &search"));
+    retranslateSearchMenu(wordsearchmenu, CommandCategories::SearchCateg);
+
+    wordgroupmenu->menuAction()->setText(tr("&Word group"));
+    retranslateSearchMenu(wordgroupmenu, CommandCategories::GroupCateg);
+
+    kanjisearchmenu->menuAction()->setText(tr("Kan&ji search"));
+
+    QAction *kanjisrcsubmenu = kanjisearchmenu->actions().at(0);
+    kanjisrcsubmenu->setText(tr("&Filters"));
+
+    a = kanjisrcsubmenu->menu()->actions().at(0);
+    a->setText(tr("&Reset"));
+
+    // kanjisrcsubmenu action 1 is separator
+
+    a = kanjisrcsubmenu->menu()->actions().at(2);
+    a->setText(tr("Stroke &count filter"));
+
+    a = kanjisrcsubmenu->menu()->actions().at(3);
+    a->setText(tr("&JLPT filter"));
+
+    a = kanjisrcsubmenu->menu()->actions().at(4);
+    a->setText(tr("&Meaning filter"));
+
+    a = kanjisrcsubmenu->menu()->actions().at(5);
+    a->setText(tr("Rea&ding filter"));
+
+    a = kanjisrcsubmenu->menu()->actions().at(6);
+    a->setText(tr("Jouyou &grade filter"));
+
+    // kanjisrcsubmenu action 7 is separator
+
+    a = kanjisrcsubmenu->menu()->actions().at(8);
+    a->setText(tr("R&adicals filter"));
+
+    // kanjisrcsubmenu action 9 is separator
+
+    a = kanjisrcsubmenu->menu()->actions().at(10);
+    a->setText(tr("&Index filter"));
+
+    a = kanjisrcsubmenu->menu()->actions().at(11);
+    a->setText(tr("&SKIP filter"));
+
+    // kanjisearchmenu action 1 is separator
+
+    retranslateKanjiMenu(kanjisearchmenu, CommandCategories::SearchCateg, 2);
+
+    kanjigroupmenu->menuAction()->setText(tr("&Kanji group"));
+    retranslateKanjiMenu(kanjigroupmenu, CommandCategories::GroupCateg);
+
+    helpmenu->menuAction()->setText(tr("&Help"));
+    a = helpmenu->actions().at(0);
+    a->setText(tr("&About"));
+
+    a = helpmenu->actions().at(1);
+    a->setText(tr("About &Qt"));
+
+
+    if (!mainform)
+    {
+        a = menu->actions().constLast();
+        a->setText(tr("Dock"));
+        a->setShortcut(QKeySequence(tr("F9")));
+    }
 }
 
 void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, QMenu *menu, CommandCategories categ)
@@ -1638,7 +1762,7 @@ void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, 
     gUI->addCommandAction(commandmap, srcsubmenu, tr("&Japanese to %1"), categ == CommandCategories::SearchCateg ? Qt::Key_F2 : QKeySequence(), makeCommand(Commands::FromJapanese, categ), true, group);
     gUI->addCommandAction(commandmap, srcsubmenu, tr("%1 &to Japanese"), categ == CommandCategories::SearchCateg ? Qt::Key_F3 : QKeySequence(), makeCommand(Commands::ToJapanese, categ), true, group);
     if (categ == CommandCategories::SearchCateg)
-        gUI->addCommandAction(commandmap, srcsubmenu, tr("&Browse Japanese"), categ == CommandCategories::SearchCateg ? Qt::Key_F4 : QKeySequence(), makeCommand(Commands::BrowseJapanese, categ), true, group);
+        gUI->addCommandAction(commandmap, srcsubmenu, tr("&Browse Japanese"), Qt::Key_F4, makeCommand(Commands::BrowseJapanese, categ), true, group);
 
     //menu->addSeparator();
 
@@ -1646,7 +1770,7 @@ void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, 
 
     if (categ == CommandCategories::SearchCateg)
     {
-        gUI->addCommandAction(commandmap, srcsubmenu, tr("E&xample sentences"), categ == CommandCategories::SearchCateg ? Qt::Key_F5 : QKeySequence(), makeCommand(Commands::ToggleExamples, categ), true);
+        gUI->addCommandAction(commandmap, srcsubmenu, tr("E&xample sentences"), Qt::Key_F5, makeCommand(Commands::ToggleExamples, categ), true);
 
         srcsubmenu->addSeparator();
     }
@@ -1677,21 +1801,15 @@ void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, 
     gUI->addCommandAction(commandmap, menu, tr("Add word to &dictionary..."), QKeySequence(), makeCommand(Commands::WordToDict, categ));
     menu->addSeparator();
     gUI->addCommandAction(commandmap, menu, tr("&Edit word..."), QKeySequence(), makeCommand(Commands::EditWord, categ));
-    //menu->addSeparator();
-    //addCommandAction(commandmap, srcsubmenu, tr("New word..."), QKeySequence(), makeCommand(Commands::CreateNewWord, categ));
     gUI->addCommandAction(commandmap, menu, tr("De&lete word"), QKeySequence(), makeCommand(Commands::DeleteWord, categ));
     gUI->addCommandAction(commandmap, menu, tr("&Revert to original"), QKeySequence(), makeCommand(Commands::RevertWord, categ));
 
-    //a = menu->addAction(tr("New word to dictionary..."));
-    //connect(a, &QAction::triggered, [this]() { editNewWord(activewidget->dictionary()); });
-
+    menu->addSeparator();
     if (menu == wordsearchmenu)
     {
-        menu->addSeparator();
         gUI->addCommandAction(commandmap, menu, tr("&New word to dictionary..."), QKeySequence(), makeCommand(Commands::CreateNewWord, categ));
+        menu->addSeparator();
     }
-
-    menu->addSeparator();
 
     srcsubmenu = menu->addMenu(tr("&Clipboard"));
 
@@ -1704,7 +1822,115 @@ void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, 
     gUI->addCommandAction(commandmap, srcsubmenu, tr("A&ppend word kana"), QKeySequence(), makeCommand(Commands::AppendWordKana, categ));
     srcsubmenu->addSeparator();
     gUI->addCommandAction(commandmap, srcsubmenu, tr("Cop&y word definition"), QKeySequence(), makeCommand(Commands::CopyWordDef, categ));
+}
 
+void ZKanjiForm::retranslateSearchMenu(QMenu *menu, CommandCategories categ, int from)
+{
+    QAction *srcsubmenu = menu->actions().at(from + 0);
+    srcsubmenu->setText(tr("&Mode"));
+
+    QAction *a = srcsubmenu->menu()->actions().at(0);
+    a->setText(tr("&Japanese to %1"));
+    a->setShortcut(categ == CommandCategories::SearchCateg ? Qt::Key_F2 : QKeySequence());
+
+    a = srcsubmenu->menu()->actions().at(1);
+    a->setText(tr("%1 &to Japanese"));
+    a->setShortcut(categ == CommandCategories::SearchCateg ? Qt::Key_F3 : QKeySequence());
+    if (categ == CommandCategories::SearchCateg)
+    {
+        a = srcsubmenu->menu()->actions().at(2);
+        a->setText(tr("&Browse Japanese"));
+        a->setShortcut(Qt::Key_F4);
+    }
+
+    srcsubmenu = menu->actions().at(from + 1);
+    srcsubmenu->setText(tr("&Options"));
+
+
+    int skip = 0;
+    if (categ == CommandCategories::SearchCateg)
+    {
+        a = srcsubmenu->menu()->actions().at(0);
+        a->setText(tr("E&xample sentences"));
+
+        skip = 2;
+    }
+
+    a = srcsubmenu->menu()->actions().at(skip + 0);
+    a->setText(tr("Any &start of word"));
+    a = srcsubmenu->menu()->actions().at(skip + 1);
+    a->setText(tr("Any &end of word"));
+
+    // srcsubmenu action skip + 2 is separator
+
+    a = srcsubmenu->menu()->actions().at(skip + 3);
+    a->setText(tr("&Deinflect search"));
+    a = srcsubmenu->menu()->actions().at(skip + 4);
+    a->setText(tr("Strict &match"));
+
+    // srcsubmenu action skip + 5 is separator
+
+    a = srcsubmenu->menu()->actions().at(skip + 6);
+    a->setText(tr("&Filtering"));
+    a = srcsubmenu->menu()->actions().at(skip + 7);
+    a->setText(tr("Edi&t filters"));
+
+    // srcsubmenu action skip + 8 is separator
+
+    a = srcsubmenu->menu()->actions().at(skip + 9);
+    a->setText(tr("Se&parate meanings"));
+
+    // menu action from + 2 is separator
+
+    a = menu->actions().at(from + 3);
+    a->setText(tr("Add word to &group..."));
+    a = menu->actions().at(from + 4);
+    a->setText(tr("Add word to &study deck..."));
+    a = menu->actions().at(from + 5);
+    a->setText(tr("Add word to &dictionary..."));
+
+    // menu action from + 6 is separator
+
+    a = menu->actions().at(from + 7);
+    a->setText(tr("&Edit word..."));
+    a = menu->actions().at(from + 8);
+    a->setText(tr("De&lete word"));
+    a = menu->actions().at(from + 9);
+    a->setText(tr("&Revert to original"));
+
+    // menu action from + 10 is separator
+
+    if (menu == wordsearchmenu)
+    {
+        a = menu->actions().at(from + 11);
+        a->setText(tr("&New word to dictionary..."));
+        from += 2;
+    }
+
+    srcsubmenu = menu->actions().at(from + 11);
+    srcsubmenu->setText(tr("&Clipboard"));
+
+    a = srcsubmenu->menu()->actions().at(0);
+    a->setText(tr("&Copy word"));
+
+    // srcsubmenu action 1 is separator
+
+    a = srcsubmenu->menu()->actions().at(2);
+    a->setText(tr("Copy &word written form"));
+    a = srcsubmenu->menu()->actions().at(3);
+    a->setText(tr("&Append word written form"));
+
+    // srcsubmenu action 4 is separator
+
+    a = srcsubmenu->menu()->actions().at(5);
+    a->setText(tr("C&opy word kana form"));
+    a = srcsubmenu->menu()->actions().at(6);
+    a->setText(tr("A&ppend word kana"));
+
+    // srcsubmenu action 7 is separator
+
+    a = srcsubmenu->menu()->actions().at(8);
+    a->setText(tr("Cop&y word definition"));
 }
 
 void ZKanjiForm::fillKanjiMenu(QSignalMapper *commandmap, QMenu *menu, CommandCategories categ)
@@ -1719,6 +1945,34 @@ void ZKanjiForm::fillKanjiMenu(QSignalMapper *commandmap, QMenu *menu, CommandCa
     gUI->addCommandAction(commandmap, menu, tr("&Copy to clipboard"), QKeySequence(), makeCommand(Commands::CopyKanji, categ));
     gUI->addCommandAction(commandmap, menu, tr("A&ppend to clipboard"), QKeySequence(), makeCommand(Commands::AppendKanji, categ));
 }
+
+
+void ZKanjiForm::retranslateKanjiMenu(QMenu *menu, CommandCategories categ, int from)
+{
+    QAction *a = menu->actions().at(from + 0);
+    a->setText(tr("Kanji &information"));
+
+    // menu action from + 1 is separator
+
+    a = menu->actions().at(from + 2);
+    a->setText(tr("Add kanji to &group..."));
+    a = menu->actions().at(from + 3);
+    a->setText(tr("Collect kanji &words..."));
+
+    // menu action from + 4 is separator
+
+    a = menu->actions().at(from + 5);
+    a->setText(tr("&Edit kanji definition..."));
+
+    // menu action from + 6 is separator
+
+    a = menu->actions().at(from + 7);
+    a->setText(tr("&Copy to clipboard"));
+    a = menu->actions().at(from + 8);
+    a->setText(tr("A&ppend to clipboard"));
+
+}
+
 
 bool ZKanjiForm::validDockPos(QPoint pos)
 {

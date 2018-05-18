@@ -195,10 +195,16 @@ private:
 
     // Populates the main menu when the form is created.
     void fillMainMenu();
+    // Updates the main menu texts on language change events.
+    void retranslateMainMenu();
     // Populates a word list search menu either for dictionary searches or word group lists.
     void fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, QMenu *menu, CommandCategories categ);
+    // Updates the search menu texts on language change events.
+    void retranslateSearchMenu(QMenu *menu, CommandCategories categ, int from = 0);
     // Populates a kanji list search menu either for dictionary searches or kanji group lists.
     void fillKanjiMenu(QSignalMapper *commandmap, QMenu *menu, CommandCategories categ);
+    // Updates the kanji menu texts on language change events.
+    void retranslateKanjiMenu(QMenu *menu, CommandCategories categ, int from = 0);
 
     // Returns whether the main ZKanjiForm at the passed global position is not covered by
     // any other windows.
@@ -263,10 +269,12 @@ private:
     bool skipmenu;
 
     QMenu *dictmenu;
+    QMenu *viewmenu;
     QMenu *wordsearchmenu;
     QMenu *wordgroupmenu;
     QMenu *kanjisearchmenu;
     QMenu *kanjigroupmenu;
+    QMenu *helpmenu;
     QSignalMapper *dictmap;
     QSignalMapper *commandmap;
     QActionGroup *viewgroup;
