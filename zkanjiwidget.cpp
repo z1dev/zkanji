@@ -97,16 +97,18 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
 
     QPixmap pix = renderFromSvg(QStringLiteral(":/magnisearch.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     dictimg = triangleImage(pix);
-    connect(modemenu.addAction(QIcon(pix), "Dictionary search\tCtrl+1"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
+    connect(modemenu.addAction(QIcon(pix), QString()), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
     pix = renderFromSvg(QStringLiteral(":/wordgroups.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     wgrpimg = triangleImage(pix);
-    connect(modemenu.addAction(QIcon(pix), "Word groups\tCtrl+2"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
+    connect(modemenu.addAction(QIcon(pix), QString()), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
     pix = renderFromSvg(QStringLiteral(":/kanjigroups.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     kgrpimg = triangleImage(pix);
-    connect(modemenu.addAction(QIcon(pix), "Kanji groups\tCtrl+3"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
+    connect(modemenu.addAction(QIcon(pix), QString()), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
     pix = renderFromSvg(QStringLiteral(":/kanjisearch.svg"), _iconW, _iconH, QRect(0, 0, _iconW, _iconH));
     ksrcimg = triangleImage(pix);
-    connect(modemenu.addAction(QIcon(pix), "Kanji search\tCtrl+4"), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
+    connect(modemenu.addAction(QIcon(pix), QString()), &QAction::triggered, this, &ZKanjiWidget::setModeByAction);
+
+    setTranslationTexts();
 
     connect(gUI, &GlobalUI::dictionaryAdded, this, &ZKanjiWidget::dictionaryAdded);
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &ZKanjiWidget::dictionaryRemoved);
@@ -481,6 +483,28 @@ void ZKanjiWidget::allowActionTriggered(bool checked)
         allowdockaction->setChecked(checked);
 }
 
+bool ZKanjiWidget::event(QEvent *e)
+{
+    if (e->type() == SetDictEvent::Type())
+    {
+        // Changes active dictionary to the dictionary specified by the event.
+        int index = ((SetDictEvent*)e)->index();
+
+        setDictionary(index);
+        return true;
+    }
+    else if (e->type() == GetDictEvent::Type())
+    {
+        GetDictEvent *de = (GetDictEvent*)e;
+        de->setResult(dictionaryIndex());
+        return true;
+    }
+    else if (e->type() == QEvent::LanguageChange)
+        setTranslationTexts();
+
+    return base::event(e);
+}
+
 void ZKanjiWidget::paintEvent(QPaintEvent *e)
 {
     if (!paintactive)
@@ -530,26 +554,6 @@ void ZKanjiWidget::paintEvent(QPaintEvent *e)
 
     //p->drawLine(0, 0, 0, rect().height());
     //p->drawLine(0, 0, rect().width(), 0);
-}
-
-bool ZKanjiWidget::event(QEvent *e)
-{
-    if (e->type() == SetDictEvent::Type())
-    {
-        // Changes active dictionary to the dictionary specified by the event.
-        int index = ((SetDictEvent*)e)->index();
-
-        setDictionary(index);
-        return true;
-    }
-    else if (e->type() == GetDictEvent::Type())
-    {
-        GetDictEvent *de = (GetDictEvent*)e;
-        de->setResult(dictionaryIndex());
-        return true;
-    }
-
-    return base::event(e);
 }
 
 void ZKanjiWidget::contextMenuEvent(QContextMenuEvent *e)
@@ -673,6 +677,14 @@ void ZKanjiWidget::dictionaryFlagChanged(int index, int order)
         //        connect(dictmenu.addAction(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
 
     }
+}
+
+void ZKanjiWidget::setTranslationTexts()
+{
+    modemenu.actions().at(0)->setText(QString("%1\tCtrl+1").arg(tr("Dictionary search")));
+    modemenu.actions().at(1)->setText(QString("%1\tCtrl+2").arg(tr("Word groups")));
+    modemenu.actions().at(2)->setText(QString("%1\tCtrl+3").arg(tr("Kanji groups")));
+    modemenu.actions().at(3)->setText(QString("%1\tCtrl+4").arg(tr("Kanji search")));
 }
 
 void ZKanjiWidget::setModeByAction()

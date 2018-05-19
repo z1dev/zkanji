@@ -984,6 +984,11 @@ bool ZKanjiGridView::viewportEvent(QEvent *e)
         kanjitipcell = -1;
         kanjitipkanji = -1;
         break;
+    case QEvent::LanguageChange:
+        if (status != nullptr)
+            status->clear();
+        updateStatus();
+        break;
     }
 
     return base::viewportEvent(e);

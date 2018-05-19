@@ -111,8 +111,8 @@ public:
 public slots:
     void allowActionTriggered(bool checked);
 protected:
-    virtual void paintEvent(QPaintEvent *e) override;
     virtual bool event(QEvent *e) override;
+    virtual void paintEvent(QPaintEvent *e) override;
     virtual void contextMenuEvent(QContextMenuEvent *e) override;
     //virtual void keyPressEvent(QKeyEvent *e) override;
 private slots:
@@ -135,6 +135,9 @@ private slots:
     void dictionaryRenamed(const QString &oldname, int index, int order);
     void dictionaryFlagChanged(int index, int order);
 private:
+    // Change texts of the mode menu to match the currently selected language.
+    void setTranslationTexts();
+
     // Changes what's displayed in the window, depending on the passed action. The action
     // must be one of the actions in the modeMenu.
     void setModeByAction();
