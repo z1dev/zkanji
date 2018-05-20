@@ -1753,6 +1753,8 @@ void ZKanjiForm::retranslateMainMenu()
         a->setText(tr("Dock"));
         a->setShortcut(QKeySequence(tr("F9")));
     }
+
+    qApp->postEvent(this, new UpdateDictionaryMenuEvent);
 }
 
 void ZKanjiForm::fillSearchMenu(QSignalMapper *commandmap, QActionGroup *group, QMenu *menu, CommandCategories categ)
