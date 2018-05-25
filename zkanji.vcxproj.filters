@@ -992,6 +992,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_languages.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_languageform.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_languageform.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="languageform.cpp">
+      <Filter>Code\Files with .ui\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1408,6 +1417,12 @@
     <CustomBuild Include="languages.h">
       <Filter>Code\General\Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="languageform.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="languageform.h">
+      <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kanji.h">
@@ -1658,6 +1673,9 @@
     </ClInclude>
     <ClInclude Include="languagesettings.h">
       <Filter>Code\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_languageform.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

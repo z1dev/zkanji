@@ -76,6 +76,8 @@ QString Languages::IDs(int ix)
 
 int Languages::idIndex(QString str)
 {
+    if (str.isEmpty())
+        return 0;
     for (int ix = 0, siz = list.size(); ix != siz; ++ix)
         if (list[ix].second == str)
             return ix;
@@ -84,8 +86,11 @@ int Languages::idIndex(QString str)
 
 bool Languages::setLanguage(int ix)
 {
-    if (ix < 0 || ix >= list.size() || ix == current)
+    if (ix < 0 || ix >= list.size())
         return false;
+
+    if (ix == current)
+        return true;
 
     if (ix == 0)
     {

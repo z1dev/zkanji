@@ -142,6 +142,8 @@ namespace Settings
 
         // General settings
 
+        ini.setValue("language", Settings::language);
+
         ini.setValue("dateformat", general.dateformat == GeneralSettings::YearMonthDay ? "YearMonthDay" : general.dateformat == GeneralSettings::MonthDayYear ? "MonthDayYear" : "DayMonthYear");
         ini.setValue("savewinpos", general.savewinpos);
         //ini.setValue("savetoolstates", general.savetoolstates);

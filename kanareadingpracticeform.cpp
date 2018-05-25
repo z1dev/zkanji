@@ -100,13 +100,8 @@ KanaReadingPracticeForm::KanaReadingPracticeForm(QWidget *parent) : base(parent,
 
     connect(ui->abortButton, &QPushButton::clicked, this, &DialogWindow::closeAbort);
 
-    //setAttribute(Qt::WA_DontShowOnScreen);
-    //show();
     fixWrapLabelsHeight(this, -1);
-    //adjustSize();
-    //setFixedSize(size());
-    //hide();
-    //setAttribute(Qt::WA_DontShowOnScreen, false);
+    updateWindowGeometry(this);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -230,7 +225,6 @@ void KanaReadingPracticeForm::keyPressEvent(QKeyEvent *e)
 
 void KanaReadingPracticeForm::showEvent(QShowEvent *e)
 {
-    adjustSize();
     setFixedSize(size());
     base::showEvent(e);
 }

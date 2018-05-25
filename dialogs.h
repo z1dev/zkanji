@@ -15,6 +15,12 @@ class WordToGroupForm;
 class KanjiToGroupForm;
 class WordToDictionaryForm;
 
+
+// Shows a dialog to select program language on startup. Returns false if the user pressed
+// close to prevent starting the program. If true is returned, the Settings::language string
+// is set to the ID of the selected language.
+bool languageSelect();
+
 // Shows WordToGroupForm dialog. Set updatelastdiag to true, if the global UI should remember
 // the last word dialog where the ok button was pressed. Calling gUI->wordToDestSelect() will
 // then open the last dialog.

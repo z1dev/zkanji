@@ -3903,7 +3903,7 @@ A &quot;%1&quot; gomb megnyomásakor új kísérlet tehető a fájl mentésére.
         <location filename="../kanapracticesettingsform.ui" line="514"/>
         <location filename="../kanapracticesettingsform.ui" line="535"/>
         <source>a</source>
-        <translation>mn</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../kanapracticesettingsform.ui" line="193"/>
@@ -4011,7 +4011,7 @@ A &quot;%1&quot; gomb megnyomásakor új kísérlet tehető a fájl mentésére.
     <message>
         <location filename="../kanapracticesettingsform.ui" line="354"/>
         <source>n</source>
-        <translation>n</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../kanapracticesettingsform.ui" line="361"/>

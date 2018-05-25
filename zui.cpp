@@ -538,7 +538,7 @@ void fixWrapLabelsHeight(QWidget *form, int labelwidth
 
         l->setMinimumWidth(labelwidth <= 0 ? l->width() : labelwidth);
         l->setMaximumWidth(labelwidth <= 0 ? l->width() : labelwidth);
-        l->setMinimumHeight(l->sizeHint().height());
+        l->setMinimumHeight(/*l->sizeHint().height()*/l->heightForWidth(l->minimumWidth()));
 
 #ifdef _DEBUG
         if (fixed != nullptr)
