@@ -556,7 +556,7 @@ WordStudyListForm::WordStudyListForm(WordDeck *deck, DeckStudyPages page, QWidge
     connect(startButton, &QPushButton::clicked, this, &WordStudyListForm::startTest);
     connect(closeButton, &QPushButton::clicked, this, &WordStudyListForm::close);
 
-    setButtonText();
+    translateTexts();
 
     queuesort = { 0, Qt::AscendingOrder };
     studiedsort = { 0, Qt::AscendingOrder };
@@ -820,7 +820,7 @@ bool WordStudyListForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setButtonText();
+        translateTexts();
     }
 
     return base::event(e);
@@ -1314,9 +1314,10 @@ void WordStudyListForm::dictRemoved(int index, int orderindex, void *oldaddress)
         close();
 }
 
-void WordStudyListForm::setButtonText()
+void WordStudyListForm::translateTexts()
 {
     startButton->setText(tr("Start the test"));
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText(qApp->translate("ButtonBox", "Close"));
 }
 
 void WordStudyListForm::saveColumns()

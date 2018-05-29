@@ -24,11 +24,11 @@ GroupExportForm::GroupExportForm(QWidget *parent) : base(parent), ui(new Ui::Gro
 
     gUI->scaleWidget(this);
 
-    exportbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
-    exportbutton->setText(tr("Export"));
-    exportbutton->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &GroupExportForm::exportClicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &GroupExportForm::closeCancel);
+
+    translateTexts();
 
     FormStates::restoreDialogSize("GroupExport", this, true);
 }
@@ -89,7 +89,7 @@ void GroupExportForm::modelDataChanged()
         return;
 
     bool sel = kanjimodel->hasChecked() || wordsmodel->hasChecked();
-    exportbutton->setEnabled(sel);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(sel);
 }
 
 void GroupExportForm::on_dictCBox_currentIndexChanged(int ix)
@@ -111,6 +111,12 @@ void GroupExportForm::on_dictCBox_currentIndexChanged(int ix)
     ui->wordsTree->expandAll();
 
     modelDataChanged();
+}
+
+void GroupExportForm::translateTexts()
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "Export"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

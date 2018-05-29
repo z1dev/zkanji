@@ -213,7 +213,7 @@ protected slots:
     void dictReset();
     void dictRemoved(int index, int orderindex, void *oldaddress);
 private:
-    void setButtonText();
+    void translateTexts();
 
     // Saves the column sizes and visibility for the current mode from the dictionary view.
     void saveColumns();

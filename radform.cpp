@@ -46,7 +46,7 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     connect(ui->radicalGrid, &ZRadicalGrid::selectionChanged, this, &RadicalForm::selectionChanged);
     connect(ui->radicalGrid, &ZRadicalGrid::groupingChanged, this, &RadicalForm::groupingChanged);
 
-    connect(ui->dialogButtons, &QDialogButtonBox::clicked, this, &RadicalForm::handleButtons);
+    connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RadicalForm::handleButtons);
 
     RadicalFiltersModel &m = radicalFiltersModel();
     connect(&m, &RadicalFiltersModel::filterAdded, this, &RadicalForm::radsAdded);
@@ -65,10 +65,12 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     ui->radsDownButton->setEnabled(false);
     ui->radsRemoveButton->setEnabled(false);
     ui->radsClearButton->setEnabled(!m.empty());
-    ui->dialogButtons->button(QDialogButtonBox::Ok)->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     connect(ui->radsList, &QListWidget::currentRowChanged, this, &RadicalForm::radsRowChanged);
     connect(ui->radsList, &QListWidget::itemDoubleClicked, this, &RadicalForm::radsDoubleClicked);
+
+    translateTexts();
 
     updateWindowGeometry(this);
     //setAttribute(Qt::WA_DontShowOnScreen);
@@ -261,7 +263,7 @@ bool RadicalForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setButtonText();
+        translateTexts();
     }
 
     return base::event(e);
@@ -277,12 +279,15 @@ bool RadicalForm::eventFilter(QObject *o, QEvent *e)
     return base::eventFilter(o, e);
 }
 
-void RadicalForm::setButtonText()
+void RadicalForm::translateTexts()
 {
     if (ui->expandWidget->isVisibleTo(this))
         ui->prevSelButton->setText(tr("Hide filter history") + QStringLiteral(" <<"));
     else
         ui->prevSelButton->setText(tr("Show filter history") + QStringLiteral(" >>"));
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 void RadicalForm::updateSettings()
@@ -379,18 +384,18 @@ void RadicalForm::showHidePrevSel()
             ui->splitter->setSizes({ gridsize - oldexp - ui->splitter->handleWidth(), oldexp });
     }
 
-    setButtonText();
+    translateTexts();
 }
 
 void RadicalForm::updateSelectionText(const QString &str)
 {
     ui->selectionLabel->setText(str);
-    ui->dialogButtons->button(QDialogButtonBox::Ok)->setEnabled(!str.isEmpty());
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!str.isEmpty());
 }
 
 void RadicalForm::handleButtons(QAbstractButton *button)
 {
-    if (ui->dialogButtons->buttonRole(button) == QDialogButtonBox::AcceptRole)
+    if (ui->buttonBox->buttonRole(button) == QDialogButtonBox::AcceptRole)
     {
         ui->radicalGrid->finalizeSelection();
         RadicalFilter *f = new RadicalFilter();

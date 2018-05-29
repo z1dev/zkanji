@@ -479,6 +479,8 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
     connect(ui->printDefFontCBox, &QComboBox::currentTextChanged, this, &SettingsForm::printCBoxChanged);
     connect(ui->printInfoFontCBox, &QComboBox::currentTextChanged, this, &SettingsForm::printCBoxChanged);
     connect(ui->printInfoStyleCBox, &QComboBox::currentTextChanged, this, &SettingsForm::printCBoxChanged);
+
+    translateTexts();
 }
 
 SettingsForm::~SettingsForm()
@@ -1301,17 +1303,7 @@ bool SettingsForm::event(QEvent *e)
     {
         ui->retranslateUi(this);
 
-        ui->kanjiRef1CBox->setItemText(0, tr("None"));
-        ui->kanjiRef2CBox->setItemText(0, tr("None"));
-        ui->kanjiRef3CBox->setItemText(0, tr("None"));
-        ui->kanjiRef4CBox->setItemText(0, tr("None"));
-        for (int ix = 1, siz = ZKanji::kanjiReferenceCount(); ix != siz; ++ix)
-        {
-            ui->kanjiRef1CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
-            ui->kanjiRef2CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
-            ui->kanjiRef3CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
-            ui->kanjiRef4CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
-        }
+        translateTexts();
     }
 
     return base::event(e);
@@ -1346,6 +1338,26 @@ bool SettingsForm::eventFilter(QObject *o, QEvent *e)
         return false;
     }
     return base::eventFilter(o, e);
+}
+
+void SettingsForm::translateTexts()
+{
+    ui->kanjiRef1CBox->setItemText(0, tr("None"));
+    ui->kanjiRef2CBox->setItemText(0, tr("None"));
+    ui->kanjiRef3CBox->setItemText(0, tr("None"));
+    ui->kanjiRef4CBox->setItemText(0, tr("None"));
+    for (int ix = 1, siz = ZKanji::kanjiReferenceCount(); ix != siz; ++ix)
+    {
+        ui->kanjiRef1CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+        ui->kanjiRef2CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+        ui->kanjiRef3CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+        ui->kanjiRef4CBox->setItemText(ix, ZKanji::kanjiReferenceTitle(ix));
+    }
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Reset)->setText(qApp->translate("ButtonBox", "Reset"));
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setText(qApp->translate("ButtonBox", "Apply"));
+    ui->buttonBox->button(QDialogButtonBox::Discard)->setText(qApp->translate("ButtonBox", "Discard"));
 }
 
 void SettingsForm::getSiteUrlSel(int &ss, int &se)

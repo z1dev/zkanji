@@ -38,12 +38,12 @@ WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::Wor
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToGroupForm::dictionaryToBeRemoved);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToGroupForm::close);
-    acceptButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
+    QPushButton *acceptButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     acceptButton->setDefault(true);
     acceptButton->setEnabled(false);
     connect(acceptButton, &QPushButton::clicked, this, &WordToGroupForm::accept);
 
-    setButtonText();
+    translateTexts();
 
     ui->wordsTable->assignStatusBar(ui->listStatus);
 }
@@ -131,7 +131,7 @@ bool WordToGroupForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setButtonText();
+        translateTexts();
     }
 
     return base::event(e);
@@ -167,7 +167,7 @@ void WordToGroupForm::on_switchButton_clicked()
 
 void WordToGroupForm::selChanged()
 {
-    acceptButton->setEnabled(ui->groupWidget->singleSelected(false) != nullptr);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ui->groupWidget->singleSelected(false) != nullptr);
 }
 
 void WordToGroupForm::dictionaryAdded()
@@ -184,9 +184,10 @@ void WordToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictionar
         ui->switchButton->setVisible(false);
 }
 
-void WordToGroupForm::setButtonText()
+void WordToGroupForm::translateTexts()
 {
-    acceptButton->setText(tr("Add to group"));
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Add to group"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

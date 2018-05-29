@@ -18,7 +18,10 @@
 SelectDictionaryDialog::SelectDictionaryDialog(QWidget *parent) : base(parent, false), ui(new Ui::SelectDictionaryDialog)
 {
     ui->setupUi(this);
+
     gUI->scaleWidget(this);
+
+    translateTexts();
 }
 
 SelectDictionaryDialog::~SelectDictionaryDialog()
@@ -60,6 +63,12 @@ void SelectDictionaryDialog::on_buttonBox_accepted()
 void SelectDictionaryDialog::on_buttonBox_rejected()
 {
     modalClose(ModalResult::Cancel);
+}
+
+void SelectDictionaryDialog::translateTexts()
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

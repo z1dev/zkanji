@@ -193,6 +193,7 @@ DictionaryEditorForm::DictionaryEditorForm(QWidget *parent) : base(parent), ui(n
     ui->dictView->setCurrentRow(0);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Close), &QPushButton::clicked, this, &DictionaryEditorForm::close);
+    translateTexts();
 
     FormStates::restoreDialogSize("DictionaryEditor", this, true);
 }
@@ -267,7 +268,7 @@ void DictionaryEditorForm::on_dictView_currentRowChanged(int curr, int prev)
 bool DictionaryEditorForm::event(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange)
-        ui->retranslateUi(this);
+        translateTexts();
 
     return base::event(e);
 }
@@ -280,6 +281,11 @@ void DictionaryEditorForm::closeEvent(QCloseEvent *e)
     base::closeEvent(e);
 }
 
+void DictionaryEditorForm::translateTexts()
+{
+    ui->retranslateUi(this);
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText(qApp->translate("ButtonBox", "Close"));
+}
 
 //-------------------------------------------------------------
 

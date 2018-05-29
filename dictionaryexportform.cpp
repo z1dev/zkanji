@@ -33,6 +33,7 @@ DictionaryExportForm::DictionaryExportForm(QWidget *parent) : base(parent), ui(n
     exportbutton->setEnabled(false);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &DictionaryExportForm::exportClicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DictionaryExportForm::closeCancel);
+    translateTexts();
 
     FormStates::restoreDialogSize("DictionaryExport", this, true);
 }
@@ -141,6 +142,12 @@ void DictionaryExportForm::on_dictCBox_currentIndexChanged(int ix)
 void DictionaryExportForm::on_groupBox_toggled(bool on)
 {
     modelDataChanged();
+}
+
+void DictionaryExportForm::translateTexts()
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

@@ -494,6 +494,7 @@ FilterListForm::FilterListForm(WordFilterConditions *conditions, const QRect &r,
     setGeometry(QRect(left, top, geom.width() - ui->editWidget->width() - ui->splitter->handleWidth(), geom.height()));
 
     hide();
+    translateTexts();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 }
 
@@ -549,7 +550,7 @@ void FilterListForm::on_downButton_clicked()
 void FilterListForm::on_nameEdit_textEdited(const QString &text)
 {
     filterindex = -1;
-    updateSaveButton();
+    translateTexts();
     ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setEnabled(!ui->nameEdit->text().isEmpty() && nameIndex(false) == -1);
     ui->filterTable->setCurrentRow(-1);
 }
@@ -586,7 +587,7 @@ void FilterListForm::editInitiated(int row)
         ui->anyButton->setChecked(true);
     }
 
-    updateSaveButton();
+    translateTexts();
 
     toggleEditor(true);
 
@@ -677,7 +678,7 @@ bool FilterListForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        updateSaveButton();
+        translateTexts();
     }
 
     return base::event(e);
@@ -727,12 +728,13 @@ void FilterListForm::closeEvent(QCloseEvent *e)
     }
 }
 
-void FilterListForm::updateSaveButton()
+void FilterListForm::translateTexts()
 {
     if (filterindex == -1)
         ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Add"));
     else
         ui->buttons->button(QDialogButtonBox::StandardButton::Save)->setText(tr("Save"));
+    ui->buttons->button(QDialogButtonBox::StandardButton::Discard)->setText(qApp->translate("ButtonBox", "Discard"));
 }
 
 void FilterListForm::toggleEditor(bool show)

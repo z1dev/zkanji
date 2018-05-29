@@ -71,6 +71,8 @@ protected:
 private:
     DictionaryEditorForm(QWidget *parent = nullptr);
 
+    void translateTexts();
+
     DictionaryEditorForm(const DictionaryEditorForm &) = delete;
     DictionaryEditorForm(DictionaryEditorForm &&) = delete;
     DictionaryEditorForm& operator=(const DictionaryEditorForm &) = delete;

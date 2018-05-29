@@ -43,9 +43,9 @@ private slots:
     void on_kanjiGroupsBox_toggled(bool checked);
     void on_wordGroupsBox_toggled(bool checked);
 private:
-    Ui::GroupImportForm *ui;
+    void translateTexts();
 
-    QPushButton *importbutton;
+    Ui::GroupImportForm *ui;
 
     typedef DialogWindow    base;
 };

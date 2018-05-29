@@ -19,7 +19,7 @@
 //-------------------------------------------------------------
 
 
-WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), dindex(-1), addButton(nullptr), expandsize(-1)
+WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), dindex(-1), expandsize(-1)
 {
     ui->setupUi(this);
 
@@ -35,9 +35,8 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
     ui->meaningsTable->assignStatusBar(ui->meaningsStatus);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToDictionaryForm::dictionaryToBeRemoved);
+    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &WordToDictionaryForm::on_addButton_clicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToDictionaryForm::on_cancelButton_clicked);
-    addButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::ButtonRole::AcceptRole);
-    connect(addButton, &QPushButton::clicked, this, &WordToDictionaryForm::on_addButton_clicked);
 }
 
 WordToDictionaryForm::~WordToDictionaryForm()
@@ -60,7 +59,7 @@ void WordToDictionaryForm::exec(Dictionary *d, int windex, Dictionary *initial, 
 
     // Set fixed width to the add button.
 
-    setButtonText();
+    translateTexts();
 
     // Show the original word on top.
 
@@ -105,7 +104,7 @@ bool WordToDictionaryForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setButtonText();
+        translateTexts();
     }
 
     return base::event(e);
@@ -187,7 +186,7 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
             if (!windowState().testFlag(Qt::WindowMaximized) && !windowState().testFlag(Qt::WindowFullScreen))
                 resize(s);
         }
-        setButtonText();
+        translateTexts();
     }
     else
     {
@@ -201,7 +200,7 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
         ui->meaningsTable->setMultiLine(true);
         ui->meaningsTable->setModel(model);
 
-        setButtonText();
+        translateTexts();
 
         if (!ui->meaningsWidget->isVisibleTo(this))
         {
@@ -257,8 +256,9 @@ void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dict
         close();
 }
 
-void WordToDictionaryForm::setButtonText()
+void WordToDictionaryForm::translateTexts()
 {
+    QPushButton *addButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     addButton->setMinimumWidth(0);
     addButton->setMaximumWidth(QWIDGETSIZE_MAX);
 
@@ -272,6 +272,8 @@ void WordToDictionaryForm::setButtonText()
 
     addButton->setMinimumWidth(addButton->sizeHint().width() + dif);
     addButton->setMaximumWidth(addButton->minimumWidth());
+
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

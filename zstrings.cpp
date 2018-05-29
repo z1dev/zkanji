@@ -11,6 +11,31 @@
 
 //-------------------------------------------------------------
 
+namespace
+{
+#if 0
+    // QMessageBox translations that should be not used directly.
+
+    const char *ignore[] = {
+        QT_TRANSLATE_NOOP("QPlatformTheme", "OK"), QT_TRANSLATE_NOOP("QPlatformTheme", "Cancel"), QT_TRANSLATE_NOOP("QPlatformTheme", "&Yes"), QT_TRANSLATE_NOOP("QPlatformTheme", "&No")
+
+        QT_TRANSLATE_NOOP("QColorDialog", "Hu&e:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Sat:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Val:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Red:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Green:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "Bl&ue:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "A&lpha channel:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&HTML:"),
+        QT_TRANSLATE_NOOP("QColorDialog", "Cursor at %1, %2\nPress ESC to cancel"),
+        QT_TRANSLATE_NOOP("QColorDialog", "Select Color"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Basic colors"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Custom colors"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Add to Custom Colors"),
+        QT_TRANSLATE_NOOP("QColorDialog", "&Pick Screen Color"),
+    };
+#endif
+}
 
 namespace Strings
 {

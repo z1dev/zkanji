@@ -33,7 +33,7 @@ public slots:
 protected:
     virtual bool event(QEvent *e) override;
 private:
-    void updateWindowTitle();
+    void translateTexts();
 
     Ui::DictionaryTextForm *ui;
 

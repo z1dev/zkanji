@@ -49,7 +49,7 @@ private slots:
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
-    void setButtonText();
+    void translateTexts();
 
     Ui::WordToDictionaryForm *ui;
 
@@ -64,8 +64,6 @@ private:
     Dictionary *dest;
     // Word index in the destination dictionary.
     int dindex;
-
-    QPushButton *addButton;
 
     // Height of the bottom words table when shown.
     int expandsize;

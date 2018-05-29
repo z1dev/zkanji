@@ -361,6 +361,84 @@ Hibaüzenet: %1</translation>
     </message>
 </context>
 <context>
+    <name>ButtonBox</name>
+    <message>
+        <location filename="../dictionaryeditorform.cpp" line="287"/>
+        <location filename="../dictionarystatsform.cpp" line="498"/>
+        <location filename="../kanjidefform.cpp" line="137"/>
+        <location filename="../wordstudylistform.cpp" line="1320"/>
+        <location filename="../wordtestresultsform.cpp" line="201"/>
+        <source>Close</source>
+        <translation>Bezár</translation>
+    </message>
+    <message>
+        <location filename="../dictionaryexportform.cpp" line="149"/>
+        <location filename="../dictionarytextform.cpp" line="170"/>
+        <location filename="../kanjidefform.cpp" line="136"/>
+        <location filename="../languageform.cpp" line="52"/>
+        <location filename="../radform.cpp" line="289"/>
+        <location filename="../selectdictionarydialog.cpp" line="70"/>
+        <location filename="../settingsform.cpp" line="1357"/>
+        <location filename="../wordtodeckform.cpp" line="833"/>
+        <source>OK</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../dictionaryexportform.cpp" line="150"/>
+        <location filename="../dictionaryimportform.cpp" line="124"/>
+        <location filename="../dictionarytextform.cpp" line="171"/>
+        <location filename="../groupexportform.cpp" line="119"/>
+        <location filename="../groupimportform.cpp" line="111"/>
+        <location filename="../grouppickerform.cpp" line="132"/>
+        <location filename="../kanjitogroupform.cpp" line="141"/>
+        <location filename="../radform.cpp" line="290"/>
+        <location filename="../selectdictionarydialog.cpp" line="71"/>
+        <location filename="../wordtodeckform.cpp" line="834"/>
+        <location filename="../wordtodictionaryform.cpp" line="276"/>
+        <location filename="../wordtogroupform.cpp" line="190"/>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <location filename="../dictionaryimportform.cpp" line="123"/>
+        <source>Next</source>
+        <translation>Tovább</translation>
+    </message>
+    <message>
+        <location filename="../filterlistform.cpp" line="737"/>
+        <location filename="../settingsform.cpp" line="1360"/>
+        <source>Discard</source>
+        <translation>Elvet</translation>
+    </message>
+    <message>
+        <location filename="../groupexportform.cpp" line="118"/>
+        <source>Export</source>
+        <translation>Exportál</translation>
+    </message>
+    <message>
+        <location filename="../groupimportform.cpp" line="110"/>
+        <source>Import</source>
+        <translation>Importál</translation>
+    </message>
+    <message>
+        <location filename="../languageform.cpp" line="53"/>
+        <source>Quit</source>
+        <translation>Kilép</translation>
+    </message>
+    <message>
+        <location filename="../settingsform.cpp" line="1358"/>
+        <location filename="../wordeditorform.cpp" line="883"/>
+        <source>Reset</source>
+        <translation>Alaphelyzet</translation>
+    </message>
+    <message>
+        <location filename="../settingsform.cpp" line="1359"/>
+        <location filename="../wordeditorform.cpp" line="884"/>
+        <source>Apply</source>
+        <translation>Alkalmaz</translation>
+    </message>
+</context>
+<context>
     <name>CollectWordsForm</name>
     <message>
         <location filename="../collectwordsform.ui" line="14"/>
@@ -1269,22 +1347,22 @@ Leálljon az importálást?</translation>
         <translation>Törlés</translation>
     </message>
     <message>
-        <location filename="../dictionaryeditorform.cpp" line="219"/>
+        <location filename="../dictionaryeditorform.cpp" line="220"/>
         <source>Enter name for the new dictionary:</source>
         <translation>Új szótár nevének megadása:</translation>
     </message>
     <message>
-        <location filename="../dictionaryeditorform.cpp" line="224"/>
+        <location filename="../dictionaryeditorform.cpp" line="225"/>
         <source>The name entered for the new dictionary is already in use. Please try again with a different name.</source>
         <translation>Az új szótárnak szánt név már használatban van. Eltérő név megadása szükséges.</translation>
     </message>
     <message>
-        <location filename="../dictionaryeditorform.cpp" line="229"/>
+        <location filename="../dictionaryeditorform.cpp" line="230"/>
         <source>The name entered for the new dictionary is invalid. Make sure the name is a valid file name under your system, and such file does not exist in your data folder already.</source>
         <translation>Az új szótárnak megadott név érvénytelen. A névnek helyes fájlnévnek kell lennie, és azonos nevű másik fájl nem létezhet a &quot;data&quot; mappában.</translation>
     </message>
     <message>
-        <location filename="../dictionaryeditorform.cpp" line="247"/>
+        <location filename="../dictionaryeditorform.cpp" line="248"/>
         <source>The data stored for the selected dictionary, including words, study statistics and groups will be deleted. The file holding the dictionary&apos;s data will be deleted as well. This operation cannot be undone.
 
 Do you want to delete the dictionary?</source>
@@ -1339,12 +1417,12 @@ Biztos törlődjön a szótár?</translation>
         <translation>Exportál</translation>
     </message>
     <message>
-        <location filename="../dictionaryexportform.cpp" line="58"/>
+        <location filename="../dictionaryexportform.cpp" line="59"/>
         <source>Save export file</source>
         <translation>Export fájl mentése</translation>
     </message>
     <message>
-        <location filename="../dictionaryexportform.cpp" line="58"/>
+        <location filename="../dictionaryexportform.cpp" line="59"/>
         <source>Dictionary export file</source>
         <translation>Szótár export fájl</translation>
     </message>
@@ -1390,11 +1468,6 @@ Biztos törlődjön a szótár?</translation>
         <location filename="../dictionaryimportform.ui" line="192"/>
         <source>Add imported kanji to group:</source>
         <translation>Importált kandzsikat a csoportba:</translation>
-    </message>
-    <message>
-        <location filename="../dictionaryimportform.cpp" line="26"/>
-        <source>Next</source>
-        <translation>Tovább</translation>
     </message>
 </context>
 <context>
@@ -1591,7 +1664,7 @@ Biztos törlődjön a szótár?</translation>
     </message>
     <message>
         <location filename="../dictionarytextform.cpp" line="99"/>
-        <location filename="../dictionarytextform.cpp" line="171"/>
+        <location filename="../dictionarytextform.cpp" line="169"/>
         <source>zkanji - Edit information: %1</source>
         <translation>zkanji - Információ szerkesztés: %1</translation>
     </message>
@@ -1783,52 +1856,52 @@ Biztos törlődjön a szótár?</translation>
         <translation>Minden tulajdonság egyezzen</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="523"/>
-        <location filename="../filterlistform.cpp" line="621"/>
-        <location filename="../filterlistform.cpp" line="720"/>
+        <location filename="../filterlistform.cpp" line="524"/>
+        <location filename="../filterlistform.cpp" line="622"/>
+        <location filename="../filterlistform.cpp" line="721"/>
         <source>Your change to the current filter will be lost. Do you wish to discard it?</source>
         <translation>A jelenlegi szűrő változtásai el fognak veszni. Mehet tovább?</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="733"/>
+        <location filename="../filterlistform.cpp" line="734"/>
         <source>Add</source>
         <translation>Létrehoz</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="735"/>
+        <location filename="../filterlistform.cpp" line="736"/>
         <source>Save</source>
         <translation>Ment</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="604"/>
+        <location filename="../filterlistform.cpp" line="605"/>
         <source>Do you want to delete the filter?</source>
         <translation>Biztosan törlődjön a szűrő?</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="605"/>
+        <location filename="../filterlistform.cpp" line="606"/>
         <source>If you select &quot;%1&quot;, the filter will be removed and any listing using it will be updated. Select &quot;%2&quot; if you changed your mind.</source>
         <translation>A &quot;%1&quot; gomb megnyomásakor a szűrő törlődik és az ezt használó  listák frissülni fognak. &quot;%2&quot; választásával visszavonható a művelet.</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="605"/>
         <location filename="../filterlistform.cpp" line="606"/>
+        <location filename="../filterlistform.cpp" line="607"/>
         <source>Delete</source>
         <translation>Törlés</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="605"/>
-        <location filename="../filterlistform.cpp" line="607"/>
+        <location filename="../filterlistform.cpp" line="606"/>
+        <location filename="../filterlistform.cpp" line="608"/>
         <source>Cancel</source>
         <translation>Mégse</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="788"/>
+        <location filename="../filterlistform.cpp" line="790"/>
         <source>Please specify a name for the filter.</source>
         <oldsource>Please specify a name for the filter!</oldsource>
         <translation>Meg kell adni egy nevet a szűrőhöz.</translation>
     </message>
     <message>
-        <location filename="../filterlistform.cpp" line="799"/>
+        <location filename="../filterlistform.cpp" line="801"/>
         <source>Another filter exists with the same name. Please change the name and try again.</source>
         <oldsource>Another filter exists with the same name. Please change the name and try again!</oldsource>
         <translation>Már létezik szűrő a megadott névvel. Eltérő név megadása szükséges.</translation>
@@ -2177,1250 +2250,1250 @@ A szótárak szerzőiről és licenszeiről szóló információ a &quot;Szótá
 <context>
     <name>Grammar</name>
     <message>
-        <location filename="../zstrings.cpp" line="26"/>
+        <location filename="../zstrings.cpp" line="51"/>
         <source>n</source>
         <translation>fn</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="26"/>
+        <location filename="../zstrings.cpp" line="51"/>
         <source>-ru</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="26"/>
+        <location filename="../zstrings.cpp" line="51"/>
         <source>-u</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="26"/>
+        <location filename="../zstrings.cpp" line="51"/>
         <source>suru</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="27"/>
+        <location filename="../zstrings.cpp" line="52"/>
         <source>-suru</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="27"/>
+        <location filename="../zstrings.cpp" line="52"/>
         <source>-aru</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="27"/>
+        <location filename="../zstrings.cpp" line="52"/>
         <source>-kuru</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="27"/>
+        <location filename="../zstrings.cpp" line="52"/>
         <source>-iku</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="28"/>
+        <location filename="../zstrings.cpp" line="53"/>
         <source>-ri</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="28"/>
+        <location filename="../zstrings.cpp" line="53"/>
         <source>-zuru</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="28"/>
+        <location filename="../zstrings.cpp" line="53"/>
         <source>tr</source>
         <translation>tgy</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="28"/>
+        <location filename="../zstrings.cpp" line="53"/>
         <source>intr</source>
         <translation>tt</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="29"/>
+        <location filename="../zstrings.cpp" line="54"/>
         <source>a</source>
         <translation>mn</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="29"/>
+        <location filename="../zstrings.cpp" line="54"/>
         <source>na</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="29"/>
+        <location filename="../zstrings.cpp" line="54"/>
         <source>-to</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="29"/>
+        <location filename="../zstrings.cpp" line="54"/>
         <source>pn-a</source>
         <translation>fe-mn</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="30"/>
+        <location filename="../zstrings.cpp" line="55"/>
         <source>no</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="30"/>
+        <location filename="../zstrings.cpp" line="55"/>
         <source>adv</source>
         <translation>hat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="30"/>
+        <location filename="../zstrings.cpp" line="55"/>
         <source>aux</source>
         <translation>seg</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="30"/>
+        <location filename="../zstrings.cpp" line="55"/>
         <source>pref</source>
         <translation>elő</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="31"/>
+        <location filename="../zstrings.cpp" line="56"/>
         <source>suf</source>
         <translation>utó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="31"/>
+        <location filename="../zstrings.cpp" line="56"/>
         <source>conj</source>
         <translation>köt</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="31"/>
+        <location filename="../zstrings.cpp" line="56"/>
         <source>int</source>
         <translation>ind</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="31"/>
+        <location filename="../zstrings.cpp" line="56"/>
         <source>exp</source>
         <translation>kif</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="32"/>
+        <location filename="../zstrings.cpp" line="57"/>
         <source>pn</source>
         <translation>nvm</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="32"/>
+        <location filename="../zstrings.cpp" line="57"/>
         <source>par</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="32"/>
+        <location filename="../zstrings.cpp" line="57"/>
         <source>cnt</source>
         <translation>szám</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="32"/>
+        <location filename="../zstrings.cpp" line="57"/>
         <source>da/desu</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="33"/>
+        <location filename="../zstrings.cpp" line="58"/>
         <source>arch v</source>
         <translation>régi i</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="33"/>
+        <location filename="../zstrings.cpp" line="58"/>
         <source>arch a</source>
         <translation>régi mn</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="33"/>
+        <location filename="../zstrings.cpp" line="58"/>
         <source>arch -na</source>
         <translation>régi -na</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="42"/>
+        <location filename="../zstrings.cpp" line="67"/>
         <source>noun</source>
         <translation>főnév</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="42"/>
+        <location filename="../zstrings.cpp" line="67"/>
         <source>ichidan verb</source>
         <translation>egysoros ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="42"/>
+        <location filename="../zstrings.cpp" line="67"/>
         <source>godan verb</source>
         <translation>öthangváltós ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="42"/>
+        <location filename="../zstrings.cpp" line="67"/>
         <source>verb with suru</source>
         <translation>suru mellett ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="43"/>
+        <location filename="../zstrings.cpp" line="68"/>
         <source>-suru verb</source>
         <translation>-suru ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="43"/>
+        <location filename="../zstrings.cpp" line="68"/>
         <source>-aru verb</source>
         <translation>-aru ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="43"/>
+        <location filename="../zstrings.cpp" line="68"/>
         <source>-kuru verb</source>
         <translation>-kuru ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="43"/>
+        <location filename="../zstrings.cpp" line="68"/>
         <source>-iku verb</source>
         <translation>-iku ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="44"/>
+        <location filename="../zstrings.cpp" line="69"/>
         <source>-ri verb</source>
         <translation>-ri ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="44"/>
+        <location filename="../zstrings.cpp" line="69"/>
         <source>-zuru verb</source>
         <translation>-zuru ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="44"/>
+        <location filename="../zstrings.cpp" line="69"/>
         <source>transitive verb</source>
         <translation>tárgyas ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="44"/>
+        <location filename="../zstrings.cpp" line="69"/>
         <source>intransitive verb</source>
         <translation>tárgyatlan ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="45"/>
+        <location filename="../zstrings.cpp" line="70"/>
         <source>true adjective (-i)</source>
         <translation>valódi melléknév (-i)</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="45"/>
+        <location filename="../zstrings.cpp" line="70"/>
         <source>adjectival noun (-na)</source>
         <translation>álmelléknév (-na)</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="45"/>
+        <location filename="../zstrings.cpp" line="70"/>
         <source>taru adjective (-to)</source>
         <translation>taru melléknév (-to)</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="45"/>
+        <location filename="../zstrings.cpp" line="70"/>
         <source>pre-noun adjective</source>
         <translation>főnév előtti melléknév</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="46"/>
+        <location filename="../zstrings.cpp" line="71"/>
         <source>may take no</source>
         <translation>no módosíthatja</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="46"/>
-        <location filename="../zstrings.cpp" line="350"/>
+        <location filename="../zstrings.cpp" line="71"/>
+        <location filename="../zstrings.cpp" line="375"/>
         <source>adverb</source>
         <extracomment>conjugation</extracomment>
         <translation>határozószó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="46"/>
+        <location filename="../zstrings.cpp" line="71"/>
         <source>auxiliary</source>
         <translation>segédige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="46"/>
+        <location filename="../zstrings.cpp" line="71"/>
         <source>prefix</source>
         <translation>előtag</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="47"/>
+        <location filename="../zstrings.cpp" line="72"/>
         <source>suffix</source>
         <translation>utótag</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="47"/>
+        <location filename="../zstrings.cpp" line="72"/>
         <source>conjunction</source>
         <translation>kötőszó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="47"/>
+        <location filename="../zstrings.cpp" line="72"/>
         <source>interjection</source>
         <translation>indulatszó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="47"/>
+        <location filename="../zstrings.cpp" line="72"/>
         <source>expression</source>
         <translation>kifejezés</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="48"/>
+        <location filename="../zstrings.cpp" line="73"/>
         <source>pronoun</source>
         <translation>névmás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="48"/>
+        <location filename="../zstrings.cpp" line="73"/>
         <source>particle</source>
         <translation>partikula</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="48"/>
+        <location filename="../zstrings.cpp" line="73"/>
         <source>counter</source>
         <translation>számlálószó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="48"/>
+        <location filename="../zstrings.cpp" line="73"/>
         <source>copula da</source>
         <translation>da kopula</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="49"/>
+        <location filename="../zstrings.cpp" line="74"/>
         <source>archaic verb</source>
         <translation>régies ige</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="49"/>
+        <location filename="../zstrings.cpp" line="74"/>
         <source>archaic adjective</source>
         <translation>régies melléknév</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="49"/>
+        <location filename="../zstrings.cpp" line="74"/>
         <source>archaic adjectival noun</source>
         <translation>régies álmelléknév</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="58"/>
+        <location filename="../zstrings.cpp" line="83"/>
         <source>kana</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="58"/>
+        <location filename="../zstrings.cpp" line="83"/>
         <source>abbr</source>
         <translation>röv</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="58"/>
+        <location filename="../zstrings.cpp" line="83"/>
         <source>4k</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="59"/>
+        <location filename="../zstrings.cpp" line="84"/>
         <source>obsc</source>
         <translation>kev</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="59"/>
+        <location filename="../zstrings.cpp" line="84"/>
         <source>obso</source>
         <translation>elav</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="59"/>
+        <location filename="../zstrings.cpp" line="84"/>
         <source>onom</source>
         <translation>hang</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="60"/>
+        <location filename="../zstrings.cpp" line="85"/>
         <source>rare</source>
         <translation>ritka</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="60"/>
+        <location filename="../zstrings.cpp" line="85"/>
         <source>sens</source>
         <translation>kény</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="60"/>
+        <location filename="../zstrings.cpp" line="85"/>
         <source>col</source>
         <translation>köz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="58"/>
+        <location filename="../zstrings.cpp" line="83"/>
         <source>idiom</source>
         <translation>szóf</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="59"/>
+        <location filename="../zstrings.cpp" line="84"/>
         <source>pv</source>
         <translation>közm</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="60"/>
+        <location filename="../zstrings.cpp" line="85"/>
         <source>fam</source>
         <translation>biz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="61"/>
+        <location filename="../zstrings.cpp" line="86"/>
         <source>hon</source>
         <translation>tisz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="61"/>
+        <location filename="../zstrings.cpp" line="86"/>
         <source>hum</source>
         <translation>szer</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="61"/>
+        <location filename="../zstrings.cpp" line="86"/>
         <source>pol</source>
         <translation>udv</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="61"/>
+        <location filename="../zstrings.cpp" line="86"/>
         <source>arch</source>
         <translation>régi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="62"/>
+        <location filename="../zstrings.cpp" line="87"/>
         <source>poet</source>
         <translation>költ</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="62"/>
+        <location filename="../zstrings.cpp" line="87"/>
         <source>chl</source>
         <translation>gyer</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="62"/>
+        <location filename="../zstrings.cpp" line="87"/>
         <source>male</source>
         <translation>ffi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="62"/>
+        <location filename="../zstrings.cpp" line="87"/>
         <source>fem</source>
         <translation>női</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="63"/>
+        <location filename="../zstrings.cpp" line="88"/>
         <source>joke</source>
         <translation>tréf</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="63"/>
+        <location filename="../zstrings.cpp" line="88"/>
         <source>sl</source>
         <translation>szl</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="63"/>
+        <location filename="../zstrings.cpp" line="88"/>
         <source>msl</source>
         <translation>fszl</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="63"/>
+        <location filename="../zstrings.cpp" line="88"/>
         <source>der</source>
         <translation>len</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="64"/>
+        <location filename="../zstrings.cpp" line="89"/>
         <source>vul</source>
         <translation>obszc</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="73"/>
+        <location filename="../zstrings.cpp" line="98"/>
         <source>kana usage (usually no kanji)</source>
         <translation>általában csak kanával írt</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="73"/>
+        <location filename="../zstrings.cpp" line="98"/>
         <source>abbreviation</source>
         <translation>rövidítés</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="73"/>
+        <location filename="../zstrings.cpp" line="98"/>
         <source>four kanji idiom</source>
         <translation>négy kandzsis idiomatikus kifejezés</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="73"/>
+        <location filename="../zstrings.cpp" line="98"/>
         <source>idiomatism</source>
         <translation>idiomatikus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="74"/>
+        <location filename="../zstrings.cpp" line="99"/>
         <source>obscure usage</source>
         <translation>kevésbé ismert</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="74"/>
+        <location filename="../zstrings.cpp" line="99"/>
         <source>obsolete term</source>
         <translation>elavult</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="74"/>
+        <location filename="../zstrings.cpp" line="99"/>
         <source>onomatopoeia</source>
         <translation>hangutánzó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="74"/>
+        <location filename="../zstrings.cpp" line="99"/>
         <source>proverb</source>
         <translation>közmondás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="75"/>
+        <location filename="../zstrings.cpp" line="100"/>
         <source>rare word or phrase</source>
         <translation>ritkán használt kifejezés</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="75"/>
+        <location filename="../zstrings.cpp" line="100"/>
         <source>sensitivity</source>
         <translation>kényes kifejezés</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="75"/>
+        <location filename="../zstrings.cpp" line="100"/>
         <source>colloquialism</source>
         <translation>közvetlenség</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="75"/>
+        <location filename="../zstrings.cpp" line="100"/>
         <source>familiar language</source>
         <translation>bizalmasság</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="76"/>
+        <location filename="../zstrings.cpp" line="101"/>
         <source>honorific language</source>
         <translation>tiszteletiség</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="76"/>
+        <location filename="../zstrings.cpp" line="101"/>
         <source>humble language</source>
         <translation>alázatosság</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="76"/>
+        <location filename="../zstrings.cpp" line="101"/>
         <source>polite language</source>
         <translation>udvariasság</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="76"/>
+        <location filename="../zstrings.cpp" line="101"/>
         <source>archaic expression</source>
         <translation>régies kifejezés</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="77"/>
+        <location filename="../zstrings.cpp" line="102"/>
         <source>poetic expression</source>
         <translation>költőiség</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="77"/>
+        <location filename="../zstrings.cpp" line="102"/>
         <source>children&apos;s language</source>
         <translation>gyereknyelv</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="77"/>
+        <location filename="../zstrings.cpp" line="102"/>
         <source>male language</source>
         <translation>férfias stílus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="77"/>
+        <location filename="../zstrings.cpp" line="102"/>
         <source>female language</source>
         <translation>nőies stílus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="78"/>
+        <location filename="../zstrings.cpp" line="103"/>
         <source>joking style</source>
         <translation>tréfás stílus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="78"/>
+        <location filename="../zstrings.cpp" line="103"/>
         <source>slang</source>
         <translation>szleng</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="78"/>
+        <location filename="../zstrings.cpp" line="103"/>
         <source>manga slang</source>
         <translation>manga szleng</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="78"/>
+        <location filename="../zstrings.cpp" line="103"/>
         <source>derogatory expression</source>
         <translation>lenéző stílus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="79"/>
+        <location filename="../zstrings.cpp" line="104"/>
         <source>vulgar expression</source>
         <translation>obszcén</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="88"/>
+        <location filename="../zstrings.cpp" line="113"/>
         <source>archi</source>
         <translation>épí</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="88"/>
+        <location filename="../zstrings.cpp" line="113"/>
         <source>bus</source>
         <translation>üzl</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="88"/>
+        <location filename="../zstrings.cpp" line="113"/>
         <source>comp</source>
         <translation>szám</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="88"/>
+        <location filename="../zstrings.cpp" line="113"/>
         <source>econ</source>
         <translation>gazd</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="89"/>
+        <location filename="../zstrings.cpp" line="114"/>
         <source>engi</source>
         <translation>műsz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="89"/>
+        <location filename="../zstrings.cpp" line="114"/>
         <source>fin</source>
         <translation>pénz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="89"/>
-        <location filename="../zstrings.cpp" line="109"/>
+        <location filename="../zstrings.cpp" line="114"/>
+        <location filename="../zstrings.cpp" line="134"/>
         <source>food</source>
         <translation>ét</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="89"/>
-        <location filename="../zstrings.cpp" line="109"/>
+        <location filename="../zstrings.cpp" line="114"/>
+        <location filename="../zstrings.cpp" line="134"/>
         <source>law</source>
         <translation>jog</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="90"/>
+        <location filename="../zstrings.cpp" line="115"/>
         <source>mil</source>
         <translation>had</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="90"/>
+        <location filename="../zstrings.cpp" line="115"/>
         <source>mus</source>
         <translation>zene</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="92"/>
+        <location filename="../zstrings.cpp" line="117"/>
         <source>anat</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="92"/>
+        <location filename="../zstrings.cpp" line="117"/>
         <source>astr</source>
         <translation>csill</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="92"/>
+        <location filename="../zstrings.cpp" line="117"/>
         <source>biol</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="92"/>
+        <location filename="../zstrings.cpp" line="117"/>
         <source>bot</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="93"/>
+        <location filename="../zstrings.cpp" line="118"/>
         <source>chem</source>
         <translation>kém</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="93"/>
+        <location filename="../zstrings.cpp" line="118"/>
         <source>geol</source>
         <translation>föld</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="93"/>
+        <location filename="../zstrings.cpp" line="118"/>
         <source>geom</source>
         <translation>földtan</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="93"/>
+        <location filename="../zstrings.cpp" line="118"/>
         <source>ling</source>
         <translation>nyv</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="94"/>
+        <location filename="../zstrings.cpp" line="119"/>
         <source>math</source>
         <translation>mat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="94"/>
+        <location filename="../zstrings.cpp" line="119"/>
         <source>med</source>
         <translation>orv</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="94"/>
+        <location filename="../zstrings.cpp" line="119"/>
         <source>phys</source>
         <translation>fiz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="94"/>
+        <location filename="../zstrings.cpp" line="119"/>
         <source>zoo</source>
         <translation>állat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="96"/>
+        <location filename="../zstrings.cpp" line="121"/>
         <source>Buddh</source>
         <translation>buddh</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="96"/>
-        <location filename="../zstrings.cpp" line="116"/>
+        <location filename="../zstrings.cpp" line="121"/>
+        <location filename="../zstrings.cpp" line="141"/>
         <source>Shinto</source>
         <translation>sintó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="98"/>
+        <location filename="../zstrings.cpp" line="123"/>
         <source>baseb</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="98"/>
+        <location filename="../zstrings.cpp" line="123"/>
         <source>mahj</source>
         <translation>madzs</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="98"/>
+        <location filename="../zstrings.cpp" line="123"/>
         <source>m.a.</source>
         <translation>harcm</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="98"/>
-        <location filename="../zstrings.cpp" line="118"/>
+        <location filename="../zstrings.cpp" line="123"/>
+        <location filename="../zstrings.cpp" line="143"/>
         <source>shogi</source>
         <translation>sógi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="99"/>
-        <location filename="../zstrings.cpp" line="119"/>
+        <location filename="../zstrings.cpp" line="124"/>
+        <location filename="../zstrings.cpp" line="144"/>
         <source>sports</source>
         <translation>sport</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="99"/>
-        <location filename="../zstrings.cpp" line="119"/>
+        <location filename="../zstrings.cpp" line="124"/>
+        <location filename="../zstrings.cpp" line="144"/>
         <source>sumo</source>
         <translation>szumó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="108"/>
+        <location filename="../zstrings.cpp" line="133"/>
         <source>architecture</source>
         <translation>építészet</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="108"/>
+        <location filename="../zstrings.cpp" line="133"/>
         <source>business</source>
         <translation>üzlet</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="108"/>
+        <location filename="../zstrings.cpp" line="133"/>
         <source>computing</source>
         <translation>számítástechnika</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="108"/>
+        <location filename="../zstrings.cpp" line="133"/>
         <source>economy</source>
         <translation>gazdaság</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="109"/>
+        <location filename="../zstrings.cpp" line="134"/>
         <source>engineering</source>
         <translation>műszaki szavak</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="109"/>
+        <location filename="../zstrings.cpp" line="134"/>
         <source>finance</source>
         <translation>pénzügy</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="110"/>
+        <location filename="../zstrings.cpp" line="135"/>
         <source>military</source>
         <translation>hadi kifejezések</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="110"/>
+        <location filename="../zstrings.cpp" line="135"/>
         <source>music</source>
         <translation>zene</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="112"/>
+        <location filename="../zstrings.cpp" line="137"/>
         <source>anatomy</source>
         <translation>anatómia</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="112"/>
+        <location filename="../zstrings.cpp" line="137"/>
         <source>astronomy</source>
         <translation>csillagászat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="112"/>
+        <location filename="../zstrings.cpp" line="137"/>
         <source>biology</source>
         <translation>biológia</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="112"/>
+        <location filename="../zstrings.cpp" line="137"/>
         <source>botany</source>
         <translation>botanika</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="113"/>
+        <location filename="../zstrings.cpp" line="138"/>
         <source>chemistry</source>
         <translation>kémia</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="113"/>
+        <location filename="../zstrings.cpp" line="138"/>
         <source>geology</source>
         <translation>földtan</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="113"/>
+        <location filename="../zstrings.cpp" line="138"/>
         <source>geometry</source>
         <translation>geometria</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="113"/>
+        <location filename="../zstrings.cpp" line="138"/>
         <source>linguistics</source>
         <translation>nyelvészet</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="114"/>
+        <location filename="../zstrings.cpp" line="139"/>
         <source>mathematics</source>
         <translation>matematika</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="114"/>
+        <location filename="../zstrings.cpp" line="139"/>
         <source>medicine</source>
         <translation>orvostudomány</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="114"/>
+        <location filename="../zstrings.cpp" line="139"/>
         <source>physics</source>
         <translation>fizika</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="114"/>
+        <location filename="../zstrings.cpp" line="139"/>
         <source>zoology</source>
         <translation>állattan</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="116"/>
+        <location filename="../zstrings.cpp" line="141"/>
         <source>Buddhism</source>
         <translation>buddhizmus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="118"/>
+        <location filename="../zstrings.cpp" line="143"/>
         <source>baseball</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="118"/>
+        <location filename="../zstrings.cpp" line="143"/>
         <source>mahjong</source>
         <translation>madzsong</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="118"/>
+        <location filename="../zstrings.cpp" line="143"/>
         <source>martial arts</source>
         <translation>harcművészetek</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="128"/>
+        <location filename="../zstrings.cpp" line="153"/>
         <source>Ho</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="128"/>
+        <location filename="../zstrings.cpp" line="153"/>
         <source>Kans</source>
         <translation>Kansz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="128"/>
+        <location filename="../zstrings.cpp" line="153"/>
         <source>Kant</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="128"/>
+        <location filename="../zstrings.cpp" line="153"/>
         <source>Kyo</source>
         <translation>Kio</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="129"/>
+        <location filename="../zstrings.cpp" line="154"/>
         <source>Kyu</source>
         <translation>Kjú</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="129"/>
+        <location filename="../zstrings.cpp" line="154"/>
         <source>Na</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="129"/>
+        <location filename="../zstrings.cpp" line="154"/>
         <source>Os</source>
         <translation>Osz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="129"/>
+        <location filename="../zstrings.cpp" line="154"/>
         <source>Ry</source>
         <translation>Rjú</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="130"/>
+        <location filename="../zstrings.cpp" line="155"/>
         <source>Tos</source>
         <translation>Tosz</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="130"/>
+        <location filename="../zstrings.cpp" line="155"/>
         <source>Tou</source>
         <translation>Tóh</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="130"/>
+        <location filename="../zstrings.cpp" line="155"/>
         <source>Ts</source>
         <translation>Cg</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="139"/>
+        <location filename="../zstrings.cpp" line="164"/>
         <source>Hokkaidou dialect</source>
         <translation>Hokkaidó nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="139"/>
+        <location filename="../zstrings.cpp" line="164"/>
         <source>Kansai dialect</source>
         <translation>Kanszai nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="139"/>
+        <location filename="../zstrings.cpp" line="164"/>
         <source>Kantou dialect</source>
         <translation>Kantó nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="139"/>
+        <location filename="../zstrings.cpp" line="164"/>
         <source>Kyoto dialect</source>
         <translation>Kiotó nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="140"/>
+        <location filename="../zstrings.cpp" line="165"/>
         <source>Kyuushuu dialect</source>
         <translation>Kjúsú nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="140"/>
+        <location filename="../zstrings.cpp" line="165"/>
         <source>Nagano dialect</source>
         <translation>Nagano nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="140"/>
+        <location filename="../zstrings.cpp" line="165"/>
         <source>Osaka dialect</source>
         <translation>Oszaka nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="140"/>
+        <location filename="../zstrings.cpp" line="165"/>
         <source>Ryuukyuu dialect</source>
         <translation>Rjúkjú nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="141"/>
+        <location filename="../zstrings.cpp" line="166"/>
         <source>Tosa dialect</source>
         <translation>Tosza nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="141"/>
+        <location filename="../zstrings.cpp" line="166"/>
         <source>Touhoku dialect</source>
         <translation>Tóhoku nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="141"/>
+        <location filename="../zstrings.cpp" line="166"/>
         <source>Tsugaru dialect</source>
         <translation>Cugaru nyelvjárás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="150"/>
+        <location filename="../zstrings.cpp" line="175"/>
         <source>ate</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="150"/>
+        <location filename="../zstrings.cpp" line="175"/>
         <source>gik</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="150"/>
+        <location filename="../zstrings.cpp" line="175"/>
         <source>i.kanji</source>
         <translation>r.kandzsi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="150"/>
+        <location filename="../zstrings.cpp" line="175"/>
         <source>i.kana</source>
         <translation>r.kana</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="151"/>
+        <location filename="../zstrings.cpp" line="176"/>
         <source>i.oku</source>
         <translation>r.oku</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="151"/>
+        <location filename="../zstrings.cpp" line="176"/>
         <source>o.kanji</source>
         <translation>e.kandzsi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="151"/>
+        <location filename="../zstrings.cpp" line="176"/>
         <source>o.kana</source>
         <translation>e.kana</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="160"/>
+        <location filename="../zstrings.cpp" line="185"/>
         <source>ateji</source>
         <translation>atedzsi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="160"/>
+        <location filename="../zstrings.cpp" line="185"/>
         <source>gikun</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="160"/>
+        <location filename="../zstrings.cpp" line="185"/>
         <source>irregular kanji</source>
         <translation>rendhagyó kandzsi</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="160"/>
+        <location filename="../zstrings.cpp" line="185"/>
         <source>irregular kana</source>
         <translation>rendhagyó kana</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="161"/>
+        <location filename="../zstrings.cpp" line="186"/>
         <source>irregular okurigana</source>
         <translation>rendhagyó okurigana</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="161"/>
+        <location filename="../zstrings.cpp" line="186"/>
         <source>outdated kanji</source>
         <translation>elavult kandzsi alak</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="161"/>
+        <location filename="../zstrings.cpp" line="186"/>
         <source>outdated kana</source>
         <translation>elavult kana alak</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="332"/>
+        <location filename="../zstrings.cpp" line="357"/>
         <source>Word types</source>
         <translation>Szófajok</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="332"/>
+        <location filename="../zstrings.cpp" line="357"/>
         <source>Verb types</source>
         <translation>Igék</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="332"/>
+        <location filename="../zstrings.cpp" line="357"/>
         <source>Adjective types</source>
         <translation>Melléknevek</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="332"/>
+        <location filename="../zstrings.cpp" line="357"/>
         <source>Archaic</source>
         <translation>Régies</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="333"/>
+        <location filename="../zstrings.cpp" line="358"/>
         <source>Word usage</source>
         <translation>Nyelvhasználat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="333"/>
+        <location filename="../zstrings.cpp" line="358"/>
         <source>Relation of speaker and listener</source>
         <translation>Beszélő és hallgató viszonya</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="333"/>
+        <location filename="../zstrings.cpp" line="358"/>
         <source>Style of speech</source>
         <translation>Beszédstílus</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="334"/>
+        <location filename="../zstrings.cpp" line="359"/>
         <source>Fields of use</source>
         <translation>Használat területe</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="334"/>
+        <location filename="../zstrings.cpp" line="359"/>
         <source>Sciences</source>
         <translation>Tudományok</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="334"/>
+        <location filename="../zstrings.cpp" line="359"/>
         <source>Religion</source>
         <translation>Vallások</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="334"/>
+        <location filename="../zstrings.cpp" line="359"/>
         <source>Sports</source>
         <translation>Sportok</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="335"/>
+        <location filename="../zstrings.cpp" line="360"/>
         <source>Dialects</source>
         <translation>Nyelvjárások</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="335"/>
+        <location filename="../zstrings.cpp" line="360"/>
         <source>Character usage</source>
         <translation>Írásjel használat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="335"/>
+        <location filename="../zstrings.cpp" line="360"/>
         <source>JLPT level</source>
         <translation>JLPT szint</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="344"/>
+        <location filename="../zstrings.cpp" line="369"/>
         <source>polite</source>
         <translation>udvarias</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="344"/>
+        <location filename="../zstrings.cpp" line="369"/>
         <source>polite past</source>
         <translation>udvarias múlt</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="344"/>
+        <location filename="../zstrings.cpp" line="369"/>
         <source>polite neg.</source>
         <translation>udvarias tagadó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="344"/>
+        <location filename="../zstrings.cpp" line="369"/>
         <source>polite volitional / tentative</source>
         <translation>udvarias puhatolózó / akaratlagos</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="345"/>
+        <location filename="../zstrings.cpp" line="370"/>
         <source>neg.</source>
         <translation>tagadó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="345"/>
+        <location filename="../zstrings.cpp" line="370"/>
         <source>passive</source>
         <translation>szenvedő</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="345"/>
+        <location filename="../zstrings.cpp" line="370"/>
         <source>causative</source>
         <translation>műveltető</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="345"/>
+        <location filename="../zstrings.cpp" line="370"/>
         <source>passive causative</source>
         <translation>szenvedő-műveltető</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="345"/>
+        <location filename="../zstrings.cpp" line="370"/>
         <source>noun base</source>
         <translation>főnévi tő</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="346"/>
+        <location filename="../zstrings.cpp" line="371"/>
         <source>intent</source>
         <translation>szándék</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="346"/>
+        <location filename="../zstrings.cpp" line="371"/>
         <source>3rd intent</source>
         <translation>3. sz. szándéka</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="346"/>
+        <location filename="../zstrings.cpp" line="371"/>
         <source>appearance</source>
         <translation>látszat</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="346"/>
+        <location filename="../zstrings.cpp" line="371"/>
         <source>conjunctive</source>
         <translation>összekötő</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="346"/>
+        <location filename="../zstrings.cpp" line="371"/>
         <source>past</source>
         <translation>múlt</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="347"/>
+        <location filename="../zstrings.cpp" line="372"/>
         <source>-tara conditional</source>
         <translation>feltételes -tara</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="347"/>
+        <location filename="../zstrings.cpp" line="372"/>
         <source>partial conjunctive</source>
         <translation>részleges felsorolás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="347"/>
+        <location filename="../zstrings.cpp" line="372"/>
         <source>-ba conditional</source>
         <translation>feltételes -ba</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="347"/>
+        <location filename="../zstrings.cpp" line="372"/>
         <source>potential</source>
         <translation>ható</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="348"/>
+        <location filename="../zstrings.cpp" line="373"/>
         <source>command</source>
         <translation>utasító</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="348"/>
+        <location filename="../zstrings.cpp" line="373"/>
         <source>volitional / tentative</source>
         <translation>puhatolózó / akaratlagos</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="348"/>
+        <location filename="../zstrings.cpp" line="373"/>
         <source>suru base</source>
         <translation>szuru tő</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="348"/>
+        <location filename="../zstrings.cpp" line="373"/>
         <source>potential / passive</source>
         <translation>ható / szenvedő</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="350"/>
+        <location filename="../zstrings.cpp" line="375"/>
         <source>noun adj.</source>
         <translation>főnévként</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="350"/>
+        <location filename="../zstrings.cpp" line="375"/>
         <source>-na adj.</source>
         <translation>álmn.</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="350"/>
+        <location filename="../zstrings.cpp" line="375"/>
         <source>continuous</source>
         <translation>folyamatos</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="350"/>
+        <location filename="../zstrings.cpp" line="375"/>
         <source>must / neg. -ba cond.</source>
         <translation>kötelezés / tagadó -ba felt.</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="351"/>
+        <location filename="../zstrings.cpp" line="376"/>
         <source>finished / bothersome</source>
         <translation>befejezett / kellemetlen</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="351"/>
+        <location filename="../zstrings.cpp" line="376"/>
         <source>without / neg. request</source>
         <translation>nélkül / tiltás</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="351"/>
+        <location filename="../zstrings.cpp" line="376"/>
         <source>without / neg. conjunctive</source>
         <translation>nélkül / neg.feltételes</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="352"/>
+        <location filename="../zstrings.cpp" line="377"/>
         <source>archaic neg.</source>
         <translation>régies tagadó</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="352"/>
+        <location filename="../zstrings.cpp" line="377"/>
         <source>imperative</source>
         <translation>felszólító</translation>
     </message>
     <message>
-        <location filename="../zstrings.cpp" line="352"/>
+        <location filename="../zstrings.cpp" line="377"/>
         <source>do in advance / keep ~ing</source>
         <translation>előre tesz / úgy hagy</translation>
     </message>
@@ -3461,11 +3534,6 @@ A szótárak szerzőiről és licenszeiről szóló információ a &quot;Szótá
         <location filename="../groupexportform.ui" line="155"/>
         <source>For items in checked groups:</source>
         <translation>Megjelölt csoportok elemei:</translation>
-    </message>
-    <message>
-        <location filename="../groupexportform.cpp" line="28"/>
-        <source>Export</source>
-        <translation>Exportál</translation>
     </message>
     <message>
         <location filename="../groupexportform.cpp" line="54"/>
@@ -3520,11 +3588,6 @@ A szótárak szerzőiről és licenszeiről szóló információ a &quot;Szótá
         <location filename="../groupimportform.ui" line="120"/>
         <source>Destination dictionary:</source>
         <translation>Cél szótár:</translation>
-    </message>
-    <message>
-        <location filename="../groupimportform.cpp" line="26"/>
-        <source>Import</source>
-        <translation>Importál</translation>
     </message>
 </context>
 <context>
@@ -5667,6 +5730,81 @@ book title</extracomment>
     </message>
 </context>
 <context>
+    <name>QColorDialog</name>
+    <message>
+        <location filename="../zstrings.cpp" line="22"/>
+        <source>Hu&amp;e:</source>
+        <translation>Á&amp;rnyalat:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="23"/>
+        <source>&amp;Sat:</source>
+        <translation>&amp;Telítettség:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="24"/>
+        <source>&amp;Val:</source>
+        <translation>&amp;Fényerő:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="25"/>
+        <source>&amp;Red:</source>
+        <translation>&amp;Piros:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="26"/>
+        <source>&amp;Green:</source>
+        <translation>&amp;Zöld:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="27"/>
+        <source>Bl&amp;ue:</source>
+        <translation>&amp;Kék:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="28"/>
+        <source>A&amp;lpha channel:</source>
+        <translation>A&amp;lfa csatorna:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="29"/>
+        <source>&amp;HTML:</source>
+        <translation>&amp;HTML:</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="30"/>
+        <source>Cursor at %1, %2
+Press ESC to cancel</source>
+        <translation>Kurzor itt: %1, %2
+Nyomja meg az ESC billentyűt a megszakításhoz</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="31"/>
+        <source>Select Color</source>
+        <translation>Szín kiválasztása</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="32"/>
+        <source>&amp;Basic colors</source>
+        <translation>&amp;Alap színek</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="33"/>
+        <source>&amp;Custom colors</source>
+        <translation>&amp;Egyéni színek</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="34"/>
+        <source>&amp;Add to Custom Colors</source>
+        <translation>&amp;Hozzáadás az egyéni színekhez</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="35"/>
+        <source>&amp;Pick Screen Color</source>
+        <translation type="unfinished">Választás a &amp;képernyőről</translation>
+    </message>
+</context>
+<context>
     <name>QLineEdit</name>
     <message>
         <location filename="../zlineedit.cpp" line="383"/>
@@ -5692,6 +5830,29 @@ book title</extracomment>
         <location filename="../zlineedit.cpp" line="411"/>
         <source>Delete</source>
         <translation>Törlés</translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <location filename="../zstrings.cpp" line="20"/>
+        <source>&amp;Yes</source>
+        <translation>&amp;Igen</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="20"/>
+        <source>&amp;No</source>
+        <translation>&amp;Nem</translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="20"/>
+        <source>OK</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../zstrings.cpp" line="20"/>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
     </message>
 </context>
 <context>
@@ -5842,12 +6003,12 @@ book title</extracomment>
         <translation>Szűrőelőzmények:</translation>
     </message>
     <message>
-        <location filename="../radform.cpp" line="285"/>
+        <location filename="../radform.cpp" line="287"/>
         <source>Show filter history</source>
         <translation>Szűrőelőzmények mutatása</translation>
     </message>
     <message>
-        <location filename="../radform.cpp" line="283"/>
+        <location filename="../radform.cpp" line="285"/>
         <source>Hide filter history</source>
         <translation>Szűrőelőzmények elrejtése</translation>
     </message>
@@ -6675,7 +6836,7 @@ book title</extracomment>
     </message>
     <message>
         <location filename="../settingsform.ui" line="2561"/>
-        <location filename="../settingsform.cpp" line="1218"/>
+        <location filename="../settingsform.cpp" line="1220"/>
         <source>The data to look up will be inserted at the last cursor position.</source>
         <translation>A keresendő adat szövege az utolsó kurzorpozíciónál lesz beillesztve.</translation>
     </message>
@@ -7295,10 +7456,10 @@ book title</extracomment>
         <location filename="../settingsform.cpp" line="433"/>
         <location filename="../settingsform.cpp" line="434"/>
         <location filename="../settingsform.cpp" line="435"/>
-        <location filename="../settingsform.cpp" line="1304"/>
-        <location filename="../settingsform.cpp" line="1305"/>
-        <location filename="../settingsform.cpp" line="1306"/>
-        <location filename="../settingsform.cpp" line="1307"/>
+        <location filename="../settingsform.cpp" line="1345"/>
+        <location filename="../settingsform.cpp" line="1346"/>
+        <location filename="../settingsform.cpp" line="1347"/>
+        <location filename="../settingsform.cpp" line="1348"/>
         <source>None</source>
         <translation>Semelyik</translation>
     </message>
@@ -7736,12 +7897,12 @@ book title</extracomment>
         <translation>Kisebb szövegek, például szavak szófajának nyomtatására használt betűtípus</translation>
     </message>
     <message>
-        <location filename="../settingsform.cpp" line="1022"/>
+        <location filename="../settingsform.cpp" line="1024"/>
         <source>Select folder for user backups.</source>
         <translation>Biztonsági mentés mappájának kiválasztása.</translation>
     </message>
     <message>
-        <location filename="../settingsform.cpp" line="1218"/>
+        <location filename="../settingsform.cpp" line="1220"/>
         <source>The insert position won&apos;t change when the cursor is moved.</source>
         <translation>A beillesztés helye nem változik a kurzor mozgatásakor.</translation>
     </message>
@@ -8603,7 +8764,7 @@ If you would like to study new words, start a new test and allow new words to be
 <context>
     <name>WordStudyItemModel</name>
     <message>
-        <location filename="../wordtestresultsform.cpp" line="27"/>
+        <location filename="../wordtestresultsform.cpp" line="28"/>
         <source>Score</source>
         <translation>Pontszám</translation>
     </message>
@@ -9041,17 +9202,17 @@ Tévesztés: %3
         <translation>Utolsó gyakorlásban szereplő szavak:</translation>
     </message>
     <message>
-        <location filename="../wordtestresultsform.cpp" line="147"/>
+        <location filename="../wordtestresultsform.cpp" line="148"/>
         <source>Word test results</source>
         <translation>Szógyakorlás eredménye</translation>
     </message>
     <message>
-        <location filename="../wordtestresultsform.cpp" line="152"/>
+        <location filename="../wordtestresultsform.cpp" line="204"/>
         <source>Continue</source>
         <translation>Tovább</translation>
     </message>
     <message>
-        <location filename="../wordtestresultsform.cpp" line="153"/>
+        <location filename="../wordtestresultsform.cpp" line="205"/>
         <source>Suspend</source>
         <translation>Felfüggeszt</translation>
     </message>
@@ -9478,29 +9639,29 @@ A tesztbeállításoktól függően a szavaknak nem lehet azonos írott vagy kan
         <translation>Szavak részeinek kiválasztása a tanuló pakliba.</translation>
     </message>
     <message>
-        <location filename="../wordtodeckform.cpp" line="830"/>
+        <location filename="../wordtodeckform.cpp" line="828"/>
         <source>Add to study deck</source>
         <translation>Felvétel a tanuló pakliba</translation>
     </message>
     <message>
-        <location filename="../wordtodeckform.cpp" line="792"/>
-        <location filename="../wordtodeckform.cpp" line="833"/>
+        <location filename="../wordtodeckform.cpp" line="790"/>
+        <location filename="../wordtodeckform.cpp" line="831"/>
         <source>Deck 1</source>
         <translation>Pakli 1</translation>
     </message>
     <message>
-        <location filename="../wordtodeckform.cpp" line="829"/>
+        <location filename="../wordtodeckform.cpp" line="827"/>
         <source>Add words to deck</source>
         <translation>zkanji - Szavak felvétele a pakliba</translation>
     </message>
     <message>
-        <location filename="../wordtodeckform.cpp" line="695"/>
+        <location filename="../wordtodeckform.cpp" line="693"/>
         <source>Nothing new to study. All word parts are already in the deck.</source>
         <translation>Nincs mit tanulani. A szavak minden része már a pakliban van.</translation>
     </message>
     <message>
-        <location filename="../wordtodeckform.cpp" line="729"/>
-        <location filename="../wordtodeckform.cpp" line="817"/>
+        <location filename="../wordtodeckform.cpp" line="727"/>
+        <location filename="../wordtodeckform.cpp" line="815"/>
         <source>Nothing new to study. All word parts are already in the deck.
 
 You can select another deck if you want to add them.</source>
@@ -9509,7 +9670,7 @@ You can select another deck if you want to add them.</source>
 Van lehetőség másik pakli választására.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../wordtodeckform.cpp" line="803"/>
+        <location filename="../wordtodeckform.cpp" line="801"/>
         <source>%n item(s) added to the study deck</source>
         <translation>
             <numerusform>%n rész lett felvéve a tanuló pakliba</numerusform>

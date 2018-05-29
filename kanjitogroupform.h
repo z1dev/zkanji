@@ -41,7 +41,7 @@ private slots:
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
-    void setButtonText();
+    void translateTexts();
 
     Ui::KanjiToGroupForm *ui;
 

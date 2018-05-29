@@ -188,7 +188,7 @@ private:
     void updateDictionaryLabels();
 
     // Translate text of buttons
-    void setTranslatedTexts();
+    void translateTexts();
 
     Ui::WordEditorForm *ui;
 

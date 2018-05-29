@@ -30,6 +30,8 @@ public slots:
     void on_dictCBox_currentIndexChanged(int ix);
     void on_groupBox_toggled(bool on);
 private:
+    void translateTexts();
+
     Ui::DictionaryExportForm *ui;
 
     QPushButton *exportbutton;

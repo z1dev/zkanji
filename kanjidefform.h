@@ -35,6 +35,8 @@ public slots:
 protected:
     virtual bool event(QEvent *e) override;
 private:
+    void translateTexts();
+
     void updateKanji();
     void updateDictionary();
 

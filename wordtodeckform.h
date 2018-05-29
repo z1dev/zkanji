@@ -144,12 +144,9 @@ private:
     void updateOkButton();
 
     // Changes text on buttons depending on current language.
-    void setWidgetTexts();
+    void translateTexts();
 
     Ui::WordToDeckForm *ui;
-
-    QPushButton *okbutton;
-    QPushButton *cancelbutton;
 
     WordsToDeckItemModel *model;
     WordDeck *deck;

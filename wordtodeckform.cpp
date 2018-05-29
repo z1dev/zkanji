@@ -641,10 +641,8 @@ WordToDeckForm::WordToDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordT
 
     //restrictWidgetSize(ui->decksCBox, 16, AdjustedValue::Min);
 
-    okbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
-    cancelbutton = ui->buttonBox->button(QDialogButtonBox::Cancel);
-    connect(okbutton, &QPushButton::clicked, this, &WordToDeckForm::okButtonClicked);
-    connect(cancelbutton, &QPushButton::clicked, this, &WordToDeckForm::close);
+    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &WordToDeckForm::okButtonClicked);
+    connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToDeckForm::close);
 
     ui->wordsTable->assignStatusBar(ui->listStatus);
 
@@ -702,7 +700,7 @@ void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std
 
     updateOkButton();
 
-    setWidgetTexts();
+    translateTexts();
 
     //setWindowModality(Qt::ApplicationModal);
 
@@ -716,7 +714,7 @@ bool WordToDeckForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setWidgetTexts();
+        translateTexts();
     }
 
     return base::event(e);
@@ -821,16 +819,19 @@ void WordToDeckForm::on_decksCBox_currentIndexChanged(int index)
 
 void WordToDeckForm::updateOkButton()
 {
-    okbutton->setEnabled(model->hasBoxChecked());
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(model->hasBoxChecked());
 }
 
-void WordToDeckForm::setWidgetTexts()
+void WordToDeckForm::translateTexts()
 {
     setWindowTitle(QString("zkanji - %1").arg(tr("Add words to deck")));
-    okbutton->setText(tr("Add to study deck"));
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Add to study deck"));
 
     if (deck == nullptr)
         ui->decksCBox->setItemText(0, tr("Deck 1"));
+
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

@@ -269,7 +269,7 @@ WordEditorForm::WordEditorForm(QWidget *parent) : base(parent), ui(new Ui::WordE
         attribLayout->addWidget(box);
     }
 
-    setTranslatedTexts();
+    translateTexts();
 
     installRecognizer(ui->kanjiButton, ui->kanjiEdit);
     ui->kanjiEdit->setValidator(&japaneseValidator());
@@ -456,7 +456,7 @@ bool WordEditorForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setTranslatedTexts();
+        translateTexts();
     }
 
     return base::event(e);
@@ -535,7 +535,7 @@ void WordEditorForm::checkInput()
     resetBtn->setEnabled(canReset());
     okBtn->setEnabled(valid && canReset());
     okBtn->setDefault(okBtn->isEnabled());
-    setTranslatedTexts();
+    translateTexts();
     if (!okBtn->isEnabled())
         cancelBtn->setDefault(true);
     applyBtn->setEnabled(valid && canReset());
@@ -867,7 +867,7 @@ void WordEditorForm::updateDictionaryLabels()
     ui->dictLabel->setText(dict->name());
 }
 
-void WordEditorForm::setTranslatedTexts()
+void WordEditorForm::translateTexts()
 {
     okBtn->setText(tr("Save and close"));
     cancelBtn->setText(!canReset() ? tr("Close") : tr("Discard"));
@@ -878,6 +878,12 @@ void WordEditorForm::setTranslatedTexts()
         if (box != nullptr)
             box->setText(Strings::wordInfoLong(ix));
     }
+
+    //ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Reset)->setText(qApp->translate("ButtonBox", "Reset"));
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setText(qApp->translate("ButtonBox", "Apply"));
+    //ui->buttonBox->button(QDialogButtonBox::Discard)->setText(qApp->translate("ButtonBox", "Discard"));
+
 }
 
 //-------------------------------------------------------------

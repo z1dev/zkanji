@@ -5,6 +5,7 @@
 **/
 
 #include <QFile>
+#include <QDialogButtonBox>
 #include "languages.h"
 #include "zkanjimain.h"
 
@@ -203,8 +204,10 @@ QString Languages::translate(const QString &context, const QString &key, const c
 
 bool Languages::eventFilter(QObject *o, QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange && busy)
+    if (e->type() == QEvent::LanguageChange && (busy || dynamic_cast<QDialogButtonBox*>(o) != nullptr))
+    {
         return true;
+    }
 
     return base::eventFilter(o, e);
 }

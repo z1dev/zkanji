@@ -124,7 +124,7 @@
     <item>
      <widget class="QDialogButtonBox" name="buttonBox">
       <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel</set>
+       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
       </property>
      </widget>
     </item>
@@ -145,15 +145,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ZDictionaryListView</class>
-   <extends>QTableView</extends>
-   <header>zdictionarylistview.h</header>
-  </customwidget>
-  <customwidget>
    <class>DialogWindow</class>
    <extends>QMainWindow</extends>
    <header>dialogwindow.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ZDictionaryListView</class>
+   <extends>QTableView</extends>
+   <header>zdictionarylistview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

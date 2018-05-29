@@ -29,9 +29,10 @@ public slots:
     void modelDataChanged();
     void on_dictCBox_currentIndexChanged(int ix);
 private:
+    void translateTexts();
+
     Ui::GroupExportForm *ui;
 
-    QPushButton *exportbutton;
     CheckedGroupTreeModel *kanjimodel;
     CheckedGroupTreeModel *wordsmodel;
 

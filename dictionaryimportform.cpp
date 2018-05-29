@@ -22,9 +22,7 @@ DictionaryImportForm::DictionaryImportForm(QWidget *parent) : base(parent), ui(n
 
     gUI->scaleWidget(this);
 
-    importbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
-    importbutton->setText(tr("Next"));
-    connect(importbutton, &QPushButton::clicked, this, &DictionaryImportForm::closeOk);
+    connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &DictionaryImportForm::closeOk);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DictionaryImportForm::closeCancel);
 
     //connect(ui->dictCBox, &QComboBox::currentTextChanged, this, &DictionaryImportForm::dictTextChanged);
@@ -117,7 +115,13 @@ void DictionaryImportForm::on_dictCBox_currentTextChanged(const QString &text)
     if (dict == nullptr)
         ui->fullOption->setChecked(true);
 
-    importbutton->setEnabled(ZKanji::dictionaryNameValid(text, true) && text.toLower() != ZKanji::dictionary(0)->name().toLower());
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(ZKanji::dictionaryNameValid(text, true) && text.toLower() != ZKanji::dictionary(0)->name().toLower());
+}
+
+void DictionaryImportForm::translateTexts()
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "Next"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

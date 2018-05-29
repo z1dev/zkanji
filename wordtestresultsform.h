@@ -19,6 +19,7 @@ enum class WordStudyColumnTypes { Score = (int)DictColumnTypes::Last + 1 };
 class WordStudy;
 class QImage;
 class QAbstractButton;
+class QPushButton;
 class WordStudyItemModel : public DictionaryItemModel
 {
     Q_OBJECT
@@ -65,11 +66,15 @@ protected:
 protected slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 private:
+    void translateTexts();
+
     Ui::WordTestResultsForm *ui;
 
     WordStudy *study;
 
     bool nextround;
+    QPushButton *continueButton;
+    QPushButton *suspendButton;
 
     typedef QMainWindow base;
 };

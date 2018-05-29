@@ -79,7 +79,7 @@ private:
     void stopThreads();
     void startThreads(Dictionary *d);
 
-    void updateBaseLabels();
+    void translateTexts();
     void updateLabels(const StatResult &result);
 
     void setHtmlInfoText(const QString &str);

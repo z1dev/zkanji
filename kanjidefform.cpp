@@ -43,6 +43,8 @@ KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new
     ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(false);
     ui->acceptButton->setDefault(true);
 
+    translateTexts();
+
     FormStates::restoreDialogSize("KanjiDefinition", this, true);
 }
 
@@ -121,9 +123,18 @@ void KanjiDefinitionForm::dictionaryRemoved(int index, int orderindex, void *old
 bool KanjiDefinitionForm::event(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange)
+    {
         ui->retranslateUi(this);
+        translateTexts();
+    }
 
     return base::event(e);
+}
+
+void KanjiDefinitionForm::translateTexts()
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText(qApp->translate("ButtonBox", "Close"));
 }
 
 void KanjiDefinitionForm::updateKanji()

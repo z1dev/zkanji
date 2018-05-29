@@ -129,6 +129,8 @@ protected:
     virtual bool event(QEvent *e) override;
     virtual bool eventFilter(QObject *o, QEvent *e) override;
 private:
+    void translateTexts();
+
     // Updates se and ss to contain the selection start and selection end. The end of the
     // selection can be in front of the start, which is the cursor position.
     void getSiteUrlSel(int &ss, int &se);

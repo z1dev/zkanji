@@ -42,10 +42,11 @@ public slots:
     void optionChanged();
     void on_dictCBox_currentTextChanged(const QString &text);
 private:
+    void translateTexts();
+
     Ui::DictionaryImportForm *ui;
 
     DictionariesProxyModel *dictmodel;
-    QPushButton *importbutton;
 
     typedef DialogWindow    base;
 };

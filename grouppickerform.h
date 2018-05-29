@@ -53,7 +53,7 @@ private:
     GroupPickerForm(bool categories, QWidget *parent = nullptr);
     GroupPickerForm(GroupWidget::Modes mode, bool categories, QWidget *parent = nullptr);
 
-    void setButtonText();
+    void translateTexts();
 
     Ui::GroupPickerForm *ui;
 

@@ -27,12 +27,10 @@ LanguageForm::LanguageForm(QWidget *parent) : base(parent), ui(new Ui::LanguageF
     for (int ix = 0, siz = zLang->count(); ix != siz; ++ix)
         ui->languageCBox->addItem(zLang->names(ix));
 
-    QPushButton *btn = ui->buttons->button(QDialogButtonBox::Ok);
-    connect(btn, &QPushButton::clicked, this, &LanguageForm::okClicked);
+    connect(ui->buttons->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &LanguageForm::okClicked);
+    connect(ui->buttons->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &DialogWindow::closeCancel);
 
-    btn = ui->buttons->button(QDialogButtonBox::Cancel);
-    btn->setText("Quit");
-    connect(btn, &QPushButton::clicked, this, &DialogWindow::closeCancel);
+    translateTexts();
 
     updateWindowGeometry(this);
     adjustSize();
@@ -47,6 +45,12 @@ LanguageForm::~LanguageForm()
 void LanguageForm::showEvent(QShowEvent *e)
 {
     base::showEvent(e);
+}
+
+void LanguageForm::translateTexts()
+{
+    ui->buttons->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttons->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Quit"));
 }
 
 void LanguageForm::okClicked()
@@ -67,7 +71,6 @@ bool languageSelect()
         Settings::language = QString();
         return true;
     }
-
 
 
     LanguageForm *frm = new LanguageForm;

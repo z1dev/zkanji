@@ -39,14 +39,12 @@ private slots:
     void dictionaryAdded();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
 private:
-    void setButtonText();
+    void translateTexts();
 
     Ui::WordToGroupForm *ui;
 
     Dictionary *dict;
     std::vector<int> list;
-
-    QPushButton *acceptButton;
 
     bool updatelast;
 

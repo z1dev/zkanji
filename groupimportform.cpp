@@ -16,15 +16,13 @@
 //-------------------------------------------------------------
 
 
-GroupImportForm::GroupImportForm(QWidget *parent) : base(parent), ui(new Ui::GroupImportForm), importbutton(nullptr)
+GroupImportForm::GroupImportForm(QWidget *parent) : base(parent), ui(new Ui::GroupImportForm)
 {
     ui->setupUi(this);
 
     gUI->scaleWidget(this);
 
-    importbutton = ui->buttonBox->button(QDialogButtonBox::Ok);
-    importbutton->setText(tr("Import"));
-    importbutton->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &GroupImportForm::closeOk);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &GroupImportForm::closeCancel);
 
@@ -35,6 +33,8 @@ GroupImportForm::GroupImportForm(QWidget *parent) : base(parent), ui(new Ui::Gro
     ui->wordsWidget->showOnlyCategories();
     ui->kanjiWidget->setMultiSelect(false);
     ui->wordsWidget->setMultiSelect(false);
+
+    translateTexts();
 
     FormStates::restoreDialogSize("GroupImport", this, true);
 }
@@ -82,7 +82,7 @@ bool GroupImportForm::importWordMeanings() const
 void GroupImportForm::selectionChanged()
 {
     bool sel = ui->kanjiWidget->current() != nullptr && ui->wordsWidget->current() != nullptr;
-    importbutton->setEnabled(sel);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(sel);
 }
 
 void GroupImportForm::on_dictCBox_currentIndexChanged(int ix)
@@ -105,6 +105,11 @@ void GroupImportForm::on_wordGroupsBox_toggled(bool checked)
     ui->wordsWidget->setEnabled(checked);
 }
 
+void GroupImportForm::translateTexts()
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "Import"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
+}
 
 
 //-------------------------------------------------------------

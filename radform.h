@@ -91,8 +91,9 @@ protected:
     virtual bool eventFilter(QObject *o, QEvent *e) override;
     //virtual void showEvent(QShowEvent *event) override;
 private:
-    // Set text on the show/hide history button.
-    void setButtonText();
+    // Updates texts on buttons depending on current language. Also updates text on the
+    // show/hide history button.
+    void translateTexts();
     // Switches between the parts and radicals display.
     void updateMode();
     // Sets the radical grid's filter settings depending on

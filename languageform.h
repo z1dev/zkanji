@@ -22,6 +22,8 @@ public:
 protected:
     virtual void showEvent(QShowEvent *e) override;
 private:
+    void translateTexts();
+
     void okClicked();
 
     Ui::LanguageForm *ui;

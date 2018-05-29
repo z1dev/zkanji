@@ -118,7 +118,7 @@ protected:
     virtual void closeEvent(QCloseEvent *e) override;
 private:
     // Retranslates button texts.
-    void updateSaveButton();
+    void translateTexts();
 
     // Shows or hides the filter editor while resizing the window.
     void toggleEditor(bool show);

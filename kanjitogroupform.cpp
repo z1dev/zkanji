@@ -36,7 +36,7 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     acceptButton->setEnabled(false);
     connect(acceptButton, &QPushButton::clicked, this, &KanjiToGroupForm::accept);
 
-    setButtonText();
+    translateTexts();
 
     //dictCBox = new ZDictionaryComboBox(this);
     //ui->groupWidget->addControlWidget(dictCBox, true);
@@ -98,7 +98,7 @@ bool KanjiToGroupForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        setButtonText();
+        translateTexts();
     }
 
     return base::event(e);
@@ -135,9 +135,10 @@ void KanjiToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictiona
         close();
 }
 
-void KanjiToGroupForm::setButtonText()
+void KanjiToGroupForm::translateTexts()
 {
     acceptButton->setText(tr("Add to group"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

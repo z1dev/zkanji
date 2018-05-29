@@ -61,7 +61,7 @@ void DictionaryTextForm::exec(Dictionary *d)
 
     dict = d;
     ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), dict->name(), Flags::Flag));
-    updateWindowTitle();
+    translateTexts();
     ui->infoText->setPlainText(dict->infoText());
 
     connect(d, &Dictionary::dictionaryReset, this, &DictionaryTextForm::dictionaryReset);
@@ -158,17 +158,17 @@ void DictionaryTextForm::on_removeButton_clicked()
 bool DictionaryTextForm::event(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange)
-    {
-        ui->retranslateUi(this);
-        updateWindowTitle();
-    }
+        translateTexts();
 
     return base::event(e);
 }
 
-void DictionaryTextForm::updateWindowTitle()
+void DictionaryTextForm::translateTexts()
 {
+    ui->retranslateUi(this);
     setWindowTitle(tr("zkanji - Edit information: %1").arg(dict->name()));
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setText(qApp->translate("ButtonBox", "OK"));
+    ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(qApp->translate("ButtonBox", "Cancel"));
 }
 
 

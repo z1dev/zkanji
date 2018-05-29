@@ -343,7 +343,7 @@ bool DictionaryStatsForm::event(QEvent *e)
     if (e->type() == QEvent::LanguageChange)
     {
         ui->retranslateUi(this);
-        updateBaseLabels();
+        translateTexts();
     }
 
     return base::event(e);
@@ -391,7 +391,7 @@ void DictionaryStatsForm::updateData()
 
     Dictionary *d = ZKanji::dictionary(0);
     d = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
-    updateBaseLabels();
+    translateTexts();
 
     ui->kanjiNumLabel->setText(QString::number(ZKanji::kanjis.size()));
     int cnt = 0;
@@ -484,7 +484,7 @@ void DictionaryStatsForm::startThreads(Dictionary *d)
     timer.start(100, this);
 }
 
-void DictionaryStatsForm::updateBaseLabels()
+void DictionaryStatsForm::translateTexts()
 {
     Dictionary *d = ZKanji::dictionary(0);
     ui->baseLabel->setText(tr("The base dictionary was built for zkanji %1 on %2.").arg(d->programVersion()).arg(formatDateTime(d->baseDate())));
@@ -494,6 +494,8 @@ void DictionaryStatsForm::updateBaseLabels()
         ui->exampleLabel->setText(tr("No example sentences database loaded."));
     d = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
     ui->buildLabel->setText(tr("The selected dictionary was last saved in zkanji %1 on %2.").arg(d->programVersion()).arg(formatDateTime(d->lastWriteDate())));
+
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText(qApp->translate("ButtonBox", "Close"));
 }
 
 void DictionaryStatsForm::updateLabels(const StatResult &r)

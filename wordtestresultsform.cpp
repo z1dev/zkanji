@@ -7,6 +7,7 @@
 #include <QtEvents>
 #include <QImage>
 #include <QDesktopWidget>
+#include <QPushButton>
 #include "wordtestresultsform.h"
 #include "ui_wordtestresultsform.h"
 #include "groupstudy.h"
@@ -127,7 +128,7 @@ void WordStudyItemModel::entryAdded(int windex)
 //-------------------------------------------------------------
 
 
-WordTestResultsForm::WordTestResultsForm(QWidget *parent) : base(parent), ui(new Ui::WordTestResultsForm), study(nullptr), nextround(false)
+WordTestResultsForm::WordTestResultsForm(QWidget *parent) : base(parent), ui(new Ui::WordTestResultsForm), study(nullptr), nextround(false), continueButton(nullptr), suspendButton(nullptr)
 {
     ui->setupUi(this);
     ui->wordsTable->setStudyDefinitionUsed(true);
@@ -149,9 +150,10 @@ void WordTestResultsForm::exec(WordStudy *s)
     if (!study->finished())
     {
         ui->buttonBox->setStandardButtons(0);
-        ui->buttonBox->addButton(tr("Continue"), QDialogButtonBox::AcceptRole);
-        ui->buttonBox->addButton(tr("Suspend"), QDialogButtonBox::RejectRole);
+        continueButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
+        suspendButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::RejectRole);
     }
+    translateTexts();
 
     setAttribute(Qt::WA_DontShowOnScreen, true);
     show();
@@ -191,6 +193,17 @@ void WordTestResultsForm::on_buttonBox_clicked(QAbstractButton *button)
 {
     nextround = ui->buttonBox->buttonRole(button) != QDialogButtonBox::RejectRole;
     close();
+}
+
+void WordTestResultsForm::translateTexts()
+{
+    if (study->finished())
+        ui->buttonBox->button(QDialogButtonBox::Close)->setText(qApp->translate("ButtonBox", "Close"));
+    else
+    {
+        continueButton->setText(tr("Continue"));
+        suspendButton->setText(tr("Suspend"));
+    }
 }
 
 
