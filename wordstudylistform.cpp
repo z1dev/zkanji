@@ -337,7 +337,7 @@ QString WordStudyAreaModel::tooltip(int col) const
     int learnedcount = std::get<1>(list[col].second);
     int testcount = std::get<2>(list[col].second);
     if (type == DeckStatAreaType::Items)
-        return tr("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(date.date()));
+        return tr("Items: %1\nLearned: %2\nTested: %3\n%4").arg(itemcount + learnedcount + testcount).arg(learnedcount).arg(testcount).arg(DateTimeFunctions::formatDay(date.date()));
     else if (type == DeckStatAreaType::Forecast)
         return tr("Items: %1\n%2").arg(itemcount).arg(DateTimeFunctions::formatDay(date.date()));
 
@@ -692,7 +692,10 @@ void WordStudyListForm::restoreItemsState(const WordStudyListFormDataItems &data
 
     ignoreguard.release(true);
 
-    model->setViewMode(data.mode);
+    if (model->viewMode() == data.mode)
+        model->reset();
+    else
+        model->setViewMode(data.mode);
 
     model->setShownParts(ui->wButton->isChecked(), ui->kButton->isChecked(), ui->dButton->isChecked());
 
