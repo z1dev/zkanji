@@ -66,6 +66,7 @@ namespace Settings
 
     const QColor nowordsldef = QColor(192, 192, 192);
     const QColor unsortedldef = QColor(247, 247, 240);
+    const QColor notranslationldef = QColor(255, 0, 0);
 
     const QColor katabgldef = QColor(157, 216, 243);
     const QColor hirabgldef = QColor(157, 243, 149);
@@ -106,6 +107,7 @@ namespace Settings
 
     const QColor nowordsddef = QColor(192, 192, 192);
     const QColor unsortedddef = QColor(66, 68, 81);
+    const QColor notranslationddef = QColor(255, 0, 0);
 
     const QColor katabgddef = QColor(0, 100, 130);
     const QColor hirabgddef = QColor(50, 92, 12);
@@ -260,6 +262,7 @@ namespace Settings
         ini.setValue("colors/n1", colors.n1);
         ini.setValue("colors/kanjinowords", colors.kanjinowords);
         ini.setValue("colors/kanjiunsorted", colors.kanjiunsorted);
+        ini.setValue("colors/kanjinotranslation", colors.kanjinotranslation);
         ini.setValue("colors/coloroku", colors.coloroku);
         ini.setValue("colors/oku", colors.okucolor);
         ini.setValue("colors/katabg", colors.katabg);
@@ -938,6 +941,7 @@ namespace Settings
         colors.n1 = ini.value("colors/n1").value<QColor>();
         colors.kanjinowords = ini.value("colors/kanjinowords").value<QColor>();
         colors.kanjiunsorted = ini.value("colors/kanjiunsorted").value<QColor>();
+        colors.kanjinotranslation = ini.value("colors/kanjinotranslation").value<QColor>();
         colors.coloroku = ini.value("colors/coloroku", true).toBool();
         colors.okucolor = ini.value("colors/oku").value<QColor>();
 
@@ -1580,6 +1584,10 @@ namespace Settings
             if (colors.kanjiunsorted.isValid())
                 return colors.kanjiunsorted;
             break;
+        case ColorSettings::KanjiNoTranslation:
+            if (colors.kanjinotranslation.isValid())
+                return colors.kanjinotranslation;
+            break;
         case ColorSettings::KataBg:
             if (colors.katabg.isValid())
                 return colors.katabg;
@@ -1684,6 +1692,8 @@ namespace Settings
             return colors.lighttheme ? nowordsldef : nowordsddef;
         case ColorSettings::KanjiUnsorted:
             return colors.lighttheme ? unsortedldef : unsortedddef;
+        case ColorSettings::KanjiNoTranslation:
+            return colors.lighttheme ? notranslationldef : notranslationddef;
         case ColorSettings::KataBg:
             return colors.lighttheme ? katabgldef : katabgddef;
         case ColorSettings::HiraBg:

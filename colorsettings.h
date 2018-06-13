@@ -34,7 +34,7 @@ struct ColorSettings
         Inf, Attrib, Types, Notes,
         Fields, Dialects, KanaOnly, SentenceWord, KanjiTestPos,
         Oku, N5, N4, N3, N2, N1, KanjiNoWords,
-        KanjiUnsorted, KataBg, HiraBg,
+        KanjiUnsorted, KanjiNoTranslation, KataBg, HiraBg,
         SimilarText, /*SimilarBg, PartsBg, PartOfBg,*/
         StrokeDot, KanjiExBg, Stat1, Stat2, Stat3
     };
@@ -63,6 +63,7 @@ struct ColorSettings
 
     QColor kanjinowords;
     QColor kanjiunsorted;
+    QColor kanjinotranslation;
 
     QColor katabg;
     QColor hirabg;

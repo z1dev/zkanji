@@ -388,6 +388,7 @@ SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsF
 
     ui->colNoWordsCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiNoWords));
     ui->colUnsortedCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiUnsorted));
+    ui->colNoTranslationCBox->setDefaultColor(Settings::defUiColor(ColorSettings::KanjiNoTranslation));
 
     ui->colOkuCBox->setDefaultColor(Settings::defUiColor(ColorSettings::Oku));
 
@@ -649,6 +650,7 @@ void SettingsForm::reset()
 
     ui->colNoWordsCBox->setCurrentColor(Settings::colors.kanjinowords);
     ui->colUnsortedCBox->setCurrentColor(Settings::colors.kanjiunsorted);
+    ui->colNoTranslationCBox->setCurrentColor(Settings::colors.kanjinotranslation);
 
     ui->studyIncludeCBox->setCurrentIndex((int)Settings::study.includedays);
     ui->studyIncludeEdit->setText(QString::number(Settings::study.includecount));
@@ -935,6 +937,7 @@ void SettingsForm::applyClicked()
 
     Settings::colors.kanjinowords = ui->colNoWordsCBox->currentColor();
     Settings::colors.kanjiunsorted = ui->colUnsortedCBox->currentColor();
+    Settings::colors.kanjinotranslation = ui->colNoTranslationCBox->currentColor();
 
     Settings::study.includedays = (StudySettings::IncludeDays)ui->studyIncludeCBox->currentIndex();
     val = ui->studyIncludeEdit->text().toInt(&ok);

@@ -1026,6 +1026,10 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     QFont oldfont = p.font();
 
     QColor gridColor = Settings::uiColor(ColorSettings::Grid);
+    QColor textcolor = Settings::textColor(this, ColorSettings::Text);
+    QColor seltextcolor = Settings::textColor(this, ColorSettings::SelText);
+    QColor bgcolor = Settings::textColor(this, ColorSettings::Bg);
+    QColor selcolor = Settings::textColor(this, ColorSettings::SelBg);
 
     p.setPen(gridColor);
     
@@ -1055,7 +1059,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     }
 
     // Fill background to the right of the last grid line.
-    p.setBrush(Settings::textColor(this, ColorSettings::Bg) /*opts.palette.color(colorgrp, QPalette::Base)*/);
+    p.setBrush(bgcolor);
     if (cols * cellsize < size.width())
         p.fillRect(QRect(QPoint(cols * cellsize, 0), QPoint(size.width(), y2)), p.brush());
 
@@ -1108,32 +1112,46 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
                 if (dict->kanjiWordCount(itemmodel->kanjiAt(drawpos)) == 0)
                     c = Settings::uiColor(ColorSettings::KanjiNoWords);
                 else
-                    c = Settings::textColor(this, ColorSettings::Text); // opts.palette.color(colorgrp, QPalette::Text);
+                    c = textcolor; // opts.palette.color(colorgrp, QPalette::Text);
             }
             p.setPen(c);
             c = itemmodel->backColorAt(drawpos);
             if (!c.isValid())
-                c = Settings::textColor(this, ColorSettings::Bg); // opts.palette.color(colorgrp, QPalette::Base);
+                c = bgcolor; // opts.palette.color(colorgrp, QPalette::Base);
             p.setBrush(c);
         }
         else
         {
             QColor cc = itemmodel->textColorAt(drawpos);
-            QColor c = Settings::textColor(this, ColorSettings::SelText); // opts.palette.color(state == State::Dragging ? QPalette::Inactive : colorgrp, QPalette::HighlightedText)
+            QColor c = seltextcolor;
             if (!cc.isValid() && dict->kanjiWordCount(itemmodel->kanjiAt(drawpos)) == 0)
                 cc = Settings::uiColor(ColorSettings::KanjiNoWords);
             if (cc.isValid())
-                c = colorFromBase(Settings::textColor(this, ColorSettings::Text), c, cc);
+                c = colorFromBase(textcolor, c, cc);
             p.setPen(c);
 
-            c = Settings::textColor(this, ColorSettings::SelBg);// opts.palette.color(state == State::Dragging ? QPalette::Inactive : colorgrp, QPalette::Highlight)
+            c = selcolor;
             cc = itemmodel->backColorAt(drawpos);
             if (cc.isValid())
-                c = colorFromBase(Settings::textColor(this, ColorSettings::Bg), c, cc);
+                c = colorFromBase(bgcolor, c, cc);
 
             p.setBrush(c);
         }
         p.fillRect(QRect(x, y, cellsize - 1, cellsize - 1), p.brush());
+
+        // Draw a small triangle at the bottom right corner of a cell to show the kanji
+        // doesn't have user defined meaning. Only needed for user dictionaries.
+        if (dict != ZKanji::dictionary(0) && !dict->hasKanjiMeaning(itemmodel->kanjiAt(drawpos)))
+        {
+            QColor ccc = Settings::uiColor(ColorSettings::KanjiNoTranslation);
+            if (sel)
+                ccc = colorFromBase(bgcolor, p.brush().color(), ccc);
+            QLinearGradient grad(QPointF(x + cellsize * 0.8, y + cellsize * 0.8), QPointF(x + cellsize, y + cellsize));
+            grad.setColorAt(0, p.brush().color());
+            grad.setColorAt(0.5, p.brush().color());
+            grad.setColorAt(1, ccc);
+            p.fillRect(QRect(x + cellsize * 0.8, y + cellsize * 0.8, cellsize * 0.2 - 1, cellsize * 0.2 - 1), QBrush(grad));
+        }
 
         drawTextBaseline(&p, x, y + cellsize * 0.86, true, QRect(x, y, cellsize - 1, cellsize - 1), ZKanji::kanjis[itemmodel->kanjiAt(drawpos)]->ch);
 
@@ -1156,7 +1174,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     {
         // Paint the drag indicator.
 
-        p.setBrush(Settings::textColor(true, ColorSettings::SelBg) /*opts.palette.color(colorgrp, QPalette::Highlight)*/);
+        p.setBrush(selcolor);
 
         QRect r = dragind < model()->size() ? cellRect(dragind) : QRect();
         QRect r2 = dragind > 0 ? cellRect(dragind - 1) : QRect();
