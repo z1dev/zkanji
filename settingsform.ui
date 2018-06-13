@@ -233,7 +233,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>12</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="interfacePage">
              <property name="sizePolicy">
@@ -5930,6 +5930,7 @@
   <tabstop>colN1CBox</tabstop>
   <tabstop>colNoWordsCBox</tabstop>
   <tabstop>colUnsortedCBox</tabstop>
+  <tabstop>colNoTranslationCBox</tabstop>
   <tabstop>okuColorBox</tabstop>
   <tabstop>colOkuCBox</tabstop>
   <tabstop>bgKataCBox</tabstop>
