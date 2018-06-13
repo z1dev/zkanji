@@ -366,7 +366,7 @@ Hibaüzenet: %1</translation>
         <location filename="../dictionaryeditorform.cpp" line="287"/>
         <location filename="../dictionarystatsform.cpp" line="498"/>
         <location filename="../kanjidefform.cpp" line="137"/>
-        <location filename="../wordstudylistform.cpp" line="1320"/>
+        <location filename="../wordstudylistform.cpp" line="1323"/>
         <location filename="../wordtestresultsform.cpp" line="201"/>
         <source>Close</source>
         <translation>Bezár</translation>
@@ -378,7 +378,7 @@ Hibaüzenet: %1</translation>
         <location filename="../languageform.cpp" line="52"/>
         <location filename="../radform.cpp" line="289"/>
         <location filename="../selectdictionarydialog.cpp" line="70"/>
-        <location filename="../settingsform.cpp" line="1357"/>
+        <location filename="../settingsform.cpp" line="1360"/>
         <location filename="../wordtodeckform.cpp" line="833"/>
         <source>OK</source>
         <translation></translation>
@@ -406,7 +406,7 @@ Hibaüzenet: %1</translation>
     </message>
     <message>
         <location filename="../filterlistform.cpp" line="737"/>
-        <location filename="../settingsform.cpp" line="1360"/>
+        <location filename="../settingsform.cpp" line="1363"/>
         <source>Discard</source>
         <translation>Elvet</translation>
     </message>
@@ -426,13 +426,13 @@ Hibaüzenet: %1</translation>
         <translation>Kilép</translation>
     </message>
     <message>
-        <location filename="../settingsform.cpp" line="1358"/>
+        <location filename="../settingsform.cpp" line="1361"/>
         <location filename="../wordeditorform.cpp" line="883"/>
         <source>Reset</source>
         <translation>Alaphelyzet</translation>
     </message>
     <message>
-        <location filename="../settingsform.cpp" line="1359"/>
+        <location filename="../settingsform.cpp" line="1362"/>
         <location filename="../wordeditorform.cpp" line="884"/>
         <source>Apply</source>
         <translation>Alkalmaz</translation>
@@ -5801,7 +5801,7 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
     <message>
         <location filename="../zstrings.cpp" line="35"/>
         <source>&amp;Pick Screen Color</source>
-        <translation type="unfinished">Választás a &amp;képernyőről</translation>
+        <translation>Választás a &amp;képernyőről</translation>
     </message>
 </context>
 <context>
@@ -6836,7 +6836,7 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="2561"/>
-        <location filename="../settingsform.cpp" line="1220"/>
+        <location filename="../settingsform.cpp" line="1223"/>
         <source>The data to look up will be inserted at the last cursor position.</source>
         <translation>A keresendő adat szövege az utolsó kurzorpozíciónál lesz beillesztve.</translation>
     </message>
@@ -6899,7 +6899,7 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="2914"/>
-        <location filename="../settingsform.ui" line="5619"/>
+        <location filename="../settingsform.ui" line="5643"/>
         <source>Kanji / kana:</source>
         <translation>Kandzsi / kana:</translation>
     </message>
@@ -6920,7 +6920,7 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="2963"/>
-        <location filename="../settingsform.ui" line="5665"/>
+        <location filename="../settingsform.ui" line="5689"/>
         <source>Notes:</source>
         <translation>Jegyzetek:</translation>
     </message>
@@ -6931,31 +6931,31 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="2997"/>
-        <location filename="../settingsform.ui" line="5699"/>
+        <location filename="../settingsform.ui" line="5723"/>
         <source>Font-style for the notes font</source>
         <translation>Betűstílus a jegyzetek írására</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="3001"/>
-        <location filename="../settingsform.ui" line="5703"/>
+        <location filename="../settingsform.ui" line="5727"/>
         <source>Normal</source>
         <translation>Normál</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="3006"/>
-        <location filename="../settingsform.ui" line="5708"/>
+        <location filename="../settingsform.ui" line="5732"/>
         <source>Bold</source>
         <translation>Félkövér</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="3011"/>
-        <location filename="../settingsform.ui" line="5713"/>
+        <location filename="../settingsform.ui" line="5737"/>
         <source>Italic</source>
         <translation>Dőlt</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="3016"/>
-        <location filename="../settingsform.ui" line="5718"/>
+        <location filename="../settingsform.ui" line="5742"/>
         <source>Bold Italic</source>
         <translation>Félkövér dőlt</translation>
     </message>
@@ -7212,7 +7212,7 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
         <location filename="../settingsform.ui" line="3924"/>
         <source>Unsorted kanji background:</source>
         <oldsource>Unsorted kanji bg.:</oldsource>
-        <translation>Rendezetlen kandzsi háttér:</translation>
+        <translation>Nem besorolt kandzsi háttere:</translation>
     </message>
     <message>
         <location filename="../settingsform.ui" line="3963"/>
@@ -7261,648 +7261,658 @@ Nyomja meg az ESC billentyűt a megszakításhoz</translation>
         <translation>Példaszavak háttere:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4134"/>
+        <location filename="../settingsform.ui" line="4121"/>
+        <source>Kanji readings:</source>
+        <translation>Kandzsiolvasatok:</translation>
+    </message>
+    <message>
+        <location filename="../settingsform.ui" line="4128"/>
+        <source>Missing reading translation:</source>
+        <translation>Hiányzó jelentés fordítás:</translation>
+    </message>
+    <message>
+        <location filename="../settingsform.ui" line="4158"/>
         <source>Study colors:</source>
         <translation>Tanulás színek:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4141"/>
+        <location filename="../settingsform.ui" line="4165"/>
         <source>Correct answer:</source>
         <translation>Helyes válasz:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4158"/>
+        <location filename="../settingsform.ui" line="4182"/>
         <source>Wrong answer:</source>
         <translation>Helytelen válasz:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4175"/>
+        <location filename="../settingsform.ui" line="4199"/>
         <source>New item:</source>
         <translation>Új tanulandó:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4192"/>
+        <location filename="../settingsform.ui" line="4216"/>
         <source>Kanji in reading test:</source>
         <translation>Kandzsi az olvasat gyakorláskor:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4241"/>
+        <location filename="../settingsform.ui" line="4265"/>
         <source>Study statistics:</source>
         <translation>Tanulás statisztika:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4254"/>
+        <location filename="../settingsform.ui" line="4278"/>
         <source>Color 2:</source>
         <translation>2. szín:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4261"/>
+        <location filename="../settingsform.ui" line="4285"/>
         <source>Color 3:</source>
         <translation>3. szín:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4274"/>
+        <location filename="../settingsform.ui" line="4298"/>
         <source>Color 1:</source>
         <translation>1. szín:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4330"/>
+        <location filename="../settingsform.ui" line="4354"/>
         <source>General settings:</source>
         <translation>Általános beállítások:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4337"/>
+        <location filename="../settingsform.ui" line="4361"/>
         <source>Start of test day:</source>
         <translation>Tesztnap kezdőpontja:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4355"/>
+        <location filename="../settingsform.ui" line="4379"/>
         <source>The hour when the daily long-term study test day starts</source>
         <translation>Az óra amikor új hosszú távú tanulási nap kezdődik</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4371"/>
+        <location filename="../settingsform.ui" line="4395"/>
         <source>[ 1 AM - 12 noon ]</source>
         <translation>[ hajnali 1 - déli 12]</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4386"/>
+        <location filename="../settingsform.ui" line="4410"/>
         <source>Show the last studied words with their results when finishing a long-term study session</source>
         <translation>Az utoljára gyakorolt szavak listájának megjelenítése az eredményekkel együtt a hosszú távú tanulás után</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4389"/>
+        <location filename="../settingsform.ui" line="4413"/>
         <source>Show test result after study</source>
         <translation>Teszteredmények a tanulás után</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4412"/>
+        <location filename="../settingsform.ui" line="4436"/>
         <source>Inclusion of new items:</source>
         <translation>Új elemek tanulása:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4419"/>
+        <location filename="../settingsform.ui" line="4443"/>
         <source>When to include:</source>
         <translation>Milyen időközönként:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4432"/>
+        <location filename="../settingsform.ui" line="4456"/>
         <source>Which days should the program add new items to study from the queue. The queue must hold items, or the study will start with only studied ones</source>
         <translation>Melyik napokon legyenek új elemek felvéve a tesztbe az előkészített listából. Az előkészített listának tartalmaznia kell elemeket, vagy a tanulás új elemek nélkül indul</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4436"/>
+        <location filename="../settingsform.ui" line="4460"/>
         <source>Daily (recommended)</source>
         <translation>Naponta (ajánlott)</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4441"/>
+        <location filename="../settingsform.ui" line="4465"/>
         <source>Every second day</source>
         <translation>Minden második nap</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4446"/>
+        <location filename="../settingsform.ui" line="4470"/>
         <source>Every third day</source>
         <translation>Minden harmadik nap</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4451"/>
+        <location filename="../settingsform.ui" line="4475"/>
         <source>Every fifth day</source>
         <translation>Minden ötödik nap</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4456"/>
+        <location filename="../settingsform.ui" line="4480"/>
         <source>Every week</source>
         <translation>Hetente</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4464"/>
+        <location filename="../settingsform.ui" line="4488"/>
         <source>Include at most:</source>
         <translation>Új elemek legfeljebb:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4482"/>
+        <location filename="../settingsform.ui" line="4506"/>
         <source>Number of fresh items to include from the queue when a new study session starts</source>
         <translation>Az előkészített listából legfeljebb hány új elem kerüljön a tesztbe amikor a tanulás elkezdődik</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4498"/>
+        <location filename="../settingsform.ui" line="4522"/>
         <source>[0 = ask before test]</source>
         <translation>[0 = kérdezzen rá]</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4513"/>
+        <location filename="../settingsform.ui" line="4537"/>
         <source>Try to avoid including several parts of the same word on the same study session</source>
         <translation>Kísérlet tevése azonos szó különböző elemeinek felvételére ugyanazon a tanulónapon</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4516"/>
+        <location filename="../settingsform.ui" line="4540"/>
         <source>Limit to a single item for each new word</source>
         <translation>Új szavak egyetlen elemére korlátozás</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4529"/>
+        <location filename="../settingsform.ui" line="4553"/>
         <source>Only include fresh items from the queue to study, if the due items on a given study day don&apos;t exceed a limited number of items</source>
         <translation>Csak akkor legyenek új elemek felvéve az előkészített listából a tesztbe, ha az esedékes elemek száma nem halad meg egy értéket</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4532"/>
+        <location filename="../settingsform.ui" line="4556"/>
         <source>Limit tested items by adding fewer new ones</source>
         <translation>Új elemek korlátozása kevesebb elem felvételével</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4539"/>
+        <location filename="../settingsform.ui" line="4563"/>
         <source>Limit new items above:</source>
         <translation>Új elemek az esedékes szám alatt:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4552"/>
+        <location filename="../settingsform.ui" line="4576"/>
         <source>Number of fresh items to include from the queue and due items together shouldn&apos;t exceed this number</source>
         <translation>Az esedékes elemek száma és az új elemek száma együtt nem haladhatja meg ezt az értéket</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4578"/>
+        <location filename="../settingsform.ui" line="4602"/>
         <source>Kanji readings test after main test:</source>
         <translation>Kandzsiolvasatok gyakorlása a teszt után:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4591"/>
+        <location filename="../settingsform.ui" line="4615"/>
         <source>Tested readings:</source>
         <translation>Gyakorolt olvasatok:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4604"/>
+        <location filename="../settingsform.ui" line="4628"/>
         <source>Which kanji readings found in the tested words to practice after a study session</source>
         <translation>Melyik fajta kandzsiolvasatok kerüljenek a gyakorlatba, amik a napi tesztben előfordultak</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4608"/>
+        <location filename="../settingsform.ui" line="4632"/>
         <source>ON readings</source>
         <translation>ON olvasatok</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4613"/>
+        <location filename="../settingsform.ui" line="4637"/>
         <source>Kun readings</source>
         <translation>Kun olvasatok</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4618"/>
+        <location filename="../settingsform.ui" line="4642"/>
         <source>Both ON and Kun</source>
         <translation>ON és Kun olvasatok</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4623"/>
-        <location filename="../settingsform.cpp" line="432"/>
+        <location filename="../settingsform.ui" line="4647"/>
         <location filename="../settingsform.cpp" line="433"/>
         <location filename="../settingsform.cpp" line="434"/>
         <location filename="../settingsform.cpp" line="435"/>
-        <location filename="../settingsform.cpp" line="1345"/>
-        <location filename="../settingsform.cpp" line="1346"/>
-        <location filename="../settingsform.cpp" line="1347"/>
+        <location filename="../settingsform.cpp" line="436"/>
         <location filename="../settingsform.cpp" line="1348"/>
+        <location filename="../settingsform.cpp" line="1349"/>
+        <location filename="../settingsform.cpp" line="1350"/>
+        <location filename="../settingsform.cpp" line="1351"/>
         <source>None</source>
         <translation>Semelyik</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4637"/>
+        <location filename="../settingsform.ui" line="4661"/>
         <source>Readings in:</source>
         <translation>Olvasatok az elemekben:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4650"/>
+        <location filename="../settingsform.ui" line="4674"/>
         <source>Practice kanji readings found in the selected words only</source>
         <translation>Csak a választott szavakban szereplő kandzsiolvasatok kerülnek a gyakorlatba</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4654"/>
+        <location filename="../settingsform.ui" line="4678"/>
         <source>New and mistaken words</source>
         <translation>Új és téves válaszokban</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4659"/>
+        <location filename="../settingsform.ui" line="4683"/>
         <source>New words</source>
         <translation>Új szavakban</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4664"/>
+        <location filename="../settingsform.ui" line="4688"/>
         <source>Mistakes</source>
         <translation>Téves válaszokban</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4669"/>
+        <location filename="../settingsform.ui" line="4693"/>
         <source>Every tested word</source>
         <translation>Minden tesztelt szóban</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4677"/>
+        <location filename="../settingsform.ui" line="4701"/>
         <source>Test settings:</source>
         <translation>Teszt beállításai:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4690"/>
+        <location filename="../settingsform.ui" line="4714"/>
         <source>Display the number of days the tested item will be due in, when selecting an answer button</source>
         <translation>A várható időköz napokban kifejezve amikor egy tesztelt elem esedékes lesz, adott válasz gombok megnyomása után</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4693"/>
+        <location filename="../settingsform.ui" line="4717"/>
         <source>Show estimated intervals above the answer buttons</source>
         <translation>Becsült időközök a válasz gombok felett</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4722"/>
+        <location filename="../settingsform.ui" line="4746"/>
         <source>The kana characters will be replaced by blanks when showing the written form of the word before the answer is given</source>
         <translation>A kana betűk helyére jelek kerülnek a szavak írott alakjában, mielőtt a kérdés meg lenne válaszolva</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4725"/>
+        <location filename="../settingsform.ui" line="4749"/>
         <source>Hide kana characters in written form, when kana reading is tested</source>
         <translation>Kana betűk kitakarása a szavak írott alakjában, ha a kana alak a kérdés</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4772"/>
-        <location filename="../settingsform.ui" line="4818"/>
-        <location filename="../settingsform.ui" line="5011"/>
+        <location filename="../settingsform.ui" line="4796"/>
+        <location filename="../settingsform.ui" line="4842"/>
+        <location filename="../settingsform.ui" line="5035"/>
         <source>Definition</source>
         <translation>Meghatározás</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4785"/>
-        <location filename="../settingsform.ui" line="4864"/>
-        <location filename="../settingsform.ui" line="4995"/>
+        <location filename="../settingsform.ui" line="4809"/>
+        <location filename="../settingsform.ui" line="4888"/>
+        <location filename="../settingsform.ui" line="5019"/>
         <source>Kana reading</source>
         <translation>Kana alak</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4795"/>
-        <location filename="../settingsform.ui" line="4874"/>
-        <location filename="../settingsform.ui" line="4979"/>
+        <location filename="../settingsform.ui" line="4819"/>
+        <location filename="../settingsform.ui" line="4898"/>
+        <location filename="../settingsform.ui" line="5003"/>
         <source>Written form</source>
         <translation>Írott alak</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4808"/>
+        <location filename="../settingsform.ui" line="4832"/>
         <source>Written form:</source>
         <translation>Írott alak:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4831"/>
+        <location filename="../settingsform.ui" line="4855"/>
         <source>Kana reading:</source>
         <translation>Kana alak:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4841"/>
-        <location filename="../settingsform.ui" line="5642"/>
+        <location filename="../settingsform.ui" line="4865"/>
+        <location filename="../settingsform.ui" line="5666"/>
         <source>Definition:</source>
         <translation>Meghatározás:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4890"/>
+        <location filename="../settingsform.ui" line="4914"/>
         <source>Tested</source>
         <translation>Megválaszolandó</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4906"/>
+        <location filename="../settingsform.ui" line="4930"/>
         <source>Primary hint</source>
         <translation>Elsődleges segítség</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4935"/>
+        <location filename="../settingsform.ui" line="4959"/>
         <source>*The primary hint is shown as the question for the tested item types. The other hint can also be revealed during the test.</source>
         <translation>*Az elsődleges segítség jelenik meg az aktuális megválaszolandó elem típusától függően. A másik segítség is megjeleníthető teszt közben.</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4961"/>
+        <location filename="../settingsform.ui" line="4985"/>
         <source>Type answer for:</source>
         <translation>Válasz begépelése ha a megválaszolandó:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4976"/>
+        <location filename="../settingsform.ui" line="5000"/>
         <source>Show a text field to enter the tested written form</source>
         <translation>Jelenjen meg szövegmező a megválaszolandó írott alakhoz</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="4992"/>
+        <location filename="../settingsform.ui" line="5016"/>
         <source>Show a text field to enter the tested kana reading</source>
         <translation>Jelenjen meg szövegmező a megválaszolandó kana alakhoz</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5008"/>
+        <location filename="../settingsform.ui" line="5032"/>
         <source>Show a text field to enter the tested definition</source>
         <translation>Jelenjen meg szövegmező a megválaszolandó meghatározáshoz</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5039"/>
+        <location filename="../settingsform.ui" line="5063"/>
         <source>Only show word as correctly answered when the answer was entered with the correct kana</source>
         <translation>Csak akkor legyen egy válasz helyesként jelölve, ha a beírt válaszban a kanahasználat egyezik a szóval</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5042"/>
+        <location filename="../settingsform.ui" line="5066"/>
         <source>Katakana and hiragana usage must match</source>
         <translation>Katakana és hiragana egyezés ellenőrzése</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5065"/>
+        <location filename="../settingsform.ui" line="5089"/>
         <source>Wait before testing an item again after a wrong answer:</source>
         <translation>Várakozás ideje mielőtt egy hibásan megválaszolt szó újra kérdés lesz:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5072"/>
+        <location filename="../settingsform.ui" line="5096"/>
         <source>In minutes:</source>
         <translation>Percben:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5108"/>
+        <location filename="../settingsform.ui" line="5132"/>
         <source>Offer to suspend test when a limit is reached:</source>
         <translation>Teszt felfüggesztésének lehetősége egy korlát elérésekor:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5121"/>
+        <location filename="../settingsform.ui" line="5145"/>
         <source>Suspend test if user is inactive</source>
         <translation>Teszt felfüggesztése ha a felhasználó inaktív</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5128"/>
+        <location filename="../settingsform.ui" line="5152"/>
         <source>Length of inactivity:</source>
         <translation>Időtartam után:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5142"/>
+        <location filename="../settingsform.ui" line="5166"/>
         <source>1 minute</source>
         <translation>1 perc</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5147"/>
+        <location filename="../settingsform.ui" line="5171"/>
         <source>1 and a half minutes</source>
         <translation>Másfél perc</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5152"/>
+        <location filename="../settingsform.ui" line="5176"/>
         <source>2 minutes</source>
         <translation>2 perc</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5157"/>
+        <location filename="../settingsform.ui" line="5181"/>
         <source>3 minutes</source>
         <translation>3 perc</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5162"/>
+        <location filename="../settingsform.ui" line="5186"/>
         <source>5 minutes</source>
         <translation>5 perc</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5176"/>
+        <location filename="../settingsform.ui" line="5200"/>
         <source>Suspend test if a number of items have been answered already</source>
         <translation>Teszt felfüggesztése, ha adott számú elem már meg lett válaszolva</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5179"/>
+        <location filename="../settingsform.ui" line="5203"/>
         <source>After tested items:</source>
         <translation>Válaszadás száma után:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5192"/>
+        <location filename="../settingsform.ui" line="5216"/>
         <source>Suspend test after this number of items</source>
         <translation>A teszt fel lesz függesztve az itt megadott számú elemre adott válasz elfogadása után</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5208"/>
+        <location filename="../settingsform.ui" line="5232"/>
         <source>Suspend test if a number of minutes have passed after studying started</source>
         <translation>Teszt felfüggesztése, ha adott idő eltelt a teszt megkezdése után</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5211"/>
+        <location filename="../settingsform.ui" line="5235"/>
         <source>After minutes passed:</source>
         <translation>Eltelt percek után:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5224"/>
+        <location filename="../settingsform.ui" line="5248"/>
         <source>Suspend test after this number of minutes</source>
         <translation>A teszt fel lesz függesztve az itt megadott számú perc elteltével</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5253"/>
+        <location filename="../settingsform.ui" line="5277"/>
         <source>Printed parts:</source>
         <translation>Nyomtatott részek:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5266"/>
+        <location filename="../settingsform.ui" line="5290"/>
         <source>Print grammatical type</source>
         <translation>Szófaj nyomtatása</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5273"/>
+        <location filename="../settingsform.ui" line="5297"/>
         <source>Instead of the word definition found in the dictionary, print the definition you set for studying</source>
         <translation>A szótárban található szómeghatározások helyett a tanulásra szánt meghatározás legyen kinyomtatva</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5276"/>
+        <location filename="../settingsform.ui" line="5300"/>
         <source>Print user specified study definitions</source>
         <translation>Saját szómeghatározások nyomtatása</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5289"/>
+        <location filename="../settingsform.ui" line="5313"/>
         <source>Check to print the written form of words. Uncheck to print the kana reading</source>
         <translation>Ha be van jelölve, a szavak írott alakja kerül nyomtatásra. Kijelölés hiányában a kana alak lesz kinyomtatva</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5292"/>
+        <location filename="../settingsform.ui" line="5316"/>
         <source>Print kanji</source>
         <translation>Kandzsi nyomtatása</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5299"/>
+        <location filename="../settingsform.ui" line="5323"/>
         <source>Furigana/reading:</source>
         <translation>Furigana/olvasat:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5312"/>
+        <location filename="../settingsform.ui" line="5336"/>
         <source>Placement of kana reading of kanji in words, when kanji is printed</source>
         <translation>A kana olvasat elhelyezése a kandzsi alak közelében ha a kandzsi alak lesz nyomtatva</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5316"/>
+        <location filename="../settingsform.ui" line="5340"/>
         <source>No furigana</source>
         <translation>Nincs furigana</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5321"/>
+        <location filename="../settingsform.ui" line="5345"/>
         <source>Furigana above kanji</source>
         <translation>Furigana a kandzsi felett</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5326"/>
+        <location filename="../settingsform.ui" line="5350"/>
         <source>Reading after kanji</source>
         <translation>Kana alak a kandzsi után</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5334"/>
+        <location filename="../settingsform.ui" line="5358"/>
         <source>Order:</source>
         <translation>Sorrend:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5351"/>
+        <location filename="../settingsform.ui" line="5375"/>
         <source>Japanese - Definition</source>
         <translation>Japán - Meghatározás</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5356"/>
+        <location filename="../settingsform.ui" line="5380"/>
         <source>Definition - Japanese</source>
         <translation>Meghatározás - Japán</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5380"/>
+        <location filename="../settingsform.ui" line="5404"/>
         <source>Layout and size:</source>
         <translation>Elrendezés és méret:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5393"/>
+        <location filename="../settingsform.ui" line="5417"/>
         <source>Print each word line as a single block of text, instead of printing the Japanese and definition parts in separate columns</source>
         <translation>Egyetlen összefüggő szövegblokk legyen nyomtatva az egyes szavak sorában, a japán alak és a meghatározás oszlopokba rendezése helyett</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5396"/>
+        <location filename="../settingsform.ui" line="5420"/>
         <source>Flow definition and Japanese together</source>
         <translation>Folytonos meghatározás és japán alak</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5409"/>
+        <location filename="../settingsform.ui" line="5433"/>
         <source>Print the word definition and its Japanese form on alternate pages. This can be used for studying</source>
         <translation>A szómeghatározás és a japán alak külön oldalon lesz nyomtatva. Ezt lehet tanulásra használni</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5412"/>
+        <location filename="../settingsform.ui" line="5436"/>
         <source>Definition and Japanese on separate pages</source>
         <translation>Szómeghatározás és japán alak külön oldalon</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5419"/>
+        <location filename="../settingsform.ui" line="5443"/>
         <source>Line height:</source>
         <translation>Sormagasság:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5432"/>
+        <location filename="../settingsform.ui" line="5456"/>
         <source>Physical size of a printed line on paper</source>
         <translation>A nyomtatott sorok fizikai mérete a papíron</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5436"/>
+        <location filename="../settingsform.ui" line="5460"/>
         <source>4 mm / 0.16 inches</source>
         <translation>4 mm / 0.16 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5441"/>
+        <location filename="../settingsform.ui" line="5465"/>
         <source>5 mm / 0.2 inches</source>
         <translation>5 mm / 0.2 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5446"/>
+        <location filename="../settingsform.ui" line="5470"/>
         <source>6 mm / 0.24 inches</source>
         <translation>6 mm / 0.24 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5451"/>
+        <location filename="../settingsform.ui" line="5475"/>
         <source>7 mm / 0.28 inches</source>
         <translation>7 mm / 0.28 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5456"/>
+        <location filename="../settingsform.ui" line="5480"/>
         <source>8 mm / 0.32 inches</source>
         <translation>8 mm / 0.32 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5461"/>
+        <location filename="../settingsform.ui" line="5485"/>
         <source>9 mm / 0.36 inches</source>
         <translation>9 mm / 0.36 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5466"/>
+        <location filename="../settingsform.ui" line="5490"/>
         <source>10 mm / 0.4 inches</source>
         <translation>10 mm / 0.4 hüvelyk</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5474"/>
+        <location filename="../settingsform.ui" line="5498"/>
         <source>Columns on page:</source>
         <translation>Oszlopok száma egy oldalon:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5487"/>
+        <location filename="../settingsform.ui" line="5511"/>
         <source>Number of Japanese / definition columns on each page</source>
         <translation>A japán alak és szómeghatározás oszlopainak száma minden oldalon</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5528"/>
+        <location filename="../settingsform.ui" line="5552"/>
         <source>Customization:</source>
         <oldsource>Decoration:</oldsource>
         <translation>Testreszabás:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5541"/>
+        <location filename="../settingsform.ui" line="5565"/>
         <source>Draw a light gray background for every second word to visually separate them</source>
         <translation>Minden második szó háttere legyen halvány szürke, hogy a szavak vizuálisan meg legyenek különböztetve egymástól</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5544"/>
+        <location filename="../settingsform.ui" line="5568"/>
         <source>Background for every second row</source>
         <translation>Háttér minden második sorban</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5557"/>
+        <location filename="../settingsform.ui" line="5581"/>
         <source>Separate each word with a line</source>
         <translation>A szavak legyenek vonallal elválasztva</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5560"/>
+        <location filename="../settingsform.ui" line="5584"/>
         <source>Separator line between rows</source>
         <translation>Választóvonal a szavak sorai között</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5573"/>
+        <location filename="../settingsform.ui" line="5597"/>
         <source>Print the page number at the bottom of the page</source>
         <translation>Oldalszám nyomtatása minden lap alján</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5576"/>
+        <location filename="../settingsform.ui" line="5600"/>
         <source>Print page number</source>
         <translation>Oldalszám nyomtatása</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5596"/>
+        <location filename="../settingsform.ui" line="5620"/>
         <source>Printer font settings:</source>
         <translation>Nyomtatás betűinek beállításai:</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5609"/>
+        <location filename="../settingsform.ui" line="5633"/>
         <source>Use the fonts selected for dictionary search results, instead of different fonts just for printing</source>
         <translation>A szótári találatokhoz választott betűkészlet használata, külön betűbeállítások helyett</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5612"/>
+        <location filename="../settingsform.ui" line="5636"/>
         <source>Use dictionary fonts</source>
         <translation>Szótár betűkészletének használata</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5632"/>
+        <location filename="../settingsform.ui" line="5656"/>
         <source>Font for printing kanji and kana</source>
         <translation>Kandzsi és kana nyomtatására használt betűtípus</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5655"/>
+        <location filename="../settingsform.ui" line="5679"/>
         <source>Font for printing most non-Japanese text</source>
         <translation>A legtöbb nem japán szöveg nyomtatására használt betűtípus</translation>
     </message>
     <message>
-        <location filename="../settingsform.ui" line="5683"/>
+        <location filename="../settingsform.ui" line="5707"/>
         <source>Font for printing smaller text, like word notes</source>
         <translation>Kisebb szövegek, például szavak szófajának nyomtatására használt betűtípus</translation>
     </message>
     <message>
-        <location filename="../settingsform.cpp" line="1024"/>
+        <location filename="../settingsform.cpp" line="1027"/>
         <source>Select folder for user backups.</source>
         <translation>Biztonsági mentés mappájának kiválasztása.</translation>
     </message>
     <message>
-        <location filename="../settingsform.cpp" line="1220"/>
+        <location filename="../settingsform.cpp" line="1223"/>
         <source>The insert position won&apos;t change when the cursor is moved.</source>
         <translation>A beillesztés helye nem változik a kurzor mozgatásakor.</translation>
     </message>
@@ -8995,12 +9005,12 @@ If you would like to study new words, start a new test and allow new words to be
         <translation>1 hónap</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1319"/>
+        <location filename="../wordstudylistform.cpp" line="1322"/>
         <source>Start the test</source>
         <translation>Teszt indítás</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="772"/>
+        <location filename="../wordstudylistform.cpp" line="775"/>
         <source>Do you want to remove the selected items?
 
 The items will be removed from the queue, but their custom definitions shared between tests won&apos;t change.</source>
@@ -9009,7 +9019,7 @@ The items will be removed from the queue, but their custom definitions shared be
 Az elemek kikerülnek az előkészített listából, de a tanuló saját meghatározásai nem tűnnek el.</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="774"/>
+        <location filename="../wordstudylistform.cpp" line="777"/>
         <source>Do you want to remove the selected items?
 
 The study data for the selected items will be reset and the items will be removed from this list. The custom definitions shared between tests won&apos;t change.
@@ -9022,7 +9032,7 @@ Az elemektanulmányi adatai törlődnek, és az elemek lekerülnek a listáról.
 Ez a művelet utólag nem vonható vissza.</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="786"/>
+        <location filename="../wordstudylistform.cpp" line="789"/>
         <source>Do you want to move the selected items back to the queue?
 
 The study data of the items will be reset, the items will be removed from this list and moved to the end of the queue. The custom definitions shared between tests won&apos;t change.
@@ -9035,7 +9045,7 @@ Az elemektanulmányi adatai törlődnek, az elemek lekerülnek erről a listár�
 Ez a művelet utólag nem vonható vissza.</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="814"/>
+        <location filename="../wordstudylistform.cpp" line="817"/>
         <source>All study data, including past statistics, item level and difficulty will be reset for the selected items. The items will be shown like they were new the next time the test starts. Consider moving the items back to the queue instead.
 
 Do you want to reset the study data?</source>
@@ -9044,118 +9054,118 @@ Do you want to reset the study data?</source>
 Törlődjenek a tanulmányi adatok?</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1052"/>
-        <location filename="../wordstudylistform.cpp" line="1136"/>
+        <location filename="../wordstudylistform.cpp" line="1055"/>
+        <location filename="../wordstudylistform.cpp" line="1139"/>
         <source>Main hint</source>
         <translation>Elsődleges segítség</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1080"/>
-        <location filename="../wordstudylistform.cpp" line="1166"/>
+        <location filename="../wordstudylistform.cpp" line="1083"/>
+        <location filename="../wordstudylistform.cpp" line="1169"/>
         <source>Default</source>
         <translation>Alapértelmezett</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1080"/>
-        <location filename="../wordstudylistform.cpp" line="1166"/>
+        <location filename="../wordstudylistform.cpp" line="1083"/>
+        <location filename="../wordstudylistform.cpp" line="1169"/>
         <source>Written</source>
         <translation>Írott</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1080"/>
-        <location filename="../wordstudylistform.cpp" line="1166"/>
+        <location filename="../wordstudylistform.cpp" line="1083"/>
+        <location filename="../wordstudylistform.cpp" line="1169"/>
         <source>Kana</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1080"/>
-        <location filename="../wordstudylistform.cpp" line="1166"/>
+        <location filename="../wordstudylistform.cpp" line="1083"/>
+        <location filename="../wordstudylistform.cpp" line="1169"/>
         <source>Definition</source>
         <translation>Meghatározás</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1104"/>
+        <location filename="../wordstudylistform.cpp" line="1107"/>
         <source>Priority</source>
         <translation>Prioritás</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Highest</source>
         <translation>Legmagasabb</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Very high</source>
         <translation>Nagyon magas</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>High</source>
         <translation>Magas</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Higher</source>
         <translation>Magasabb</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Normal</source>
         <translation>Normál</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Lower</source>
         <translation>Alacsonyabb</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Low</source>
         <translation>Alacsony</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Very low</source>
         <translation>Nagyon alacsony</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1115"/>
+        <location filename="../wordstudylistform.cpp" line="1118"/>
         <source>Lowest</source>
         <translation>Legalacsonyabb</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1119"/>
+        <location filename="../wordstudylistform.cpp" line="1122"/>
         <source>Ctrl+%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1124"/>
-        <location filename="../wordstudylistform.cpp" line="1220"/>
+        <location filename="../wordstudylistform.cpp" line="1127"/>
+        <location filename="../wordstudylistform.cpp" line="1223"/>
         <source>Remove from deck...</source>
         <translation>Pakliból törlés...</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1192"/>
+        <location filename="../wordstudylistform.cpp" line="1195"/>
         <source>Study options</source>
         <translation>Tanulási adatok</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1195"/>
+        <location filename="../wordstudylistform.cpp" line="1198"/>
         <source>Increase level</source>
         <translation>Szint növelése</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1203"/>
+        <location filename="../wordstudylistform.cpp" line="1206"/>
         <source>Decrease level</source>
         <translation>Szint csökkentése</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1212"/>
+        <location filename="../wordstudylistform.cpp" line="1215"/>
         <source>Reset study data</source>
         <translation>Tanulási adatok törlése</translation>
     </message>
     <message>
-        <location filename="../wordstudylistform.cpp" line="1227"/>
+        <location filename="../wordstudylistform.cpp" line="1230"/>
         <source>Move back to queue...</source>
         <translation>Vissza az előkészített listába...</translation>
     </message>
@@ -11227,43 +11237,43 @@ Biztos törlődjön?</translation>
 <context>
     <name>ZKanjiGridView</name>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1509"/>
+        <location filename="../zkanjigridview.cpp" line="1527"/>
         <source>Kanji information...</source>
         <translation>Kandzsi információ...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1512"/>
+        <location filename="../zkanjigridview.cpp" line="1530"/>
         <source>Add to group...</source>
         <translation>Kandzsi csoportba...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1514"/>
+        <location filename="../zkanjigridview.cpp" line="1532"/>
         <source>Collect words...</source>
         <translation>Szavak gyűjtése...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1517"/>
+        <location filename="../zkanjigridview.cpp" line="1535"/>
         <source>Edit definition...</source>
         <translation>Kandzsik jelentései...</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1520"/>
+        <location filename="../zkanjigridview.cpp" line="1538"/>
         <source>Copy to clipboard</source>
         <translation>Vágólapra</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1522"/>
+        <location filename="../zkanjigridview.cpp" line="1540"/>
         <source>Append to clipboard</source>
         <translation>Vágólaphoz ad</translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1233"/>
+        <location filename="../zkanjigridview.cpp" line="1251"/>
         <source>Ctrl+D</source>
         <comment>Deselect</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../zkanjigridview.cpp" line="1233"/>
+        <location filename="../zkanjigridview.cpp" line="1251"/>
         <source>Ctrl+Shift+A</source>
         <comment>Deselect</comment>
         <translation type="unfinished"></translation>
@@ -11335,40 +11345,40 @@ Biztos törlődjön?</translation>
 <context>
     <name>gUI</name>
     <message>
-        <location filename="../settings.cpp" line="381"/>
+        <location filename="../settings.cpp" line="384"/>
         <source>Couldn&apos;t create or overwrite the state settings file. Please make sure you have permission to modify the file %1</source>
         <oldsource>Couldn&apos;t create or overwrite the state settings file. Please make sure you have permission to modify the file %1.</oldsource>
         <translation>Nem sikerült felülírni a programállapot fájlt. Megfelelő jogosultság szükséges a fájl módosításához: %1</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="551"/>
+        <location filename="../settings.cpp" line="554"/>
         <source>There was an error writing the state settings file.</source>
         <translation>Hiba történt a programállapot fájl írása közben.</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="551"/>
+        <location filename="../settings.cpp" line="554"/>
         <source>Please make sure there&apos;s enough disk space to write to %1 and &quot;%2&quot;.</source>
         <translation>Nincs elég tárhely a fájl írásához: %1</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="551"/>
-        <location filename="../settings.cpp" line="553"/>
+        <location filename="../settings.cpp" line="554"/>
+        <location filename="../settings.cpp" line="556"/>
         <source>Try again</source>
         <translation>Újra</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="554"/>
+        <location filename="../settings.cpp" line="557"/>
         <source>Cancel</source>
         <translation>Mégse</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="1214"/>
+        <location filename="../settings.cpp" line="1218"/>
         <source>Couldn&apos;t open the state settings file for reading. Please make sure you have permission to access the file %1</source>
         <oldsource>Couldn&apos;t open the state settings file for reading. Please make sure you have permission to access the file %1.</oldsource>
         <translation>Nem sikerült megnyitni a programállapot fájlt olvasáshoz. Megfelelő jogosultság szükséges a fájlhoz való hozzáféréshez: %1</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="1356"/>
+        <location filename="../settings.cpp" line="1360"/>
         <source>There was an error in states.xml at line %1, position %2, of the type %3. The program can load normally with some settings lost.</source>
         <translation>Hiba a states.xml fájlban itt: %1. sor, %2. karakter. A hiba típusa: %3. A program rendesen elindul, de beállítások elveszhetnek.</translation>
     </message>
