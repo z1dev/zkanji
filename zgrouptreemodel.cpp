@@ -285,7 +285,7 @@ Qt::ItemFlags GroupTreeModel::flags(const TreeItem *item) const
 bool GroupTreeModel::hasChildren(const TreeItem *parent) const
 {
     return parent == nullptr || (parent->userData() != 0 && ((GroupBase*)parent->userData())->isCategory() && (placeholder || 
-        ((!onlycateg && ((GroupCategoryBase*)parent->userData())->isEmpty()) || ((GroupCategoryBase*)parent->userData())->categoryCount() != 0)
+        ((!onlycateg && !((GroupCategoryBase*)parent->userData())->isEmpty()) || ((GroupCategoryBase*)parent->userData())->categoryCount() != 0)
         ));
 }
 
