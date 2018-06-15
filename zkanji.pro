@@ -332,4 +332,6 @@ DISTFILES +=
 RESOURCES += \
     Resources/resources.qrc
 
-TRANSLATIONS = lang/zkanji_hu.ts
+TRANSLATIONS = \
+	lang/zkanji.ts \
+	lang/zkanji_hu.ts

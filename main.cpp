@@ -50,7 +50,7 @@
 // Version of program as ansi-text. Must not contain non-latin characters.
 //
 // Versioning only changes between releases.
-char ZKANJI_PROGRAM_VERSION[] = "v0.0.5pre-alpha";
+char ZKANJI_PROGRAM_VERSION[] = "v0.1.0 (beta)";
 
 int showAndQuit(QString title, QString text)
 {
