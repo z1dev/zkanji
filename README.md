@@ -13,7 +13,7 @@ replace parts accordingly.)
 ## Description
 
 zkanji is an open-source, cross-platform, feature rich Japanese language study
-suite and dictionary software. It is beta, meaning it's features are in place
+suite and dictionary software. It is beta, meaning its features are in place
 but not fully tested. Use it at your own risk! zkanji has several kanji look-up
 methods, example sentences for many Japanese words, vocabulary printing, JLPT
 levels indicated for words and kanji, a spaced-repetition system for studying
