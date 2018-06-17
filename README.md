@@ -79,7 +79,7 @@ with the path to the compiled zkanji executable as a command-line parameter.
 This will copy some DLLs next to the executable, and also create some extra
 folders. These extra folders, except the one called `platforms` (this is
 important!), must be copied to a subfolder named `plugins`. The `platforms`
-folder should be kept kept in the root of the executable.
+folder should be kept in the root of the executable.
 
 ---
 
