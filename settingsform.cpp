@@ -1058,7 +1058,7 @@ void SettingsForm::refSelChanged()
 
     // The whole selection is a single block.
     bool single = true;
-    for (int ix = 1, sel = rows.size(); single && ix != sel; ++ix)
+    for (int ix = 1, sel = rows.size(); single && ix < sel; ++ix)
     {
         if (rows[ix] != rows[ix - 1] + 1)
             single = false;

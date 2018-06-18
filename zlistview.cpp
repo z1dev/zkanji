@@ -1370,6 +1370,7 @@ void ZListView::keyPressEvent(QKeyEvent *e)
     if (e == QKeySequence::Deselect
 #ifndef Q_OS_LINUX
         // Qt is missing this important key combination for Windows and Mac.
+        //: Deselect All key combination (Select All is Ctrl+A in English)
         || e == QKeySequence(tr("Ctrl+D", "Deselect")) || e == QKeySequence(tr("Ctrl+Shift+A", "Deselect"))
 #endif
         )
@@ -1511,11 +1512,11 @@ void ZListView::keyPressEvent(QKeyEvent *e)
         return;
     }
 
-    if (!shift)
+    if (!shift && ctrl)
     {
-        if (!ctrl)
-            clearSelection();
-        else
+        //if (!ctrl)
+        //    clearSelection();
+        //else
             commitPivotSelection();
     }
 
