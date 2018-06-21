@@ -402,21 +402,12 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
 {
     QStylePainter p(viewport());
     const QSize &size = viewport()->size();
-    QStyleOptionViewItem opts;
-    opts.initFrom(this);
-    opts.showDecorationSelected = true;
-    QBrush oldbrush = p.brush();
 
     if (list.empty())
     {
-        p.setBrush(opts.palette.color(QPalette::Normal, QPalette::Base));
-        p.fillRect(event->rect() /*QRect(0, 0, size.width(), size.height())*/, p.brush());
-        p.setBrush(oldbrush);
+        p.fillRect(event->rect(), QBrush(Settings::textColor(this, ColorSettings::Bg)));
         return;
     }
-
-    QPen oldpen = p.pen();
-    QFont oldfont = p.font();
 
     int vpos = verticalScrollBar()->value();
 
@@ -428,24 +419,16 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
     // Current item to be drawn.
     int pos = top == 0 ? 0 : rows[top - 1];
 
-    //int gridHint = p.style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-    //QColor gridColor = static_cast<QRgb>(gridHint);
-
-    //QColor gridColor;
-    //if (Settings::colors.grid.isValid())
-    //    gridColor = Settings::colors.grid;
-    //else
-    //{
-    //    int gridHint = qApp->style()->styleHint(QStyle::SH_Table_GridLineColor, &opts, this);
-    //    gridColor = static_cast<QRgb>(gridHint);
-    //}
-
     QColor gridColor = Settings::uiColor(ColorSettings::Grid);
 
     ZRect r(0, y, -1, heights - 1);
     int lastwidth = std::numeric_limits<int>::max();
+
+    QColor pencol;
+    QColor brushcol;
     while (top != rows.size() && r.top() <= size.height())
     {
+        p.setPen(gridColor);
         while (pos != rows[top])
         {
             r.setLeft(r.right() + 1);
@@ -453,16 +436,16 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
 
             if (!selected(pos))
             {
-                p.setPen(opts.palette.color(QPalette::Normal, QPalette::Text));
-                p.setBrush(opts.palette.color(QPalette::Normal, QPalette::Base));
+                pencol = Settings::textColor(this, ColorSettings::Text);
+                brushcol = Settings::textColor(this, ColorSettings::Bg);
             }
             else
             {
-                p.setPen(opts.palette.color(QPalette::Normal, QPalette::HighlightedText));
-                p.setBrush(opts.palette.color(QPalette::Normal, QPalette::Highlight));
+                pencol = Settings::textColor(this, ColorSettings::SelText);
+                brushcol = Settings::textColor(this, ColorSettings::SelBg);
             }
 
-            paintItem(pos, p, r);
+            paintItem(pos, p, r, brushcol, pencol);
             p.setPen(gridColor);
             p.drawLine(r.right(), y, r.right(), y + heights - 1);
             ++pos;
@@ -475,20 +458,12 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
         lastwidth = r.right() + 1;
         y += heights;
 
-        p.setBrush(opts.palette.color(QPalette::Normal, QPalette::Base));
-        p.fillRect(ZRect(QPoint(lastwidth, r.top()), QPoint(size.width(), r.bottom() + 1)), p.brush());
+        p.fillRect(ZRect(QPoint(lastwidth, r.top()), QPoint(size.width(), r.bottom() + 1)), Settings::textColor(this, ColorSettings::Bg));
 
         r = ZRect(0, r.bottom() + 1, -1, heights - 1);
     }
     if (top == rows.size())
-    {
-        p.setBrush(opts.palette.color(QPalette::Normal, QPalette::Base));
-        p.fillRect(QRect(QPoint(0, r.top()), QPoint(size.width(), size.height())), p.brush());
-        p.setBrush(oldbrush);
-    }
-
-    p.setFont(oldfont);
-    p.setPen(oldpen);
+        p.fillRect(QRect(QPoint(0, r.top()), QPoint(size.width(), size.height())), Settings::textColor(this, ColorSettings::Bg));
 }
 
 void ZRadicalGrid::resizeEvent(QResizeEvent *event)
@@ -1089,20 +1064,13 @@ int ZRadicalGrid::itemWidth(int index)
     return items[index]->width;
 }
 
-void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r)
+void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r, QColor bgcol, QColor textcol)
 {
-    //QFont::StyleStrategy ss;
-
     QFont radfont = Settings::radicalFont();
-    //ss = QFont::StyleStrategy(QFont::PreferDevice | QFont::NoSubpixelAntialias | QFont::PreferAntialias);
-    //radfont.setStyleStrategy(ss);
-    //radfont.setFamily(radicalsFontName());
     radfont.setPointSize(radfontsize);
     QFontMetrics radmet(radfont);
 
     QFont namefont;
-    //ss = QFont::StyleStrategy(namefont.styleStrategy() | QFont::NoSubpixelAntialias | QFont::PreferAntialias);
-    //namefont.setStyleStrategy(ss);
     namefont.setFamily(Settings::fonts.kana);
     namefont.setPointSize(namefontsize);
     QFontMetrics namemet(namefont);
@@ -1118,8 +1086,8 @@ void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r)
 
     int radwidth = 0;
 
-    QFont oldfont = p.font();
-    p.fillRect(r, p.brush());
+    p.setPen(textcol);
+    p.fillRect(r, bgcol);
 
     QString str;
     if (mode == RadicalFilterModes::Parts || mode == RadicalFilterModes::Radicals || (!group && !names))
@@ -1194,8 +1162,6 @@ void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r)
         p.setFont(infofont);
         p.drawText(r.left(), r.bottom() - heights * 0.24, radwidth, heights * 0.24, Qt::AlignHCenter | Qt::AlignVCenter, str);
     }
-
-    p.setFont(oldfont);
 }
 
 int ZRadicalGrid::indexAt(int x, int y)

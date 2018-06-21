@@ -168,7 +168,7 @@ private:
     int itemWidth(int index);
 
     // Drawing of a single item. The index given is from the list.
-    void paintItem(int index, QStylePainter &p, const ZRect &r);
+    void paintItem(int index, QStylePainter &p, const ZRect &r, QColor bgcol, QColor textcol);
 
     // Returns the index of the item at the given coordinate in the list. If there is no item
     // at index, or the item is for stroke count, the result is -1.
