@@ -571,7 +571,7 @@ void ZRadicalGrid::init()
         radfontsize = lastsize;
     lastsize = -1;
 
-    float nameh = 0.4f;
+    float nameh = 0.5f;
     namefontsize = int(heights * nameh);
     QFont namefont;
 
@@ -582,7 +582,7 @@ void ZRadicalGrid::init()
     namefont.setPointSize(namefontsize);
 
     QFontMetrics namemet(namefont);
-    while (namemet.boundingRect(QString(QChar(0x9F3B))).height() > int(heights * 0.4))
+    while (namemet.boundingRect(QString(QChar(0x9F3B))).height() > int(heights * 0.5))
     {
         QFontInfo fi(namefont);
         lastsize = fi.pointSize();
@@ -602,11 +602,11 @@ void ZRadicalGrid::init()
         namefontsize = lastsize;
     lastsize = -1;
 
-    float infoh = 0.24f;
+    float infoh = 0.32f;
     notesfontsize = int(heights * infoh);
     QFont notesfont { Settings::fonts.info, notesfontsize };
     QFontMetrics nfmet(notesfont);
-    while (nfmet.boundingRect(QStringLiteral("123456789")).height() > int(heights * 0.24))
+    while (nfmet.boundingRect(QStringLiteral("123456789")).height() > int(heights * 0.32))
     {
         QFontInfo fi(notesfont);
         lastsize = fi.pointSize();
@@ -1076,7 +1076,7 @@ void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r, QColor
     QFontMetrics namemet(namefont);
 
     QFont infofont{ Settings::fonts.info, notesfontsize };
-    QFontMetrics infomet(infofont);
+    //QFontMetrics infomet(infofont);
 
     QChar comma(0x3001);
 
