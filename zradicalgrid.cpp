@@ -1097,13 +1097,15 @@ void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r, QColor
         {
             str = QString::number(-(short)list[index]);
             radwidth = 0;
+            //p.drawText(r.left(), r.top(), heights - 1, heights - 1, Qt::AlignHCenter | Qt::AlignVCenter, str);
+            drawTextBaseline(&p, 0, r.top() + r.height() * 0.7, true, r, str);
         }
         else
         {
             str = mode == RadicalFilterModes::Parts ? QChar(ZKanji::radklist[list[index]].first) : mode == RadicalFilterModes::Radicals ? radsymbols[list[index]] : ZKanji::radlist[list[index]]->ch;
             radwidth = heights - 1;
+            p.drawText(r.left(), r.top(), heights - 1, heights - 1 - heights * 0.25, Qt::AlignHCenter | Qt::AlignVCenter, str);
         }
-        p.drawText(r.left(), r.top(), heights - 1, heights - 1 - heights * 0.25, Qt::AlignHCenter | Qt::AlignVCenter, str);
     }
     else
     {
