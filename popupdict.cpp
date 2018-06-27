@@ -52,6 +52,8 @@ PopupDictionary::PopupDictionary(QWidget *parent) : base(parent), ui(new Ui::Pop
     ui->dictionary->view()->setSizeBase(ListSizeBase::Popup);
     ui->dictionary->view()->setGroupDisplay(true);
 
+    ui->dictionary->restoreState(FormStates::popupdict.dict);
+
     connect(qApp, &QApplication::applicationStateChanged, this, &PopupDictionary::appStateChange);
     connect(gUI, &GlobalUI::settingsChanged, this, &PopupDictionary::settingsChanged);
 
@@ -208,6 +210,7 @@ bool PopupDictionary::event(QEvent *e)
 
 void PopupDictionary::closeEvent(QCloseEvent *e)
 {
+    ui->dictionary->saveState(FormStates::popupdict.dict);
     emit beingClosed();
 
     base::closeEvent(e);
