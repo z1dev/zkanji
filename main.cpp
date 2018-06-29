@@ -16,6 +16,10 @@
 #include <QSharedMemory>
 #include <QStringBuilder>
 #include <QTextStream>
+
+//#include <QDesktopWidget>
+//#include <QScreen>
+
 #include <initializer_list>
 #include <iostream>
 
@@ -977,6 +981,12 @@ int main(int argc, char **argv)
         gUI->applySettings();
 
         a.postEvent(gUI, new StartEvent, INT_MIN);
+
+        //qreal dpi = QApplication::primaryScreen()->physicalDotsPerInch();
+        //qreal dpi2 = QApplication::primaryScreen()->logicalDotsPerInchY();
+        //qreal ratio = (qreal)QApplication::primaryScreen()->logicalDotsPerInchY() / QApplication::primaryScreen()->physicalDotsPerInchY();
+        //QMessageBox::information(nullptr, "zkanji", QString("%1, %2, %3").arg(dpi).arg(dpi2).arg(ratio));
+
         int result = a.exec();
         return result;
     }

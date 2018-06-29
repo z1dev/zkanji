@@ -1814,7 +1814,8 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
             if (c != nullptr && c->jlptn != 0)
             {
                 QFont f = Settings::notesFont();
-                f.setPointSize(r.height() / 2 - 2);
+                //f.setPointSize(r.height() / 2 - 2);
+                f.setPixelSize(r.height() * 0.6);
                 painter->save();
                 painter->setFont(f);
 

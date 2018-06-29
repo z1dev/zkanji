@@ -1312,6 +1312,11 @@ bool SettingsForm::event(QEvent *e)
     return base::event(e);
 }
 
+namespace Settings
+{
+    extern qreal _scaleratio;
+}
+
 bool SettingsForm::eventFilter(QObject *o, QEvent *e)
 {
     if (o == ui->kanjiPreview && e->type() == QEvent::Paint)
@@ -1326,7 +1331,7 @@ bool SettingsForm::eventFilter(QObject *o, QEvent *e)
 
         p.fillRect(r, Settings::textColor(ui->kanjiPreview, ColorSettings::SystemColorTypes::Bg));
 
-        QFont kfont = { ui->kanjiFontCBox->currentText(), Settings::scaled(ui->kanjiSizeCBox->currentText().toInt()) };
+        QFont kfont = { ui->kanjiFontCBox->currentText(), Settings::scaled(ui->kanjiSizeCBox->currentText().toInt() / Settings::_scaleratio) };
         if (ui->kanjiAliasBox->isChecked())
         {
             QFont::StyleStrategy ss = kfont.styleStrategy();

@@ -12,6 +12,9 @@
 #include <QDir>
 #include <QByteArray>
 #include <QStringBuilder>
+
+#include <QScreen>
+
 #include "settings.h"
 #include "fontsettings.h"
 #include "generalsettings.h"
@@ -137,6 +140,8 @@ namespace Settings
     KanjiSettings kanji;
     StudySettings study;
     DataSettings data;
+
+    qreal _scaleratio = 1;
 
     void saveIniFile()
     {
@@ -758,6 +763,9 @@ namespace Settings
             gUI->applyStyleSheet();
             qApp->setFont(f);
         }
+
+        _scaleratio = (qreal)QApplication::primaryScreen()->logicalDotsPerInchY() / QApplication::primaryScreen()->physicalDotsPerInchY();
+
     }
 
     void loadIniFile()
@@ -1375,7 +1383,7 @@ namespace Settings
 
     QFont kanjiFont(bool scaled)
     {
-        QFont f = { fonts.kanji, Settings::scaled(fonts.kanjifontsize) };
+        QFont f = { fonts.kanji, Settings::scaled(fonts.kanjifontsize / _scaleratio) };
         if (Settings::fonts.nokanjialias)
         {
             QFont::StyleStrategy ss = f.styleStrategy();
@@ -1750,17 +1758,17 @@ namespace Settings
 
     double scaling()
     {
-        return general.scale / 100.0;
+        return general.scale / 100.0 * _scaleratio;
     }
 
     int scaled(int siz)
     {
-        return siz * general.scale / 100.0;
+        return siz * general.scale / 100.0 * _scaleratio;
     }
 
     int scaled(double siz)
     {
-        return siz * general.scale / 100.0;
+        return siz * general.scale / 100.0 * _scaleratio;
     }
 
     QSize scaled(QSize siz)
