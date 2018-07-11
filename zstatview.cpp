@@ -165,14 +165,14 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
             int r = am->count();
             int mid;
             qint64 middatepos;
-            qint64 mindatepos = from;
+            //qint64 mindatepos = from;
             qint64 maxdatepos = to;
             while (l < r)
             {
                 mid = (l + r) / 2;
                 middatepos = am->valueDate(mid);
                 if (middatepos <= ldatepos)
-                    l = mid + 1, mindatepos = am->valueDate(mid + 1);
+                    l = mid + 1/*, mindatepos = am->valueDate(mid + 1)*/;
                 else
                     r = mid, maxdatepos = am->valueDate(mid);
             }
