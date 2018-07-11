@@ -356,7 +356,12 @@ public:
 
     BrowseOrder browseOrder() const;
 
+    // Returns the order (row number) of the word that matches the searchstr, or the order
+    // index of the very last word if the search string would come after it.
     int browseRow(QString searchstr) const;
+    // Returns the order (row number) of the word with the given dictionary word index. If not
+    // found, returns the index to the word that would be the result of a browseRow search
+    // with the same kana form as the word at windex.
     int browseRow(int windex) const;
 
     // Returns the dictionary the model shows items for.

@@ -152,7 +152,10 @@ void KanjiReadingPracticeForm::exec()
     setAttribute(Qt::WA_DontShowOnScreen, true);
     show();
     qApp->processEvents();
-    ui->kanjiLabel->setMaximumHeight(ui->kanjiLabel->width());
+    updateWindowGeometry(this);
+    int s = std::max(ui->kanjiLabel->width(), ui->kanjiLabel->height());
+    //ui->kanjiLabel->setMaximumHeight(ui->kanjiLabel->width());
+    ui->kanjiLabel->setFixedSize(QSize(s, s));
     hide();
     setAttribute(Qt::WA_DontShowOnScreen, false);
 

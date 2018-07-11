@@ -20,7 +20,7 @@
    <string>zkanji - Kanji reading test</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
     <item row="3" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
@@ -142,12 +142,6 @@
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="kanjiLabel">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
       <property name="font">
        <font>
         <pointsize>54</pointsize>
