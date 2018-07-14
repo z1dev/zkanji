@@ -14,133 +14,35 @@
 #include "smartvector.h"
 #include "fastarray.h"
 
-// WARNING: The following explanation is outdated.
 // Long-term study algorithm and structures description.
 //
-// The exact things to memorize are not stored by these structures as they
-// are general, only study data.
+// The exact things to memorize are not stored by these structures as they are general, only
+// study data.
 //
-// StudyCard: Knowledge is divided into separate small units (items). Data for
-// a single item is stored in a StudyCard structure. The data corresponds to
-// statistics for each repetition, date of last test, interval to wait till
-// next test etc.
+// StudyCard: Knowledge is divided into separate small units (items). Data for a single item
+// is stored in a StudyCard structure. The data corresponds to statistics for each repetition,
+// date of last test, interval to wait till next test etc.
 //
-// StudyDeck: holds a list of StudyCard objects and global statistics about
-// each study day.
+// StudyDeck: holds a list of StudyCard objects and global statistics about each study day.
 //
-// Student: holds the created study decks. It's the student object which
-// computes the intervals, new score etc. of StudyCards after each answer
-// was given. Also holds data about the user's past performance that is
-// used when computing new intervals and score.
+// StudyDeckList: holds a list of study decks. Used to create or delete decks or to retrieve
+// them.
 //
-//
-// A few assumptions are made (from information found online) about the speed
-// of learning and forgetting of items:
-// - Number of items being studied doesn't influence the aquisition of other
-//   items.
-// - Some items are much harder to remember than most others. If those are
-//   excluded, the ratio of correct answers will be much better.
-// - The probability of correct answer to an item and the period's length
-//   or interval of not studying that item is directly proportional.
-// - Items being remembered for less than 3 weeks count as not memorized.
-//   Anything above is not considered new.
+// StudentProfile: computes the interval multiplier based on answer given. Holds an average of
+// multipliers that helps deciding on the result.
 //
 //
-// Algorithm:
+// A few assumptions are made (from information found online) about the speed of learning and
+// forgetting of items:
+// - Number of items being studied doesn't influence the aquisition of other items.
+// - Some items are much harder to remember than most others. If those are excluded, the ratio
+//   of correct answers will be much better. This is currently not used in the algorithm. The
+//   student should bear the responsibility for excluding these items.
+// - The probability of correct answer to an item and the period's length or interval of not
+//   studying that item is directly proportional.
+// - Items being remembered for less than 3 weeks count as not memorized. Anything above is
+//   not considered new.
 //
-// The algorithm is based on: https://www.supermemo.com/english/ol/sm2.htm
-// New items to study can be added each day. The answers given to them won't
-// affect stored student data in any way. They are assigned to level 1 with an
-// interval of repetition of 1 day independent of the given answer. (They get
-// repeated in the same test until the answer is positive.)
-//
-// Each level is assigned an interval-multiplier (defaults to 2.5). If
-// the answer is positive, the previous interval is multiplied with it. The
-// level of the item is then calculated from the new interval. The result must
-// be larger than the default interval of the new level but not larger than
-// that of the next level. (The default interval is computed by multiplying
-// the starting 1 day interval with the interval-multiplier of each level.)
-//
-// The number of negative answers for an item is stored, until it receives a
-// correct answer after its first 60 days interval. The number of wrong answers
-// given to this item is divided by the number of all answers to it to get the
-// difficulty of the item. This is compared to the average difficulty of other
-// items to get its relative difficulty. Very difficult items, or items with 3
-// consecutive wrong answers will be put to level 1 and postponed by a week.
-// Postponed items are marked "problematic", and the counter of negative
-// answers and the number of answers are reset to 0. When the item is answered
-// correctly after a 60 day no-study interval, its problematic flag is
-// cleared.
-// Very new items with at most 5 times of inclusion in tests are never seen as
-// problematic. New items not included more than 3 times yet don't count
-// towards the average difficulty that is used to mark other words problematic.
-//
-// When an item gets a negative answer, and the previous answer to it was
-// positive, its level is decremented by 2. If the previous answer was
-// negative as well it'll be put to level 1. The new interval for it is then
-// set to the default interval of the new level divided by its difficulty, and
-// the correct level is assigned to it based on this new interval. If the item
-// gets a negative answer for a second time in the same test, it's immediately
-// put to level 1 but its negative answer counter is not modified in that
-// test.
-//
-// When an item is given a negative answer or retried, it is asked a second
-// time in the same test in approximately 10 minutes. When it's first retried,
-// its level is decremented by 1. If an item is retried for the second time it
-// will be treated the same way as items getting a negative answer for the
-// first time. In consecutive retries it's put to level 1.
-//
-// Items can be grouped together if they are associated with each other. For
-// example when vocabulary is studied, the definition in one language is
-// associated with the definition in another language of the same word. In
-// this case it's bad if two items are studied on the same day, so the current
-// item's interval can be changed to avoid that. The maximum change is
-// the percent of the acceptable forgetting rate for the current level.
-// I.e. when an item's level becomes 5 and the interval is approximately 39
-// days, the acceptable forgetting rate is 9%, which means the interval can
-// be changed with at most 3.51 days in both directions. The change will be
-// random between 2 days and the maximum accepted interval (if the acceptable
-// change is 2 days or more).
-//
-// Each answer to non-problematic items modifies the level's interval-
-// multiplier. The student object keeps record of the multiplier of each level
-// for each day it was modified. When an answer is given, it is assumed that
-// the past 99 items had exactly the acceptable ratio.
-// I.e. 92% correct if the level has an 8% acceptable forgetting rate. This
-// means 91.08 correct answers and 7.92 incorrect.
-// The new answer is added as the 100th answer and a new interval-multiplier
-// is computed from it.
-// I.e. if the answer was incorrect we assume 91.08 correct answers and 8.92
-// incorrect, which is 8.92% forgetting rate. This rate is 0.92% worse than
-// the 8% accepted rate, so a value is computed by decreasing the old
-// multiplier by (0.92 * 2)%. (The old multiplier is the multiplier as it was
-// on the day the item got an answer the last time.)
-// The new interval modifier becomes the average of the computed value and the
-// current value.
-// For a 2.5 default multiplier and 8.92% forgetting rate this makes the new
-// value to be (2.4816 + 2.5) / 2 = 2.4908.
-// If the answer was positive, this makes 92.08 correct and 7.92 incorrect
-// answers. In this example the computed new interval is then the average of
-// the default 2.5 and (2.5 - 2.5 * ((-0.08 * 2) / 100)). Making the value to
-// be (2.504 + 2.5) / 2 = 2.502.
-//
-// If an item's interval differs to the tested date by more than the accepted
-// time (from the example above), and the item's answer is positive, its level
-// is assumed to be what it should be from that interval, and its difficulty
-// is decreased.
-// If the answer is negative, or the item is retried, it's treated like a
-// normal negative answer. We assume that the forgetting rate is linear, and
-// when computing the new interval-multiplier the accepted forgetting rate is
-// increased.
-//
-
-// StudyCardStatus: status of an item of study
-// // Learned: the item was considered learned at the end of the study day.
-// // Incorrect: wrong was selected as the answer at least once.
-// Problematic: the item was problematic.
-// Finished: combined with the other statuses, the last given answer was correct or easy and
-//       the card wasn't needed again.
-//enum class StudyCardStatus : uchar { /*Learned = 0x01,*/ /*Incorrect = 0x01,*/ /*Problematic = 0x02,*/ Finished = 0x40 };
 
 // StudyCardStat: statistics for cards for each day they were studied on
 struct StudyCardStat // - ex TRepStat
@@ -152,28 +54,19 @@ struct StudyCardStat // - ex TRepStat
     // Number of tenth seconds spent on this card on the test day between its display and the
     // answer given. Can't exceed 6000 seconds, even if the student went afk.
     ushort timespent;
-    // Combination of StudyCardStatus values.
-    //uchar status;
 };
 QDataStream& operator<<(QDataStream &stream, const StudyCardStat &stat);
 QDataStream& operator>>(QDataStream &stream, StudyCardStat &stat);
 
-
+// An id given to the users of study decks for each item they store in a deck. Must be stored
+// as a pointer.
 struct CardId
 {
-    //CardId();
-    //bool isValid();
 private:
     CardId(int data);
     int data;
 
     friend class StudyDeck;
-    //friend bool operator==(const CardId &a, const CardId &b);
-    //friend bool operator!=(const CardId &a, const CardId &b);
-    //friend bool operator<(const CardId &a, const CardId &b);
-    //friend QDataStream& operator<<(QDataStream &stream, const CardId &id);
-    //friend QDataStream& operator>>(QDataStream &stream, CardId &id);
-
 };
 
 struct StudyCard // - ex TRepetitionItem
@@ -745,7 +638,7 @@ public:
     StudyDeckId skipIdLegacy(QDataStream &stream);
     // End legacy.
 
-    void load(QDataStream &stream);
+    void load(QDataStream &stream, int version);
     void save(QDataStream &stream) const;
 
     void clear();
@@ -766,36 +659,7 @@ public:
 
     // Returns the index-th deck.
     StudyDeck* decks(int index);
-
-    // Saves current data that can be reverted by revertUndo(). The data is
-    // only temporary, doesn't get saved in a file.
-    //void createUndo();
-
-    // Restores data saved with createUndo(). Make sure any other data that
-    // relies on this gets reverted as well.
-    //void revertUndo();
-
-    // Adds answercnt and wrongcnt to the stored values of answer count and
-    // wrong answer count.
-    //void changeAnswerRatio(ushort answercnt, ushort wrongcnt);
 private:
-    // Temporary container of undo data.
-    //struct Undo
-    //{
-    //    int cardanswercnt;
-    //    int cardwrongcnt;
-    //};
-
-    //Undo undodata;
-
-    // End of temporary data
-
-    // Number of times cards were answered.
-    //int cardanswercnt;
-
-    // Number of times cards were answered incorrectly.
-    //int cardwrongcnt;
-
     // Id of the next study deck to be created. This value is not saved.
     StudyDeckId nextid;
 
@@ -819,11 +683,11 @@ public:
     // Adds a new multiplier to the average returned by baseMultiplier().
     void addMultiplier(float mul);
 
-    // Returns the multilier for the next repetition of a card, if the answer to it was easy.
+    // Returns the multiplier for the next repetition of a card, if the answer to it was easy.
     float easyMultiplier(float mul) const;
-    // Returns the multilier for the next repetition of a card, if the answer to it was wrong.
+    // Returns the multiplier for the next repetition of a card, if the answer to it was wrong.
     float wrongMultiplier(float mul) const;
-    // Returns the multilier for the next repetition of a card, if the answer to it was retry.
+    // Returns the multiplier for the next repetition of a card, if the answer to it was retry.
     float retryMultiplier(float mul) const;
 
     bool isModified() const;
@@ -838,51 +702,12 @@ public:
 
     // Acceptable rate of correct items. 0.9 means 90% correct answers.
     double acceptRate(uchar level);
-
-    // Calculates the correct level of an item with the given interval. The
-    // interval is specified in milliseconds.
-    // For example an interval of approximately 2.5 days means the
-    // result is 1. 
-    //uchar levelFromInterval(QDate date, qint64 interval);
-
-    // Calculates the default interval on a given level.
-    //qint64 defaultInterval(uchar level);
-
-    // The interval-multiplier for a level for the passed date.
-    //double multiplierOn(QDate date, uchar level);
-
-    // Current interval-multiplier for a level.
-    //double multiplier(uchar level);
-
-    // Changes the interval-multiplier for the level, making future intervals
-    // shorter or longer depending on the last answer given on tests. 
-    //void updateMultiplier(uchar level, qint64 interval, QDateTime cardtestdate, QDate testdate, bool correct);
-
-    // Adds answercnt and wrongcnt to the stored values of answer count and
-    // wrong answer count. The resulting value should be a sum of all values
-    // in a StudyDeckList.
-    //void changeAnswerRatio(ushort answercnt, ushort wrongcnt);
-
-    // Returns whether a card with the given number of answers and number of
-    // wrong answers is below average by too much. The result is always false
-    // while there is too little data.
-    //bool hasProblematicAnswers(ushort answercnt, ushort wrongcnt);
-
 private:
     // Temporary container of undo data.
     struct Undo
     {
         int cardcount;
         double multiaverage;
-
-        //int cardanswercnt;
-        //int cardwrongcnt;
-
-        // [multiplier, list size]
-        // Only the last values of the lists in the multi map are saved,
-        // with their index. If a new value has been added, it'll be deleted
-        // when reverting.
-        //std::map<uchar, std::pair<double, uint>> multi;
     };
 
     Undo undodata;
@@ -895,25 +720,6 @@ private:
     // The average value of all card multipliers that had a correct answer after a 3 week
     // interval.
     double multiaverage;
-
-    // Past multipliers for each level on each day the level changed.
-    // The last value is the current multiplier.
-    //std::map<uchar, std::vector<std::pair<QDate, double>>> multi;
-
-    // Acceptable rate of correct items. 0.9 means 90% correct answers. Each level's
-    // acceptable rate is higher than the previous. Only used when updating interval of study
-    // cards that might clash with other items.
-    //float acceptrate[12];
-
-    // Number of times cards were answered. When a card gets too many wrong
-    // answers, it's excluded from this count, and added as a new card after
-    // it's answered again.
-    //int cardanswercnt;
-
-    // Number of times cards were answered incorrectly. When a card gets too
-    // many wrong answers, it's excluded from this count, and added as a new
-    // card after it's answered again.
-    //int cardwrongcnt;
 };
 
 namespace ZKanji

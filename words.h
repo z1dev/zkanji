@@ -1252,8 +1252,7 @@ namespace ZKanji
 
     // Number of dictionaries loaded.
     int dictionaryCount();
-    // Adds a fully constructed dictionary to the list of dictionaries. Used
-    // in import only.
+    // Adds a fully constructed dictionary to the list of dictionaries. Used in import only.
     void addDictionary(Dictionary *dict);
     // Adds a new dictionary.
     Dictionary* addDictionary();
@@ -1293,8 +1292,8 @@ namespace ZKanji
     // dictionaries are reordered. This must be called at startup.
     void changeDictionaryOrder(const std::list<quint8> &order);
 
-    // Saves every modified dictionary and group to the user data folder. Set
-    // forced to true to save unmodified data too.
+    // Saves every modified dictionary and group to the user data folder. Set forced to true
+    // to save unmodified data too.
     void saveUserData(bool forced = false);
 
     // Checks whether the user data files should be backed up according to the user settings,
@@ -1309,8 +1308,7 @@ namespace ZKanji
     // is skipped for speed.
     void cloneWordData(WordEntry *dest, WordEntry *src, bool copykanjikana);
 
-    // Returns true if a and b have the same kanji/kana, definitions,
-    // frequency, types etc.
+    // Returns true if a and b have the same kanji/kana, definitions, frequency, types etc.
     bool sameWord(WordEntry *a, WordEntry *b);
 
     // Returns the meanings of a kanji as specified in the passed dictionary.

@@ -47,7 +47,7 @@ extern char ZKANJI_PROGRAM_VERSION[];
 static char ZKANJI_BASE_FILE_VERSION[] = "002";
 static char ZKANJI_DICTIONARY_FILE_VERSION[] = "001";
 
-static char ZKANJI_GROUP_FILE_VERSION[] = "002";
+static char ZKANJI_GROUP_FILE_VERSION[] = "003";
 
 const QChar GLOSS_SEP_CHAR = QChar(0x0082);
 
@@ -3409,15 +3409,27 @@ void Dictionary::loadUserDataFile(const QString &filename)
             kanjidata[it->first]->meanings = std::move(it->second);
 
         loadUserDataLegacy(stream, version);
+
+        usermod = false;
+        emit userDataModified(false);
     }
     else
     {
         clearUserData();
         loadUserData(stream, version);
+
+        if (version == 2)
+        {
+            studydecks->fixStats();
+            setToUserModified();
+        }
+        else
+        {
+            usermod = false;
+            emit userDataModified(false);
+        }
     }
 
-    usermod = false;
-    emit userDataModified(false);
     emit dictionaryReset();
 }
 
@@ -3518,7 +3530,7 @@ void Dictionary::loadUserData(QDataStream &stream, int version)
 #endif
 
     decks->clear();
-    studydecks->load(stream);
+    studydecks->load(stream, version);
 
 #if TIMED_LOAD == 1
     qint64 t3 = t.nsecsElapsed();

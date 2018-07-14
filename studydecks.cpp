@@ -23,6 +23,10 @@ namespace
 
     const quint32 s_1_day = 24 * 60 * 60;
     const quint32 s_1_month = s_1_day * 30.5;
+
+    // File version of the dictionary groups data being loaded at the moment, to be used by
+    // streaming operators that can't access the parent objects.
+    int studyloadversion = -1;
 }
 
 //-------------------------------------------------------------
@@ -129,6 +133,7 @@ QDataStream& operator<<(QDataStream& stream, const StudyCard &c)
     //stream << (quint16)c.answercnt;
     //stream << (quint16)c.wrongcnt;
     //stream << (qint8)c.problematic;
+    stream << (qint8)c.learned;
     stream << (quint8)c.repeats;
     stream << (quint8)c.testlevel;
     stream << (quint32)c.timespent;
@@ -153,7 +158,6 @@ QDataStream& operator>>(QDataStream& stream, StudyCard &c)
     stream >> b;
     c.level = b;
     stream >> c.multiplier;
-    //c.level = b;
     //stream >> s;
     //c.inclusion = s;
     stream >> ui;
@@ -165,6 +169,12 @@ QDataStream& operator>>(QDataStream& stream, StudyCard &c)
     //c.wrongcnt = s;
     //stream >> ch;
     //c.problematic = ch;
+
+    if (studyloadversion >= 3)
+    {
+        stream >> ch;
+        c.learned = ch;
+    }
     stream >> b;
     c.repeats = b;
     stream >> b;
@@ -2138,8 +2148,10 @@ StudyDeckList::~StudyDeckList()
     clear();
 }
 
-void StudyDeckList::load(QDataStream &stream)
+void StudyDeckList::load(QDataStream &stream, int version)
 {
+    studyloadversion = version;
+
     //bool mod = ZKanji::profile().isModified();
     //ZKanji::profile().changeAnswerRatio(-cardanswercnt, -cardwrongcnt);
 
