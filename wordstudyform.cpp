@@ -316,6 +316,20 @@ WordStudyForm::WordStudyForm(QWidget *parent) :
         }
     }
 
+    QFont deffont = ui->kanjiLabel->font();
+    deffont.setFamily(Settings::fonts.main);
+    QFont kanafont = ui->kanjiLabel->font();
+    kanafont.setFamily(Settings::fonts.kana);
+
+    QFontMetrics defmet(deffont);
+    QFontMetrics kanamet(kanafont);
+
+    int minh = std::max(defmet.height(), kanamet.height());
+
+    ui->kanjiLabel->setMinimumHeight(minh);
+    ui->kanaLabel->setMinimumHeight(minh);
+    ui->meaningLabel->setMinimumHeight(minh);
+
     ui->optionsButton->setMenu(optionmenu);
 
     connect(ui->acceptButton, &QPushButton::clicked, this, &WordStudyForm::answerEntered);
@@ -774,8 +788,15 @@ void WordStudyForm::answerEntered()
 
     ui->optionsButton->show();
 
+    QFont deffont = ui->kanjiLabel->font();
+    deffont.setFamily(Settings::fonts.main);
+    QFont kanafont = ui->kanjiLabel->font();
+    kanafont.setFamily(Settings::fonts.kana);
+
+    ui->kanjiLabel->setFont(kanafont);
     ui->kanjiLabel->setText(w->kanji.toQStringRaw());
     ui->kanjiLabel->show();
+    ui->kanaLabel->setFont(kanafont);
     ui->kanaLabel->setText(w->kana.toQStringRaw());
     ui->kanaLabel->show();
     ui->meaningLabel->setText(dictionary()->displayedStudyDefinition(windex));
@@ -863,23 +884,21 @@ void WordStudyForm::answerEntered()
 
     if (correct == 0)
     {
-        QFont tmpfont = ui->kanjiLabel->font();
-
         QColor c = Settings::uiColor(ColorSettings::StudyWrong);
         if ((wquestion & (int)WordPartBits::Kanji) != 0)
         {
             ui->kanjiLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
-            ui->kanjiLabel->setFont(tmpfont);
+            ui->kanjiLabel->setFont(kanafont);
         }
         if ((wquestion & (int)WordPartBits::Kana) != 0)
         {
             ui->kanaLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
-            ui->kanaLabel->setFont(tmpfont);
+            ui->kanaLabel->setFont(kanafont);
         }
         if ((wquestion & (int)WordPartBits::Definition) != 0)
         {
             ui->meaningLabel->setStyleSheet(QStringLiteral("color: %1").arg(c.name())); //red(), 2, 16, QLatin1Char('0')).arg(c.green(), 2, 16, QLatin1Char('0')).arg(c.blue(), 2, 16, QLatin1Char('0')));
-            ui->meaningLabel->setFont(tmpfont);
+            ui->meaningLabel->setFont(deffont);
             ui->meaningLabel->updated();
         }
     }
@@ -1094,42 +1113,60 @@ bool WordStudyForm::showNext()
     WordEntry *w = dictionary()->wordEntry(windex);
 
     // Remove color and strikeout
-    QFont tmpfont = ui->kanjiLabel->font();
+
+    QFont deffont = ui->kanjiLabel->font();
+    deffont.setFamily(Settings::fonts.main);
+    QFont kanafont = ui->kanjiLabel->font();
+    kanafont.setFamily(Settings::fonts.kana);
+
     ui->kanjiLabel->setStyleSheet(QString());
-    ui->kanjiLabel->setFont(tmpfont);
     ui->kanaLabel->setStyleSheet(QString());
-    ui->kanaLabel->setFont(tmpfont);
     ui->meaningLabel->setStyleSheet(QString());
-    ui->meaningLabel->setFont(tmpfont);
+    ui->meaningLabel->setFont(deffont);
     ui->meaningLabel->updated();
 
     // Kanji label.
     if ((wquestion & (int)WordPartBits::Kanji) != 0)
-        ui->kanjiLabel->setText(tr("?") % QChar(0x3000));
-    else if (whint != WordParts::Kanji)
     {
-        QString str = w->kanji.toQStringRaw();
-        if (((deck && Settings::study.hidekanjikana) || (!deck && study->studySettings().hidekana)) && ((wquestion & (int)WordPartBits::Kana) != 0) && (wquestion & (int)WordPartBits::Definition) == 0)
-        {
-            QChar subst[] = { QChar(0x25b3), QChar(0x25ce), QChar(0x25c7), QChar(0x2606) };
-            for (int ix = 0; ix != str.size(); ++ix)
-            {
-                if (KANA(str.at(ix).unicode()) || DASH(str.at(ix).unicode()))
-                    str[ix] = subst[rnd(0, 3)];
-            }
-        }
-        ui->kanjiLabel->setText(str);
+        ui->kanjiLabel->setFont(deffont);
+        ui->kanjiLabel->setText(tr("?") % QChar(0x3000));
     }
     else
-        ui->kanjiLabel->setText(QChar(0x3000));
+    {
+        ui->kanjiLabel->setFont(kanafont);
+        if (whint != WordParts::Kanji)
+        {
+            QString str = w->kanji.toQStringRaw();
+            if (((deck && Settings::study.hidekanjikana) || (!deck && study->studySettings().hidekana)) && ((wquestion & (int)WordPartBits::Kana) != 0) && (wquestion & (int)WordPartBits::Definition) == 0)
+            {
+                QChar subst[] = { QChar(0x25b3), QChar(0x25ce), QChar(0x25c7), QChar(0x2606) };
+                for (int ix = 0; ix != str.size(); ++ix)
+                {
+                    if (KANA(str.at(ix).unicode()) || DASH(str.at(ix).unicode()))
+                        str[ix] = subst[rnd(0, 3)];
+                }
+            }
+            ui->kanjiLabel->setText(str);
+        }
+        else
+            ui->kanjiLabel->setText(QChar(0x3000));
+    }
 
     // Kana label.
     if ((wquestion & (int)WordPartBits::Kana) != 0)
+    {
+        ui->kanaLabel->setFont(deffont);
         ui->kanaLabel->setText(tr("?") % QChar(0x3000));
-    else if (whint != WordParts::Kana)
-        ui->kanaLabel->setText(w->kana.toQStringRaw());
+    }
     else
-        ui->kanaLabel->setText(QChar(0x3000));
+    {
+        ui->kanaLabel->setFont(kanafont);
+
+        if (whint != WordParts::Kana)
+            ui->kanaLabel->setText(w->kana.toQStringRaw());
+        else
+            ui->kanaLabel->setText(QChar(0x3000));
+    }
 
     // Meaning label.
     if ((wquestion & (int)WordPartBits::Definition) != 0)
