@@ -92,13 +92,13 @@ namespace
 
         NTFSPermissionGuard permissionguard;
 
-        if (QFileInfo::exists(path + "zkanji.ini"))
+        if (QFileInfo::exists(path + "/zkanji.ini"))
         {
-            QFileInfo finf(path + "zkanji.ini");
+            QFileInfo finf(path + "/zkanji.ini");
             if (!finf.isWritable() || !finf.isReadable())
                 return false;
 
-            finf.setFile(path + "/data");
+            finf.setFile(path + "/data/");
             if (finf.isWritable())
                 return true;
         }
@@ -112,7 +112,7 @@ namespace
             if (!finf.isWritable() || !finf.isReadable())
                 return false;
 
-            finf.setFile(path + "/data");
+            finf.setFile(path + "/data/");
             if (finf.isWritable())
                 return true;
         }
