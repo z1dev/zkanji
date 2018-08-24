@@ -477,13 +477,21 @@ namespace
             QObject *child = childs.at(ix);
             if (child->isWidgetType())
             {
-                for (int ix = 1, childlevel = updateWindowGeometryHelper((QWidget*)child, level); ix != childlevel; ++ix)
+                for (int ix = 1, childlevel = updateWindowGeometryHelper((QWidget*)child, level) + 1; ix != childlevel; ++ix)
                     ;
             }
         }
 
         if (w->layout())
-            invalidateLayout(w->layout());
+        {
+            if (level > 0)
+                invalidateLayout(w->layout());
+            else
+            {
+                w->layout()->invalidate();
+                w->layout()->activate();
+            }
+        }
 
         return level;
     }
@@ -491,7 +499,7 @@ namespace
 
 void updateWindowGeometry(QWidget *widget)
 {
-    updateWindowGeometryHelper(widget, 0);
+    updateWindowGeometryHelper(widget, dynamic_cast<QMainWindow*>(widget) == nullptr ? 0 : -1);
 }
 
 int fixedLabelWidth(QLabel *label)
