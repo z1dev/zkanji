@@ -8,7 +8,8 @@
 #define EXAMPLEWIDGET_H
 
 #include <QWidget>
-#include <QBasicTimer>
+
+#include "zbasictimer.h"
 
 namespace Ui {
     class ExampleWidget;
@@ -76,7 +77,7 @@ private:
     bool locked;
 
     // Used for auto repeat right-clicks.
-    QBasicTimer repeattimer;
+    ZBasicTimer repeattimer;
     // The button being down by the mouse.
     QToolButton *repeatbutton;
 

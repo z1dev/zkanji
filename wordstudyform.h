@@ -10,7 +10,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QDateTime>
-#include <QBasicTimer>
+#include "zbasictimer.h"
 
 namespace Ui {
     class WordStudyForm;
@@ -151,7 +151,7 @@ private:
     // Index on the status bar to display time.
     int timeindex;
 
-    QBasicTimer timer;
+    ZBasicTimer timer;
 
     ModalResult result;
 

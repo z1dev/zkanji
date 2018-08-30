@@ -9,7 +9,7 @@
 
 #include <QtCore>
 #include <QFrame>
-#include <QBasicTimer>
+#include "zbasictimer.h"
 
 // Widget with a self painted scroll bar. Unlike the QAbstractScrollArea, it doesn't use a
 // container widget. Derived classes must call the base painting and mouse/keyboard events,
@@ -158,8 +158,8 @@ private:
     // button.
     int dragpos;
 
-    QBasicTimer pagetimer;
-    QBasicTimer buttontimer;
+    ZBasicTimer pagetimer;
+    ZBasicTimer buttontimer;
 
     typedef QFrame base;
 };

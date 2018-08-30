@@ -8,7 +8,7 @@
 #define KANAREADINGPRACTICEFORM_H
 
 #include <vector>
-#include <QBasicTimer>
+#include "zbasictimer.h"
 #include "dialogwindow.h"
 
 
@@ -82,7 +82,7 @@ private:
     // Label showing passed time.
     //QLabel *timeLabel;
 
-    QBasicTimer timer;
+    ZBasicTimer timer;
 
     typedef DialogWindow    base;
 };

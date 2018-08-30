@@ -8,13 +8,13 @@
 #define ZKANJIGRIDVIEW_H
 
 #include <QAbstractScrollArea>
-#include <QBasicTimer>
 #include <QMenu>
 
 #include <list>
 #include <map>
 #include <memory>
 
+#include "zbasictimer.h"
 #include "smartvector.h"
 
 class QMenu;
@@ -257,7 +257,7 @@ private:
     // Amount to scroll when auto scrolling. Gradually increased.
     int autoScrollCount;
 
-    QBasicTimer autoScrollTimer;
+    ZBasicTimer autoScrollTimer;
 
     // Number of columns currently shown in the grid. This value
     // automatically changes as the user resizes the widget.

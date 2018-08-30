@@ -8,9 +8,10 @@
 #define ZTOOLTIP_H
 
 #include <QFrame>
-#include <QBasicTimer>
 #include <QElapsedTimer>
 #include <QVariant>
+
+#include "zbasictimer.h"
 
 // Qt looks for a base class called QTipLabel which is inaccessable as it's private, when
 // deciding whether to add a drop shadow to windows with the ToolTip window flag. This hack
@@ -87,8 +88,8 @@ private:
 
     QElapsedTimer time;
 
-    QBasicTimer fadetimer;
-    QBasicTimer waittimer;
+    ZBasicTimer fadetimer;
+    ZBasicTimer waittimer;
     qint64 fadestart;
     bool fadein;
 

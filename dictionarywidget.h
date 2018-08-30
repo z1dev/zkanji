@@ -8,11 +8,12 @@
 #define DICTIONARYWIDGET_H
 
 #include <QWidget>
-#include <QBasicTimer>
 #include <QStringListModel>
 
 #include <memory>
 #include <functional>
+
+#include "zbasictimer.h"
 
 namespace Ui {
     class DictionaryWidget;
@@ -429,7 +430,7 @@ private:
     // Function used to determine sort order when sorting is requested.
     ProxySortFunction sortfunc;
 
-    QBasicTimer historytimer;
+    ZBasicTimer historytimer;
 
     typedef QWidget base;
 };

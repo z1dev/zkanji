@@ -1001,6 +1001,15 @@
     <ClCompile Include="languageform.cpp">
       <Filter>Code\Files with .ui\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="zbasictimer.cpp">
+      <Filter>Code\ZObject\General\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_zbasictimer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_zbasictimer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="romajizer.h">
@@ -1422,6 +1431,9 @@
     </CustomBuild>
     <CustomBuild Include="languageform.h">
       <Filter>Code\Files with .ui\Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="zbasictimer.h">
+      <Filter>Code\ZObject\General\Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

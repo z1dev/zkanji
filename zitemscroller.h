@@ -9,7 +9,7 @@
 
 #include <QStylePainter>
 #include <QStyleOption>
-//#include <QBasicTimer>
+//#include "zbasictimer.h"
 #include "zscrollarea.h"
 
 // Displays kanji elements and kanji drawn with the element painter or kanji font.
@@ -173,7 +173,7 @@ private:
     // mouse button is not pressed.
     //QPoint downpos;
 
-    //QBasicTimer timer;
+    //ZBasicTimer timer;
 
     typedef ZScrollArea base;
 };

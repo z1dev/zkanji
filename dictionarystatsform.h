@@ -8,9 +8,9 @@
 #define DICTIONARYSTATSFORM_H
 
 #include <QThread>
-#include <QBasicTimer>
 #include <atomic>
 #include <memory>
+#include "zbasictimer.h"
 #include "dialogwindow.h"
 
 namespace Ui {
@@ -85,7 +85,7 @@ private:
     void setHtmlInfoText(const QString &str);
 
     Ui::DictionaryStatsForm *ui;
-    QBasicTimer timer;
+    ZBasicTimer timer;
 
     std::unique_ptr<StatsThread> thread;
 

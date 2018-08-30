@@ -12,12 +12,13 @@
 #include <QActionGroup>
 #include <QAction>
 #include <QSet>
-#include <QBasicTimer>
 #include <QDateTime>
 #include <QPixmap>
 #include <QSystemTrayIcon>
 
 #include <memory>
+
+#include "zbasictimer.h"
 
 class ZKanjiForm;
 class ZKanjiWidget;
@@ -400,7 +401,7 @@ private:
     int autosavecounter;
 
     // Timer for ui tasks like saving user data. It fires at 2 second intervals.
-    QBasicTimer uiTimer;
+    ZBasicTimer uiTimer;
     // Date and time when the user database was last saved.
     QDateTime lastsave;
 

@@ -7,10 +7,10 @@
 #ifndef ZEXAMPLESTRIP_H
 #define ZEXAMPLESTRIP_H
 
-#include <QBasicTimer>
 #include <memory>
 #include "zscrollarea.h"
 #include "sentences.h"
+#include "zbasictimer.h"
 
 class Dictionary;
 class ZExampleStrip;
@@ -68,7 +68,7 @@ private:
 
     // On some systems the mouseEnter and mouseLeave messages are not reliable, and a timer is
     // needed to wait for them to arrive. 
-    QBasicTimer waittimer;
+    ZBasicTimer waittimer;
 
     typedef QWidget base;
 };
