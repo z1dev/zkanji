@@ -144,8 +144,9 @@ SOURCES += \
     zstatview.cpp \
     zdictionarycombobox.cpp \
     zstatusbar.cpp \
-	languages.cpp \
-	languageform.cpp
+    languages.cpp \
+    languageform.cpp \
+    zbasictimer.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -276,7 +277,8 @@ HEADERS += \
     zstatusbar.h \
 	languages.h \
 	languagesettings.h \
-	languageform.h
+	languageform.h \
+	zbasictimer.h
 
 FORMS += \
     collectwordsform.ui \
@@ -325,7 +327,7 @@ FORMS += \
     kanareadingpracticeform.ui \
     kanawritingpracticeform.ui \
     kanapracticesettingsform.ui \
-	languageform.ui
+    languageform.ui
 
 DISTFILES +=
 
