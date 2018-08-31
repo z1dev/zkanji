@@ -370,6 +370,9 @@ private:
     // Registers widget as scaled to stop scaling it a second time.
     void _registerWidgetScale(QWidget *w);
 
+    // Closes all open zkanji windows.
+    void closeAll();
+
     KanjiInfoForm *kanjiinfo;
     // Blocks showing new kanji info when positive non zero.
     int infoblock;

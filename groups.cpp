@@ -1980,7 +1980,8 @@ void WordGroups::clear()
     base::clear();
     wordsgroups.clear();
 
-    emit groupsReseted();
+    //if (qApp->eventDispatcher() != nullptr)
+        emit groupsReseted();
 }
 
 void WordGroups::applyChanges(const std::map<int, int> &changes)
@@ -2633,7 +2634,9 @@ KanjiGroups::~KanjiGroups()
 void KanjiGroups::clear()
 {
     base::clear();
-    emit groupsReseted();
+
+    //if (qApp->eventDispatcher() != nullptr)
+        emit groupsReseted();
 }
 
 Dictionary* KanjiGroups::dictionary()

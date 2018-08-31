@@ -1732,12 +1732,17 @@ void GlobalUI::saveBeforeQuit()
 {
     static bool saved = false;
     if (saved)
+    {
+        closeAll();
         return;
+    }
     saved = true;
 
     saveSettings();
     lastsave = QDateTime::currentDateTimeUtc();
     ZKanji::saveUserData();
+
+    closeAll();
 }
 
 void GlobalUI::disableAutoSave()
@@ -1919,6 +1924,14 @@ void GlobalUI::_registerWidgetScale(QWidget *w)
 {
     scaledwidgets.insert(w);
     connect(w, &QWidget::destroyed, this, &GlobalUI::scaledWidgetDestroyed);
+}
+
+void GlobalUI::closeAll()
+{
+    while (!mainforms.empty())
+    {
+        delete mainforms.back();
+    }
 }
 
 //void GlobalUI::wordFilterErased(int index)
