@@ -9,12 +9,12 @@
 
 #include <QAbstractScrollArea>
 #include <QMenu>
+#include <QBasicTimer>
 
 #include <list>
 #include <map>
 #include <memory>
 
-#include "zbasictimer.h"
 #include "smartvector.h"
 
 class QMenu;
@@ -257,7 +257,7 @@ private:
     // Amount to scroll when auto scrolling. Gradually increased.
     int autoScrollCount;
 
-    ZBasicTimer autoScrollTimer;
+    QBasicTimer autoScrollTimer;
 
     // Number of columns currently shown in the grid. This value
     // automatically changes as the user resizes the widget.

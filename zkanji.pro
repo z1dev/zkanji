@@ -146,7 +146,6 @@ SOURCES += \
     zstatusbar.cpp \
     languages.cpp \
     languageform.cpp \
-    zbasictimer.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -275,10 +274,9 @@ HEADERS += \
     zstatview.h \
     zdictionarycombobox.h \
     zstatusbar.h \
-	languages.h \
-	languagesettings.h \
-	languageform.h \
-	zbasictimer.h
+    languages.h \
+    languagesettings.h \
+    languageform.h \
 
 FORMS += \
     collectwordsform.ui \

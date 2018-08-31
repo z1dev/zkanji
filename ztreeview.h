@@ -8,7 +8,7 @@
 #define ZTREEVIEW_H
 
 #include <QTreeView>
-#include "zbasictimer.h"
+#include <QBasicTimer>
 
 class TreeItem;
 class ZAbstractTreeModel;
@@ -190,7 +190,7 @@ private:
     TreeItem *edititem;
     // Timer used when hovering over a category during a drag and drop, and the category might
     // open if hovering over it long enough.
-    ZBasicTimer expandtimer;
+    QBasicTimer expandtimer;
 
     // Rectangle to be filled with the insertion indicator color while dragging a group. This
     // is an empty rectangle, if the group is to be added into a hovered category.

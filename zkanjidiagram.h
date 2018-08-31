@@ -8,10 +8,9 @@
 #define ZKANJIWIDGET_H
 
 #include <QtCore>
+#include <QBasicTimer>
 #include <QWidget>
 #include <memory>
-
-#include "zbasictimer.h"
 
 class QImage;
 enum class StrokeDirection;
@@ -136,7 +135,7 @@ private:
     // rectangles should be drawn. 
     std::vector<std::pair<QPoint, QRect>> numrects;
 
-    ZBasicTimer timer;
+    QBasicTimer timer;
 
     // Number of fully drawn strokes on image. If it's less than strokepos, only the missing
     // strokes are drawn on image before displaying it. If it's larger than strokepos, the

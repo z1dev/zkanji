@@ -9,9 +9,9 @@
 
 #include <QTableView>
 #include <QAbstractItemModel>
+#include <QBasicTimer>
 #include <memory>
 #include "smartvector.h"
-#include "zbasictimer.h"
 
 class ZListViewItemDelegate;
 class QMimeData;
@@ -510,7 +510,7 @@ private:
 
     std::vector<ColumnSizingData> tmpcolsize;
 
-    ZBasicTimer doubleclicktimer;
+    QBasicTimer doubleclicktimer;
 
     using QTableView::selectionModel;
     using QTableView::setSelectionModel;

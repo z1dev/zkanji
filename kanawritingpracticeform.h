@@ -87,7 +87,7 @@ private:
     QString entered;
 
     // Timer used to show passed time.
-    ZBasicTimer timer;
+    QBasicTimer timer;
     // Timer used in stroke animation to delay next kana.
     QTimer *t;
 
