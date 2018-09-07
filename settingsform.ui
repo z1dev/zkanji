@@ -2405,9 +2405,6 @@
                 </property>
                 <item>
                  <widget class="ZLineEdit" name="backupFolderEdit">
-                  <property name="text">
-                   <string/>
-                  </property>
                   <property name="placeholderText">
                    <string>Leave empty to save backup next to the user data.</string>
                   </property>
@@ -5997,7 +5994,7 @@
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup_2"/>
-  <buttongroup name="buttonGroup_3"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_3"/>
  </buttongroups>
 </ui>

@@ -6,6 +6,7 @@
 
 #include <QFile>
 #include <QDialogButtonBox>
+#include <QComboBox>
 #include "languages.h"
 #include "zkanjimain.h"
 
@@ -204,9 +205,57 @@ QString Languages::translate(const QString &context, const QString &key, const c
 
 bool Languages::eventFilter(QObject *o, QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange && (busy || dynamic_cast<QDialogButtonBox*>(o) != nullptr))
+    if (e->type() == QEvent::LanguageChange)
     {
-        return true;
+        // Save combo box indexes before language changes and restore them when it's finished.
+        // Qt sends a LanguageChange event to the QApplication first, which posts it to every
+        // top level widget. The top level widgets are then responsible to send this event to
+        // their children.
+        // We use this to block the event from the QApplication, and posting it to all top
+        // level widgets ourselves.
+
+        if (!busy && o == qApp)
+        {
+            QList<QWidget*> widgets = qApp->allWidgets();
+
+            // Combo boxes, their current index, and whether they didn't have signals blocked.
+            std::vector<std::tuple<QComboBox*, int, bool>> saved;
+
+            // Save the combo boxes current index in saved and block their signals.
+            for (QWidget *w : widgets)
+            {
+                QComboBox *box = dynamic_cast<QComboBox*>(w);
+
+                if (box == nullptr || box->isEditable())
+                    continue;
+
+                saved.push_back(std::make_tuple(box, box->currentIndex(), !box->signalsBlocked()));
+                if (!box->signalsBlocked())
+                    box->blockSignals(true);
+            }
+
+            widgets = qApp->topLevelWidgets();
+            // Send the event to all top level widgets
+            for (QWidget *w : widgets)
+                if (w->windowType() != Qt::Desktop)
+                    qApp->postEvent(w, new QEvent(QEvent::LanguageChange));
+
+            qApp->processEvents();
+
+            // Restore the combo box current indexes and free their signals.
+            for (const std::tuple<QComboBox*, int, bool> &val : saved)
+            {
+                QComboBox *box = std::get<0>(val);
+                box->setCurrentIndex(std::get<1>(val));
+                if (std::get<2>(val))
+                    box->blockSignals(false);
+            }
+
+            return true;
+        }
+
+        if (busy || dynamic_cast<QDialogButtonBox*>(o) != nullptr)
+            return true;
     }
 
     return base::eventFilter(o, e);
