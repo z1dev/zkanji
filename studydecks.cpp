@@ -13,6 +13,8 @@
 #include "zui.h"
 #include "studysettings.h"
 
+#include "checked_cast.h"
+
 namespace
 {
     const char  ZKANJI_PROFILE_FILE_VERSION[] = "001";
@@ -147,7 +149,7 @@ QDataStream& operator>>(QDataStream& stream, StudyCard &c)
 {
     quint8 b;
     qint8 ch;
-    quint16 s;
+    //quint16 s;
     quint32 ui;
 
     stream >> make_zvec<qint32, StudyCardStat>(c.stats);
@@ -256,7 +258,7 @@ void DeckTimeStatList::save(QDataStream &stream) const
 
 void DeckTimeStatList::createUndo(uchar level)
 {
-    undocount = items.size();
+    undocount = tosigned(items.size());
     if (items.size() > level)
         undostat = items[level];
 }
@@ -276,7 +278,7 @@ void DeckTimeStatList::addTime(uchar level, uchar repeats, quint32 time)
 {
     if (items.size() <= level)
     {
-        int s = items.size();
+        int s = tosigned(items.size());
         items.resize(level + 1);
         for (int ix = s; ix != level + 1; ++ix)
             items[ix].used = 0;
@@ -286,7 +288,7 @@ void DeckTimeStatList::addTime(uchar level, uchar repeats, quint32 time)
     repeats = std::min<uchar>(254, repeats);
     if (stat.timestats.size() <= repeats)
     {
-        int s = stat.timestats.size();
+        int s = tosigned(stat.timestats.size());
         stat.timestats.resize(repeats + 1);
         for (int ix = s; ix != repeats + 1; ++ix)
             stat.timestats[ix].used = 0;
@@ -336,7 +338,7 @@ quint32 DeckTimeStatList::estimate(uchar level, uchar repeats) const
         // Calculate real time from the existing data and estimate 3 minutes to fill it up to
         // 5 repeats like above.
         qint64 r = 0;
-        for (int ix = repeats, siz = std::min(5, items[0].timestats.size()); ix < siz; ++ix)
+        for (int ix = repeats, siz = std::min<int>(5, tosigned(items[0].timestats.size())); ix < siz; ++ix)
         {
             qint64 avg = _estimate(0, ix);
 
@@ -378,7 +380,7 @@ quint32 DeckTimeStatList::estimate(uchar level, uchar repeats) const
     }
 
     qint64 r = 0;
-    for (int ix = repeats, siz = std::min(repeatavg, stat.timestats.size()); ix < siz; ++ix)
+    for (int ix = repeats, siz = std::min<int>(repeatavg, tosigned(stat.timestats.size())); ix < siz; ++ix)
     {
         qint64 avg = _estimate(level, ix);
         const DeckTimeStatItem &tstat = stat.timestats[ix];
@@ -393,10 +395,11 @@ quint32 DeckTimeStatList::estimate(uchar level, uchar repeats) const
         r += avg;
     }
 
-    if (stat.timestats.size() <= repeatavg)
+    int ssiz = tosigned(stat.timestats.size());
+    if (ssiz <= repeatavg)
     {
-        for (int ix = stat.timestats.size(); ix != repeatavg; ++ix)
-            r += _estimate(level, stat.timestats.size() - 1) * 0.8;
+        for (int ix = ssiz; ix != repeatavg; ++ix)
+            r += _estimate(level, ssiz - 1) * 0.8;
     }
 
     return std::max<qint64>(0, r);
@@ -495,13 +498,13 @@ void DeckDayStatList::fixStats(const std::vector<std::tuple<StudyCard*, int, boo
     QSet<StudyCard*> added;
     int statpos = 0;
     int timespent = 0;
-    for (int ix = 0, siz = cards.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(cards.size()); ix != siz; ++ix)
     {
         StudyCard *card = std::get<0>(cards[ix]);
         int cardstatix = std::get<1>(cards[ix]);
         QDate carddate = card->stats[cardstatix].day;
         bool cardgood = std::get<2>(cards[ix]);
-        while (statpos < tmp.size() && tmp[statpos].day <= carddate)
+        while (statpos < tosigned(tmp.size()) && tmp[statpos].day <= carddate)
         {
             timespent += tmp[statpos].timespent;
             ++statpos;
@@ -574,7 +577,7 @@ const DeckDayStat& DeckDayStatList::back() const
     return list.back();
 }
 
-int DeckDayStatList::size() const
+DeckDayStatList::size_type DeckDayStatList::size() const
 {
     return list.size();
 }
@@ -778,7 +781,7 @@ StudyDeck::StudyDeck(StudyDeckList *owner, StudyDeckId id) : owner(owner), id(id
 
 StudyDeck::~StudyDeck()
 {
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         StudyCard *card = list[ix];
         if (card->level >= 3)
@@ -852,14 +855,14 @@ void StudyDeck::copy(StudyDeck *src, std::map<CardId*, CardId*> &map)
     list.reserve(src->list.size());
     ids.reserve(src->ids.size());
 
-    for (int ix = 0, siz = src->ids.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->ids.size()); ix != siz; ++ix)
     {
-        CardId *id = new CardId(ix);
-        ids.push_back(id);
-        map.insert(std::make_pair(src->ids[ix], id));
+        CardId *cid = new CardId(ix);
+        ids.push_back(cid);
+        map.insert(std::make_pair(src->ids[ix], cid));
     }
 
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         StudyCard *c = new StudyCard;
         StudyCard *csrc = src->list[ix];
@@ -870,7 +873,7 @@ void StudyDeck::copy(StudyDeck *src, std::map<CardId*, CardId*> &map)
         list.push_back(c);
     }
 
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         StudyCard *c = list[ix];
         StudyCard *csrc = src->list[ix];
@@ -921,7 +924,7 @@ void StudyDeck::fixDayStats()
     // [ card, card stat index, answer was correct]
     std::vector<std::tuple<StudyCard*, int, bool>> tmp;
     //std::map<StudyCard*, int> incl;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         StudyCard *c = list[ix];
 
@@ -929,7 +932,7 @@ void StudyDeck::fixDayStats()
         //c->wrongcnt = 0;
 
         //incl[c] = 0;
-        for (int iy = 0; iy != c->stats.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(c->stats.size()); iy != sizy; ++iy)
         {
             if (iy != 0 && c->stats[iy - 1].day == c->stats[iy].day)
                 continue;
@@ -973,7 +976,7 @@ void StudyDeck::checkDayStats() const
     const DeckDayStat &stat = daystats.back();
 
     bool error = false;
-    if (stat.itemcount != list.size())
+    if (stat.itemcount != tosigned(list.size()))
         error = true;
 
     int lcnt = 0;
@@ -1025,13 +1028,13 @@ int StudyDeck::cardIndex(CardId *cardid) const
 
 void StudyDeck::fixResizeCardId(int size)
 {
-    if (ids.size() == size)
+    if (tosigned(ids.size()) == size)
         return;
     QString errormsg = qApp->translate("", "The study data is corrupted. There's a high chance that the cards in the long-term study list will have invalid intervals and score.");
     QMessageBox::warning(nullptr, "zkanji", errormsg);
-    while (ids.size() > size)
+    while (tosigned(ids.size()) > size)
         deleteCard(ids.back());
-    while (ids.size() < size)
+    while (tosigned(ids.size()) < size)
         createCard(nullptr, 0);
 }
 
@@ -1044,12 +1047,12 @@ CardId* StudyDeck::loadCardId(QDataStream &stream)
     return ids[val];
 }
 
-void StudyDeck::saveCardId(QDataStream &stream, CardId *id) const
+void StudyDeck::saveCardId(QDataStream &stream, CardId *cid) const
 {
-    if (id == nullptr)
+    if (cid == nullptr)
         stream << (qint32)-1;
     else
-        stream << (qint32)id->data;
+        stream << (qint32)cid->data;
 }
 
 void StudyDeck::setCardData(CardId *cardid, intptr_t data)
@@ -1106,7 +1109,7 @@ CardId* StudyDeck::createCard(CardId *cardid_group, intptr_t data)
     //    card->id = CardId(0);
     //else
     //    card->id = CardId(list.back()->id.data + 1);
-    card->index = list.size(); // id.reset(new CardId(list.size()));
+    card->index = tosigned(list.size()); // id.reset(new CardId(list.size()));
 
     if (group != nullptr)
     {
@@ -1117,7 +1120,7 @@ CardId* StudyDeck::createCard(CardId *cardid_group, intptr_t data)
     daystats.newCard(ltDay(testdate), group == nullptr);
 
     list.push_back(card);
-    ids.push_back(new CardId(ids.size()));
+    ids.push_back(new CardId(tosigned(ids.size())));
 
     return ids.back(); //card->id.get();
 }
@@ -1176,7 +1179,7 @@ CardId* StudyDeck::deleteCard(CardId *cardid)
 
     list.erase(list.begin() + cardix);
     ids.erase(ids.begin() + cardix);
-    for (; cardix != list.size(); ++cardix)
+    for (int siz = tosigned(list.size()); cardix != siz; ++cardix)
     {
         --list[cardix]->index; //id->data;
         --ids[cardix]->data;
@@ -1188,7 +1191,7 @@ CardId* StudyDeck::deleteCard(CardId *cardid)
 void StudyDeck::deleteCardGroup(CardId *cardid)
 {
 #ifdef _DEBUG
-    if (cardid == nullptr || cardid->data < 0 || cardid->data >= list.size())
+    if (cardid == nullptr || cardid->data < 0 || cardid->data >= tosigned(list.size()))
         throw "Invalid card id.";
 #endif
 
@@ -1237,7 +1240,7 @@ void StudyDeck::deleteCardGroup(CardId *cardid)
 
     // Removing the cards from list and updating the id of the rest.
     int ix = 0;
-    for (int pos = 0, siz = list.size(); pos != siz; ++pos)
+    for (int pos = 0, siz = tosigned(list.size()); pos != siz; ++pos)
     {
         if (listdata[pos] == nullptr)
             continue;
@@ -1295,7 +1298,7 @@ void StudyDeck::mergeGroups(CardId *g1, CardId *g2)
 
 ushort StudyDeck::dayStatSize() const
 {
-    return daystats.size();
+    return tounsigned<ushort>(daystats.size());
 }
 
 const DeckDayStat& StudyDeck::dayStat(int index) const
@@ -1361,7 +1364,7 @@ ushort StudyDeck::cardInclusion(CardId *cardid) const
     if (card == nullptr)
         return 0;
 
-    return card->stats.size();// inclusion;
+    return tounsigned<ushort>(card->stats.size());// inclusion;
 }
 
 QDateTime StudyDeck::cardTestDate(CardId *cardid) const
@@ -1575,7 +1578,7 @@ int StudyDeck::daysSinceLastInclude() const
     QDateTime now = QDateTime::currentDateTimeUtc();
     QDate day = ltDay(now);
 
-    for (int ix = daystats.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(daystats.size()) - 1; ix != -1; --ix)
     {
         const DeckDayStat &stat = daystats.items(ix);
         if (stat.testednew == 0)
@@ -1602,7 +1605,7 @@ QDate StudyDeck::testDay() const
 
 int StudyDeck::testSize() const
 {
-    return testcards.size();
+    return tosigned(testcards.size());
 }
 
 CardId* StudyDeck::testCard(int index) const
@@ -2187,7 +2190,7 @@ void StudyDeckList::save(QDataStream &stream) const
     //stream << (qint32)cardwrongcnt;
 
     stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         stream << list[ix]->deckId();
         list[ix]->save(stream);
@@ -2236,7 +2239,7 @@ void StudyDeckList::removeDeck(StudyDeckId id)
     mapping.erase(id);
 }
 
-int StudyDeckList::size() const
+StudyDeckList::size_type StudyDeckList::size() const
 {
     return list.size();
 }
@@ -2305,7 +2308,7 @@ void StudentProfile::load(const QString &filename)
     if (strncmp(tmp, "zpf", 3))
         return;
 
-    int version = strtol(tmp + 3, nullptr, 10);
+    //int version = strtol(tmp + 3, nullptr, 10);
 
     qint32 i;
     stream >> i;

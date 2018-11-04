@@ -19,6 +19,8 @@
 #include "ranges.h"
 //#include "groupstudy.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -115,7 +117,7 @@ void WordDeckItems<T>::copy(WordDeckItems<T> *src, const std::map<CardId*, CardI
 
     list.clear();
     list.reserve(src->list.size());
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         item_type *i = new item_type;
         *i = *src->list[ix];
@@ -131,7 +133,7 @@ int WordDeckItems<T>::add(T *item)
 {
     //expand(owner->wordRomaji(item->data->index), list.size(), false);
     list.push_back(item);
-    return list.size() - 1;
+    return tosigned(list.size()) - 1;
 }
 
 template<typename T>
@@ -151,7 +153,7 @@ int WordDeckItems<T>::indexOf(T* item) const
 }
 
 template<>
-void WordDeckItems<FreeWordDeckItem>::_copy(FreeWordDeckItem *item, FreeWordDeckItem *srcitem, const std::map<CardId*, CardId*> &cardmap)
+void WordDeckItems<FreeWordDeckItem>::_copy(FreeWordDeckItem * /*item*/, FreeWordDeckItem * /*srcitem*/, const std::map<CardId*, CardId*> &/*cardmap*/)
 {
     ;
 }
@@ -177,7 +179,7 @@ void WordDeckItems<LockedWordDeckItem>::_copy(LockedWordDeckItem *item, LockedWo
 //}
 
 template<>
-void WordDeckItems<FreeWordDeckItem>::loadItem(QDataStream &stream, FreeWordDeckItem *item, StudyDeck *study)
+void WordDeckItems<FreeWordDeckItem>::loadItem(QDataStream &stream, FreeWordDeckItem *item, StudyDeck * /*study*/)
 {
     owner->loadFreeDeckItem(stream, item);
 }
@@ -189,7 +191,7 @@ void WordDeckItems<LockedWordDeckItem>::loadItem(QDataStream &stream, LockedWord
 }
 
 template<>
-void WordDeckItems<FreeWordDeckItem>::saveItem(QDataStream &stream, const FreeWordDeckItem *item, StudyDeck *study) const
+void WordDeckItems<FreeWordDeckItem>::saveItem(QDataStream &stream, const FreeWordDeckItem *item, StudyDeck * /*study*/) const
 {
     owner->saveFreeDeckItem(stream, item);
 }
@@ -203,8 +205,9 @@ void WordDeckItems<LockedWordDeckItem>::saveItem(QDataStream &stream, const Lock
 template<>
 void WordDeckItems<FreeWordDeckItem>::save(QDataStream &stream) const
 {
-    stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
+    qint32 lsiz = tosigned(list.size());
+    stream << (qint32)lsiz;
+    for (int ix = 0; ix != lsiz; ++ix)
         saveItem(stream, list[ix], nullptr);
 }
 
@@ -212,8 +215,9 @@ template<>
 void WordDeckItems<LockedWordDeckItem>::save(QDataStream &stream) const
 {
     StudyDeck *study = owner->getStudyDeck();
-    stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
+    qint32 lsiz = tosigned(list.size());
+    stream << (qint32)lsiz;
+    for (int ix = 0; ix != lsiz; ++ix)
         saveItem(stream, list[ix], study);
 }
 
@@ -246,8 +250,10 @@ QDataStream& operator>>(QDataStream &stream, KanjiReadingWord &w)
 
 QDataStream& operator<<(QDataStream &stream, const KanjiReadingItem &r)
 {
-    stream << (qint32)r.words.size();
-    for (int ix = 0; ix != r.words.size(); ++ix)
+    qint32 wsiz = tosigned(r.words.size());
+
+    stream << (qint32)wsiz;
+    for (int ix = 0; ix != wsiz; ++ix)
         stream << *r.words[ix];
     stream << (qint32)r.kanjiindex;
     stream << (quint8)r.reading;
@@ -307,10 +313,11 @@ void ReadingTestList::load(QDataStream &stream)
 
 void ReadingTestList::save(QDataStream &stream) const
 {
-    stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
+    qint32 lsiz = tosigned(list.size());
+    stream << (qint32)lsiz;
+    for (int ix = 0; ix != lsiz; ++ix)
         stream << *list[ix];
-    stream << (qint32)words.count();
+    stream << (qint32)tosigned(words.count());
     for (int i : words)
         stream << (qint32)i;
 }
@@ -327,7 +334,7 @@ bool ReadingTestList::empty() const
     return list.empty();
 }
 
-int ReadingTestList::size() const
+ReadingTestList::size_type ReadingTestList::size() const
 {
     return list.size();
 }
@@ -365,7 +372,7 @@ void ReadingTestList::copy(ReadingTestList *src)
     words = src->words;
     list.clear();
     list.reserve(src->list.size());
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         KanjiReadingItem *item = new KanjiReadingItem;
         KanjiReadingItem *srcitem = src->list[ix];
@@ -373,7 +380,7 @@ void ReadingTestList::copy(ReadingTestList *src)
         item->kanjiindex = srcitem->kanjiindex;
         item->reading = srcitem->reading;
 
-        for (int iy = 0, siy = srcitem->words.size(); iy != siy; ++iy)
+        for (int iy = 0, siy = tosigned(srcitem->words.size()); iy != siy; ++iy)
         {
             KanjiReadingWord *kw = new KanjiReadingWord;
             *kw = *srcitem->words[iy];
@@ -397,10 +404,10 @@ void ReadingTestList::processRemovedWord(int windex)
             words.insert(index - 1);
     }
 
-    for (int ix = list.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
     {
         KanjiReadingItem *item = list[ix];
-        for (int iy = item->words.size(); iy != -1; --iy)
+        for (int iy = tosigned(item->words.size()); iy != -1; --iy)
         {
             int &wix = item->words[iy]->windex;
             if (wix == windex)
@@ -465,14 +472,14 @@ void ReadingTestList::add(int windex, bool newitem, bool failed, bool undo)
         int r = findKanjiReading(e->kanji, e->kana, ix, ZKanji::kanjis[k], &fdat);
 
         // Not a reading from ON or KUN, so we can't test it.
-        if (r == 0 || (Settings::study.readings == StudySettings::ON && r > ZKanji::kanjis[k]->on.size()) || (Settings::study.readings == StudySettings::Kun && r <= ZKanji::kanjis[k]->on.size()) || found.contains(std::make_pair(k, r)))
+        if (r == 0 || (Settings::study.readings == StudySettings::ON && r > tosigned(ZKanji::kanjis[k]->on.size())) || (Settings::study.readings == StudySettings::Kun && r <= tosigned(ZKanji::kanjis[k]->on.size())) || found.contains(std::make_pair(k, r)))
             continue;
 
         found.insert(std::make_pair(k, r));
 
         // Search the kanji/reading in the items already in the readings list.
         int rix = -1;
-        for (int iy = 0; iy != list.size() && rix == -1; ++iy)
+        for (int iy = 0, sizy = tosigned(list.size()); iy != sizy && rix == -1; ++iy)
             if (list[iy]->kanjiindex == k && list[iy]->reading == r)
                 rix = iy;
 
@@ -511,7 +518,7 @@ void ReadingTestList::add(int windex, bool newitem, bool failed, bool undo)
             }
         }
 
-        for (int iy = 0; wordadded && iy != item->words.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(item->words.size()); wordadded && iy != sizy; ++iy)
         {
             if (item->words[iy]->windex != windex)
                 continue;
@@ -554,10 +561,10 @@ void ReadingTestList::removeWord(int windex)
         changed = true;
     }
 
-    for (int ix = list.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
     {
         KanjiReadingItem *item = list[ix];
-        for (int iy = item->words.size() - 1; iy != -1; --iy)
+        for (int iy = tosigned(item->words.size()) - 1; iy != -1; --iy)
             if (item->words[iy]->windex == windex)
             {
                 changed = true;
@@ -613,12 +620,12 @@ bool ReadingTestList::readingMatches(QString answer)
     // Answer is not exact match, but a word might have the correct furigana.
     std::vector<FuriganaData> fdat;
 
-    for (int ix = 0; ix != list.front()->words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.front()->words.size()); ix != siz; ++ix)
     {
         WordEntry *w = owner->dictionary()->wordEntry(list.front()->words[ix]->windex);
         findFurigana(w->kanji, w->kana, fdat);
 
-        for (int iy = 0; iy != w->kanji.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(w->kanji.size()); iy != sizy; ++iy)
         {
             // Stepping through every character and trying to find the kanji being
             // tested. Its reading should also be the same as the current one.
@@ -626,9 +633,10 @@ bool ReadingTestList::readingMatches(QString answer)
                 continue;
 
             int fpos = 0;
-            for (fpos = 0; fpos != fdat.size() && iy > fdat[fpos].kanji.pos; ++fpos)
+            int fsiz = tosigned(fdat.size());
+            for ( ; fpos != fsiz && iy > tosigned(fdat[fpos].kanji.pos); ++fpos)
                 ;
-            if (fpos == fdat.size() || fdat[fpos].kanji.pos != iy || fdat[fpos].kanji.len != 1)
+            if (fpos == fsiz || tosigned(fdat[fpos].kanji.pos) != iy || fdat[fpos].kanji.len != 1)
                 continue;
 
             if (findKanjiReading(w->kanji, w->kana, iy, k, &fdat) != r)
@@ -674,7 +682,7 @@ void ReadingTestList::nextWords(std::vector<int> &wlist)
 {
     wlist.clear();
     wlist.reserve(list.front()->words.size());
-    for (int ix = 0; ix != list.front()->words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.front()->words.size()); ix != siz; ++ix)
         wlist.push_back(list.front()->words[ix]->windex);
 }
 
@@ -689,7 +697,7 @@ WordDeckList::WordDeckList(Dictionary *dict) : base(dict), dict(dict), lastdeck(
 
 WordDeckList::~WordDeckList()
 {
-
+    ;
 }
 
 void WordDeckList::load(QDataStream &stream)
@@ -704,13 +712,12 @@ void WordDeckList::load(QDataStream &stream)
         list.push_back(new WordDeck(this));
         list.back()->load(stream);
     }
-
 }
 
 void WordDeckList::save(QDataStream &stream) const
 {
     stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         list[ix]->save(stream);
 }
 
@@ -723,7 +730,7 @@ void WordDeckList::applyChanges(Dictionary *olddict, std::map<int, int> &changes
 {
     //dict = newdict;
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         list[ix]->applyChanges(olddict, changes);
 }
 
@@ -734,7 +741,7 @@ void WordDeckList::copy(WordDeckList *src)
 
     list.clear();
     list.reserve(src->list.size());
-    for (int ix = 0; ix != src->list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         list.push_back(new WordDeck(this));
         list.back()->copy(src->list[ix]);
@@ -748,11 +755,11 @@ Dictionary* WordDeckList::dictionary()
 
 void WordDeckList::processRemovedWord(int windex)
 {
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         list[ix]->processRemovedWord(windex);
 }
 
-int WordDeckList::size() const
+WordDeckList::size_type WordDeckList::size() const
 {
     return list.size();
 }
@@ -800,7 +807,7 @@ int WordDeckList::indexOf(WordDeck *deck) const
 
 int WordDeckList::indexOf(const QString &name) const
 {
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix]->getName() == name)
             return ix;
     return -1;
@@ -809,7 +816,7 @@ int WordDeckList::indexOf(const QString &name) const
 bool WordDeckList::rename(int index, const QString &name)
 {
     QString val = name.trimmed().left(255);
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix]->getName() == val)
             return false;
 
@@ -823,7 +830,7 @@ bool WordDeckList::rename(int index, const QString &name)
 bool WordDeckList::add(const QString &name)
 {
     QString val = name.trimmed().left(255);
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix]->getName() == val)
             return false;
 
@@ -838,7 +845,7 @@ bool WordDeckList::nameTakenOrInvalid(const QString &name)
     QString val = name.trimmed().left(255);
     if (val.isEmpty())
         return true;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix]->getName() == val)
             return true;
     return false;
@@ -864,7 +871,7 @@ void WordDeckList::move(const smartvector<Range> &ranges, int pos)
         return;
 
     if (pos == -1)
-        pos = list.size();
+        pos = tosigned(list.size());
 
     _moveRanges(ranges, pos, list /*[this](const Range &r, int pos) { _moveRange(worddecks, r, pos); }*/);
 
@@ -876,7 +883,7 @@ void WordDeckList::move(const smartvector<Range> &ranges, int pos)
 //-------------------------------------------------------------
 
 
-WordDeck::WordDeck(WordDeckList *owner) : base(owner), lastcnt(0), freeitems(this), lockitems(this), testreadings(this), newcnt(0) 
+WordDeck::WordDeck(WordDeckList *owner) : base(owner), lastcnt(0), newcnt(0), freeitems(this), lockitems(this), testreadings(this)
 {
     generatingnext = false;
     abortgenerating = false;
@@ -940,7 +947,7 @@ void WordDeck::save(QDataStream &stream) const
     stream << (qint32)list.size();
 
     const StudyDeck *study = studyDeck();
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         stream << *list[ix];
         study->saveCardId(stream, list[ix]->groupid);
@@ -1080,7 +1087,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
     // prioritised word has already been found.
     std::map<int, bool> match;
 
-    for (int ix = list.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
     {
         int newindex = changes.at(list[ix]->index);
         if (newindex == -1)
@@ -1149,7 +1156,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
     // Adding more word data to the 'kept' map. Word data not in mainword can be associated
     // with items with study data. If the main saved word data from mainword doesn't have that
     // type of item, items of other word data are used.
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         int newindex = changes.at(list[ix]->index);
 
@@ -1174,9 +1181,9 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
         study->groupData(posdata->groupid, datalist);
 
         int added = 0;
-        for (int ix = 0; ix != datalist.size(); ++ix)
+        for (int iy = 0, sizy = tosigned(datalist.size()); iy != sizy; ++iy)
         {
-            LockedWordDeckItem *item = (LockedWordDeckItem*)datalist[ix];
+            LockedWordDeckItem *item = (LockedWordDeckItem*)datalist[iy];
             // The answer type of item wasn't found for this word before.
             if ((t & (int)item->questiontype) == 0)
                 added |= (int)item->questiontype;
@@ -1197,7 +1204,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
     }
 
     // Do the same for the other word data not used after the update.
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         int newindex = changes.at(list[ix]->index);
 
@@ -1224,7 +1231,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
     // At this point 'kept' contains which type of items of which word data will still be in
     // use. They will be merged into words in mainword.
     freeitems.applyChanges(changes, mainword, kept);
-    newcnt = std::min(newcnt, freeitems.size());
+    newcnt = std::min(newcnt, tosigned(freeitems.size()));
 
     // Indexes in lockitems that will be deleted after the changes are applied to it.
     std::vector<int> deleted;
@@ -1274,9 +1281,9 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
     // change.
     std::sort(deleted.begin(), deleted.end());
     deleted.resize(std::unique(deleted.begin(), deleted.end()) - deleted.begin());
-    for (int ix = deleted.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(deleted.size()) - 1; ix != -1; --ix)
     {
-        for (int dix = duelist.size() - 1; dix != -1; --dix)
+        for (int dix = tosigned(duelist.size()) - 1; dix != -1; --dix)
         {
 #ifdef _DEBUG
             if (duelist[dix] == deleted[ix])
@@ -1285,7 +1292,7 @@ void WordDeck::applyChanges(Dictionary *olddict, std::map<int, int> &changes)
             if (duelist[dix] > deleted[ix])
                 --duelist[dix];
         }
-        for (int fix = failedlist.size() - 1; fix != -1; --fix)
+        for (int fix = tosigned(failedlist.size()) - 1; fix != -1; --fix)
         {
 #ifdef _DEBUG
             if (failedlist[fix] == deleted[ix])
@@ -1357,7 +1364,7 @@ void WordDeck::copy(WordDeck *src)
     std::map<WordDeckWord*, WordDeckWord*> wordmap;
     list.clear();
     list.reserve(src->list.size());
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         WordDeckWord *w = new WordDeckWord;
         *w = *src->list[ix];
@@ -1381,14 +1388,14 @@ void WordDeck::processRemovedWord(int windex)
     std::vector<int> fremoved;
     // Removing word from the freeitems list. The freeitems are items with no study data yet,
     // and only the basic word data.
-    for (int ix = freeitems.size() - 1; ix != -1 && fremoved.size() != 3; --ix)
+    for (int ix = tosigned(freeitems.size()) - 1; ix != -1 && fremoved.size() != 3; --ix)
         if (freeitems.items(ix)->data->index == windex)
         {
             freeitems.remove(ix);
             fremoved.insert(fremoved.begin(), ix);
         }
 
-    newcnt = std::min(newcnt, freeitems.size());
+    newcnt = std::min(newcnt, tosigned(freeitems.size()));
 
     std::vector<int> lremoved;
 
@@ -1399,7 +1406,7 @@ void WordDeck::processRemovedWord(int windex)
     int itemcnt = 0;
     int itempos[3] { 0, 0, 0 };
 
-    for (int ix = 0, siz = lockitems.size(); ix != siz && itemcnt != 3; ++ix)
+    for (int ix = 0, siz = tosigned(lockitems.size()); ix != siz && itemcnt != 3; ++ix)
     {
         if (lockitems.items(ix)->data->index == windex)
         {
@@ -1419,7 +1426,7 @@ void WordDeck::processRemovedWord(int windex)
     }
     else if (itemcnt != 0)
     {
-        for (int ix = duelist.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(duelist.size()) - 1; ix != -1; --ix)
         {
             int &i = duelist[ix];
             if (i > itempos[0])
@@ -1441,7 +1448,7 @@ void WordDeck::processRemovedWord(int windex)
             else if (i == itempos[0])
                 duelist.erase(duelist.begin() + ix);
         }
-        for (int ix = failedlist.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(failedlist.size()) - 1; ix != -1; --ix)
         {
             int &i = failedlist[ix];
             if (i > itempos[0])
@@ -1472,7 +1479,7 @@ void WordDeck::processRemovedWord(int windex)
 
     // Remove the items from the word data and their study cards.
 
-    for (int ix = list.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
     {
         if (list[ix]->index > windex)
             --list[ix]->index;
@@ -1498,7 +1505,7 @@ void WordDeck::initNewStudy(int num)
     if (num == 0)
         return;
 
-    newcnt += std::min(freeitems.size(), num);
+    newcnt += std::min(tosigned(freeitems.size()), num);
     dictionary()->setToUserModified();
 }
 
@@ -1592,12 +1599,12 @@ bool WordDeck::firstTest() const
 
 int WordDeck::readingsQueued() const
 {
-    return testreadings.size();
+    return tosigned(testreadings.size());
 }
 
 int WordDeck::wordDataSize() const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 WordDeckWord* WordDeck::wordData(int index)
@@ -1681,7 +1688,7 @@ int WordDeck::answerAverage() const
 
 int WordDeck::queueSize() const
 {
-    return freeitems.size();
+    return tosigned(freeitems.size());
 }
 
 int WordDeck::dueSize() const
@@ -1694,7 +1701,7 @@ int WordDeck::dueSize() const
         return now < ltDay(d);
     });
 
-    return failedlist.size() + (endit - duelist.begin());
+    return tosigned(failedlist.size()) + (endit - duelist.begin());
 
     //int duecnt = 0;
     //for (int ix : duelist)
@@ -1714,9 +1721,9 @@ quint32 WordDeck::dueEta() const
     const StudyDeck *study = studyDeck();
     quint32 r = 0;
     int dsiz = dueSize();
-    for (int ix = 0, siz = failedlist.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(failedlist.size()); ix != siz; ++ix)
         r += study->cardEta(lockitems.items(failedlist[ix])->cardid);
-    dsiz -= failedlist.size();
+    dsiz -= tosigned(failedlist.size());
     for (int ix = 0; ix != dsiz; ++ix)
         r += study->cardEta(lockitems.items(duelist[ix])->cardid);
 
@@ -1731,7 +1738,7 @@ int WordDeck::newSize() const
 
 int WordDeck::failedSize() const
 {
-    return failedlist.size();
+    return tosigned(failedlist.size());
 }
 
 FreeWordDeckItem* WordDeck::queuedItems(int index)
@@ -1746,7 +1753,7 @@ void WordDeck::removeQueuedItems(const std::vector<int> &items)
 
     std::vector<int> ordered = items;
     std::sort(ordered.begin(), ordered.end());
-    for (int ix = ordered.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(ordered.size()) - 1; ix != -1; --ix)
     {
         FreeWordDeckItem *item = freeitems.items(ordered[ix]);
         WordDeckWord *dat = item->data;
@@ -1769,16 +1776,16 @@ void WordDeck::removeStudiedItems(const std::vector<int> &items)
     StudyDeck *study = studyDeck();
     std::vector<int> ordered = items;
     std::sort(ordered.begin(), ordered.end());
-    for (int ix = ordered.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(ordered.size()) - 1; ix != -1; --ix)
     {
-        for (int iy = duelist.size() - 1; iy != -1; --iy)
+        for (int iy = tosigned(duelist.size()) - 1; iy != -1; --iy)
         {
             if (duelist[iy] > ordered[ix])
                 --duelist[iy];
             else if (duelist[iy] == ordered[ix])
                 duelist.erase(duelist.begin() + iy);
         }
-        for (int iy = failedlist.size() - 1; iy != -1; --iy)
+        for (int iy = tosigned(failedlist.size()) - 1; iy != -1; --iy)
         {
             if (failedlist[iy] > ordered[ix])
                 --failedlist[iy];
@@ -1815,7 +1822,7 @@ void WordDeck::requeueStudiedItems(const std::vector<int> &items)
 
     std::vector<std::pair<int, int>> parts;
     parts.reserve(items.size());
-    for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
     {
         LockedWordDeckItem *item = lockitems.items(items[ix]);
         WordDeckWord *dat = item->data;
@@ -1936,7 +1943,7 @@ int WordDeck::queueWordItems(const std::vector<std::pair<int, int>> &parts)
         return 0;
 
     int added = 0;
-    for (int ix = 0; ix != parts.size(); ++ix)
+    for (int ix = 0, siz = tosigned(parts.size()); ix != siz; ++ix)
     {
         int windex = parts[ix].first;
         int types = parts[ix].second;
@@ -1989,7 +1996,7 @@ int WordDeck::queueWordItems(const std::vector<std::pair<int, int>> &parts)
 int WordDeck::queueUniqueSize() const
 {
     QSet<int> uniques;
-    for (int ix = 0; ix != freeitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(freeitems.size()); ix != siz; ++ix)
         uniques.insert(freeitems.items(ix)->data->index);
     return uniques.size();
 }
@@ -1998,15 +2005,15 @@ void WordDeck::dueItems(std::vector<int> &items) const
 {
     items.clear();
     items.reserve(duelist.size() + failedlist.size());
-    for (int ix = 0, siz = failedlist.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(failedlist.size()); ix != siz; ++ix)
         items.push_back(failedlist[ix]);
-    for (int ix = 0, siz = duelist.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(duelist.size()); ix != siz; ++ix)
         items.push_back(duelist[ix]);
 }
 
 int WordDeck::studySize() const
 {
-    return lockitems.size();
+    return tosigned(lockitems.size());
 }
 
 LockedWordDeckItem* WordDeck::studiedItems(int index)
@@ -2201,7 +2208,7 @@ void WordDeck::checkDueList()
     StudyDeck *study = studyDeck();
 
     QDateTime prevdate = study->cardNextTestDate(lockitems.items(duelist[0])->cardid);
-    for (int ix = 1, siz = duelist.size(); ix < siz; ++ix)
+    for (int ix = 1, siz = tosigned(duelist.size()); ix < siz; ++ix)
     {
         const LockedWordDeckItem *a = lockitems.items(duelist[ix - 1]);
         const LockedWordDeckItem *b = lockitems.items(duelist[ix]);
@@ -2404,7 +2411,7 @@ void WordDeck::answer(StudyCard::AnswerType a, qint64 answertime)
     // it assumed the current item failed and will have to be repeated.
     // If the current item was a success, there is nothing else to test. Set the next one to
     // invalid.
-    if (((nextix == currentix && nextix.free == -1) || (currentix.free != -1 && nextix.locked == lockitems.size())) && (a == StudyCard::Correct || a == StudyCard::Easy))
+    if (((nextix == currentix && nextix.free == -1) || (currentix.free != -1 && nextix.locked == tosigned(lockitems.size()))) && (a == StudyCard::Correct || a == StudyCard::Easy))
         nextix.reset();
 
     StudyDeck *study = studyDeck();
@@ -2435,7 +2442,7 @@ void WordDeck::answer(StudyCard::AnswerType a, qint64 answertime)
 
         // The next item to be shown is the same as the current item. A new next item must be
         // found.
-        if (nextix.locked == lockitems.size() /*== currentix*/)
+        if (nextix.locked == tosigned(lockitems.size()) /*== currentix*/)
             nextix.reset();
 
         freeitems.remove(currentix.free);
@@ -2692,7 +2699,7 @@ void WordDeck::doGenerateNextItem()
         if (item == current || item->data->lastinclude.msecsTo(now) < 60 * 1000 * minutestowait)
             past.push_back(item);
     }
-    for (int ix = 0; ix != failedlist.size() && !abortgenerating; ++ix)
+    for (int ix = 0, siz = tosigned(failedlist.size()); ix != siz && !abortgenerating; ++ix)
     {
         LockedWordDeckItem *item = lockitems.items(failedlist[ix]);
         if (item == current || item->data->lastinclude.msecsTo(now) < 60 * 1000 * minutestowait)
@@ -2727,7 +2734,7 @@ void WordDeck::doGenerateNextItem()
         // Count the number of items in each priority group and go from highest to lowest.
         int priorities[9];
         memset(priorities, 0, sizeof(int) * 9);
-        for (int ix = 0; ix != freeitems.size() && !abortgenerating; ++ix)
+        for (int ix = 0, siz = tosigned(freeitems.size()); ix != siz && !abortgenerating; ++ix)
         {
 #ifdef _DEBUG
             if (freeitems.items(ix)->priority < 1 || freeitems.items(ix)->priority > 9)
@@ -2748,7 +2755,7 @@ void WordDeck::doGenerateNextItem()
         int p = 8;
         while (foundix == -1 && p != -1 && !abortgenerating)
         {
-            for (int ix = 0; ix != freeitems.size() && priorities[p] != 0 && !abortgenerating; ++ix)
+            for (int ix = 0, siz = tosigned(freeitems.size()); ix != siz && priorities[p] != 0 && !abortgenerating; ++ix)
             {
                 FreeWordDeckItem *item = freeitems.items(ix);
                 if (item == current || item->priority != p + 1)
@@ -2802,7 +2809,7 @@ void WordDeck::doGenerateNextItem()
             // If the same item is found as the next one, it'll be the last in the locked
             // items list.
             nextix.free = -1;
-            nextix.locked = lockitems.size();
+            nextix.locked = tosigned(lockitems.size());
         }
         else if (currentix.free != -1 && nextix.free != -1 && currentix.free < nextix.free)
         {
@@ -2899,9 +2906,9 @@ void WordDeck::doGenerateNextItem()
             // not found in the previous 10 minutes if possible. Otherwise remember the item
             // whose group was included the longest time ago.
 
-            quint32 shorttime = -1;
+            quint32 shorttime = (quint32)-1;
             int shortindex = -1;
-            quint32 shorttime10 = -1;
+            quint32 shorttime10 = (quint32)-1;
             int shortindex10 = -1;
 
             for (int ix = 0; ix != duecnt && !abortgenerating; ++ix)
@@ -2912,14 +2919,14 @@ void WordDeck::doGenerateNextItem()
                     continue;
 
                 if (ltDay(ditem->data->lastinclude) < testday &&
-                    (shorttime == -1 || study->cardSpacing(ditem->cardid) < shorttime))
+                    (shorttime == (quint32)-1 || study->cardSpacing(ditem->cardid) < shorttime))
                 {
                     shorttime = study->cardSpacing(ditem->cardid);
                     shortindex = duelist[ix];
                 }
 
                 if (ditem->data->lastinclude.msecsTo(now) > 60 * 1000 * minutestowait &&
-                    (shorttime10 == -1 || study->cardSpacing(ditem->cardid) < shorttime10))
+                    (shorttime10 == (quint32)-1 || study->cardSpacing(ditem->cardid) < shorttime10))
                 {
                     shorttime10 = study->cardSpacing(ditem->cardid);
                     shortindex10 = duelist[ix];
@@ -3003,7 +3010,7 @@ void WordDeck::doGenerateNextItem()
         nextix = currentix;
 
         if (currentix.free >= 0)
-            nextix.setLocked(lockitems.size());
+            nextix.setLocked(tosigned(lockitems.size()));
         return;
     }
 

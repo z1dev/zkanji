@@ -505,7 +505,7 @@ bool ZKanjiWidget::event(QEvent *e)
     return base::event(e);
 }
 
-void ZKanjiWidget::paintEvent(QPaintEvent *e)
+void ZKanjiWidget::paintEvent(QPaintEvent * /*e*/)
 {
     if (!paintactive)
         return;
@@ -536,7 +536,7 @@ void ZKanjiWidget::paintEvent(QPaintEvent *e)
     //grad.setColorAt(0, activecolor);
     //p.fillRect(r, grad);
 
-    QRect r = rect();
+    //QRect r = rect();
 
     QPainterPath path;
     //path.addPolygon(QPolygonF({ QPointF(0, r.bottom() - siz * 0.5), QPointF(siz * 0.5, r.bottom()), QPointF(0, r.bottom()) }));
@@ -584,7 +584,7 @@ void ZKanjiWidget::allowActionDestroyed()
 //    base::keyPressEvent(e);
 //}
 
-void ZKanjiWidget::on_dictionary_wordDoubleClicked(int windex, int dindex)
+void ZKanjiWidget::on_dictionary_wordDoubleClicked(int windex, int /*dindex*/)
 {
     gUI->wordToDestSelect(ZKanji::dictionary(dictindex), windex);
 }
@@ -657,7 +657,7 @@ void ZKanjiWidget::dictionaryMoved(int from, int to)
     connect(action, &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
 }
 
-void ZKanjiWidget::dictionaryRenamed(const QString &oldname, int index, int order)
+void ZKanjiWidget::dictionaryRenamed(const QString &/*oldname*/, int index, int order)
 {
     dictmenu.actions().at(order)->setText(ZKanji::dictionary(index/*ZKanji::dictionaryPosition(order)*/)->name());
 }
@@ -670,7 +670,7 @@ void ZKanjiWidget::dictionaryFlagChanged(int index, int order)
         int _iconH = _iconW;
 
         QSize s = QSize(_iconW, _iconH);
-        QSize ts = triangleSize(QSize(_iconW, _iconH));
+        //QSize ts = triangleSize(QSize(_iconW, _iconH));
         ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
 
         dictmenu.actions().at(order)->setIcon(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(index)->name()));

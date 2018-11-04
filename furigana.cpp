@@ -14,6 +14,8 @@
 #include "kanji.h"
 #include "words.h"
 
+#include "checked_cast.h"
+
 const uchar consonantcolumn[84] =
 {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 101, 1, 101, 1, //14
@@ -138,7 +140,7 @@ bool furiganaStep(const QCharString &kanji, const QCharString &kana, int &kanjis
     if (kanjistart <= kanjiend && kanastart <= kanaend)
     {
         res = furiganaStep2(kanji, kana, kanjistart, kanjiend, kanastart, kanaend, dat, datpos, hacks);
-        if (!res && !datpos && ix == kanjistart + (kana.size() - 1 - kanaend) && kanjiend - kanjistart + 1 <= 3)
+        if (!res && !datpos && ix == kanjistart + (tosigned(kana.size()) - 1 - kanaend) && kanjiend - kanjistart + 1 <= 3)
         {
             res = true;
             for (int i = kanjistart; i <= kanjiend && res; i++)
@@ -301,7 +303,7 @@ int kunLen(const QChar *kun)
 // Length of kanji on reading without the leading dash.
 int onLen(const QChar *on)
 {
-    return qcharlen(on) - (on[0] == '-' ? 1 : 0);
+    return tosigned(qcharlen(on)) - (on[0] == '-' ? 1 : 0);
 }
 
 // Checks whether the passed reading might be found at kanastart in kana, ending at or before
@@ -458,12 +460,12 @@ int furiReadingDiff(KanjiEntry *k, const QCharString &kana, int kanastart, int k
 
     int mismatch;
 
-    for (int ix = 0; ix < k->on.size(); ++ix)
+    for (int ix = 0, siz = tosigned(k->on.size()); ix != siz; ++ix)
     {
         const QChar *on = k->on.items(ix).data();
         if (on[0] == '-')
             ++on;
-        int onlen = qcharlen(on);
+        int onlen = tosigned(qcharlen(on));
         if (!fuReading(on, onlen, kana.data(), kanastart, kanaend, &mismatch))
             mindiff = std::min(mindiff, mismatch);
         else
@@ -472,7 +474,7 @@ int furiReadingDiff(KanjiEntry *k, const QCharString &kana, int kanastart, int k
 
     // Try to match kanji KUN-readings or irregular readings.
 
-    for (int ix = 0; ix < k->kun.size(); ++ix)
+    for (int ix = 0, siz = tosigned(k->kun.size()); ix != siz; ++ix)
     {
         int klen = kunLen(k->kun[ix].data());
         if (!fuReading(k->kun[ix].data(), klen, kana.data(), kanastart, kanaend, &mismatch))
@@ -530,17 +532,17 @@ bool furiganaStep2(const QCharString &kanji, const QCharString &kana, int &kanji
 
         // Try to match kanji ON-readings **** REMOVED: or special character pronunciations.
 
-        for (int ix = 0; ix < readings->size(); ++ix)
+        for (int ix = 0, siz = tosigned(readings->size()); ix != siz; ++ix)
         {
             const QChar *on = (readings->items(ix).data() + (readings->items(ix)[0] == '-' ? 1 : 0));
-            int onlen = qcharlen(on);
+            int onlen = tosigned(qcharlen(on));
             if (l.count(onlen) == 0 && fuReading(on, onlen, kana.data(), kanastart, kanaend))
                 l.insert(onlen);
         }
 
         // Try to match kanji KUN-readings or irregular readings.
 
-        for (int ix = 0; ix < k->kun.size(); ++ix)
+        for (int ix = 0, siz = tosigned(k->kun.size()); ix != siz; ++ix)
         {
             int kunlen = kunLen(k->kun[ix].data());
             if (l.count(kunlen) == 0 && fuReading(k->kun[ix].data(), kunlen, kana.data(), kanastart, kanaend))
@@ -634,7 +636,7 @@ bool furiganaStep2(const QCharString &kanji, const QCharString &kana, int &kanji
 
         std::set<int> l2;
 
-        for (int ix = 0; ix < k->kun.size(); ++ix)
+        for (int ix = 0, siz = tosigned(k->kun.size()); ix != siz; ++ix)
         {
             const QChar *c = qcharchr(k->kun[ix].data(), QChar('.'));
             if (c == nullptr || c[1].unicode() == 0)
@@ -674,7 +676,7 @@ bool furiganaStep2(const QCharString &kanji, const QCharString &kana, int &kanji
                 // character into the masu base form.
 
                 // Number of characters after the . character.
-                int clen = qcharlen(c + 1);
+                int clen = tosigned(qcharlen(c + 1));
 
                 QChar ch = hiraganaCh(c + clen, 0);
                 QChar newch = 0;
@@ -1342,16 +1344,13 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
     //int r = 0;
 
     // Find the kanji at kanjipos in the furigana data.
-    int pos;
-    for (pos = 0; pos != fdat.size() && kanjipos >= fdat[pos].kanji.pos + fdat[pos].kanji.len; ++pos)
-        ;
+    int pos = 0;
+    while (pos != tosigned(fdat.size()) && kanjipos >= fdat[pos].kanji.pos + fdat[pos].kanji.len)
+        ++pos;
 
     // Kanji not found.
-    if (pos == fdat.size() || fdat[pos].kanji.pos + fdat[pos].kanji.len <= kanjipos)
+    if (pos == tosigned(fdat.size()) || tosigned(fdat[pos].kanji.pos + fdat[pos].kanji.len) <= kanjipos)
         return -1;
-
-    if (pos < 0)
-        return 0;
 
     if (k == nullptr)
         k = ZKanji::kanjis[ZKanji::kanjiIndex(kanji[kanjipos].unicode())];
@@ -1371,7 +1370,7 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
 
     int kanaval = 9999;
 
-    const QChar *c;
+    const QChar *c = nullptr;
     QString kanahira = hiraganize(kana);
     //const wchar_t *kana = kanatmp.c_str();
 
@@ -1379,13 +1378,13 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
     {
         // Furigana corresponding to the one kanji was found.
 
-        for (int ix = 0; ix < k->on.size(); ++ix)
+        for (int ix = 0, siz = tosigned(k->on.size()); ix != siz; ++ix)
         {
             c = k->on[ix].data();
             if (c[0] == '-')
                 c++;
 
-            int clen = qcharlen(c);
+            int clen = tosigned(qcharlen(c));
 
             if (clen != fdat[pos].kana.len)
                 continue;
@@ -1407,7 +1406,7 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
 
             // Match ON reading with hiraganized word-kana at the kanji's furigana position.
             // Only save it if it matches and it's closer than a previous match.
-            val = fuReading(c, clen, kanahira.constData(), fdat[pos].kana.pos, fdat[pos].kana.pos + fdat[pos].kana.len - (pos < fdat.size() - 1 ? 0 : 1));
+            val = fuReading(c, clen, kanahira.constData(), fdat[pos].kana.pos, fdat[pos].kana.pos + fdat[pos].kana.len - (pos < tosigned(fdat.size()) - 1 ? 0 : 1));
             if (val != 0 && val < matchval)
             {
                 lastmatch = ix;
@@ -1417,7 +1416,7 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
 
         // ON reading does not match or the reading part is followed by possible okurigana.
         // It's possible the reading is from the KUN readings.
-        bool afterkana = lastmatch < 0 || (kanji.size() > fdat[pos].kanji.pos + fdat[pos].kanji.len && KANA(kanji[fdat[pos].kanji.pos + fdat[pos].kanji.len]));
+        bool afterkana = lastmatch < 0 || (tosigned(kanji.size()) > fdat[pos].kanji.pos + fdat[pos].kanji.len && KANA(kanji[fdat[pos].kanji.pos + fdat[pos].kanji.len]));
 
         if (fullmatch && !afterkana)
             return lastmatch + 1; // Found the on-reading. no need to go further.
@@ -1425,7 +1424,7 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
         {
             // Found on-reading but it could be kun too.
             QString on = hiraganize(c);
-            for (int ix = 1 + k->on.size(); ix < ccnt; ++ix)
+            for (int ix = 1 + tosigned(k->on.size()); ix < ccnt; ++ix)
             {
                 int kk = ZKanji::kanjiCompactToReal(k, ix) - 1 - k->on.size();
 
@@ -1440,7 +1439,7 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
         else
         {
             // No perfect match or no match at all.
-            for (int ix = 1 + k->on.size(); ix < ccnt; ++ix)
+            for (int ix = 1 + tosigned(k->on.size()); ix < ccnt; ++ix)
             {
                 int kk = ZKanji::kanjiCompactToReal(k, ix) - 1 - k->on.size();
 
@@ -1457,7 +1456,7 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
                 if ((!afterkana && lastmatch >= 0 && matchval == 1) || (lastkana >= 0 && kanaval == 1))
                     continue;
 
-                val = fuReading(k->kun[kk].data(), klen, kanahira.constData(), fdat[pos].kana.pos, fdat[pos].kana.pos + fdat[pos].kana.len - (pos < fdat.size() - 1 ? 0 : 1));
+                val = fuReading(k->kun[kk].data(), klen, kanahira.constData(), fdat[pos].kana.pos, fdat[pos].kana.pos + fdat[pos].kana.len - (pos < tosigned(fdat.size()) - 1 ? 0 : 1));
                 if (val != 0 && val < kanaval)
                 {
                     lastkana = ix;
@@ -1486,14 +1485,18 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
             wp = wpMid;
 
         // There's kana after the last kanji in the current furigana item.
-        bool afterkana = wp == wpEnd && fdat[pos].kanji.pos + fdat[pos].kanji.len < kanji.size() && KANA(kanji[fdat[pos].kanji.pos + fdat[pos].kanji.len].unicode());
+        bool afterkana = wp == wpEnd && fdat[pos].kanji.pos + fdat[pos].kanji.len < tosigned(kanji.size()) && KANA(kanji[fdat[pos].kanji.pos + fdat[pos].kanji.len].unicode());
 
-        for (int i = 0; i < ccnt - 1; i++)
+        for (int ix = 0; ix < ccnt - 1; ix++)
         {
             int kk;
-            if (i >= k->on.size())
-                kk = ZKanji::kanjiCompactToReal(k, i + 1);
-            c = i < k->on.size() ? k->on[i].data() : k->kun[kk - 1 - k->on.size()].data();
+            if (ix >= tosigned(k->on.size()))
+            {
+                kk = ZKanji::kanjiCompactToReal(k, ix + 1);
+                c = k->kun[kk - 1 - k->on.size()].data();
+            }
+            else
+                c = k->on[ix].data();
             if (c[0] == '-')
                 c++;
 
@@ -1504,39 +1507,39 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
 
             if (wp != wpMid)
             {
-                if (i < k->on.size() && !fullmatch && !qcharncmp(kanahira.constData() + fdat[pos].kana.pos + (wp == wpStart ? 0 : fdat[pos].kana.len - len), hiraganize(c).constData(), len))
+                if (ix < tosigned(k->on.size()) && !fullmatch && !qcharncmp(kanahira.constData() + fdat[pos].kana.pos + (wp == wpStart ? 0 : fdat[pos].kana.len - len), hiraganize(c).constData(), len))
                 {
                     fullmatch = true;
-                    lastmatch = i;
+                    lastmatch = ix;
                     matchval = 1;
                     if (!afterkana)
                         break;
 
                     // Found exact match, skip other on readings.
-                    i = k->on.size() - 1;
+                    ix = tosigned(k->on.size()) - 1;
                     continue;
                 }
 
-                if (i >= k->on.size() && (lastmatch < 0 || afterkana) && !qcharncmp(kanahira.constData() + fdat[pos].kana.pos + (wp == wpStart ? 0 : fdat[pos].kana.len - len), c, len))
+                if (ix >= tosigned(k->on.size()) && (lastmatch < 0 || afterkana) && !qcharncmp(kanahira.constData() + fdat[pos].kana.pos + (wp == wpStart ? 0 : fdat[pos].kana.len - len), c, len))
                 {
-                    lastkana = i + 1;
+                    lastkana = ix + 1;
                     break;
                 }
 
-                if (i < k->on.size() && lastmatch >= 0 && matchval == 1 || i >= k->on.size() && kanaval == 1)
+                if ((ix < tosigned(k->on.size()) && lastmatch >= 0 && matchval == 1) || (ix >= tosigned(k->on.size()) && kanaval == 1))
                     continue;
 
                 int s = fdat[pos].kana.pos + (wp == wpStart ? 0 : fdat[pos].kana.len - len);
                 if ((val = fuReading(c, len, kanahira.constData(), s, s + len - 1)) != 0)
                 {
-                    if (i < k->on.size() && val < matchval)
+                    if (ix < tosigned(k->on.size()) && val < matchval)
                     {
-                        lastmatch = i;
+                        lastmatch = ix;
                         matchval = val;
                     }
-                    else if (i >= k->on.size() && val < kanaval)
+                    else if (ix >= tosigned(k->on.size()) && val < kanaval)
                     {
-                        lastkana = i + 1;
+                        lastkana = ix + 1;
                         kanaval = val;
                     }
                 }
@@ -1547,42 +1550,44 @@ int findKanjiReading(const QCharString &kanji, const QCharString &kana, int kanj
                 int start = fdat[pos].kana.pos + (kanjipos - fdat[pos].kanji.pos);
                 int end = fdat[pos].kana.pos + fdat[pos].kana.len - len - (fdat[pos].kanji.pos + fdat[pos].kanji.len - 1 - kanjipos);
 
-                if (i >= k->on.size() || !fullmatch)
+                if (ix >= tosigned(k->on.size()) || !fullmatch)
                 {
                     for (int pp = start; pp <= end; pp++)
                     {
                         if (!qcharncmp(kanahira.constData() + pp, hiraganize(c).constData(), len))
                         {
-                            if (i < k->on.size())
+                            if (ix < tosigned(k->on.size()))
                             {
-                                lastmatch = i;
+                                lastmatch = ix;
                                 matchval = 1;
                                 fullmatch = true;
                                 break;
                             }
                             else
                             {
-                                lastkana = i + 1;
+                                lastkana = ix + 1;
                                 kanaval = 1;
                                 fullmatch = true;
                                 break;
                             }
                         }
 
-                        if ((i < k->on.size() && lastmatch >= 0) || (i >= k->on.size() && lastkana >= 0))
+                        if ((ix < tosigned(k->on.size()) && lastmatch >= 0) || (ix >= tosigned(k->on.size()) && lastkana >= 0))
                             continue;
 
                         if ((val = fuReading(c, len, kanahira.constData(), start, start + len - 1)) != 0)
-                            if (i < k->on.size() && val < matchval)
+                        {
+                            if (ix < tosigned(k->on.size()) && val < matchval)
                             {
-                                lastmatch = i;
+                                lastmatch = ix;
                                 matchval = val;
                             }
-                            else if (i >= k->on.size() && val < kanaval)
+                            else if (ix >= tosigned(k->on.size()) && val < kanaval)
                             {
-                                lastkana = i + 1;
+                                lastkana = ix + 1;
                                 kanaval = val;
                             }
+                        }
                     }
                     if (fullmatch)
                         break;
@@ -1654,7 +1659,7 @@ void testFuriganaReadingTest()
                     if (!furi.empty())
                     {
                         stream << QString("%1 %2 %3 ").arg(ix).arg(e->kanji.toQString()).arg(e->kana.toQString());
-                        for (int j = 0; j != furi.size(); ++j)
+                        for (int j = 0; j != tosigned(furi.size()); ++j)
                             stream << QString("{%1, %2}, {%3, %4} ").arg(furi[j].kanji.pos).arg(furi[j].kanji.len).arg(furi[j].kana.pos).arg(furi[j].kana.len);
                         stream << endl;
                     }

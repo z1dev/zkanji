@@ -9,6 +9,8 @@
 #include "grammar_enums.h"
 #include "languages.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 namespace
@@ -533,11 +535,11 @@ namespace Strings
         return result;
     }
 
-    QString wordInflectionText(std::vector<InfTypes> infl)
+    QString wordInflectionText(const std::vector<InfTypes> &infl)
     {
         QString result;
 
-        for (int ix = 0; ix != infl.size(); ++ix)
+        for (int ix = 0, siz = tosigned(infl.size()); ix != siz; ++ix)
         {
             if (ix != 0)
                 result += ", ";

@@ -68,17 +68,17 @@ void KanjiScrollerModel::setBgColor(QColor col)
     bgcolor = col;
 }
 
-QColor KanjiScrollerModel::bgColor(int index) const
+QColor KanjiScrollerModel::bgColor(int /*index*/) const
 {
     return bgcolor;
 }
 
-QColor KanjiScrollerModel::textColor(int index) const
+QColor KanjiScrollerModel::textColor(int /*index*/) const
 {
     return QColor();
 }
 
-int KanjiScrollerModel::size() const
+KanjiScrollerModel::size_type KanjiScrollerModel::size() const
 {
     return list.size();
 }
@@ -215,8 +215,8 @@ int ZItemScroller::scrollMax() const
     if (m == nullptr)
         return 0;
     if (scrollerType() == Scrollbar)
-        return m->size() * cellsize;
-    return m->size();
+        return tosigned(m->size()) * cellsize;
+    return tosigned(m->size());
 }
 
 int ZItemScroller::scrollPage() const
@@ -232,7 +232,7 @@ int ZItemScroller::scrollStep() const
     return 1;
 }
 
-void ZItemScroller::scrolled(int oldpos, int &newpos)
+void ZItemScroller::scrolled(int /*oldpos*/, int &/*newpos*/)
 {
     update();
 }
@@ -269,8 +269,8 @@ void ZItemScroller::paintEvent(QPaintEvent *e)
     QColor gridcolor = Settings::uiColor(ColorSettings::Grid);
 
     // Get position of leftmost visible item.
-    QSize s = size();
-    int siz = m ? m->size() : 0;
+    //QSize s = size();
+    int siz = m ? tosigned(m->size()) : 0;
     int pos = scrollerType() == Scrollbar ? scrollPos() / cellsize : scrollPos();
     int left = scrollerType() == Scrollbar ? r.left() - (scrollPos() % cellsize) : r.left();
 
@@ -444,7 +444,7 @@ void ZItemScroller::leaveEvent(QEvent *e)
 {
     base::leaveEvent(e);
 
-    QSize s = size();
+    //QSize s = size();
 
     //if (buttonEnabled(true) && buttonRect(true).contains(mousepos) )
     //    update(buttonRect(true));
@@ -562,7 +562,7 @@ void ZItemScroller::modelChanged()
 
 QRect ZItemScroller::itemRect(int index)
 {
-    if (!m || index < 0 || index >= m->size())
+    if (!m || index < 0 || index >= tosigned(m->size()))
         return QRect();
 
     QRect r = drawArea();
@@ -583,7 +583,7 @@ int ZItemScroller::itemAt(const QPoint &pt)
         x = (pt.x() - r.left()) + scrollPos(); /*(buttonRect(true).right() + 1) + scrollpos;*/
     else
         x = scrollPos() * cellsize + (pt.x() - r.left());
-    if (x / cellsize >= m->size())
+    if (x / cellsize >= tosigned(m->size()))
         return -1;
     return x / cellsize;
 }

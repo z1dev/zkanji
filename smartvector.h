@@ -21,9 +21,16 @@ namespace nostd
 
 
 template<typename T, typename Alloc=std::allocator<T*>> class smartvector;
+template<typename T, typename Alloc=std::allocator<T*>> class smartvector_iterator;
 template<typename T, typename Alloc=std::allocator<T*>> class smartvector_const_iterator;
 
-template<typename T, typename Alloc=std::allocator<T*>>
+template<typename T, typename Alloc> smartvector_iterator<T, Alloc> operator+(typename smartvector_iterator<T, Alloc>::difference_type, const smartvector_iterator<T, Alloc> &);
+template<typename T, typename Alloc> smartvector_iterator<T, Alloc> operator-(typename smartvector_iterator<T, Alloc>::difference_type, const smartvector_iterator<T, Alloc> &);
+
+template<typename T, typename Alloc> smartvector_const_iterator<T, Alloc> operator+(typename smartvector_const_iterator<T, Alloc>::difference_type, const smartvector_const_iterator<T, Alloc> &);
+template<typename T, typename Alloc> smartvector_const_iterator<T, Alloc> operator-(typename smartvector_const_iterator<T, Alloc>::difference_type, const smartvector_const_iterator<T, Alloc> &);
+
+template<typename T, typename Alloc>
 class smartvector_iterator 
 {
 protected:
@@ -56,20 +63,20 @@ public:
     bool null() const { return base.operator*() == nullptr; }
     T*& operator*() { return base.operator*(); }
     T*& operator->() { return base.operator->(); }
-    T*& operator[](int n) { return base[n]; }
+    T*& operator[](difference_type n) { return base[n]; }
 
     self_type& operator++() { ++base; return *this; }
     self_type operator++(int) { self_type copy(*this);  ++base; return copy; }
     self_type& operator--() { --base; return *this; }
     self_type operator--(int) { self_type copy(*this);  --base; return copy; }
 
-    self_type operator+(int n) const { return self_type(base + n); }
-    self_type operator-(int n) const { return self_type(base - n); }
-    self_type& operator+=(int n) { base += n; return *this; }
-    self_type& operator-=(int n) { base -= n; return *this; }
+    self_type operator+(difference_type n) const { return self_type(base + n); }
+    self_type operator-(difference_type n) const { return self_type(base - n); }
+    self_type& operator+=(difference_type n) { base += n; return *this; }
+    self_type& operator-=(difference_type n) { base -= n; return *this; }
 
-    int operator-(const self_type &other) const { return base - other.base; }
-    int operator-(const const_self_type &other) const { return base - other.base; }
+    difference_type operator-(const self_type &other) const { return base - other.base; }
+    difference_type operator-(const const_self_type &other) const { return base - other.base; }
 
     bool operator==(const self_type &other) const { return base == other.base; }
     bool operator!=(const self_type &other) const { return base != other.base; }
@@ -87,8 +94,9 @@ public:
 private:
     friend smartvector<T, Alloc>;
     friend smartvector_const_iterator<T, Alloc>;
-    friend self_type operator+(int n, const self_type &);
-    friend self_type operator-(int n, const self_type &);
+
+    friend smartvector_iterator<T, Alloc> (::operator+ <>) (difference_type, const smartvector_iterator<T, Alloc> &);
+    friend smartvector_iterator<T, Alloc> (::operator- <>) (difference_type, const smartvector_iterator<T, Alloc> &);
 };
 
 template<typename T, typename Alloc = std::allocator<T*>>
@@ -98,6 +106,8 @@ private:
     typedef smartvector_iterator<T, Alloc>  base;
     typedef smartvector_move_iterator<T, Alloc> self_type;
 public:
+    typedef typename base::difference_type difference_type;
+
     smartvector_move_iterator() : base() {}
     smartvector_move_iterator(const self_type &orig) : base(orig._base()) {}
     smartvector_move_iterator(const typename base::basetype &origbase) : base(origbase) {}
@@ -107,12 +117,12 @@ public:
     self_type& operator--() { base::operator--(); return *this; }
     self_type operator--(int) { self_type copy(*this);  base::operator--(); return copy; }
 
-    self_type operator+(int n) const { return self_type(this->_base() + n); }
-    self_type operator-(int n) const { return self_type(this->_base() - n); }
-    self_type& operator+=(int n) { base::operator+=(n); return *this; }
-    self_type& operator-=(int n) { base::operator-=(n); return *this; }
+    self_type operator+(difference_type n) const { return self_type(this->_base() + n); }
+    self_type operator-(difference_type n) const { return self_type(this->_base() - n); }
+    self_type& operator+=(difference_type n) { base::operator+=(n); return *this; }
+    self_type& operator-=(difference_type n) { base::operator-=(n); return *this; }
 
-    int operator-(const self_type &other) const { return this->_base() - other._base(); }
+    difference_type operator-(const self_type &other) const { return this->_base() - other._base(); }
 
     bool operator==(const self_type &other) const { return this->_base() == other._base(); }
     bool operator!=(const self_type &other) const { return this->_base() != other._base(); }
@@ -152,20 +162,20 @@ public:
     bool null() const { return base.operator*() == nullptr; }
     const T* operator*() const { return base.operator*(); }
     const T* operator->() const { return base.operator->(); }
-    const T* operator[](int n) const { return base[n]; }
+    const T* operator[](difference_type n) const { return base[n]; }
 
     self_type& operator++() { ++base; return *this; }
     self_type operator++(int) { self_type copy(*this);  ++base; return copy; }
     self_type& operator--() { --base; return *this; }
     self_type operator--(int) { self_type copy(*this);  --base; return copy; }
 
-    self_type operator+(int n) const { return self_type(base + n); }
-    self_type operator-(int n) const { return self_type(base - n); }
-    self_type& operator+=(int n) { base += n; return *this; }
-    self_type& operator-=(int n) { base -= n; return *this; }
+    self_type operator+(difference_type n) const { return self_type(base + n); }
+    self_type operator-(difference_type n) const { return self_type(base - n); }
+    self_type& operator+=(difference_type n) { base += n; return *this; }
+    self_type& operator-=(difference_type n) { base -= n; return *this; }
 
-    int operator-(const self_type &other) const { return base - other.base; }
-    int operator-(const mod_self_type &other) const { return base - other.base; }
+    difference_type operator-(const self_type &other) const { return base - other.base; }
+    difference_type operator-(const mod_self_type &other) const { return base - other.base; }
 
     bool operator==(const self_type &other) const { return base == other.base; }
     bool operator!=(const self_type &other) const { return base != other.base; }
@@ -184,8 +194,9 @@ public:
 private:
     friend smartvector<T, Alloc>;
     friend smartvector_iterator<T, Alloc>;
-    friend self_type operator+(int n, const self_type &);
-    friend self_type operator-(int n, const self_type &);
+
+    friend smartvector_const_iterator<T, Alloc> (::operator+ <>) (difference_type, const smartvector_const_iterator<T, Alloc> &);
+    friend smartvector_const_iterator<T, Alloc> (::operator- <>) (difference_type, const smartvector_const_iterator<T, Alloc> &);
 };
 
 
@@ -510,7 +521,7 @@ public:
         return it;
     }
 
-    iterator insert(const_iterator position, size_type n, std::nullptr_t nul)
+    iterator insert(const_iterator position, size_type n, std::nullptr_t /*nul*/)
     {
         if (n == 0)
             return begin() + (position - cbegin());
@@ -568,8 +579,8 @@ public:
         if (first == last)
             return begin() + p;
 
-        int n = std::distance(first, last);
 #ifdef _DEBUG
+        int n = std::distance(first, last);
         if (n < 0)
             throw "First comes after last.";
 #endif
@@ -740,7 +751,7 @@ public:
         if (empty())
             return;
 
-        int n = size() - 1;
+        auto n = size() - 1;
         value_type *d = base::data() + n;
         while (n-- != 0)
         {

@@ -10,6 +10,7 @@
 #include "zkanjimain.h"
 #include "treebuilder.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -54,7 +55,7 @@ bool TreeBuilder::initNext()
         auto it = added.find(strch);
         if (it == added.end())
         {
-            elem.strpos = textmap.size();
+            elem.strpos = tosigned(textmap.size());
             added.insert(std::make_pair(strch, elem.strpos));
             textmap.insert(textmap.end(), strch.data(), strch.data() + elem.len);
 
@@ -69,7 +70,6 @@ bool TreeBuilder::initNext()
     else
     {
         std::set<int> defs;
-        QCharString str;
 
         QStringList texts;
         func(initpos, texts);
@@ -89,7 +89,7 @@ bool TreeBuilder::initNext()
                 elem.index = initpos;
                 if (newelem)
                 {
-                    elem.strpos = textmap.size();
+                    elem.strpos = tosigned(textmap.size());
                     added.insert(std::make_pair(str, elem.strpos));
                     textmap.insert(textmap.end(), str.data(), str.data() + elem.len);
                 }
@@ -110,7 +110,7 @@ bool TreeBuilder::initNext()
         {
             list.shrink_to_fit();
             indexes.resize(list.size());
-            for (int ix = 0; ix != indexes.size(); ++ix)
+            for (int ix = 0, siz = tosigned(indexes.size()); ix != siz; ++ix)
                 indexes[ix] = ix;
         }
 
@@ -152,7 +152,7 @@ int TreeBuilder::initPos() const
 
 bool TreeBuilder::sortNext()
 {
-    if (pos == indexes.size())
+    if (pos == tosigned(indexes.size()))
         return false;
 
     int *ixdata = &indexes[0];
@@ -164,7 +164,7 @@ bool TreeBuilder::sortNext()
 
     // The item 'positem' cannot be put in the current node with no node
     // (obviously), or the label of the current node does not match positem's.
-    while (current != nullptr && (current->label.size() >= positem.len || qcharncmp(current->label.data(), textdata + positem.strpos, current->label.size()) ))
+    while (current != nullptr && (tosigned(current->label.size()) >= positem.len || qcharncmp(current->label.data(), textdata + positem.strpos, current->label.size()) ))
         current = current->parent;
 
     if (current == nullptr)
@@ -177,8 +177,8 @@ bool TreeBuilder::sortNext()
     // Finding the number of words starting at pos, that start with the
     // same string as 'positem', up to lablen characters.
     int maxpos = std::min(pos + 5000, (int)indexes.size() - 1);
-    while (maxpos != indexes.size() - 1 && listdata[ixdata[maxpos]].len >= lablen && !qcharncmp(textdata + listdata[ixdata[maxpos]].strpos, textdata + positem.strpos, lablen))
-        maxpos = std::min(int(maxpos * 1.5), (int)indexes.size() - 1);
+    while (maxpos != tosigned(indexes.size()) - 1 && listdata[ixdata[maxpos]].len >= lablen && !qcharncmp(textdata + listdata[ixdata[maxpos]].strpos, textdata + positem.strpos, lablen))
+        maxpos = std::min(int(maxpos * 1.5), tosigned(indexes.size()) - 1);
 
     int min = pos;
     int max = maxpos;
@@ -210,13 +210,12 @@ bool TreeBuilder::sortNext()
 
     // Used for checking whether an index has been added in the new node.
     std::set<int> found;
-    bool checkfit = true;
 
     current = nodelist.addNode(textdata + positem.strpos, lablen, false);
 
     if (startcnt || match)
     {
-        current->lines.reserve(std::min(std::max(match, TextSearchTreeBase::NODEFULLCOUNT), match + startcnt));
+        current->lines.reserve(std::min(std::max(match, (int)TextSearchTreeBase::NODEFULLCOUNT), match + startcnt));
 
         // Add exact matches that will have to be placed in the new node even
         // if it gets full.
@@ -234,7 +233,7 @@ bool TreeBuilder::sortNext()
         {
             if (found.count(listdata[ixdata[pos]].index) == 0)
             {
-                if (current->lines.size() >= TextSearchTreeBase::NODEFULLCOUNT)
+                if (tosigned(current->lines.size()) >= TextSearchTreeBase::NODEFULLCOUNT)
                 {
                     // Node is full. Backtrack so the rest of the items can be
                     // distributed in sub-nodes.
@@ -250,7 +249,7 @@ bool TreeBuilder::sortNext()
         current->lines.shrink_to_fit();
     }
 
-    current->sum = current->lines.size();
+    current->sum = tosigned(current->lines.size());
     TextNode *n = current;
     while (n->parent)
     {
@@ -260,12 +259,12 @@ bool TreeBuilder::sortNext()
 
     ++lablen;
 
-    return pos != indexes.size();
+    return pos != tosigned(indexes.size());
 }
 
 int TreeBuilder::importSize() const
 {
-    return indexes.size();
+    return tosigned(indexes.size());
 }
 
 int TreeBuilder::importPos() const

@@ -130,6 +130,8 @@ class WordAttributeFilterList : public QObject
 {
     Q_OBJECT
 public:
+    typedef size_t  size_type;
+
     WordAttributeFilterList(QObject *parent = nullptr);
     virtual ~WordAttributeFilterList();
 
@@ -137,7 +139,7 @@ public:
     void loadXMLSettings(QXmlStreamReader &reader);
 
     // Number of filters in the list.
-    int size() const;
+    size_type size() const;
     // Erases every filter and signals filterErased for each of them.
     void clear();
     // No filters found in filters list. The "in examples" and "in groups" filters are not
@@ -219,6 +221,8 @@ struct OriginalWord
 class OriginalWordsList
 {
 public:
+    typedef size_t  size_type;
+
     ~OriginalWordsList();
 
     void swap(OriginalWordsList &other);
@@ -239,7 +243,7 @@ public:
     bool skip(QDataStream &stream);
 
     // Number of original words in the list.
-    int size() const;
+    size_type size() const;
 
     // Returns the original word at the index position in list.
     const OriginalWord* items(int index) const;
@@ -255,11 +259,11 @@ public:
 
     // Adds a new word with the passed dictionary index, kanji and kana as "Added". Does not
     // check for conflicting words added before. Returns whether changes were made.
-    bool createAdded(int windex, const QChar *kanji, const QChar *kana, int kanjilen = -1, int kanalen = -1);
+    void createAdded(int windex, const QChar *kanji, const QChar *kana, int kanjilen = -1, int kanalen = -1);
 
     // Adds a word with the passed dictionary index and data as "Modified". Does not check for
     // conflicting words added before.
-    bool createModified(int windex, WordEntry *w);
+    void createModified(int windex, WordEntry *w);
 
     // If the word with windex was user modified and found in this list, its data is copied to
     // w, and then it's removed. Returns whether the word was successfully reverted. When the
@@ -289,6 +293,8 @@ enum class InfTypes;
 class WordResultList
 {
 public:
+    typedef size_t  size_type;
+
     //WordResultList();
     WordResultList(Dictionary *dict);
     WordResultList(WordResultList &&src);
@@ -312,7 +318,7 @@ public:
     void clear();
     bool empty() const;
 
-    int size() const;
+    size_type size() const;
     std::vector<int>& getIndexes();
     const std::vector<int>& getIndexes() const;
     //int indexAt(int ix) const;
@@ -376,6 +382,8 @@ private:
 class TextSearchTree : public TextSearchTreeBase
 {
 public:
+    typedef size_t  size_type;
+
     TextSearchTree(const TextSearchTree&) = delete;
     TextSearchTree& operator=(const TextSearchTree&) = delete;
     TextSearchTree(TextSearchTree&&) = delete;
@@ -396,16 +404,17 @@ public:
 
     // Returns a list of words starting with the search string. If exact is true, the word
     // can't be longer than the romanized search. If sameform is true, the kana/kanji or
-    // lower/upper case of the original search must match the word.
+    // lower/upper case of the original search must match the word. In this case only the last
+    // infsize characters can differ, because they were altered when the word was deinflected.
     // The search string should be in Japanese form for kana trees, and not reversed. Pass a
     // list for the results in result. Pass a list of word indexes in wordpool to limit the
     // possible results to the words in that list. This list must be sorted.
-    void findWords(std::vector<int> &result, QString search, bool exact, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize = 0);
+    void findWords(std::vector<int> &result, QString search, bool exact, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, int infsize = 0);
     // Returns whether the result of findWords() would hold windex with the passed arguments.
     // Filter conditions and word filtering list are not supported. This function can be fast
     // for a single value, but it's slow to use in place of findWords(). Pass a boolean
     // value's address in found to check whether the given windex was found in the tree.
-    bool wordMatches(int windex, QString search, bool exact, bool sameform, uint infsize = 0, bool *found = nullptr);
+    bool wordMatches(int windex, QString search, bool exact, bool sameform, int infsize = 0, bool *found = nullptr);
 
 
     virtual bool isKana() const override;
@@ -438,7 +447,7 @@ protected:
     virtual QString lineDefinition(int line, int def) const;
 
     virtual void doGetWord(int index, QStringList &texts) const override;
-    virtual int size() const override;
+    virtual size_type size() const override;
     //virtual int doMoveFromFullNode(TextNode *node, int index) override;
 private:
 	typedef TextSearchTreeBase base;
@@ -477,7 +486,7 @@ public:
     void processRemovedWord(int windex);
 
     // Number of definitions stored.
-    virtual int size() const override;
+    virtual size_type size() const override;
     // Returns the user definition of an item with the passed word index. If not defined for
     // the word, null is returned.
     const QCharString* itemDef(int windex) const;
@@ -535,6 +544,8 @@ struct WordCommons
 class WordCommonsTree : public TextSearchTreeBase
 {
 public:
+    typedef size_t  size_type;
+
     WordCommonsTree();
     virtual ~WordCommonsTree();
 
@@ -591,7 +602,7 @@ public:
     const smartvector<WordCommons>& getItems();
 protected:
     virtual void doGetWord(int index, QStringList &texts) const override;
-    virtual int size() const override;
+    virtual size_type size() const override;
 private:
     smartvector<WordCommons> list;
 
@@ -620,6 +631,8 @@ struct WordExamples
 class WordExamplesTree : public TextSearchTreeBase
 {
 public:
+    typedef size_t  size_type;
+
     WordExamplesTree();
     virtual ~WordExamplesTree();
 
@@ -646,7 +659,7 @@ public:
     bool hasExample(const QChar *kanji, const QChar *kana) const;
 protected:
     virtual void doGetWord(int index, QStringList &texts) const override;
-    virtual int size() const override;
+    virtual size_type size() const override;
 private:
     smartvector<WordExamples> list;
 
@@ -974,10 +987,10 @@ public:
     // possible results to the words in that list. This list must be sorted.
     // WARNING: Passing a search string made with QString::fromRawData() might not be null terminated,
     // or the null might come too late. In that case this function can fail.
-    void findKanjiWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize = 0) const;
+    void findKanjiWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, int infsize = 0) const;
     // Returns whether the result of findKanjiWords() would contain windex. This check is fast
     // for a single value, but much slower than findKanjiWords() when filling a results list.
-    bool wordMatchesKanjiSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, uint infsize = 0) const;
+    bool wordMatchesKanjiSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, int infsize = 0) const;
 
     // Returns a list of words that match the given search string. The search string must
     // only contain kana or the Japanese long-vowel dash symbol.
@@ -988,10 +1001,10 @@ public:
     // possible results to the words in that list. This list must be sorted.
     // WARNING: Passing a search string made with QString::fromRawData() might not be null terminated,
     // or the null might come too late. In that case this function can fail.
-    void findKanaWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize = 0);
+    void findKanaWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, int infsize = 0);
     // Returns whether the result of findKanaWords() would contain windex. This check is fast
     // for a single value, but much slower than findKanaWords() when filling a results list.
-    bool wordMatchesKanaSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, const uint infsize = 0);
+    bool wordMatchesKanaSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, const int infsize = 0);
 
 
     // Returns the index of the word with the exact kanji, kana and romaji. Romaji must

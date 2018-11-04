@@ -157,7 +157,7 @@ void ZListView::loadXMLSettings(QXmlStreamReader &reader)
 
             if (ok)
             {
-                for (int ix = 0, siz = colsizes.size(); ix != siz; ++ix)
+                for (int ix = 0, siz = tosigned(colsizes.size()); ix != siz; ++ix)
                     setColumnWidth(colsizes[ix].first, colsizes[ix].second);
             }
         }
@@ -189,9 +189,9 @@ void ZListView::loadXMLSettings(QXmlStreamReader &reader)
     reader.skipCurrentElement();
 }
 
-void ZListView::saveColumnState(ListStateData &data) const
+void ZListView::saveColumnState(ListStateData &dat) const
 {
-    data.columns.clear();
+    dat.columns.clear();
 
     ZAbstractTableModel *m = model();
     if (m == nullptr)
@@ -206,11 +206,11 @@ void ZListView::saveColumnState(ListStateData &data) const
         if (!m->headerData(ix, Qt::Horizontal, (int)ColumnRoles::FreeSized).toBool())
             continue;
 
-        data.columns.push_back(std::make_pair(ix, columnWidth(ix)));
+        dat.columns.push_back(std::make_pair(ix, columnWidth(ix)));
     }
 }
 
-void ZListView::restoreColumnState(const ListStateData &data, ZAbstractTableModel *columnmodel)
+void ZListView::restoreColumnState(const ListStateData &dat, ZAbstractTableModel *columnmodel)
 {
     bool selfmodel = model() != nullptr;
     ZAbstractTableModel *m = selfmodel ? model() : columnmodel;
@@ -224,10 +224,10 @@ void ZListView::restoreColumnState(const ListStateData &data, ZAbstractTableMode
     if (!selfmodel)
         saveColumnData(m);
 
-    for (int ix = 0, siz = data.columns.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(dat.columns.size()); ix != siz; ++ix)
     {
-        int c = data.columns[ix].first;
-        int w = data.columns[ix].second;
+        int c = dat.columns[ix].first;
+        int w = dat.columns[ix].second;
         if (c < 0 || c >= cc || w < 0 || w > 999999 || !m->headerData(c, Qt::Horizontal, (int)ColumnRoles::FreeSized).toBool())
             continue;
         if (selfmodel)
@@ -418,7 +418,7 @@ QModelIndexList ZListView::selectedIndexes() const
     auto m = model();
 
     QModelIndexList result;
-    result.reserve(rows.size());
+    result.reserve(tosigned(rows.size()));
     for (int r : rows)
         result << m->index(r, 0);
 
@@ -631,7 +631,7 @@ void ZListView::updateSelection(bool range)
     {
         // Update the selections fully within the view.
 
-        for (int ix = 1, siz = sel.size(); ix != siz - 1; ++ix)
+        for (int ix = 1, siz = tosigned(sel.size()); ix != siz - 1; ++ix)
         {
             int top = rowViewportPosition(mapFromSelection(sel[ix]->first, true));
 
@@ -799,22 +799,22 @@ ZStatusBar* ZListView::statusBar() const
 
 QSize ZListView::sizeHint() const
 {
-    if (hint.isEmpty())
+    if (sizhint.isEmpty())
         return base::sizeHint();
 
-    return hint;
+    return sizhint;
 }
 
 void ZListView::setSizeHint(QSize newsizehint)
 {
-    hint = newsizehint;
+    sizhint = newsizehint;
     _invalidate();
 }
 
 void ZListView::setFontSizeHint(int charwidth, int charheight)
 {
     QFontMetrics fm(font());
-    hint = QSize(fm.averageCharWidth() * charwidth, fm.height() * charheight);
+    sizhint = QSize(fm.averageCharWidth() * charwidth, fm.height() * charheight);
     _invalidate();
 }
 
@@ -833,8 +833,8 @@ void ZListView::setSizeBase(ListSizeBase newbase)
     if (sizebase == ListSizeBase::Custom)
         return;
 
-    FontSettings::LineSize siz = sizebase == ListSizeBase::Main ? Settings::fonts.mainsize : Settings::fonts.popsize;
-    verticalHeader()->setDefaultSectionSize(Settings::scaled(siz == FontSettings::Medium ? 19 : siz == FontSettings::Small ? 17 : siz == FontSettings::Large ? 24 : 28));
+    LineSize siz = sizebase == ListSizeBase::Main ? Settings::fonts.mainsize : Settings::fonts.popsize;
+    verticalHeader()->setDefaultSectionSize(Settings::scaled(siz == LineSize::Medium ? 19 : siz == LineSize::Small ? 17 : siz == LineSize::Large ? 24 : 28));
 }
 
 int ZListView::checkBoxColumn() const
@@ -865,7 +865,7 @@ void ZListView::clickCheckBox(const QModelIndex &index)
     int col = index.column();
     std::vector<int> rows;
     selectedRows(rows);
-    for (int ix = 0, siz = rows.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(rows.size()); ix != siz; ++ix)
     {
         QModelIndex ind = m->index(rows[ix], col);
         if (!ind.flags().testFlag(Qt::ItemIsUserCheckable))
@@ -974,11 +974,11 @@ void ZListView::selectAll()
     if (model() == nullptr || (seltype != ListSelectionType::Extended && seltype != ListSelectionType::Toggle))
         return;
     commitPivotSelection();
-    int lastrow = mapToSelection(model()->rowCount() - 1);
-    if (selection->rangeSelected(0, lastrow))
+    int endrow = mapToSelection(model()->rowCount() - 1);
+    if (selection->rangeSelected(0, endrow))
         return;
 
-    selection->selectRange(0, lastrow, true);
+    selection->selectRange(0, endrow, true);
 
     viewport()->update();
     signalSelectionChanged();
@@ -1067,7 +1067,7 @@ void ZListView::rowsMoved(const smartvector<Range> &ranges, int pos)
     updateGeometries();
 }
 
-void ZListView::layoutAboutToBeChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void ZListView::layoutAboutToBeChanged(const QList<QPersistentModelIndex> &/*parents*/, QAbstractItemModel::LayoutChangeHint /*hint*/)
 {
     commitPivotSelection();
 
@@ -1089,7 +1089,7 @@ void ZListView::layoutAboutToBeChanged(const QList<QPersistentModelIndex> &paren
     saveColumnData();
 }
 
-void ZListView::layoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void ZListView::layoutChanged(const QList<QPersistentModelIndex> &/*parents*/, QAbstractItemModel::LayoutChangeHint /*hint*/)
 {
     // Rebuilding the selection from persistent indexes.
     currentrow = perix.last().isValid() ? perix.last().row() : -1;
@@ -1141,7 +1141,7 @@ int ZListView::mapToSelection(int row) const
     return row;
 }
 
-int ZListView::mapFromSelection(int index, bool top) const
+int ZListView::mapFromSelection(int index, bool /*top*/) const
 {
     return index;
 }
@@ -1223,7 +1223,7 @@ void ZListView::changeCurrent(int rowindex)
     }
 }
 
-bool ZListView::requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
+bool ZListView::requestingContextMenu(const QPoint &/*pos*/, const QPoint &/*globalpos*/, int /*selindex*/)
 {
     return false;
 }
@@ -1315,7 +1315,7 @@ void ZListView::resizeEvent(QResizeEvent *e)
     autoResizeColumns(true);
 }
 
-void ZListView::verticalScrollbarValueChanged(int value)
+void ZListView::verticalScrollbarValueChanged(int /*value*/)
 {
     // Used to fetch more data and update some hover status we don't need. It uses persistent
     // indexes that must be prevented.
@@ -1324,7 +1324,7 @@ void ZListView::verticalScrollbarValueChanged(int value)
     autoResizeColumns();
 }
 
-void ZListView::horizontalScrollbarValueChanged(int value)
+void ZListView::horizontalScrollbarValueChanged(int /*value*/)
 {
     // Used to fetch more data and update some hover status we don't need. It uses persistent
     // indexes that must be prevented.
@@ -1353,7 +1353,7 @@ void ZListView::keyPressEvent(QKeyEvent *e)
     }
 
     int rowcnt = model()->rowCount();
-    int colcnt = model()->columnCount();
+    //int colcnt = model()->columnCount();
     if (rowcnt == 0 && e->key() != Qt::Key_Left && e->key() != Qt::Key_Right)
     {
         QFrame::keyPressEvent(e);
@@ -2015,7 +2015,7 @@ void ZListView::dragEnterEvent(QDragEnterEvent *e)
     viewport()->update();
 }
 
-void ZListView::dragLeaveEvent(QDragLeaveEvent *e)
+void ZListView::dragLeaveEvent(QDragLeaveEvent * /*e*/)
 {
     if (state != State::Dragging)
         return;
@@ -2262,6 +2262,8 @@ bool ZListView::viewportEvent(QEvent *e)
 
         // Skipping base class implementations that would save persistent indexes.
         return QAbstractScrollArea::viewportEvent(e);
+    default:
+        break;
     }
     return base::viewportEvent(e);
 }
@@ -2441,7 +2443,7 @@ void ZListView::resetColumnData()
     }
 
     int cc = m->columnCount();
-    if (cc != tmpcolsize.size())
+    if (cc != tosigned(tmpcolsize.size()))
         tmpcolsize.clear();
 
     bool savedmatches = false;
@@ -2569,7 +2571,7 @@ void ZListView::updateStatus()
     }
     
     int scnt = model()->statusCount();
-    if ((scnt == 0 && status->size() != 1) || (scnt != 0 && status->size() != scnt + 1))
+    if ((scnt == 0 && status->size() != 1) || (scnt != 0 && tosigned(status->size()) != scnt + 1))
     {
         status->clear();
 

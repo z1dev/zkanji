@@ -29,6 +29,8 @@
 #include "generalsettings.h"
 #include "globalui.h"
 
+#include "checked_cast.h"
+
 
 extern char ZKANJI_PROGRAM_VERSION[];
 static char ZKANJI_EXAMPLES_FILE_VERSION[] = "002";
@@ -197,7 +199,7 @@ bool ImportFileHandler::error() const
     return fail;
 }
 
-int ImportFileHandler::size() const
+qint64 ImportFileHandler::size() const
 {
     return fail || f == nullptr ? 0 : f->size();
 }
@@ -447,7 +449,7 @@ void DictImport::closeEvent(QCloseEvent *e)
 {
     if (isVisible() /*loop.isRunning()*/ && !ui->finishButton->isEnabled())
     {
-        QString msg = !modified ? tr("Do you want to abort the import?")  : tr("Some data has been modified and it will be kept even if you abort the import.\n\nDo you want to abort?");
+        QString msg = !modified ? tr("Do you want to abort the import?") : tr("Some data has been modified and it will be kept even if you abort the import.\n\nDo you want to abort?");
         if (QMessageBox::warning(nullptr, "zkanji", msg, QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         {
             e->ignore();
@@ -694,12 +696,12 @@ bool DictImport::doImportExamples()
     // The Japanese sentence
     QString jpn;
     // Japanese sentence id
-    int id_jp;
+    int id_jp = 0;
 
     // The English sentence
     QString trans;
     // English sentence id
-    int id_tr;
+    int id_tr = 0;
 
     // Japanese and English id pairs in order they are found in the imported and created data.
     std::vector<std::pair<int, int>> ids;
@@ -747,14 +749,14 @@ bool DictImport::doImportExamples()
             trans = line.mid(tabpos + 1, idpos - tabpos - 1);
 
             bool ok = false;
-            auto ids = line.midRef(idpos + 4).split('_');
-            if (ids.size() == 2)
+            QVector<QStringRef> lineids = line.midRef(idpos + 4).split('_');
+            if (lineids.size() == 2)
             {
                 // In the WWWJDIC format the Japanese id comes second. When switching to the
                 // Tatoeba format, swap the ids.
-                id_jp = ids.at(1).toInt(&ok);
+                id_jp = lineids.at(1).toInt(&ok);
                 if (ok)
-                    id_tr = ids.at(0).toInt(&ok);
+                    id_tr = lineids.at(0).toInt(&ok);
             }
 
             if (!jpn.isEmpty() && !trans.isEmpty() && ok && !idtaken.contains(std::make_pair(id_jp, id_tr)))
@@ -769,7 +771,7 @@ bool DictImport::doImportExamples()
 
         QCharTokenizer tokens(line.constData(), line.size(), qcharisspace);
 
-        std::vector<ExampleWordsData> words;
+        std::vector<ExampleWordsData> exwords;
 
         while (tokens.next() && jpnpos < jpnsiz)
         {
@@ -894,7 +896,7 @@ bool DictImport::doImportExamples()
                     WordEntry *e = dict->wordEntry(wix);
                     dict->findKanaWords(wordsfound, QString(kanaform, kanasiz), 0, true, nullptr, nullptr);
                     // Only use words that have the exact same definition that e has.
-                    for (int ix = wordsfound.size() - 1; ix != -1; --ix)
+                    for (int ix = tosigned(wordsfound.size()) - 1; ix != -1; --ix)
                     {
                         WordEntry *we = dict->wordEntry(wordsfound[ix]);
                         if (!definitionsMatch(e, we))
@@ -925,7 +927,7 @@ bool DictImport::doImportExamples()
             }
             else
             {
-                for (int ix = 0; ix != wordsfound.size(); ++ix)
+                for (int ix = 0, siz = tosigned(wordsfound.size()); ix != siz; ++ix)
                 {
                     WordEntry *we = dict->wordEntry(wordsfound[ix]);
                     kanjidat = we->kanji;
@@ -943,10 +945,10 @@ bool DictImport::doImportExamples()
                 ExampleWordsData wdata;
                 wdata.pos = wordpos;
                 wdata.len = wordlen;
-                wdata.forms.resize(wordforms.size());
-                for (int ix = 0; ix != wordforms.size(); ++ix)
+                wdata.forms.resize((quint16)wordforms.size());
+                for (int ix = 0, siz = tosigned(wordforms.size()); ix != siz; ++ix)
                     wdata.forms[ix] = std::move(wordforms[ix]);
-                words.push_back(std::move(wdata));
+                exwords.push_back(std::move(wdata));
                 ++wordix;
             }
         }
@@ -954,34 +956,34 @@ bool DictImport::doImportExamples()
         wordix = 0;
 
         // At most 255 words are supported.
-        if (words.empty() || words.size() > 255)
+        if (exwords.empty() || exwords.size() > 255)
             continue;
 
         std::pair<int, int> sid = std::make_pair(id_jp, id_tr);
         idtaken.insert(sid);
         ids.push_back(sid);
 
-        doImportExamplesSentenceHelper(buff, jpn, trans, words);
+        doImportExamplesSentenceHelper(buff, jpn, trans, exwords);
 
-        words.clear();
+        exwords.clear();
 
         ++sentenceix;
 
         if (sentenceix == 100)
         {
             // Compress the buffer and empty it.
-            QByteArray data = qCompress(buff.data(), buff.size());
+            QByteArray dat = qCompress(buff.data(), tosigned(buff.size()));
 
             blockpos.push_back(of.pos());
-            ostream.writeRawData(data.constData(), data.size());
+            ostream.writeRawData(dat.constData(), dat.size());
 
             buff.clear();
 
             sentenceix = 0;
             wordix = 0;
 
-			if (blockix == USHRT_MAX)
-				throw ZException("More than 6 million sentences in the example database.");
+            if (blockix == USHRT_MAX)
+                throw ZException("More than 6 million sentences in the example database.");
 
             ++blockix;
         }
@@ -993,10 +995,10 @@ bool DictImport::doImportExamples()
     if (sentenceix != 0)
     {
         // Compress the buffer and empty it.
-        QByteArray data = qCompress(buff.data(), buff.size());
+        QByteArray dat = qCompress(buff.data(), tosigned(buff.size()));
 
         blockpos.push_back(of.pos());
-        ostream.writeRawData(data.constData(), data.size());
+        ostream.writeRawData(dat.constData(), dat.size());
     }
     buff.clear();
 
@@ -1012,15 +1014,15 @@ bool DictImport::doImportExamples()
     // Write the data block structure.
     int bpos = 0;
     buff.resize(buff.size() + 4 + 4 * blockpos.size());
-    addInt(buff.data(), bpos, blockpos.size());
-    for (int ix = 0; ix != blockpos.size(); ++ix)
+    addInt(buff.data(), bpos, tosigned(blockpos.size()));
+    for (int ix = 0, siz = tosigned(blockpos.size()); ix != siz; ++ix)
         addInt(buff.data(), bpos, blockpos[ix]);
     //ostream << make_zvec<qint32, qint32>(blockpos);
 
     // Write anything from the word commons list which has example data.
 
     const smartvector<WordCommons> &commons = ZKanji::commons.getItems();
-    for (int ix = 0; ix != commons.size(); ++ix)
+    for (int ix = 0, siz = tosigned(commons.size()); ix != siz; ++ix)
     {
         const WordCommons *item = commons[ix];
         if (item->examples.empty())
@@ -1030,7 +1032,7 @@ bool DictImport::doImportExamples()
         QByteArray kanaarr = item->kana.toUtf8();
         buff.resize(buff.size() + 2 + kanjiarr.size() + 2 + kanaarr.size() + 2 + item->examples.size() * 4);
         addByteArrayString(buff.data(), bpos, kanjiarr);
-    //    ostream << make_zstr(item->kanji, ZStrFormat::Byte);
+        //ostream << make_zstr(item->kanji, ZStrFormat::Byte);
         addByteArrayString(buff.data(), bpos, kanaarr);
         //    ostream << make_zstr(item->kana, ZStrFormat::Byte);
         addShort(buff.data(), bpos, item->examples.size());
@@ -1040,30 +1042,30 @@ bool DictImport::doImportExamples()
         {
             const WordCommonsExample &ex = item->examples[iy];
             addShort(buff.data(), bpos, ex.block);
-    //        ostream << (quint16)ex.block;
+            //ostream << (quint16)ex.block;
             buff[bpos++] = ex.line;
-    //        ostream << (quint8)ex.line;
+            //ostream << (quint8)ex.line;
             buff[bpos++] = ex.wordindex;
-    //        ostream << (quint8)ex.wordindex;
+            //ostream << (quint8)ex.wordindex;
         }
     }
 
-    QByteArray data = qCompress(buff.data(), buff.size());
-    ostream << (qint32)data.size();
-    ostream.writeRawData(data.constData(), data.size());
+    QByteArray dat = qCompress(buff.data(), tosigned(buff.size()));
+    ostream << (qint32)dat.size();
+    ostream.writeRawData(dat.constData(), dat.size());
 
     // The IDs at the end.
     buff.resize(ids.size() * 8);
     bpos = 0;
-    for (int ix = 0, siz = ids.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(ids.size()); ix != siz; ++ix)
     {
         addInt(buff.data(), bpos, ids[ix].first);
         addInt(buff.data(), bpos, ids[ix].second);
     }
 
-    data = qCompress(buff.data(), buff.size());
-    ostream << (qint32)data.size();
-    ostream.writeRawData(data.constData(), data.size());
+    dat = qCompress(buff.data(), tosigned(buff.size()));
+    ostream << (qint32)dat.size();
+    ostream.writeRawData(dat.constData(), dat.size());
 
     //ostream << (qint32)0;
 
@@ -1072,7 +1074,7 @@ bool DictImport::doImportExamples()
     return true;
 }
 
-void DictImport::doImportExamplesSentenceHelper(std::vector<uchar> &buff, const QString &jpn, const QString &trans, const std::vector<ExampleWordsData> &words)
+void DictImport::doImportExamplesSentenceHelper(std::vector<uchar> &buff, const QString &jpn, const QString &trans, const std::vector<ExampleWordsData> &exwords)
 {
     QByteArray jpnstr = jpn.toUtf8();
     QByteArray transstr = trans.toUtf8();
@@ -1082,11 +1084,11 @@ void DictImport::doImportExamplesSentenceHelper(std::vector<uchar> &buff, const 
     int utf8datapos = 0;
     // First determine the number of bytes to be written in buff.
     int writesize = 2 + jpnstr.size() + 2 + transstr.size() + 2;
-    for (int ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(exwords.size()); ix != siz; ++ix)
     {
-        const ExampleWordsData &wd = words[ix];
+        const ExampleWordsData &wd = exwords[ix];
         writesize += 2 + 2 + 2;
-        for (int iy = 0; iy != wd.forms.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(wd.forms.size()); iy != sizy; ++iy)
         {
             auto &p = wd.forms[iy];
             QByteArray arr = p.kanji.toQStringRaw().toUtf8();
@@ -1098,7 +1100,7 @@ void DictImport::doImportExamplesSentenceHelper(std::vector<uchar> &buff, const 
         }
     }
 
-    int pos = buff.size();
+    int pos = tosigned(buff.size());
     buff.resize(buff.size() + writesize);
     uchar *dat = buff.data();
 
@@ -1106,19 +1108,19 @@ void DictImport::doImportExamplesSentenceHelper(std::vector<uchar> &buff, const 
     addByteArrayString(dat, pos, jpnstr);
     addByteArrayString(dat, pos, transstr);
 
-    // Write the words data, starting with the number of items in words.
-    addShort(dat, pos, words.size());
+    // Write the words data, starting with the number of items in exwords.
+    addShort(dat, pos, (quint16)exwords.size());
 
-    for (int ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(exwords.size()); ix != siz; ++ix)
     {
-        const ExampleWordsData &wd = words[ix];
+        const ExampleWordsData &wd = exwords[ix];
         addShort(dat, pos, wd.pos);
         addShort(dat, pos, wd.len);
 
         addShort(dat, pos, wd.forms.size());
-        for (int iy = 0; iy != wd.forms.size(); ++iy, utf8datapos += 2)
+        for (int iy = 0, sizy = tosigned(wd.forms.size()); iy != sizy; ++iy, utf8datapos += 2)
         {
-            auto &p = wd.forms[iy];
+            //auto &p = wd.forms[iy];
             addByteArrayString(dat, pos, utf8data[utf8datapos]);
             addByteArrayString(dat, pos, utf8data[utf8datapos + 1]);
         }
@@ -1127,7 +1129,8 @@ void DictImport::doImportExamplesSentenceHelper(std::vector<uchar> &buff, const 
 
 void DictImport::addShort(uchar *dat, int &pos, quint16 w)
 {
-    if (QSysInfo::ByteOrder == QSysInfo::BigEndian)
+    bool bigendian = (QSysInfo::ByteOrder == QSysInfo::BigEndian);
+    if (bigendian)
         w = qbswap(w);
     dat[pos] = (0xff & w);
     dat[pos + 1] = (0xff00 & w) >> 8;
@@ -1136,7 +1139,8 @@ void DictImport::addShort(uchar *dat, int &pos, quint16 w)
 
 void DictImport::addInt(uchar *dat, int &pos, quint32 i)
 {
-    if (QSysInfo::ByteOrder == QSysInfo::BigEndian)
+    bool bigendian = (QSysInfo::ByteOrder == QSysInfo::BigEndian);
+    if (bigendian)
         i = qbswap(i);
     dat[pos] = (0xff & i);
     dat[pos + 1] = (0xff00 & i) >> 8;
@@ -1353,8 +1357,8 @@ bool DictImport::importKanjidic()
         KanjiEntry *k = ZKanji::addKanji(str.at(0), kindex);
         k->jis = val;
 
-        enum class Modes { Normal, NameKana, RadicalName, Meaning };
-        Modes mode = Modes::Normal;
+        enum class States { Normal, NameKana, RadicalName, Meaning };
+        States state = States::Normal;
 
         QStringList onr;
         QStringList kunr;
@@ -1363,22 +1367,22 @@ bool DictImport::importKanjidic()
         QString mstr;
         QStringList meanings;
 
-        for (int pos = 2; pos != parts.size(); ++pos)
+        for (int pos = 2, psiz = tosigned(parts.size()); pos != psiz; ++pos)
         {
-            if (mode != Modes::Meaning)
+            if (state != States::Meaning)
                 mstr.clear();
 
             QChar ch, ch2;
             int num;
-            if (mode != Modes::Meaning && letterAndNumber(parts.at(pos), ch, ch2, num))
+            if (state != States::Meaning && letterAndNumber(parts.at(pos), ch, ch2, num))
             {
                 if (ch == 'T' && ch2 == 0)
                 {
-                    // T code of kana type found.
+                    // T code of kana state found.
                     if (num == 1)
-                        mode = Modes::NameKana;
+                        state = States::NameKana;
                     else if (num == 2)
-                        mode = Modes::RadicalName;
+                        state = States::RadicalName;
                 }
                 else if (ch == 'B' && ch2 == 0 && num > 0 && num < 215)
                     k->rad = num;
@@ -1446,7 +1450,7 @@ bool DictImport::importKanjidic()
                 else if (ch == 'I' && ch2 == 'N' && num > 0 && num < 9999)
                     k->knk = num;
             }
-            else if (parts.at(pos).at(0) == QChar('{') || mode == Modes::Meaning)
+            else if (parts.at(pos).at(0) == QChar('{') || state == States::Meaning)
             {
                 // Processing meaning strings.
 
@@ -1457,18 +1461,18 @@ bool DictImport::importKanjidic()
 
                 if (*std::prev(parts.at(pos).end()) == QChar('}'))
                 {
-                    mode = Modes::Normal;
+                    state = States::Normal;
                     meanings.push_back(mstr.mid(1, mstr.size() - 2));
                 }
                 else
-                    mode = Modes::Meaning;
+                    state = States::Meaning;
             }
             else if (KANA(parts.at(pos).at(parts.at(pos).at(0) == QChar('-') && parts.at(pos).size() > 1 ? 1 : 0).unicode()))
             {
                 // Readings.
 
                 // Radical names are ignored because the zradfile has everything.
-                if (mode == Modes::RadicalName)
+                if (state == States::RadicalName)
                     continue;
 
                 bool error = false;
@@ -1499,12 +1503,12 @@ bool DictImport::importKanjidic()
                 if (onreading)
                 {
                     // Name kana should be hiragana only.
-                    if (mode == Modes::NameKana)
+                    if (state == States::NameKana)
                         continue;
                     if (onr.indexOf(parts.at(pos)) == -1)
                         onr.push_back(parts.at(pos));
                 }
-                else if (mode == Modes::NameKana)
+                else if (state == States::NameKana)
                 {
                     if (dotfound || parts.at(pos).at(0) == QChar('-') || *std::prev(parts.at(pos).end()) == QChar('-'))
                         continue;
@@ -1536,7 +1540,7 @@ bool DictImport::importKanjidic()
                     if (skips.size() != 3)
                         continue;
 
-                    bool ok = true;
+                    ok = true;
                     k->skips[0] = skips.at(0).toInt(&ok);
                     if (k->skips[0] >= 1 && k->skips[0] <= 4)
                         for (int ix = 1; ok && ix != 3; ++ix)
@@ -1890,8 +1894,8 @@ Dictionary* DictImport::importJMdict()
     TextSearchTree dtree(nullptr, false, false);
 
     // The dictionary and its indexes that will be built in this function.
-    TreeBuilder idtree(dtree, words.size(),
-        [this](int wix, QStringList& texts) { for (int ix = 0; ix != words[wix]->defs.size(); ++ix)
+    TreeBuilder idtree(dtree, tosigned(words.size()),
+        [this](int wix, QStringList& texts) { for (int ix = 0, siz = tosigned(words[wix]->defs.size()); ix != siz; ++ix)
         {
             QCharString str;
             str.copy(words[wix]->defs[ix].def.toLower().constData());
@@ -1901,10 +1905,10 @@ Dictionary* DictImport::importJMdict()
                 texts << QString(tok.token(), tok.tokenSize());
         }},
         [this]() { return nextUpdate(); });
-    TreeBuilder iktree(ktree, words.size(),
+    TreeBuilder iktree(ktree, tosigned(words.size()),
         [this](int wix, QStringList& texts) { texts << words[wix]->romaji.toQStringRaw(); },
         [this]() { return nextUpdate(); });
-    TreeBuilder ibtree(btree, words.size(),
+    TreeBuilder ibtree(btree, tosigned(words.size()),
         [this](int wix, QStringList& texts) { texts << words[wix]->romaji.toQStringRaw(); },
         [this]() { return nextUpdate(); });
     smartvector<KanjiDictData> kanjidata;
@@ -1945,7 +1949,7 @@ Dictionary* DictImport::importJMdict()
 
 
     ui->progressBar->setValue(0);
-    ui->progressBar->setMaximum(words.size() * 2);
+    ui->progressBar->setMaximum(tosigned(words.size()) * 2);
 
     if (!setInfoText(tr("%1/%2 - Building character indexes...").arg(step).arg(stepcnt)))
         return nullptr;
@@ -1955,7 +1959,7 @@ Dictionary* DictImport::importJMdict()
 
     abcde.resize(words.size());
     aiueo.resize(words.size());
-    for (int ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         abcde[ix] = ix;
         aiueo[ix] = ix;
@@ -1973,7 +1977,7 @@ Dictionary* DictImport::importJMdict()
                 if (!wvec.empty() && wvec.back() == ix)
                     continue;
                 wvec.push_back(ix);
-                
+
                 ZKanji::kanjis[kix]->word_freq += w->freq;
             }
             else if (!KANA(kanji[iy].unicode()) && UNICODE_J(kanji[iy].unicode()))
@@ -2068,7 +2072,7 @@ Dictionary* DictImport::importJMdict()
     }))
         return nullptr;
 
-        
+
     ui->progressBar->setValue(2);
     if (interruptSort(aiueo.begin(), aiueo.end(), [this, &hira](int a, int b, bool &stop) {
         if (!nextUpdate())
@@ -2107,7 +2111,7 @@ Dictionary* DictImport::importJMdict()
     return new Dictionary(std::move(words), std::move(dtree), std::move(ktree), std::move(btree), std::move(kanjidata), std::move(symdata), std::move(kanadata), std::move(abcde), std::move(aiueo));
 }
 
-bool DictImport::importJLPTN(Dictionary *dict)
+bool DictImport::importJLPTN(Dictionary *d)
 {
     if (!setInfoText(tr("Opening JLPT N data...")))
         return false;
@@ -2123,16 +2127,16 @@ bool DictImport::importJLPTN(Dictionary *dict)
 
     ImportFileHandlerGuard fileguard(file);
 
-    qint64 s = file.size();
-    ui->progressBar->setMaximum(s);
+    qint64 fsiz = file.size();
+    ui->progressBar->setMaximum(fsiz);
 
     // <Word kanji, word kana, word kana romanized>, JLPT N level
-    std::vector<std::pair<std::tuple<QString, QString, QString>, int>> words;
+    std::vector<std::pair<std::tuple<QString, QString, QString>, int>> worddata;
     // Missing words: <Word kanji, word kana, JLPT N level>
     std::vector<std::tuple<QString, QString, int>> missing;
 
-    enum class Modes { Words, Kanji };
-    Modes mode = Modes::Words;
+    enum class States { Words, Kanji };
+    States state = States::Words;
     QString str;
     while (file.getLine(str))
     {
@@ -2141,14 +2145,14 @@ bool DictImport::importJLPTN(Dictionary *dict)
 
         if (str.isEmpty())
         {
-            mode = Modes::Kanji;
+            state = States::Kanji;
             continue;
         }
 
         if (str.at(0) == '#')
             continue;
 
-        if (mode == Modes::Words)
+        if (state == States::Words)
         {
             QStringList parts = str.split('\t', QString::SkipEmptyParts);
 
@@ -2201,9 +2205,9 @@ bool DictImport::importJLPTN(Dictionary *dict)
                 return false;
             }
 
-            int ix = dict->findKanjiKanaWord(kanji, kana);
+            int ix = d->findKanjiKanaWord(kanji, kana);
             if (ix != -1)
-                words.push_back(std::make_pair(std::make_tuple(kanji, kana, romanize(kana)), N));
+                worddata.push_back(std::make_pair(std::make_tuple(kanji, kana, romanize(kana)), N));
             else
                 missing.push_back(std::make_tuple(kanji, kana, N));
         }
@@ -2225,7 +2229,7 @@ bool DictImport::importJLPTN(Dictionary *dict)
     if (!setInfoText(tr("Sorting JLPT N data...")))
         return false;
 
-    if (interruptSort(words.begin(), words.end(), [this](const std::pair<std::tuple<QString, QString, QString>, int> &a, const std::pair<std::tuple<QString, QString, QString>, int> &b, bool &stop)
+    if (interruptSort(worddata.begin(), worddata.end(), [this](const std::pair<std::tuple<QString, QString, QString>, int> &a, const std::pair<std::tuple<QString, QString, QString>, int> &b, bool &stop)
     {
         if (!nextUpdate())
         {
@@ -2236,12 +2240,12 @@ bool DictImport::importJLPTN(Dictionary *dict)
     }))
         return false;
 
-    TreeBuilder tree(ZKanji::commons, words.size(),
-        [&words](int wix, QStringList& texts) { texts << std::get<2>(words[wix].first); },
+    TreeBuilder tree(ZKanji::commons, tosigned(worddata.size()),
+        [&worddata](int wix, QStringList& texts) { texts << std::get<2>(worddata[wix].first); },
         [this]() { return nextUpdate(); });
 
-    for (int ix = 0; ix != words.size(); ++ix)
-        ZKanji::commons.addJLPTN(std::get<0>(words[ix].first).constData(), std::get<1>(words[ix].first).constData(), words[ix].second);
+    for (int ix = 0, siz = tosigned(worddata.size()); ix != siz; ++ix)
+        ZKanji::commons.addJLPTN(std::get<0>(worddata[ix].first).constData(), std::get<1>(worddata[ix].first).constData(), worddata[ix].second);
 
     ui->progressBar->setValue(0);
 
@@ -2278,9 +2282,8 @@ bool DictImport::importJLPTN(Dictionary *dict)
     if (!missing.empty())
     {
         JLPTReplaceForm *frm = new JLPTReplaceForm(this);
-        frm->exec(path, dict, missing);
+        frm->exec(path, d, missing);
     }
-
     return true;
 }
 
@@ -2393,7 +2396,7 @@ bool DictImport::doImportFromExport()
 
             if (isErrorSet() || !nextUpdate(file.pos()))
                 return false;
-            
+
             continue;
         }
 
@@ -2423,8 +2426,8 @@ bool DictImport::doImportFromExport()
     TextSearchTree dtree(nullptr, false, false);
 
     // The dictionary and its indexes that will be built in this function.
-    TreeBuilder idtree(dtree, words.size(),
-        [this](int wix, QStringList& texts) { for (int ix = 0; ix != words[wix]->defs.size(); ++ix)
+    TreeBuilder idtree(dtree, tosigned(words.size()),
+        [this](int wix, QStringList& texts) { for (int ix = 0, siz = tosigned(words[wix]->defs.size()); ix != siz; ++ix)
     {
         QCharString str;
         str.copy(words[wix]->defs[ix].def.toLower().constData());
@@ -2434,10 +2437,10 @@ bool DictImport::doImportFromExport()
             texts << QString(tok.token(), tok.tokenSize());
     }},
         [this]() { return nextUpdate(); });
-    TreeBuilder iktree(ktree, words.size(),
+    TreeBuilder iktree(ktree, tosigned(words.size()),
         [this](int wix, QStringList& texts) { texts << words[wix]->romaji.toQStringRaw(); },
         [this]() { return nextUpdate(); });
-    TreeBuilder ibtree(btree, words.size(),
+    TreeBuilder ibtree(btree, tosigned(words.size()),
         [this](int wix, QStringList& texts) { texts << words[wix]->romaji.toQStringRaw(); },
         [this]() { return nextUpdate(); });
 
@@ -2472,7 +2475,7 @@ bool DictImport::doImportFromExport()
     }
 
     ui->progressBar->setValue(0);
-    ui->progressBar->setMaximum(words.size() * 2);
+    ui->progressBar->setMaximum(tosigned(words.size()) * 2);
 
     if (!setInfoText(tr("%1/%2 - Building character indexes...").arg(step).arg(stepcnt)))
         return false;
@@ -2480,7 +2483,7 @@ bool DictImport::doImportFromExport()
 
     abcde.resize(words.size());
     aiueo.resize(words.size());
-    for (int ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         abcde[ix] = ix;
         aiueo[ix] = ix;
@@ -2513,8 +2516,8 @@ bool DictImport::doImportFromExport()
         if (!nextUpdate(ix * 2))
             return false;
 
-        QChar *romaji = words[ix]->romaji.data();
-        len = words[ix]->romaji.size();
+        QChar *romaji = w->romaji.data();
+        len = w->romaji.size();
 
         for (int iy = 0; iy != len; ++iy)
         {
@@ -2530,8 +2533,8 @@ bool DictImport::doImportFromExport()
             kvec.push_back(ix);
         }
 
-        QChar *kana = words[ix]->kana.data();
-        len = words[ix]->kana.size();
+        QChar *kana = w->kana.data();
+        len = w->kana.size();
 
         for (int iy = 0; iy != len; ++iy)
         {
@@ -2719,7 +2722,7 @@ bool DictImport::doImportFromExportPartial()
         return false;
     ++step;
 
-    for (int ix = 0, siz = words.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         WordEntry *e = words[ix];
         int windex = dict->findKanjiKanaWord(e->kanji.data(), e->kana.data(), e->romaji.data());
@@ -2736,7 +2739,7 @@ bool DictImport::doImportFromExportPartial()
         return false;
     ++step;
 
-    for (int ix = 0, siz = kanjis.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(kanjis.size()); ix != siz; ++ix)
     {
         dict->setKanjiMeaning(kanjis[ix].first, kanjis[ix].second);
         if (kanjigroup != nullptr)
@@ -2783,7 +2786,7 @@ WordEntry* DictImport::importWord()
     int pos = 0;
     if (!kanjiKana(str, 0, kanji, kana, pos))
         return nullptr;
-    
+
     if (str.size() <= pos || str.at(pos) != ' ')
     {
         setErrorText(tr("Invalid line format. Expected space after word."));
@@ -2798,7 +2801,7 @@ WordEntry* DictImport::importWord()
     if (p2 == -1)
         p2 = str.size();
     freq = str.mid(pos, p2 - pos).toInt(&ok);
-    if(!ok)
+    if (!ok)
     {
         setErrorText(tr("Word frequency not found or not a valid number."));
         return nullptr;
@@ -3172,7 +3175,7 @@ bool DictImport::doImportUserData()
                     return false;
                 }
 
-                QStringList words = str.mid(tabpos + 1).split(' ');
+                //QStringList words = str.mid(tabpos + 1).split(' ');
                 int pos = tabpos + 1;
                 while (pos < str.size())
                 {
@@ -3284,8 +3287,8 @@ bool DictImport::importRadFiles()
     //stream.setDevice(&f2);
     //stream.setCodec("EUC-JP");
 
-    enum class Modes { Seeking, Reading };
-    Modes mode = Modes::Seeking;
+    enum class States { Seeking, Reading };
+    States state = States::Seeking;
 
     ZKanji::radklist.reserve(253);
     // Temporary storage before filling the fastarray in radklist.
@@ -3296,10 +3299,10 @@ bool DictImport::importRadFiles()
         if (!nextUpdate(s1 + file.pos()))
             return false;
 
-        if (str.isEmpty() || (mode == Modes::Seeking && str.at(0) != '$'))
+        if (str.isEmpty() || (state == States::Seeking && str.at(0) != '$'))
             continue;
 
-        mode = Modes::Reading;
+        state = States::Reading;
 
         // Each line starting with the dollar sign has the format:
         // $ radical-symbol stroke-count [optional image file name on some server somewhere]
@@ -3328,7 +3331,7 @@ bool DictImport::importRadFiles()
                 return false;
             }
 
-            if (ZKanji::radkcnt.size() < scnt + 1)
+            if (tosigned(ZKanji::radkcnt.size()) < scnt + 1)
                 ZKanji::radkcnt.resize(scnt + 1, 0);
             ++ZKanji::radkcnt[scnt];
 
@@ -3346,7 +3349,7 @@ bool DictImport::importRadFiles()
             KanjiEntry *k = ZKanji::kanjis[kix];
             if (!k->radks.empty() && k->radks.back() == ZKanji::radklist.size() - 1)
                 continue;
-            k->radks.push_back(ZKanji::radklist.size() - 1);
+            k->radks.push_back((ushort)ZKanji::radklist.size() - 1);
             tmplist.push_back(kix);
         }
     }
@@ -3359,17 +3362,17 @@ bool DictImport::importRadFiles()
     // Fix radkcnt, which now contains number of radicals for a given stroke count. It should
     // contain the sum of radicals with less than or equal stroke count.
 
-    for (int ix = 1, siz = ZKanji::radkcnt.size(); siz != 0 && ix != siz; ++ix)
+    for (int ix = 1, siz = tosigned(ZKanji::radkcnt.size()); siz != 0 && ix != siz; ++ix)
         ZKanji::radkcnt[ix] += ZKanji::radkcnt[ix - 1];
 
     file.setFile(f3);
 
     //stream.setDevice(&f3);
     //stream.setCodec("UTF-8");
-    
+
     int partix = -1;
-    uchar radnum;
-    uchar radstrokes;
+    uchar radnum = 0;
+    uchar radstrokes = 0;
     QChar rad;
     QCharStringList radnames;
     std::vector<ushort> radkanji;
@@ -3418,7 +3421,7 @@ bool DictImport::importRadFiles()
 
             radkanji.clear();
 
-            radnames.clear(); 
+            radnames.clear();
             radnames.reserve(parts.size() - 3);
             for (int ix = 3; ix != parts.size(); ++ix)
             {
@@ -3509,7 +3512,7 @@ bool DictImport::skipSection()
     {
         if (!nextUpdate(file.pos()))
             return false;
-    } 
+    }
 
     if (!str.isEmpty())
         file.repeat();
@@ -3684,17 +3687,17 @@ void DictImport::saveEntry()
                     gsiz += s->glosses.at(gix).size();
 
                 def.def.setSize(gsiz);
-                QChar *data = def.def.data();
+                QChar *defdata = def.def.data();
                 for (int gix = 0; gix != s->gusage; ++gix)
                 {
                     const QString &str = s->glosses.at(gix);
                     int strsiz = str.size();
-                    memcpy(data, str.constData(), sizeof(QChar) * strsiz);
+                    memcpy(defdata, str.constData(), sizeof(QChar) * strsiz);
 
                     if (gix != s->gusage - 1)
                     {
-                        data[strsiz] = GLOSS_SEP_CHAR;
-                        data = data + strsiz + 1;
+                        defdata[strsiz] = GLOSS_SEP_CHAR;
+                        defdata = defdata + strsiz + 1;
                     }
                 }
             }
@@ -3727,11 +3730,11 @@ void DictImport::saveEntry()
             if (k != nullptr && !onlykana)
             {
                 int ks = w->kanji.size();
-                for (int ix = 0; ix != ks; ++ix)
+                for (int iz = 0; iz != ks; ++iz)
                 {
-                    if (KANJI(w->kanji[ix].unicode()))
+                    if (KANJI(w->kanji[iz].unicode()))
                     {
-                        int kix = ZKanji::kanjiIndex(w->kanji[ix]);
+                        int kix = ZKanji::kanjiIndex(w->kanji[iz]);
                         if (ZKanji::kanjis[kix]->frequency > kanjifreq)
                             kanjifreq = ZKanji::kanjis[kix]->frequency;
                     }
@@ -3763,7 +3766,7 @@ bool DictImport::newKElement()
 
     if (kcurrent == nullptr || !kcurrent->str.isEmpty())
     {
-        if (entry.kusage != entry.klist.size())
+        if (entry.kusage != tosigned(entry.klist.size()))
         {
             kcurrent = entry.klist[entry.kusage];
             kcurrent->str.clear();
@@ -3789,7 +3792,7 @@ bool DictImport::newRElement()
 
     if (rcurrent == nullptr || !rcurrent->str.isEmpty())
     {
-        if (entry.rusage != entry.rlist.size())
+        if (entry.rusage != tosigned(entry.rlist.size()))
         {
             rcurrent = entry.rlist[entry.rusage];
             rcurrent->str.clear();
@@ -3816,7 +3819,7 @@ bool DictImport::newSElement()
 
     if (scurrent == nullptr || scurrent->gusage != 0)
     {
-        if (entry.susage != entry.slist.size())
+        if (entry.susage != tosigned(entry.slist.size()))
             scurrent = entry.slist[entry.susage];
         else
         {

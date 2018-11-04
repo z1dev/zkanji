@@ -33,6 +33,8 @@
 #include "generalsettings.h"
 #include "ztooltip.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -72,7 +74,7 @@ WordStudyTestsModel::~WordStudyTestsModel()
 
 int WordStudyTestsModel::count() const
 {
-    return stats.size();
+    return tosigned(stats.size());
 }
 
 int WordStudyTestsModel::barWidth(ZStatView *view, int col) const
@@ -131,7 +133,7 @@ int WordStudyTestsModel::value(int col, int valpos) const
 
 QString WordStudyTestsModel::tooltip(int col) const
 {
-    if (col < 0 || col >= stats.size())
+    if (col < 0 || col >= tosigned(stats.size()))
         return QString();
 
     if (stats[col] == -1)
@@ -152,12 +154,12 @@ WordStudyLevelsModel::WordStudyLevelsModel(WordDeck *deck, QObject *parent) : ba
     for (int ix = 0, siz = deck->studySize(); ix != siz; ++ix)
     {
         int lv = deck->studyLevel(ix);
-        if (list.size() <= lv)
+        if (tosigned(list.size()) <= lv)
             list.resize(lv + 1);
         ++list[lv];
     }
 
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         maxval = std::max(maxval, list[ix]);
 }
 
@@ -168,7 +170,7 @@ WordStudyLevelsModel::~WordStudyLevelsModel()
 
 int WordStudyLevelsModel::count() const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 int WordStudyLevelsModel::maxValue() const
@@ -194,7 +196,7 @@ int WordStudyLevelsModel::valueCount() const
     return 1;
 }
 
-int WordStudyLevelsModel::value(int col, int valpos) const
+int WordStudyLevelsModel::value(int col, int /*valpos*/) const
 {
     return list[col];
 }
@@ -228,7 +230,7 @@ void WordStudyAreaModel::setInterval(DeckStatIntervals newinterval)
 
 int WordStudyAreaModel::count() const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 int WordStudyAreaModel::maxValue() const
@@ -242,7 +244,7 @@ int WordStudyAreaModel::maxValue() const
         int last = std::lower_bound(list.begin(), list.end(), lastDate(), [](const std::pair<qint64, std::tuple<int, int, int>> &p, qint64 d) {
             return p.first < d;
         }) - list.begin();
-        for (int ix = first, siz = std::min<int>(list.size(), last + 1); ix != siz; ++ix)
+        for (int ix = first, siz = std::min<int>(tosigned(list.size()), last + 1); ix != siz; ++ix)
         {
             const auto &val = list[ix].second;
             maxval = std::max<int>(std::get<0>(val) + std::get<1>(val) + std::get<2>(val), maxval);
@@ -329,7 +331,7 @@ qint64 WordStudyAreaModel::valueDate(int col) const
 
 QString WordStudyAreaModel::tooltip(int col) const
 {
-    if (col < 0 || col >= list.size())
+    if (col < 0 || col >= tosigned(list.size()))
         return QString();
 
     QDateTime date = QDateTime::fromMSecsSinceEpoch(list[col].first);
@@ -349,8 +351,8 @@ void WordStudyAreaModel::update()
     const StudyDeck *study = deck->getStudyDeck();
     qreal hi = 0;
     QDateTime last;
-    int lastcount;
-    int lastlearned;
+    int lastcount = 0;
+    int lastlearned = 0;
     if (type == DeckStatAreaType::Items)
     {
         for (int ix = 0, siz = study->dayStatSize(); ix != siz; ++ix)
@@ -435,7 +437,7 @@ void WordStudyAreaModel::update()
     }
     else if (type == DeckStatAreaType::Forecast)
     {
-        const StudyDeck *study = deck->getStudyDeck();
+        //const StudyDeck *study = deck->getStudyDeck();
 
         std::vector<int> items;
         deck->dueItems(items);
@@ -448,7 +450,7 @@ void WordStudyAreaModel::update()
 
         // [which date to test next, next spacing, multiplier]
         std::vector<std::tuple<QDateTime, int, double>> data;
-        for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
         {
             const LockedWordDeckItem *i = deck->studiedItems(items[ix]);
             quint32 ispace = study->cardSpacing(i->cardid);
@@ -460,7 +462,7 @@ void WordStudyAreaModel::update()
                 iday = nowday;
             }
             int pos = nowday.daysTo(iday);
-            if (pos >= days.size())
+            if (pos >= tosigned(days.size()))
                 continue;
             data.push_back(std::make_tuple(idate, ispace * study->cardMultiplier(i->cardid), study->cardMultiplier(i->cardid)));
             ++days[pos];
@@ -470,7 +472,7 @@ void WordStudyAreaModel::update()
         {
             std::vector<std::tuple<QDateTime, int, double>> tmp;
             std::swap(tmp, data);
-            for (int ix = 0, siz = tmp.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(tmp.size()); ix != siz; ++ix)
             {
                 quint32 ispace = std::get<1>(tmp[ix]);
                 QDateTime idate = std::get<0>(tmp[ix]).addSecs(ispace);
@@ -481,7 +483,7 @@ void WordStudyAreaModel::update()
                     iday = nowday.addDays(1);
                 }
                 int pos = nowday.daysTo(iday);
-                if (pos >= days.size())
+                if (pos >= tosigned(days.size()))
                     continue;
                 double multi = std::get<2>(tmp[ix]);
                 data.push_back(std::make_tuple(idate, ispace * multi, multi));
@@ -617,89 +619,89 @@ WordStudyListForm::~WordStudyListForm()
     insts.erase(insts.find(deck));
 }
 
-void WordStudyListForm::saveState(WordStudyListFormData &data) const
+void WordStudyListForm::saveState(WordStudyListFormData &dat) const
 {
-    data.siz = isMaximized() ? normalGeometry().size() : rect().size();
+    dat.siz = isMaximized() ? normalGeometry().size() : rect().size();
 
     if (itemsinited)
     {
-        data.items.showkanji = ui->wButton->isChecked();
-        data.items.showkana = ui->kButton->isChecked();
-        data.items.showdef = ui->dButton->isChecked();
+        dat.items.showkanji = ui->wButton->isChecked();
+        dat.items.showkana = ui->kButton->isChecked();
+        dat.items.showdef = ui->dButton->isChecked();
 
-        data.items.mode = ui->queuedButton->isChecked() ? DeckItemViewModes::Queued : ui->studiedButton->isChecked() ? DeckItemViewModes::Studied : DeckItemViewModes::Tested;
+        dat.items.mode = ui->queuedButton->isChecked() ? DeckItemViewModes::Queued : ui->studiedButton->isChecked() ? DeckItemViewModes::Studied : DeckItemViewModes::Tested;
 
-        ui->dictWidget->saveState(data.items.dict);
+        ui->dictWidget->saveState(dat.items.dict);
 
-        data.items.queuesort.column = queuesort.column;
-        data.items.queuesort.order = queuesort.order;
-        data.items.studysort.column = studiedsort.column;
-        data.items.studysort.order = studiedsort.order;
-        data.items.testedsort.column = testedsort.column;
-        data.items.testedsort.order = testedsort.order;
+        dat.items.queuesort.column = queuesort.column;
+        dat.items.queuesort.order = queuesort.order;
+        dat.items.studysort.column = studiedsort.column;
+        dat.items.studysort.order = studiedsort.order;
+        dat.items.testedsort.column = testedsort.column;
+        dat.items.testedsort.order = testedsort.order;
 
-        data.items.queuesizes = queuesizes;
-        data.items.studysizes = studiedsizes;
-        data.items.testedsizes = testedsizes;
-        data.items.queuecols = queuecols;
-        data.items.studycols = studiedcols;
-        data.items.testedcols = testedcols;
+        dat.items.queuesizes = queuesizes;
+        dat.items.studysizes = studiedsizes;
+        dat.items.testedsizes = testedsizes;
+        dat.items.queuecols = queuecols;
+        dat.items.studycols = studiedcols;
+        dat.items.testedcols = testedcols;
     }
     if (statsinited)
     {
-        data.stats.page = ui->itemsButton->isChecked() ? DeckStatPages::Items : ui->forecastButton->isChecked() ? DeckStatPages::Forecast : ui->levelsButton->isChecked() ? DeckStatPages::Levels : DeckStatPages::Tests;
-        data.stats.itemsinterval = itemsint;
-        data.stats.forecastinterval = forecastint;
+        dat.stats.page = ui->itemsButton->isChecked() ? DeckStatPages::Items : ui->forecastButton->isChecked() ? DeckStatPages::Forecast : ui->levelsButton->isChecked() ? DeckStatPages::Levels : DeckStatPages::Tests;
+        dat.stats.itemsinterval = itemsint;
+        dat.stats.forecastinterval = forecastint;
     }
 }
 
-void WordStudyListForm::restoreFormState(const WordStudyListFormData &data)
+void WordStudyListForm::restoreFormState(const WordStudyListFormData &dat)
 {
-    if (!FormStates::emptyState(data))
-        resize(data.siz);
+    if (!FormStates::emptyState(dat))
+        resize(dat.siz);
 }
 
-void WordStudyListForm::restoreItemsState(const WordStudyListFormDataItems &data)
+void WordStudyListForm::restoreItemsState(const WordStudyListFormDataItems &dat)
 {
     FlagGuard<bool> ignoreguard(&ignoreop, true, false);
 
-    ui->wButton->setChecked(data.showkanji);
-    ui->kButton->setChecked(data.showkana);
-    ui->dButton->setChecked(data.showdef);
+    ui->wButton->setChecked(dat.showkanji);
+    ui->kButton->setChecked(dat.showkana);
+    ui->dButton->setChecked(dat.showdef);
 
-    if (data.mode == DeckItemViewModes::Queued)
+    if (dat.mode == DeckItemViewModes::Queued)
         ui->queuedButton->setChecked(true);
-    else if (data.mode == DeckItemViewModes::Studied)
+    else if (dat.mode == DeckItemViewModes::Studied)
         ui->studiedButton->setChecked(true);
-    else if (data.mode == DeckItemViewModes::Tested)
+    else if (dat.mode == DeckItemViewModes::Tested)
         ui->testedButton->setChecked(true);
 
-    ui->dictWidget->restoreState(data.dict);
+    ui->dictWidget->restoreState(dat.dict);
 
-    queuesort.column = data.queuesort.column;
-    queuesort.order = data.queuesort.order;
-    studiedsort.column = data.studysort.column;
-    studiedsort.order = data.studysort.order;
-    testedsort.column = data.testedsort.column;
-    testedsort.order = data.testedsort.order;
+    queuesort.column = dat.queuesort.column;
+    queuesort.order = dat.queuesort.order;
+    studiedsort.column = dat.studysort.column;
+    studiedsort.order = dat.studysort.order;
+    testedsort.column = dat.testedsort.column;
+    testedsort.order = dat.testedsort.order;
 
-    queuesizes = data.queuesizes;
-    studiedsizes = data.studysizes;
-    testedsizes = data.testedsizes;
-    queuecols = data.queuecols;
-    studiedcols = data.studycols;
-    testedcols = data.testedcols;
+    queuesizes = dat.queuesizes;
+    studiedsizes = dat.studysizes;
+    testedsizes = dat.testedsizes;
+    queuecols = dat.queuecols;
+    studiedcols = dat.studycols;
+    testedcols = dat.testedcols;
 
     ignoreguard.release(true);
 
-    if (model->viewMode() == data.mode)
+    if (model->viewMode() == dat.mode)
         model->reset();
     else
-        model->setViewMode(data.mode);
+        model->setViewMode(dat.mode);
 
     model->setShownParts(ui->wButton->isChecked(), ui->kButton->isChecked(), ui->dButton->isChecked());
 
-    auto &s = data.mode == DeckItemViewModes::Queued ? queuesort : data.mode == DeckItemViewModes::Studied ? studiedsort : testedsort;
+    auto &s = dat.mode == DeckItemViewModes::Queued ? queuesort : dat.mode == DeckItemViewModes::Studied ? studiedsort : testedsort;
     if (s.column == -1)
         s.column = 0;
 
@@ -713,18 +715,18 @@ void WordStudyListForm::restoreItemsState(const WordStudyListFormDataItems &data
     restoreColumns();
 }
 
-void WordStudyListForm::restoreStatsState(const WordStudyListFormDataStats &data)
+void WordStudyListForm::restoreStatsState(const WordStudyListFormDataStats &dat)
 {
-    itemsint = data.itemsinterval;
-    forecastint = data.forecastinterval;
+    itemsint = dat.itemsinterval;
+    forecastint = dat.forecastinterval;
 
     FlagGuard<bool> ignoreguard(&ignoreop, true, false);
-    ui->itemsButton->setChecked(data.page == DeckStatPages::Items);
-    ui->forecastButton->setChecked(data.page == DeckStatPages::Forecast);
-    ui->levelsButton->setChecked(data.page == DeckStatPages::Levels);
-    ui->testsButton->setChecked(data.page == DeckStatPages::Tests);
+    ui->itemsButton->setChecked(dat.page == DeckStatPages::Items);
+    ui->forecastButton->setChecked(dat.page == DeckStatPages::Forecast);
+    ui->levelsButton->setChecked(dat.page == DeckStatPages::Levels);
+    ui->testsButton->setChecked(dat.page == DeckStatPages::Tests);
     ignoreguard.release(true);
-    showStat(data.page);
+    showStat(dat.page);
 }
 
 void WordStudyListForm::showPage(DeckStudyPages newpage, bool forceinit)
@@ -875,7 +877,7 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
 
         model = new StudyListModel(deck, this);
         ui->dictWidget->setModel(model);
-        ui->dictWidget->setSortFunction([this](DictionaryItemModel *d, int c, int a, int b) { return model->sortOrder(c, a, b); });
+        ui->dictWidget->setSortFunction([this](DictionaryItemModel * /*d*/, int c, int a, int b) { return model->sortOrder(c, a, b); });
 
         connect(ui->dictWidget, &DictionaryWidget::rowSelectionChanged, this, &WordStudyListForm::rowSelectionChanged);
         connect(ui->dictWidget, &DictionaryWidget::sortIndicatorChanged, this, &WordStudyListForm::headerSortChanged);
@@ -1022,7 +1024,7 @@ void WordStudyListForm::showColumnContextMenu(const QPoint &p)
     std::vector<char> &vec = model->viewMode() == DeckItemViewModes::Queued ? queuecols : model->viewMode() == DeckItemViewModes::Studied ? studiedcols : testedcols;
     QMenu m;
 
-    for (int ix = 0, siz = vec.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(vec.size()); ix != siz; ++ix)
     {
         QAction *a = m.addAction(ui->dictWidget->view()->model()->headerData(ix, Qt::Horizontal, Qt::DisplayRole).toString());
         a->setCheckable(true);
@@ -1046,7 +1048,7 @@ void WordStudyListForm::showColumnContextMenu(const QPoint &p)
         ui->dictWidget->view()->setColumnWidth(aix, sizvec[aix]);
 }
 
-void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes)
+void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Dictionary * /*dict*/, DictColumnTypes /*coltype*/, QString /*selstr*/, const std::vector<int> &/*windexes*/, const std::vector<ushort> &/*kindexes*/)
 {
     if (ui->queuedButton->isChecked())
     {
@@ -1311,7 +1313,7 @@ void WordStudyListForm::dictReset()
     ui->dictWidget->sortByIndicator();
 }
 
-void WordStudyListForm::dictRemoved(int index, int orderindex, void *oldaddress)
+void WordStudyListForm::dictRemoved(int /*index*/, int /*orderindex*/, void *oldaddress)
 {
     if (dict == oldaddress)
         close();
@@ -1327,7 +1329,7 @@ void WordStudyListForm::saveColumns()
 {
     std::vector<int> &oldvec = model->viewMode() == DeckItemViewModes::Queued ? queuesizes : model->viewMode() == DeckItemViewModes::Studied ? studiedsizes : testedsizes;
     oldvec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
-    for (int ix = 0, siz = oldvec.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(oldvec.size()); ix != siz; ++ix)
     {
         bool hid = ui->dictWidget->view()->isColumnHidden(ix);
         ui->dictWidget->view()->setColumnHidden(ix, false);
@@ -1338,7 +1340,7 @@ void WordStudyListForm::saveColumns()
 
     std::vector<char> &oldcolvec = model->viewMode() == DeckItemViewModes::Queued ? queuecols : model->viewMode() == DeckItemViewModes::Studied ? studiedcols : testedcols;
     oldcolvec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 3, 1);
-    for (int ix = 0, siz = oldcolvec.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(oldcolvec.size()); ix != siz; ++ix)
         oldcolvec[ix] = !ui->dictWidget->view()->isColumnHidden(ix);
 }
 
@@ -1346,12 +1348,12 @@ void WordStudyListForm::restoreColumns()
 {
     std::vector<char> &colvec = model->viewMode() == DeckItemViewModes::Queued ? queuecols : model->viewMode() == DeckItemViewModes::Studied ? studiedcols : testedcols;
     colvec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 3, 1);
-    for (int ix = 0, siz = colvec.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(colvec.size()); ix != siz; ++ix)
         ui->dictWidget->view()->setColumnHidden(ix, !colvec[ix]);
 
     std::vector<int> &vec = model->viewMode() == DeckItemViewModes::Queued ? queuesizes : model->viewMode() == DeckItemViewModes::Studied ? studiedsizes : testedsizes;
     vec.resize((model->viewMode() == DeckItemViewModes::Queued ? StudyListModel::queueColCount() : model->viewMode() == DeckItemViewModes::Studied ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
-    for (int ix = 0, siz = vec.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(vec.size()); ix != siz; ++ix)
     {
         bool hid = ui->dictWidget->view()->isColumnHidden(ix);
         ui->dictWidget->view()->setColumnHidden(ix, false);
@@ -1375,7 +1377,7 @@ void WordStudyListForm::showStat(DeckStatPages page)
         ui->statView->model()->deleteLater();
     ui->statView->setModel(nullptr);
 
-    int fmh = fontMetrics().height();
+    //int fmh = fontMetrics().height();
 
     if (statpage == DeckStatPages::Items)
     {

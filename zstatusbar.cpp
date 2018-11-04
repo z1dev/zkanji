@@ -23,6 +23,8 @@
 #include "globalui.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -37,7 +39,7 @@ ZStatusLayout::ZStatusLayout(QWidget *parent) : base(parent), contents(nullptr),
     addWidget(contents);
 }
 
-ZStatusLayout::ZStatusLayout(ZStatusLayout *parent) : base(nullptr), contents(nullptr), grip(nullptr), showthegrip(false), cacheheight(-1)
+ZStatusLayout::ZStatusLayout(ZStatusLayout * /*parent*/) : base(nullptr), contents(nullptr), grip(nullptr), showthegrip(false), cacheheight(-1)
 {
     setContentsMargins(Settings::scaled(2), Settings::scaled(3), Settings::scaled(0), Settings::scaled(2));
 }
@@ -272,7 +274,6 @@ void ZStatusLayout::realign(const QRect &r)
 
         int itemh = item->sizeHint().height();
 
-        QWidget *widget = item->widget();
         int whs = hs;
 
         auto nextit = std::next(lit);
@@ -405,7 +406,7 @@ void ZStatusBar::assignTo(QObject *newbuddy)
     buddy = newbuddy;
 }
 
-int ZStatusBar::size() const
+ZStatusBar::size_type ZStatusBar::size() const
 {
     return list.size();
 }
@@ -417,7 +418,7 @@ bool ZStatusBar::empty() const
 
 void ZStatusBar::clear()
 {
-    for (int ix = list.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
         delete list[ix].second;
     list.clear();
 }
@@ -449,7 +450,7 @@ int ZStatusBar::add(QString value, int vsiz)
 
     gUI->scaleWidget(w);
 
-    return list.size() - 1;
+    return tosigned(list.size()) - 1;
 }
 
 int ZStatusBar::add(QString title, int lsiz, QString value, int vsiz, bool alignright)
@@ -494,12 +495,12 @@ int ZStatusBar::add(QString title, int lsiz, QString value, int vsiz, bool align
 
     gUI->scaleWidget(w);
 
-    return list.size() - 1;
+    return tosigned(list.size()) - 1;
 }
 
 void ZStatusBar::setValue(int index, QString str)
 {
-    if (index < 0 || index >= list.size() || (list[index].first != StatusTypes::TitleValue && list[index].first != StatusTypes::SingleValue))
+    if (index < 0 || index >= tosigned(list.size()) || (list[index].first != StatusTypes::TitleValue && list[index].first != StatusTypes::SingleValue))
         return;
 
     ((QLabel*)((QBoxLayout*)list[index].second->layout())->itemAt(list[index].first == StatusTypes::TitleValue ? 1 : 0)->widget())->setText(str);
@@ -507,7 +508,7 @@ void ZStatusBar::setValue(int index, QString str)
 
 QString ZStatusBar::value(int index) const
 {
-    if (index < 0 || index >= list.size() || (list[index].first != StatusTypes::TitleValue && list[index].first != StatusTypes::SingleValue))
+    if (index < 0 || index >= tosigned(list.size()) || (list[index].first != StatusTypes::TitleValue && list[index].first != StatusTypes::SingleValue))
         return QString();
 
     return ((QLabel*)((QBoxLayout*)list[index].second->layout())->itemAt(list[index].first == StatusTypes::TitleValue ? 1 : 0)->widget())->text();
@@ -576,12 +577,12 @@ int ZStatusBar::add(QString title, int lsiz, QString value1, int vsiz1, QString 
 
     gUI->scaleWidget(w);
 
-    return list.size() - 1;
+    return tosigned(list.size()) - 1;
 }
 
 void ZStatusBar::setValues(int index, QString val1, QString val2)
 {
-    if (index < 0 || index >= list.size() || (list[index].first != StatusTypes::TitleDouble && list[index].first != StatusTypes::DoubleValue))
+    if (index < 0 || index >= tosigned(list.size()) || (list[index].first != StatusTypes::TitleDouble && list[index].first != StatusTypes::DoubleValue))
         return;
 
     if (list[index].first == StatusTypes::TitleDouble)
@@ -640,16 +641,16 @@ void ZStatusBar::paintEvent(QPaintEvent *e)
         opt.initFrom(this);
         style()->drawPrimitive(QStyle::PE_PanelStatusBar, &opt, &p, this);
 
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         {
             QRect r = list[ix].second->geometry().adjusted(Settings::scaled(-2), Settings::scaled(-1), Settings::scaled(2), Settings::scaled(1));
             if (e->rect().intersects(r))
             {
-                QStyleOption opt(0);
-                opt.rect = r;
-                opt.palette = palette();
-                opt.state = QStyle::State_None;
-                style()->drawPrimitive(QStyle::PE_FrameStatusBarItem, &opt, &p, list[ix].second);
+                QStyleOption baropt(0);
+                baropt.rect = r;
+                baropt.palette = palette();
+                baropt.state = QStyle::State_None;
+                style()->drawPrimitive(QStyle::PE_FrameStatusBarItem, &baropt, &p, list[ix].second);
             }
         }
     }

@@ -7,7 +7,7 @@
 #include <stack>
 #include "zabstracttreemodel.h"
 
-
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -46,7 +46,7 @@ bool TreeItem::empty() const
     return list.empty();
 }
 
-int TreeItem::size() const
+TreeItem::size_type TreeItem::size() const
 {
     return list.size();
 }
@@ -56,7 +56,7 @@ int TreeItem::row() const
     if (pr == nullptr)
         return 0;
 
-    if (oldrow < pr->size() && pr->list[oldrow] == this)
+    if (oldrow < tosigned(pr->size()) && pr->list[oldrow] == this)
         return oldrow;
 
     return (oldrow = pr->indexOf(this));
@@ -94,19 +94,19 @@ TreeItem* TreeItem::realParent() const
     return pr;
 }
 
-const TreeItem* TreeItem::items(uint index) const
+const TreeItem* TreeItem::items(int index) const
 {
 #ifdef _DEBUG
-    if (index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         throw "Item index out of bounds.";
 #endif
     return list[index];
 }
 
-TreeItem* TreeItem::items(uint index)
+TreeItem* TreeItem::items(int index)
 {
 #ifdef _DEBUG
-    if (index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         throw "Item index out of bounds.";
 #endif
     return list[index];
@@ -143,13 +143,13 @@ void TreeItem::reserve(int cnt)
 
 int TreeItem::capacity()
 {
-    return list.capacity();
+    return tosigned(list.capacity());
 }
 
 void TreeItem::removeItems(int first, int cnt)
 {
 #ifdef _DEBUG
-    if (first < 0 || cnt < 0 || first >= list.size() || first + cnt > list.size())
+    if (first < 0 || cnt < 0 || first >= tosigned(list.size()) || first + cnt > tosigned(list.size()))
         throw "Passed range is invalid.";
 #endif
 
@@ -167,7 +167,7 @@ void TreeItem::takeItems(int first, int cnt, std::vector<TreeItem*> &dest)
 
 TreeItem* TreeItem::addChild(intptr_t childdata)
 {
-    TreeItem *i = new TreeItem(list.size(), this, childdata);
+    TreeItem *i = new TreeItem(tosigned(list.size()), this, childdata);
     list.push_back(i);
     return i;
 }
@@ -222,12 +222,12 @@ const TreeItem* ZAbstractTreeModel::getItem(const TreeItem *parent, int index) c
     return parent->items(index);
 }
 
-int ZAbstractTreeModel::size() const
+ZAbstractTreeModel::size_type ZAbstractTreeModel::size() const
 {
     return root.size();
 }
 
-int ZAbstractTreeModel::getSize(const TreeItem *parent) const
+ZAbstractTreeModel::size_type ZAbstractTreeModel::getSize(const TreeItem *parent) const
 {
     if (parent == nullptr)
         return size();
@@ -239,7 +239,7 @@ bool ZAbstractTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
     return base::dropMimeData(data, action, row, column, index(parent));
 }
 
-int ZAbstractTreeModel::columnCount(const TreeItem *parent) const
+int ZAbstractTreeModel::columnCount(const TreeItem * /*parent*/) const
 {
     return 1;
 }
@@ -257,7 +257,7 @@ bool ZAbstractTreeModel::hasChildren(const TreeItem *parent) const
     return base::hasChildren(index(parent));
 }
 
-bool ZAbstractTreeModel::setData(TreeItem *item, const QVariant & value, int role)
+bool ZAbstractTreeModel::setData(TreeItem * /*item*/, const QVariant &/*value*/, int /*role*/)
 {
     return false;
 }
@@ -488,7 +488,7 @@ TreeItem* ZAbstractTreeModel::itemFromIndex(const QModelIndex &index)
 
 QModelIndex ZAbstractTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (root.empty() || row < 0 || row >= itemFromIndex(parent)->size())
+    if (root.empty() || row < 0 || row >= tosigned(itemFromIndex(parent)->size()))
         return QModelIndex();
 
     return createIndex(row, column, (void*)(itemFromIndex(parent)->items(row)));
@@ -506,7 +506,7 @@ QModelIndex ZAbstractTreeModel::parent(const QModelIndex &index) const
 
 int ZAbstractTreeModel::rowCount(const QModelIndex &parent) const
 {
-    return itemFromIndex(parent)->size();
+    return tosigned(itemFromIndex(parent)->size());
 }
 
 int ZAbstractTreeModel::columnCount(const QModelIndex &parent) const

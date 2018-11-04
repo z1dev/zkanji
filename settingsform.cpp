@@ -111,7 +111,7 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
     QString str = toKana(tr("hiraganaKATAKANA"), true) + QChar(0x611f) + QChar(0x3058) + QChar(0x5e79) + QChar(0x4e8b) + QChar(0x6f22) + QChar(0x5b57) + QChar(0x76e3) + QChar(0x4e8b) + QChar(0x5b8c) + QChar(0x6cbb);
 
     // Size the text would take up in a dictionary listing.
-    int linesiz = (sizes == FontSettings::Medium ? 19 : sizes == FontSettings::Small ? 17 : sizes == FontSettings::Large ? 24 : 28) - 1;
+    int linesiz = (sizes == LineSize::Medium ? 19 : sizes == LineSize::Small ? 17 : sizes == LineSize::Large ? 24 : 28) - 1;
     // Available space for the kanji line.
     int rowsiz = r.height() * (kanjiRowSize / (kanjiRowSize + defRowSize));
 
@@ -119,7 +119,7 @@ void fontPreviewWidget::paintEvent(QPaintEvent *e)
     kf.setPixelSize(Settings::scaled(linesiz * kanjiRowSize));
     QFont mf{ deffont, 9 };
     mf.setPixelSize(Settings::scaled(linesiz * defRowSize));
-    QFont nf{ notesfont, 7, notestyle == FontSettings::Bold || notestyle == FontSettings::BoldItalic ? QFont::Bold : -1, notestyle == FontSettings::Italic || notestyle == FontSettings::BoldItalic };
+    QFont nf{ notesfont, 7, notestyle == FontStyle::Bold || notestyle == FontStyle::BoldItalic ? QFont::Bold : -1, notestyle == FontStyle::Italic || notestyle == FontStyle::BoldItalic };
     nf.setPixelSize(Settings::scaled(linesiz * notesRowSize));
     QFontMetrics nfm(nf);
 
@@ -209,7 +209,7 @@ int KanjiRefListModel::rowCount(const QModelIndex &parent) const
 
 QVariant KanjiRefListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || role != Qt::DisplayRole && role != Qt::CheckStateRole)
+    if (!index.isValid() || (role != Qt::DisplayRole && role != Qt::CheckStateRole))
         return QVariant();
 
     if (role == Qt::CheckStateRole)
@@ -238,14 +238,14 @@ Qt::DropActions KanjiRefListModel::supportedDragActions() const
     return Qt::MoveAction;
 }
 
-Qt::DropActions KanjiRefListModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions KanjiRefListModel::supportedDropActions(bool samesource, const QMimeData * /*mime*/) const
 {
     if (samesource)
         return Qt::MoveAction;
     return 0;
 }
 
-bool KanjiRefListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool KanjiRefListModel::canDropMimeData(const QMimeData * /*data*/, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
     if (parent.isValid() || row == -1 || column == -1 || action != Qt::MoveAction)
         return false;
@@ -293,7 +293,7 @@ QMimeData* KanjiRefListModel::mimeData(const QModelIndexList &indexes) const
 //-------------------------------------------------------------
 
 
-SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsForm), ignoresitechange(false), sitesele(-1), sitesels(-1)
+SettingsForm::SettingsForm(QWidget *parent) : base(parent), ui(new Ui::SettingsForm), ignoresitechange(false), sitesels(-1), sitesele(-1)
 {
     ui->setupUi(this);
 
@@ -491,11 +491,9 @@ SettingsForm::~SettingsForm()
 
 void SettingsForm::show(SettingsPage page)
 {
-    switch (page)
-    {
-    case SettingsPage::Printing:
+    if (page == SettingsPage::Printing)
         ui->pagesTree->setCurrentItem(pageTreeItem(ui->pagesStack->indexOf(ui->printPage)));
-    }
+
     base::show();
 }
 
@@ -601,8 +599,8 @@ void SettingsForm::reset()
     ui->dictSizeCBox->setCurrentIndex((int)Settings::fonts.mainsize);
     ui->popupSizeCBox->setCurrentIndex((int)Settings::fonts.popsize);
 
-    ui->fontPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), (fontPreviewWidget::LineSize)ui->dictSizeCBox->currentIndex());
-    ui->popupPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), (fontPreviewWidget::LineSize)ui->popupSizeCBox->currentIndex());
+    ui->fontPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), (LineSize)ui->dictSizeCBox->currentIndex());
+    ui->popupPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), (LineSize)ui->popupSizeCBox->currentIndex());
 
     ui->kanjiFontCBox->setCurrentIndex(ui->kanjiFontCBox->findText(Settings::fonts.kanji));
     ui->kanjiAliasBox->setChecked(Settings::fonts.nokanjialias);
@@ -704,12 +702,12 @@ void SettingsForm::reset()
     ui->printInfoStyleCBox->setCurrentIndex((int)Settings::fonts.printinfostyle);
 
     if (ui->printDictFontsBox->isChecked())
-        ui->printPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
+        ui->printPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), LineSize::Large);
     else
-        ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->printInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
+        ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (FontStyle)ui->printInfoStyleCBox->currentIndex(), LineSize::Large);
 }
 
-void SettingsForm::on_pagesTree_currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev)
+void SettingsForm::on_pagesTree_currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem * /*prev*/)
 {
     int index = 0;
 
@@ -872,20 +870,20 @@ void SettingsForm::applyClicked()
     Settings::fonts.info = ui->dictInfoFontCBox->currentText();
     if (ui->dictInfoStyleCBox->currentIndex() == -1)
         ui->dictInfoStyleCBox->setCurrentIndex((int)Settings::fonts.infostyle);
-    Settings::fonts.infostyle = (FontSettings::FontStyle)ui->dictInfoStyleCBox->currentIndex();
+    Settings::fonts.infostyle = (FontStyle)ui->dictInfoStyleCBox->currentIndex();
     //if (ui->extraFontCBox->currentIndex() == -1)
     //    ui->extraFontCBox->setCurrentIndex(ui->extraFontCBox->findText(Settings::fonts.extra));
     //Settings::fonts.extra = ui->extraFontCBox->currentText();
     //if (ui->extraStyleCBox->currentIndex() == -1)
     //    ui->extraStyleCBox->setCurrentIndex((int)Settings::fonts.extrastyle);
-    //Settings::fonts.extrastyle = (FontSettings::FontStyle)ui->extraStyleCBox->currentIndex();
+    //Settings::fonts.extrastyle = (FontStyle)ui->extraStyleCBox->currentIndex();
 
     if (ui->dictSizeCBox->currentIndex() == -1)
         ui->dictSizeCBox->setCurrentIndex((int)Settings::fonts.mainsize);
-    Settings::fonts.mainsize = (FontSettings::LineSize)ui->dictSizeCBox->currentIndex();
+    Settings::fonts.mainsize = (LineSize)ui->dictSizeCBox->currentIndex();
     if (ui->popupSizeCBox->currentIndex() == -1)
         ui->popupSizeCBox->setCurrentIndex((int)Settings::fonts.popsize);
-    Settings::fonts.popsize = (FontSettings::LineSize)ui->popupSizeCBox->currentIndex();
+    Settings::fonts.popsize = (LineSize)ui->popupSizeCBox->currentIndex();
 
     if (ui->kanjiFontCBox->currentIndex() == -1)
         ui->kanjiFontCBox->setCurrentIndex(ui->kanjiFontCBox->findText(Settings::fonts.kanji));
@@ -1013,7 +1011,7 @@ void SettingsForm::applyClicked()
     Settings::fonts.printinfo = ui->printInfoFontCBox->currentText();
     if (ui->printInfoStyleCBox->currentIndex() == -1)
         ui->printInfoStyleCBox->setCurrentIndex((int)Settings::fonts.printinfostyle);
-    Settings::fonts.printinfostyle = (FontSettings::FontStyle)ui->printInfoStyleCBox->currentIndex();
+    Settings::fonts.printinfostyle = (FontStyle)ui->printInfoStyleCBox->currentIndex();
 
     Settings::language = zLang->IDs(ui->languageCBox->currentIndex());
 
@@ -1058,7 +1056,7 @@ void SettingsForm::refSelChanged()
 
     // The whole selection is a single block.
     bool single = true;
-    for (int ix = 1, sel = rows.size(); single && ix < sel; ++ix)
+    for (int ix = 1, sel = tosigned(rows.size()); single && ix < sel; ++ix)
     {
         if (rows[ix] != rows[ix - 1] + 1)
             single = false;
@@ -1096,7 +1094,7 @@ void SettingsForm::on_studyIncludeEdit_textChanged(const QString &text)
         ui->studyIncludeCBox->setEnabled(val != 0);
 }
 
-void SettingsForm::sitesSelChanged(int curr, int prev)
+void SettingsForm::sitesSelChanged(int curr, int /*prev*/)
 {
     SitesListModel *m = (SitesListModel*)ui->sitesTable->model();
     if (curr < 0)
@@ -1199,7 +1197,7 @@ void SettingsForm::on_siteUrlEdit_textEdited(const QString &text)
     ignoresitechange = false;
 }
 
-void SettingsForm::on_siteUrlEdit_cursorPositionChanged(int oldp, int newp)
+void SettingsForm::on_siteUrlEdit_cursorPositionChanged(int /*oldp*/, int newp)
 {
     if (ignoresitechange)
         return;
@@ -1250,7 +1248,7 @@ void SettingsForm::on_siteDelButton_clicked()
     ui->sitesTable->setCurrentRow(std::max(0, std::min(row, m->rowCount() - 2)));
 }
 
-void SettingsForm::on_kanjiSizeCBox_currentIndexChanged(int index)
+void SettingsForm::on_kanjiSizeCBox_currentIndexChanged(int /*index*/)
 {
     int fontsize;
     if (ui->kanjiSizeCBox->currentIndex() == -1)
@@ -1268,28 +1266,28 @@ void SettingsForm::on_kanjiSizeCBox_currentIndexChanged(int index)
 
 void SettingsForm::fontCBoxChanged()
 {
-    ui->fontPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), (fontPreviewWidget::LineSize)ui->dictSizeCBox->currentIndex());
-    ui->popupPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), (fontPreviewWidget::LineSize)ui->popupSizeCBox->currentIndex());
+    ui->fontPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), (LineSize)ui->dictSizeCBox->currentIndex());
+    ui->popupPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), (LineSize)ui->popupSizeCBox->currentIndex());
     if (ui->printDictFontsBox->isChecked())
-        ui->printPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
+        ui->printPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), LineSize::Large);
 }
 
 void SettingsForm::fontSizeCBoxChanged()
 {
-    ui->fontPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), (fontPreviewWidget::LineSize)ui->dictSizeCBox->currentIndex());
+    ui->fontPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), (LineSize)ui->dictSizeCBox->currentIndex());
 }
 
 void SettingsForm::popupSizeCBoxChanged()
 {
-    ui->popupPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), (fontPreviewWidget::LineSize)ui->popupSizeCBox->currentIndex());
+    ui->popupPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), (LineSize)ui->popupSizeCBox->currentIndex());
 }
 
 void SettingsForm::printBoxToggled()
 {
     if (ui->printDictFontsBox->isChecked())
-        ui->printPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->dictInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
+        ui->printPreview->setFonts(ui->dictKanaFontCBox->currentText(), ui->mainFontCBox->currentText(), ui->dictInfoFontCBox->currentText(), (FontStyle)ui->dictInfoStyleCBox->currentIndex(), LineSize::Large);
     else
-        ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->printInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
+        ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (FontStyle)ui->printInfoStyleCBox->currentIndex(), LineSize::Large);
 }
 
 void SettingsForm::printCBoxChanged()
@@ -1297,7 +1295,7 @@ void SettingsForm::printCBoxChanged()
     if (ui->printDictFontsBox->isChecked())
         return;
 
-    ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (fontPreviewWidget::FontStyle)ui->printInfoStyleCBox->currentIndex(), fontPreviewWidget::Large);
+    ui->printPreview->setFonts(ui->printKanaFontCBox->currentText(), ui->printDefFontCBox->currentText(), ui->printInfoFontCBox->currentText(), (FontStyle)ui->printInfoStyleCBox->currentIndex(), LineSize::Large);
 }
 
 bool SettingsForm::event(QEvent *e)
@@ -1321,7 +1319,7 @@ bool SettingsForm::eventFilter(QObject *o, QEvent *e)
 {
     if (o == ui->kanjiPreview && e->type() == QEvent::Paint)
     {
-        QPaintEvent *pe = (QPaintEvent*)e;
+        //QPaintEvent *pe = (QPaintEvent*)e;
         QRect r = ui->kanjiPreview->rect();
 
         int mleft, mtop, mright, mbottom;

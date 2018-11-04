@@ -176,7 +176,7 @@ void WordToGroupForm::dictionaryAdded()
         ui->switchButton->setVisible(true);
 }
 
-void WordToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void WordToGroupForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict)
         close();

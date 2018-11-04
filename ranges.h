@@ -10,6 +10,9 @@
 #include <functional>
 #include "smartvector.h"
 
+#ifdef _DEBUG
+#include "checked_cast.h"
+#endif
 
 class ZAbstractTableModel;
 class QPersistentModelIndex;
@@ -132,7 +135,7 @@ private:
     // Speeds up searching if the access to items is linear, by saving the last iterator used
     // for looking up a position. If ranges changes, it must be set to ranges.end() to avoid
     // using it in an invalid state.
-    mutable smartvector<Range>::iterator itcache;
+    mutable smartvector<Range>::const_iterator itcache;
 };
 
 
@@ -201,7 +204,7 @@ template<typename LIST>
 void _moveRange(LIST &list, Range range, int pos)
 {
 #ifdef _DEBUG
-    if (range.first > range.last || range.first < 0 || std::max(range.first, range.last) >= list.size() || (pos >= range.first && pos <= range.last + 1))
+    if (range.first > range.last || range.first < 0 || std::max(range.first, range.last) >= tosigned(list.size()) || (pos >= range.first && pos <= range.last + 1))
         throw "Invalid parameters.";
 #endif
 
@@ -234,7 +237,7 @@ void _moveRange(LIST &list, Range range, int pos)
             ldat[range.last - ix] = ldat[range.first - 1 - ix];
 
         // Copy movelist back.
-        for (int ix = 0, siz = movelist.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(movelist.size()); ix != siz; ++ix)
             ldat[pos + ix] = mdat[ix];
     }
     else
@@ -244,7 +247,7 @@ void _moveRange(LIST &list, Range range, int pos)
             ldat[range.first + ix] = ldat[range.last + 1 + ix];
 
         // Copy movelist back.
-        for (int ix = 0, siz = movelist.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(movelist.size()); ix != siz; ++ix)
             ldat[pos - siz + ix] = mdat[ix];
     }
 }
@@ -316,16 +319,16 @@ bool _moveRanges(const smartvector<Range> &ranges, int pos, LIST &moved)
         return false;
 
     // Index of first range after pos.
-    int ix = std::upper_bound(ranges.begin(), ranges.end(), pos, [](int pos, const Range *r) {
+    int ix = tosigned(std::upper_bound(ranges.begin(), ranges.end(), pos, [](int pos, const Range *r) {
         return pos < r->first;
-    }) - ranges.begin();
+    }) - ranges.begin());
 
     // Moving ranges above pos:
 
     bool changed = false;
 
     int movepos = ix == 0 ? pos : std::max(ranges[ix - 1]->last + 1, pos);
-    for (int iy = ix, siz = ranges.size(); iy != siz; ++iy)
+    for (int iy = ix, siz = tosigned(ranges.size()); iy != siz; ++iy)
     {
         const Range *r = ranges[iy];
         _moveRange(moved, *r, movepos);

@@ -13,6 +13,8 @@
 #include "words.h"
 #include "ranges.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -152,9 +154,9 @@ void DictionarySearchFilterProxyModel::sortBy(int column, Qt::SortOrder order, P
         std::sort(list.begin(), list.end(), [](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) { return a.first < b.first; });
     else
     {
-        DictionaryItemModel *model = sourceModel();
-        std::sort(list.begin(), list.end(), [this, model](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
-            return sortfunc(model, sortcolumn, a.first, b.first) != (sortorder == Qt::DescendingOrder);
+        DictionaryItemModel *source = sourceModel();
+        std::sort(list.begin(), list.end(), [this, source](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
+            return sortfunc(source, sortcolumn, a.first, b.first) != (sortorder == Qt::DescendingOrder);
         });
 
         std::sort(srclist.begin(), srclist.begin() + list.size(), [this](int a, int b) { return list[a].first < list[b].first; });
@@ -184,10 +186,10 @@ const DictionaryItemModel* DictionarySearchFilterProxyModel::sourceModel() const
     return (DictionaryItemModel*)base::sourceModel();
 }
 
-void DictionarySearchFilterProxyModel::setSourceModel(DictionaryItemModel *model)
+void DictionarySearchFilterProxyModel::setSourceModel(DictionaryItemModel *newmodel)
 {
     DictionaryItemModel *smodel = sourceModel();
-    if (smodel == model)
+    if (smodel == newmodel)
         return;
 
     if (smodel != nullptr)
@@ -202,30 +204,30 @@ void DictionarySearchFilterProxyModel::setSourceModel(DictionaryItemModel *model
 
     sortfunc = nullptr;
     preparedsortfunc = nullptr;
-    fillLists(model);
-    base::setSourceModel(model);
+    fillLists(newmodel);
+    base::setSourceModel(newmodel);
 
-    connect(model, &DictionaryItemModel::dataChanged, this, &DictionarySearchFilterProxyModel::sourceDataChanged);
-    connect(model, &DictionaryItemModel::headerDataChanged, this, &DictionarySearchFilterProxyModel::sourceHeaderDataChanged);
-    connect(model, &DictionaryItemModel::modelAboutToBeReset, this, &DictionarySearchFilterProxyModel::sourceAboutToBeReset);
-    connect(model, &DictionaryItemModel::modelReset, this, &DictionarySearchFilterProxyModel::sourceReset);
+    connect(newmodel, &DictionaryItemModel::dataChanged, this, &DictionarySearchFilterProxyModel::sourceDataChanged);
+    connect(newmodel, &DictionaryItemModel::headerDataChanged, this, &DictionarySearchFilterProxyModel::sourceHeaderDataChanged);
+    connect(newmodel, &DictionaryItemModel::modelAboutToBeReset, this, &DictionarySearchFilterProxyModel::sourceAboutToBeReset);
+    connect(newmodel, &DictionaryItemModel::modelReset, this, &DictionarySearchFilterProxyModel::sourceReset);
     //connect(model, &DictionaryItemModel::rowsAboutToBeInserted, this, &DictionarySearchFilterProxyModel::sourceRowsAboutToBeInserted);
-    connect(model, &DictionaryItemModel::rowsWereInserted, this, &DictionarySearchFilterProxyModel::sourceRowsInserted);
+    connect(newmodel, &DictionaryItemModel::rowsWereInserted, this, &DictionarySearchFilterProxyModel::sourceRowsInserted);
     //connect(model, &DictionaryItemModel::rowsAboutToBeRemoved, this, &DictionarySearchFilterProxyModel::sourceRowsAboutToBeRemoved);
-    connect(model, &DictionaryItemModel::rowsWereRemoved, this, &DictionarySearchFilterProxyModel::sourceRowsRemoved);
+    connect(newmodel, &DictionaryItemModel::rowsWereRemoved, this, &DictionarySearchFilterProxyModel::sourceRowsRemoved);
     //connect(model, &DictionaryItemModel::rowsAboutToBeMoved, this, &DictionarySearchFilterProxyModel::sourceRowsAboutToBeMoved);
-    connect(model, &DictionaryItemModel::rowsWereMoved, this, &DictionarySearchFilterProxyModel::sourceRowsMoved);
+    connect(newmodel, &DictionaryItemModel::rowsWereMoved, this, &DictionarySearchFilterProxyModel::sourceRowsMoved);
 
-    connect(model, &DictionaryItemModel::columnsAboutToBeInserted, this, &DictionarySearchFilterProxyModel::sourceColumnsAboutToBeInserted);
-    connect(model, &DictionaryItemModel::columnsInserted, this, &DictionarySearchFilterProxyModel::sourceColumnsInserted);
-    connect(model, &DictionaryItemModel::columnsAboutToBeRemoved, this, &DictionarySearchFilterProxyModel::sourceColumnsAboutToBeRemoved);
-    connect(model, &DictionaryItemModel::columnsRemoved, this, &DictionarySearchFilterProxyModel::sourceColumnsRemoved);
-    connect(model, &DictionaryItemModel::columnsAboutToBeMoved, this, &DictionarySearchFilterProxyModel::sourceColumnsAboutToBeMoved);
-    connect(model, &DictionaryItemModel::columnsMoved, this, &DictionarySearchFilterProxyModel::sourceColumnsMoved);
+    connect(newmodel, &DictionaryItemModel::columnsAboutToBeInserted, this, &DictionarySearchFilterProxyModel::sourceColumnsAboutToBeInserted);
+    connect(newmodel, &DictionaryItemModel::columnsInserted, this, &DictionarySearchFilterProxyModel::sourceColumnsInserted);
+    connect(newmodel, &DictionaryItemModel::columnsAboutToBeRemoved, this, &DictionarySearchFilterProxyModel::sourceColumnsAboutToBeRemoved);
+    connect(newmodel, &DictionaryItemModel::columnsRemoved, this, &DictionarySearchFilterProxyModel::sourceColumnsRemoved);
+    connect(newmodel, &DictionaryItemModel::columnsAboutToBeMoved, this, &DictionarySearchFilterProxyModel::sourceColumnsAboutToBeMoved);
+    connect(newmodel, &DictionaryItemModel::columnsMoved, this, &DictionarySearchFilterProxyModel::sourceColumnsMoved);
 
-    connect(model, &DictionaryItemModel::layoutAboutToBeChanged, this, &DictionarySearchFilterProxyModel::sourceLayoutAboutToBeChanged);
-    connect(model, &DictionaryItemModel::layoutChanged, this, &DictionarySearchFilterProxyModel::sourceLayoutChanged);
-    connect(model, &DictionaryItemModel::statusChanged, this, &DictionarySearchFilterProxyModel::sourceStatusChanged);
+    connect(newmodel, &DictionaryItemModel::layoutAboutToBeChanged, this, &DictionarySearchFilterProxyModel::sourceLayoutAboutToBeChanged);
+    connect(newmodel, &DictionaryItemModel::layoutChanged, this, &DictionarySearchFilterProxyModel::sourceLayoutChanged);
+    connect(newmodel, &DictionaryItemModel::statusChanged, this, &DictionarySearchFilterProxyModel::sourceStatusChanged);
 }
 
 QModelIndexList DictionarySearchFilterProxyModel::mapListToSource(const QModelIndexList &indexes)
@@ -254,7 +256,7 @@ int DictionarySearchFilterProxyModel::rowCount(const QModelIndex &index) const
 {
     if (index.isValid() /*|| index.model() != this*/)
         return 0;
-    return list.size();
+    return tosigned(list.size());
 }
 
 int DictionarySearchFilterProxyModel::columnCount(const QModelIndex &index) const
@@ -266,7 +268,7 @@ int DictionarySearchFilterProxyModel::columnCount(const QModelIndex &index) cons
 
 QModelIndex DictionarySearchFilterProxyModel::mapToSource(const QModelIndex &index) const
 {
-    if (!index.isValid() || index.model() != this || index.row() >= list.size())
+    if (!index.isValid() || index.model() != this || index.row() >= tosigned(list.size()))
         return QModelIndex();
 
     return sourceModel()->index(list[index.row()].first, index.column());
@@ -333,9 +335,9 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
         return;
     }
 
-    DictionaryItemModel *model = sourceModel();
+    DictionaryItemModel *source = sourceModel();
 
-    Dictionary *dict = model->dictionary();
+    Dictionary *dict = source->dictionary();
 
     // Data change can cause words to be excluded from list, other words to be included, and
     // the rest to be sorted differently.
@@ -356,7 +358,7 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
     for (int ix = top, last = bottom + 1; ix != last; ++ix)
     {
         std::vector<InfTypes> winfs;
-        bool match = !filtering || dict->wordMatches(model->indexes(ix), smode, ssearchstr, swildcards, sstrict, sinflections, sstudydefs, scond.get(), &winfs);
+        bool match = !filtering || dict->wordMatches(source->indexes(ix), smode, ssearchstr, swildcards, sstrict, sinflections, sstudydefs, scond.get(), &winfs);
 
         bool found = srcit != srclist.end() && list[*srcit].first == ix;
 
@@ -378,7 +380,7 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
         std::sort(toremove.begin(), toremove.end());
 
     smartvector<Range> removed;
-    for (int pos = toremove.size() - 1, prev = pos - 1; pos != -1; --prev)
+    for (int pos = tosigned(toremove.size()) - 1, prev = pos - 1; pos != -1; --prev)
     {
         if (prev == -1 || toremove[prev + 1] - toremove[prev] > 1)
         {
@@ -401,7 +403,7 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
 
     // Every value in srclist would be accessed. It's easier to rebuild it.
     srclist.resize(list.size());
-    for (int iy = 0; iy != srclist.size(); ++iy)
+    for (int iy = 0, sizy = tosigned(srclist.size()); iy != sizy; ++iy)
         srclist[iy] = iy;
     if (sortfunc)
         std::sort(srclist.begin(), srclist.begin() + list.size(), [this](int a, int b) { return list[a].first < list[b].first; });
@@ -434,14 +436,14 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
         std::vector<int> srcupdatepos;
         srcupdatepos.reserve(toupdate.size());
         srcit = srclist.begin();
-        for (int ix = 0, siz = toupdate.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(toupdate.size()); ix != siz; ++ix)
         {
             srcit = std::lower_bound(srcit, srclist.end(), toupdate[ix].first, [this](int src, int val) { return list[src].first < val; });
             srcupdatepos.push_back(*srcit);
         }
 
         // Removing everything from list that are in toupdate.
-        for (int ix = 0, siz = srcupdatepos.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(srcupdatepos.size()); ix != siz; ++ix)
         {
             int listpos = srcupdatepos[ix];
             list[listpos].first = -1;
@@ -452,17 +454,17 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
         // Finding positions of the items in toupdate to be placed back in list. It's assumed
         // that the remaining values in list are correct, and they were ordered by sortfunc.
 
-        std::sort(toupdate.begin(), toupdate.end(), [model, this](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
-            bool v = sortfunc(model, sortcolumn, a.first, b.first);
+        std::sort(toupdate.begin(), toupdate.end(), [source, this](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
+            bool v = sortfunc(source, sortcolumn, a.first, b.first);
             if (sortorder == Qt::DescendingOrder)
                 return !v;
             return v;
         });
 
-        for (int ix = 0, siz = toupdate.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(toupdate.size()); ix != siz; ++ix)
         {
-            auto listit = std::upper_bound(list.begin(), list.end(), toupdate[ix].first, [this, model](int srcindex, const std::pair<int, InfVector*> &listitem) {
-                return sortfunc(model, sortcolumn, srcindex, listitem.first) != (sortorder == Qt::DescendingOrder);
+            auto listit = std::upper_bound(list.begin(), list.end(), toupdate[ix].first, [this, source](int srcindex, const std::pair<int, InfVector*> &listitem) {
+                return sortfunc(source, sortcolumn, srcindex, listitem.first) != (sortorder == Qt::DescendingOrder);
             });
             list.insert(listit, toupdate[ix]);
         }
@@ -470,7 +472,7 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
         // Rebuilding srclist.
 
         srclist.resize(list.size());
-        for (int ix = 0; ix != list.size(); ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
             srclist[ix] = ix;
 
         std::sort(srclist.begin(), srclist.begin() + list.size(), [this](int a, int b) { return list[a].first < list[b].first; });
@@ -510,22 +512,22 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
     {
         //srclist.resize(list.size() + toadd.size());
 
-        std::sort(toadd.begin(), toadd.end(), [model, this](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
-            return sortfunc(model, sortcolumn, a.first, b.first) != (sortorder == Qt::DescendingOrder);
+        std::sort(toadd.begin(), toadd.end(), [source, this](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
+            return sortfunc(source, sortcolumn, a.first, b.first) != (sortorder == Qt::DescendingOrder);
         });
 
-        auto endit = std::upper_bound(list.begin(), list.end(), toadd.back().first, [this, model](int srcindex, const std::pair<int, InfVector*> &listitem) { 
-            return sortfunc(model, sortcolumn, srcindex, listitem.first) != (sortorder == Qt::DescendingOrder);
+        auto endit = std::upper_bound(list.begin(), list.end(), toadd.back().first, [this, source](int srcindex, const std::pair<int, InfVector*> &listitem) { 
+            return sortfunc(source, sortcolumn, srcindex, listitem.first) != (sortorder == Qt::DescendingOrder);
         });
-        for (int pos = toadd.size() - 1, prev = pos - 1; pos != -1; --prev)
+        for (int pos = tosigned(toadd.size()) - 1, prev = pos - 1; pos != -1; --prev)
         {
-            auto newendit = prev == -1 ? endit : std::upper_bound(list.begin(), endit, toadd[prev].first, [this, model](int srcindex, const std::pair<int, InfVector*> &listitem) {
-                return sortfunc(model, sortcolumn, srcindex, listitem.first) != (sortorder == Qt::DescendingOrder);
+            auto newendit = prev == -1 ? endit : std::upper_bound(list.begin(), endit, toadd[prev].first, [this, source](int srcindex, const std::pair<int, InfVector*> &listitem) {
+                return sortfunc(source, sortcolumn, srcindex, listitem.first) != (sortorder == Qt::DescendingOrder);
             });
 
             if (prev == -1 || newendit != endit)
             {
-                inserted.push_back({ endit - list.begin(), pos - prev });
+                inserted.push_back({ tosigned(endit - list.begin()), pos - prev });
                 list.insert(endit, toadd.begin() + (prev + 1), toadd.begin() + (pos + 1));
 
                 pos = prev;
@@ -589,14 +591,14 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
     {
         //beginInsertRows(QModelIndex(), pos, pos + toadd.size() - 1);
 
-        auto endit = std::upper_bound(list.begin(), list.end(), toadd.back().first, [this, model](int srcindex, const std::pair<int, InfVector*> &listitem) { return srcindex < listitem.first; });
-        for (int pos = toadd.size() - 1, prev = pos - 1; pos != -1; --prev)
+        auto endit = std::upper_bound(list.begin(), list.end(), toadd.back().first, [this, source](int srcindex, const std::pair<int, InfVector*> &listitem) { return srcindex < listitem.first; });
+        for (int pos = tosigned(toadd.size()) - 1, prev = pos - 1; pos != -1; --prev)
         {
-            auto newendit = prev == -1 ? endit : std::upper_bound(list.begin(), endit, toadd[prev].first, [this, model](int srcindex, const std::pair<int, InfVector*> &listitem) { return srcindex < listitem.first; });
+            auto newendit = prev == -1 ? endit : std::upper_bound(list.begin(), endit, toadd[prev].first, [this, source](int srcindex, const std::pair<int, InfVector*> &listitem) { return srcindex < listitem.first; });
 
             if (prev == -1 || newendit != endit)
             {
-                inserted.push_back({ endit - list.begin(), pos - prev });
+                inserted.push_back({ tosigned(endit - list.begin()), pos - prev });
                 list.insert(endit, toadd.begin() + (prev + 1), toadd.begin() + (pos + 1));
 
                 pos = prev;
@@ -608,7 +610,7 @@ void DictionarySearchFilterProxyModel::sourceDataChanged(const QModelIndex &sour
     }
 
     srclist.resize(list.size());
-    for (int iy = 0; iy != srclist.size(); ++iy)
+    for (int iy = 0, sizy = tosigned(srclist.size()); iy != sizy; ++iy)
         srclist[iy] = iy;
     if (sortfunc)
         std::sort(srclist.begin(), srclist.begin() + list.size(), [this](int a, int b) { return list[a].first < list[b].first; });
@@ -628,7 +630,7 @@ void DictionarySearchFilterProxyModel::sourceHeaderDataChanged(Qt::Orientation o
     // Vertical header change is generally not supported. Emit change for the whole header
     // as a safety belt.
 
-    emit headerDataChanged(orientation, 0, list.size() - 1);
+    emit headerDataChanged(orientation, 0, tosigned(list.size()) - 1);
 }
 
 void DictionarySearchFilterProxyModel::sourceAboutToBeReset()
@@ -666,8 +668,8 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
 
         for (int ix = 0; ix != insertcnt; ++ix)
         {
-            list.emplace_back(list.size(), nullptr);
-            srclist.push_back(srclist.size());
+            list.emplace_back(tosigned(list.size()), nullptr);
+            srclist.push_back(tosigned(srclist.size()));
         }
 
         signalRowsInserted(intervals);
@@ -680,8 +682,8 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
 
     //QMessageBox::information(qApp->activeWindow(), "bbb", "1", QMessageBox::Ok);
 
-    DictionaryItemModel *model = sourceModel();
-    Dictionary *dict = model->dictionary();
+    DictionaryItemModel *source = sourceModel();
+    Dictionary *dict = source->dictionary();
     //int insertcnt = end - start + 1;
 
     //qint64 startuptime = 0;
@@ -711,13 +713,13 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
         // Delta position of the current interval. Each interval start at the original line
         // where they were inserted.
         int ipos = 0;
-        for (int ix = 0, siz = intervals.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(intervals.size()); ix != siz; ++ix)
         {
             const Interval *i = intervals[ix];
             for (int iy = 0; iy != i->count; ++iy)
             {
                 int index = ipos + i->index + iy;
-                if (!filtering || dict->wordMatches(model->indexes(index), smode, ssearchstr, swildcards, sstrict, sinflections, sstudydefs, scond.get(), winfs.get()))
+                if (!filtering || dict->wordMatches(source->indexes(index), smode, ssearchstr, swildcards, sstrict, sinflections, sstudydefs, scond.get(), winfs.get()))
                 {
                     toadd.emplace_back(index, !winfs || winfs->empty() ? nullptr : winfs.release());
                     if (filtering && !winfs->empty())
@@ -741,13 +743,13 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
         // Delta position of the current interval. Each interval start at the original line
         // where they were inserted.
         int ipos = 0;
-        for (int ix = 0, siz = intervals.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(intervals.size()); ix != siz; ++ix)
         {
             const Interval *i = intervals[ix];
             for (int iy = 0; iy != i->count; ++iy)
             {
                 int index = ipos + i->index + iy;
-                int windex = model->indexes(index);
+                int windex = source->indexes(index);
                 wpool.push_back(windex);
                 worder.emplace_back(windex, index);
             }
@@ -760,9 +762,9 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
 
         const auto &ixs = wlist.getIndexes();
         auto &infs = wlist.getInflections();
-        for (int ix = 0; ix != wlist.size(); ++ix)
+        for (int ix = 0, siz = tosigned(wlist.size()); ix != siz; ++ix)
         {
-            bool hasinf = infs.size() > ix;
+            bool hasinf = tosigned(infs.size()) > ix;
             toadd.emplace_back(ixs[ix], hasinf ? infs[ix] : nullptr);
             if (hasinf)
                 infs[ix] = nullptr;
@@ -775,7 +777,7 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
         std::sort(toadd.begin(), toadd.end(), [](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) { return a.first < b.first; });
 
         int orderpos = 0;
-        for (int ix = 0, siz = toadd.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(toadd.size()); ix != siz; ++ix)
         {
             while (worder[orderpos].first != toadd[ix].first)
                 ++orderpos;
@@ -788,12 +790,12 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
     {
         // Updating source model indexes in list before insertion.
 
-        int iindex = intervals.size() - 1;
+        int iindex = tosigned(intervals.size()) - 1;
         const Interval *i = intervals[iindex];
         // Number of source model indexes that were inserted before the current list item.
         int iinsert = insertcnt;
 
-        for (int ix = list.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
         {
             while (iindex != -1 && list[ix].first < i->index)
             {
@@ -818,7 +820,7 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
         std::sort(toadd.begin(), toadd.end(), [](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) { return a.first < b.first; });
         // Insert position of toadd items in list.
         int insertpos = std::upper_bound(list.begin(), list.end(), toadd.back().first, [](int start, const std::pair<int, InfVector*> &item) { return start < item.first; }) - list.begin();
-        for (int pos = toadd.size() - 1, prev = pos - 1; pos != -1; --prev)
+        for (int pos = tosigned(toadd.size()) - 1, prev = pos - 1; pos != -1; --prev)
         {
             if (prev == -1 || (insertpos != 0 && toadd[prev].first < list[insertpos - 1].first))
             {
@@ -831,7 +833,7 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
         }
 
         while (srclist.size() != list.size())
-            srclist.push_back(srclist.size());
+            srclist.push_back(tosigned(srclist.size()));
 
         if (!inserted.empty())
             signalRowsInserted(inserted);
@@ -869,12 +871,12 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
 
     // Updating source model indexes in list before insertion.
 
-    int iindex = intervals.size() - 1;
+    int iindex = tosigned(intervals.size()) - 1;
     const Interval *i = intervals[iindex];
     // Number of source model indexes that were inserted before the current list item.
     int iinsert = insertcnt;
 
-    for (int ix = srclist.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(srclist.size()) - 1; ix != -1; --ix)
     {
         while (iindex != -1 && list[srclist[ix]].first < i->index)
         {
@@ -907,8 +909,8 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
     if (toadd.empty())
         return;
 
-    std::sort(toadd.begin(), toadd.end(), [model, this](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
-        bool v = sortfunc(model, sortcolumn, a.first, b.first);
+    std::sort(toadd.begin(), toadd.end(), [source, this](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
+        bool v = sortfunc(source, sortcolumn, a.first, b.first);
         if (sortorder == Qt::DescendingOrder)
             return !v;
         return v;
@@ -920,22 +922,22 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
     // list for signalling.
 
     // Insert position of toadd items in list.
-    int insertpos = std::upper_bound(list.begin(), list.end(), toadd.back().first, [model, this](int start, const std::pair<int, InfVector*> &item) {
-        bool v = sortfunc(model, sortcolumn, start, item.first);
+    int insertpos = std::upper_bound(list.begin(), list.end(), toadd.back().first, [source, this](int start, const std::pair<int, InfVector*> &item) {
+        bool v = sortfunc(source, sortcolumn, start, item.first);
         if (sortorder == Qt::DescendingOrder)
             return !v;
         return v;
     }) - list.begin();
 
-    for (int pos = toadd.size() - 1, prev = pos - 1; pos != -1; --prev)
+    for (int pos = tosigned(toadd.size()) - 1, prev = pos - 1; pos != -1; --prev)
     {
-        if (prev == -1 || (insertpos != 0 && (sortfunc(model, sortcolumn, toadd[prev].first, list[insertpos - 1].first) != (sortorder == Qt::DescendingOrder))))
+        if (prev == -1 || (insertpos != 0 && (sortfunc(source, sortcolumn, toadd[prev].first, list[insertpos - 1].first) != (sortorder == Qt::DescendingOrder))))
         {
             list.insert(list.begin() + insertpos, toadd.begin() + (prev + 1), toadd.begin() + (pos + 1));
             inserted.insert(inserted.begin(), { insertpos, pos - prev });
             if (prev != -1)
-                insertpos = std::upper_bound(list.begin(), list.begin() + insertpos, toadd[prev].first, [this, model](int start, const std::pair<int, InfVector*> &item) { 
-                return sortfunc(model, sortcolumn, start, item.first) != (sortorder == Qt::DescendingOrder);
+                insertpos = std::upper_bound(list.begin(), list.begin() + insertpos, toadd[prev].first, [this, source](int start, const std::pair<int, InfVector*> &item) { 
+                return sortfunc(source, sortcolumn, start, item.first) != (sortorder == Qt::DescendingOrder);
             }) - list.begin();
             pos = prev;
         }
@@ -943,7 +945,7 @@ void DictionarySearchFilterProxyModel::sourceRowsInserted(const smartvector<Inte
 
     // Rebuilding srclist from scratch.
     srclist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         srclist[ix] = ix;
     std::sort(srclist.begin(), srclist.begin() + list.size(), [this](int a, int b) { return list[a].first < list[b].first; });
 
@@ -1153,12 +1155,12 @@ void DictionarySearchFilterProxyModel::sourceRowsRemoved(const smartvector<Range
 
         const Range *r = ranges.back();
         // Index of current range.
-        int rindex = ranges.size() - 1;
+        int rindex = tosigned(ranges.size()) - 1;
         // Number of items to decrement source model index in list at pos.
         int rcnt = removedcnt;
         // Position of the last item in list to be removed.
         int removepos = -1;
-        for (int ix = list.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
         {
             int &lfirst = list[ix].first;
 
@@ -1218,12 +1220,12 @@ void DictionarySearchFilterProxyModel::sourceRowsRemoved(const smartvector<Range
 
     const Range *r = ranges.back();
     // Index of current range.
-    int rindex = ranges.size() - 1;
+    int rindex = tosigned(ranges.size()) - 1;
     // Number of items to decrement source model index in list at pos.
     int rcnt = removedcnt;
     // Position of the last item in list to be removed.
     int removepos = -1;
-    for (int ix = srclist.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(srclist.size()) - 1; ix != -1; --ix)
     {
         int &lfirst = list[srclist[ix]].first;
 
@@ -1273,7 +1275,7 @@ void DictionarySearchFilterProxyModel::sourceRowsRemoved(const smartvector<Range
 
     // Rebuilding srclist from scratch.
     srclist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         srclist[ix] = ix;
     std::sort(srclist.begin(), srclist.begin() + list.size(), [this](int a, int b) { return list[a].first < list[b].first; });
 
@@ -1380,7 +1382,7 @@ void DictionarySearchFilterProxyModel::sourceRowsMoved(const smartvector<Range> 
 
         int first = 0;
         int movedelta = 0;
-        for (int ix = 0, siz = ranges.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ranges.size()); ix != siz; ++ix)
         {
             const Range *r = ranges[ix];
             int newfirst = std::lower_bound(list.begin() + first, list.end(), r->first, [](const std::pair<int, InfVector*> &p, int pos) { return p.first < pos; }) - list.begin();
@@ -1389,7 +1391,7 @@ void DictionarySearchFilterProxyModel::sourceRowsMoved(const smartvector<Range> 
             for (int iy = first; movedelta != 0 && iy != newfirst; ++iy)
                 list[iy].first -= movedelta;
 
-            if (newfirst == list.size() || delta[ix] <= 0)
+            if (newfirst == tosigned(list.size()) || delta[ix] <= 0)
                 break;
 
             int next = std::upper_bound(list.begin() + newfirst, list.end(), r->last, [](int pos, const std::pair<int, InfVector*> &p) { return pos < p.first; }) - list.begin();
@@ -1408,14 +1410,14 @@ void DictionarySearchFilterProxyModel::sourceRowsMoved(const smartvector<Range> 
         for (int iy = first; movedelta != 0 && iy != movepos; ++iy)
             list[iy].first -= movedelta;
 
-        int movedinspos = moved.size();
+        int movedinspos = tosigned(moved.size());
 
         // Updating source model indexes in list for ranges moved backward, and the items
         // between them that are moved forward.
 
-        int last = list.size();
+        int last = tosigned(list.size());
         movedelta = 0;
-        for (int ix = ranges.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
         {
             const Range *r = ranges[ix];
             int newlast = std::upper_bound(list.begin(), list.begin() + last, r->last, [](int pos, const std::pair<int, InfVector*> &p) { return pos < p.first; }) - list.begin();
@@ -1569,37 +1571,37 @@ void DictionarySearchFilterProxyModel::sourceRowsMoved(const smartvector<Range> 
     //emit layoutChanged();
 }
 
-void DictionarySearchFilterProxyModel::sourceColumnsAboutToBeInserted(const QModelIndex &source_parent, int start, int end)
+void DictionarySearchFilterProxyModel::sourceColumnsAboutToBeInserted(const QModelIndex &/*source_parent*/, int start, int end)
 {
     beginInsertColumns(QModelIndex(), start, end);
 }
 
-void DictionarySearchFilterProxyModel::sourceColumnsInserted(const QModelIndex &source_parent, int start, int end)
+void DictionarySearchFilterProxyModel::sourceColumnsInserted(const QModelIndex &/*source_parent*/, int /*start*/, int /*end*/)
 {
     endInsertColumns();
 }
 
-void DictionarySearchFilterProxyModel::sourceColumnsAboutToBeRemoved(const QModelIndex &source_parent, int start, int end)
+void DictionarySearchFilterProxyModel::sourceColumnsAboutToBeRemoved(const QModelIndex &/*source_parent*/, int start, int end)
 {
     beginRemoveColumns(QModelIndex(), start, end);
 }
 
-void DictionarySearchFilterProxyModel::sourceColumnsRemoved(const QModelIndex &source_parent, int start, int end)
+void DictionarySearchFilterProxyModel::sourceColumnsRemoved(const QModelIndex &/*source_parent*/, int /*start*/, int /*end*/)
 {
     endRemoveColumns();
 }
 
-void DictionarySearchFilterProxyModel::sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationColumn)
+void DictionarySearchFilterProxyModel::sourceColumnsAboutToBeMoved(const QModelIndex &/*sourceParent*/, int sourceStart, int sourceEnd, const QModelIndex &/*destinationParent*/, int destinationColumn)
 {
     beginMoveColumns(QModelIndex(), sourceStart, sourceEnd, QModelIndex(), destinationColumn);
 }
 
-void DictionarySearchFilterProxyModel::sourceColumnsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row)
+void DictionarySearchFilterProxyModel::sourceColumnsMoved(const QModelIndex &/*parent*/, int /*start*/, int /*end*/, const QModelIndex &/*destination*/, int /*row*/)
 {
     endMoveColumns();
 }
 
-void DictionarySearchFilterProxyModel::sourceLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void DictionarySearchFilterProxyModel::sourceLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &/*parents*/, QAbstractItemModel::LayoutChangeHint hint)
 {
     emit layoutAboutToBeChanged(QList<QPersistentModelIndex>(), hint);
     persistentsource = persistentIndexList();
@@ -1609,7 +1611,7 @@ void DictionarySearchFilterProxyModel::sourceLayoutAboutToBeChanged(const QList<
         persistentdest.push_back(mapToSource(ind));
 }
 
-void DictionarySearchFilterProxyModel::sourceLayoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void DictionarySearchFilterProxyModel::sourceLayoutChanged(const QList<QPersistentModelIndex> &/*parents*/, QAbstractItemModel::LayoutChangeHint hint)
 {
     fillLists(sourceModel());
 
@@ -1635,21 +1637,21 @@ void DictionarySearchFilterProxyModel::filterMoved(int index, int to)
         return;
 
     std::vector<Inclusion> &inc = scond->inclusions;
-    if (index >= inc.size() && to >= inc.size())
+    if (index >= tosigned(inc.size()) && to >= tosigned(inc.size()))
         return;
 
     if (to > index)
         --to;
 
-    Inclusion moved = index >= inc.size() ? Inclusion::Ignore : inc[index];
-    if (index < inc.size())
+    Inclusion moved = index >= tosigned(inc.size()) ? Inclusion::Ignore : inc[index];
+    if (index < tosigned(inc.size()))
         inc.erase(inc.begin() + index);
 
-    if (to >= inc.size())
+    if (to >= tosigned(inc.size()))
     {
         if (moved == Inclusion::Ignore)
             return;
-        while (inc.size() <= to)
+        while (tosigned(inc.size()) <= to)
             inc.push_back(Inclusion::Ignore);
         inc[to] = moved;
         return;
@@ -1667,14 +1669,14 @@ bool DictionarySearchFilterProxyModel::condEmpty() const
     return !scond || !*scond;
 }
 
-void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
+void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *source)
 {
     for (auto p : list)
         delete p.second;
 
     sortfunc = preparedsortfunc;
     std::vector<std::pair<int, InfVector*>>().swap(list);
-    int cnt = model == nullptr ? 0 : model->rowCount();
+    int cnt = source == nullptr ? 0 : source->rowCount();
 
     bool filtered = !ssearchstr.isEmpty() || !condEmpty();
     if (!filtered)
@@ -1685,7 +1687,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
     }
     else
     {
-        Dictionary *dict = model->dictionary();
+        Dictionary *dict = source->dictionary();
 
         WordResultList wlist(dict);
         std::vector<int> wfilter;
@@ -1694,7 +1696,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
         std::vector<std::pair<int, int>> worder;
         for (int ix = 0; ix != cnt; ++ix)
         {
-            int windex = model->indexes(ix);
+            int windex = source->indexes(ix);
             wfilter.push_back(windex);
             worder.emplace_back(windex, ix);
         }
@@ -1708,7 +1710,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
             dict->findWords(wlist, smode, ssearchstr, swildcards, sstrict, sinflections, sstudydefs, &wfilter, scond.get());
         else if (scond)
         {
-            for (int ix = 0, siz = wfilter.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(wfilter.size()); ix != siz; ++ix)
                 if (ZKanji::wordfilters().match(dict->wordEntry(wfilter[ix]), scond.get()))
                     wlist.add(wfilter[ix]);
         }
@@ -1721,9 +1723,9 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
         // index order, used for building list from worder.
         std::vector<std::pair<int, InfVector*>> tmplist;
 
-        for (int ix = 0; ix != wlist.size(); ++ix)
+        for (int ix = 0, siz = tosigned(wlist.size()); ix != siz; ++ix)
         {
-            bool hasinf = winfs.size() > ix;
+            bool hasinf = tosigned(winfs.size()) > ix;
             tmplist.emplace_back(windexes[ix], hasinf ? winfs[ix] : nullptr);
             if (hasinf)
                 winfs[ix] = nullptr;
@@ -1740,7 +1742,7 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
         int wpos = 0;
         bool first;
         InfVector *inf;
-        for (int ix = 0, siz = tmplist.size(), wsiz = worder.size(); ix != siz && wpos != wsiz; ++ix)
+        for (int ix = 0, siz = tosigned(tmplist.size()), wsiz = tosigned(worder.size()); ix != siz && wpos != wsiz; ++ix)
         {
             while (worder[wpos].first != tmplist[ix].first)
                 ++wpos;
@@ -1777,13 +1779,13 @@ void DictionarySearchFilterProxyModel::fillLists(DictionaryItemModel *model)
 
     // Rebuilding srclist.
     srclist.resize(list.size());
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         srclist[ix] = ix;
 
     if (sortfunc)
     {
-        std::sort(list.begin(), list.end(), [this, model](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
-            return sortfunc(model, sortcolumn, a.first, b.first) != (sortorder == Qt::DescendingOrder);
+        std::sort(list.begin(), list.end(), [this, source](const std::pair<int, InfVector*> &a, const std::pair<int, InfVector*> &b) {
+            return sortfunc(source, sortcolumn, a.first, b.first) != (sortorder == Qt::DescendingOrder);
         });
 
         std::sort(srclist.begin(), srclist.end(), [this](int a, int b) { return list[a].first < list[b].first; });
@@ -1924,10 +1926,10 @@ int MultiLineDictionaryItemModel::mapToSourceRow(int proxyrow) const
 int MultiLineDictionaryItemModel::mappedRowSize(int sourcerow) const
 {
 #ifdef _DEBUG
-    if (sourcerow < 0 || sourcerow >= list.size())
+    if (sourcerow < 0 || sourcerow >= tosigned(list.size()))
         throw "Source row out of range.";
 #endif
-    return (sourcerow == list.size() - 1 ? rowcount : list[sourcerow + 1]) - list[sourcerow];
+    return (sourcerow == tosigned(list.size()) - 1 ? rowcount : list[sourcerow + 1]) - list[sourcerow];
 }
 
 int MultiLineDictionaryItemModel::roundRow(int proxyrow) const
@@ -1940,13 +1942,13 @@ int MultiLineDictionaryItemModel::roundRow(int proxyrow) const
     // Distance from the word starting row.
     int start = proxyrow - list[row];
     // Distance from the starting row of the next word, or to the end of the items.
-    int end = (row < list.size() - 1 ? list[row + 1] : rowcount) - proxyrow;
+    int end = (row < tosigned(list.size()) - 1 ? list[row + 1] : rowcount) - proxyrow;
     if (start <= end)
         return list[row];
-    return row < list.size() - 1 ? list[row + 1] : rowcount;
+    return row < tosigned(list.size()) - 1 ? list[row + 1] : rowcount;
 }
 
-int MultiLineDictionaryItemModel::rowCount(const QModelIndex &parent) const
+int MultiLineDictionaryItemModel::rowCount(const QModelIndex &/*parent*/) const
 {
     return rowcount;
 }
@@ -1967,7 +1969,7 @@ QModelIndex MultiLineDictionaryItemModel::index(int row, int column, const QMode
     return createIndex(row, column);
 }
 
-QModelIndex	MultiLineDictionaryItemModel::parent(const QModelIndex &index) const
+QModelIndex	MultiLineDictionaryItemModel::parent(const QModelIndex &/*index*/) const
 {
     return QModelIndex();
 }
@@ -2008,15 +2010,15 @@ QMimeData* MultiLineDictionaryItemModel::mimeData(const QModelIndexList& indexes
 
 void MultiLineDictionaryItemModel::cachePosition(int index) const
 {
-    if (cachepos >= list.size())
-        cachepos = list.size() / 2;
+    if (cachepos >= tosigned(list.size()))
+        cachepos = tosigned(list.size()) / 2;
 
     // We were lucky and requested the same value as before.
-    if (list[cachepos] == index || (list[cachepos] < index && (cachepos == list.size() - 1 || list[cachepos + 1] > index)))
+    if (list[cachepos] == index || (list[cachepos] < index && (cachepos == tosigned(list.size()) - 1 || list[cachepos + 1] > index)))
         return;
 
     // Feeling lucky, guessing that the next or previous row is what we were looking for.
-    if (cachepos != list.size() - 1 && (list[cachepos + 1] == index || (list[cachepos + 1] < index && (cachepos + 1 == list.size() - 1 || list[cachepos + 2] > index))))
+    if (cachepos != tosigned(list.size()) - 1 && (list[cachepos + 1] == index || (list[cachepos + 1] < index && (cachepos + 1 == tosigned(list.size()) - 1 || list[cachepos + 2] > index))))
     {
         ++cachepos;
         return;
@@ -2030,10 +2032,10 @@ void MultiLineDictionaryItemModel::cachePosition(int index) const
     // Finally get the value with binary search.
 
     int left = list[cachepos] > index ? 0 : cachepos;
-    int right = list[cachepos] > index ? cachepos : list.size() - 1;
+    int right = list[cachepos] > index ? cachepos : tosigned(list.size()) - 1;
     auto it = std::upper_bound(list.begin() + left, list.begin() + (right + 1), index);
     if (it == list.begin() + (right + 1))
-        cachepos = list.size() - 1;
+        cachepos = tosigned(list.size()) - 1;
     else
         cachepos = (it - list.begin()) - 1;
 }
@@ -2054,13 +2056,13 @@ void MultiLineDictionaryItemModel::resetData(ZAbstractTableModel *m)
         list.push_back(0);
         for (int ix = 1; ix != rowcount; ++ix)
         {
-            prev += m->data(m->index(ix - 1, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>()->defs.size();
+            prev += tosigned(m->data(m->index(ix - 1, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>()->defs.size());
             list.push_back(prev);
         }
 
-        cachepos = list.size() / 2;
+        cachepos = tosigned(list.size()) / 2;
 
-        rowcount = list.back() + m->data(m->index(rowcount - 1, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>()->defs.size();
+        rowcount = list.back() + tosigned(m->data(m->index(rowcount - 1, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>()->defs.size());
     }
 }
 
@@ -2096,11 +2098,11 @@ void MultiLineDictionaryItemModel::sourceDataChanged(const QModelIndex &topLeft,
         // and the remove signal is sent. The inserted list is filled but it's only signalled
         // below.
         int dif = 0;
-        for (int ix = top, siz = list.size(); ix != bottom + 1; ++ix)
+        for (int ix = top, siz = tosigned(list.size()); ix != bottom + 1; ++ix)
         {
             WordEntry *e = m->data(m->index(top, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>();
             int oldsiz = (ix == siz - 1 ? rowcount : list[ix + 1]) - list[ix];
-            int newsiz = e->defs.size();
+            int newsiz = tosigned(e->defs.size());
 
             list[ix] -= dif;
             if (newsiz < oldsiz)
@@ -2111,7 +2113,7 @@ void MultiLineDictionaryItemModel::sourceDataChanged(const QModelIndex &topLeft,
             if (newsiz > oldsiz)
                 inserted.push_back({ list[ix] + oldsiz, newsiz - oldsiz });
         }
-        for (int ix = bottom + 1, siz = list.size(); ix != siz; ++ix)
+        for (int ix = bottom + 1, siz = tosigned(list.size()); ix != siz; ++ix)
             list[ix] -= dif;
         rowcount -= dif;
 
@@ -2121,9 +2123,9 @@ void MultiLineDictionaryItemModel::sourceDataChanged(const QModelIndex &topLeft,
         if (!inserted.empty())
         {
             dif = _intervalSize(inserted);
-            int inspos = inserted.size() - 1;
+            int inspos = tosigned(inserted.size()) - 1;
             rowcount += dif;
-            for (int ix = list.size() - 1; ix != -1 && dif != 0; --ix)
+            for (int ix = tosigned(list.size()) - 1; ix != -1 && dif != 0; --ix)
             {
                 if (list[ix] < inserted[inspos]->index)
                 {
@@ -2217,7 +2219,7 @@ void MultiLineDictionaryItemModel::sourceDataChanged(const QModelIndex &topLeft,
 
 void MultiLineDictionaryItemModel::sourceHeaderDataChanged(Qt::Orientation orientation, int first, int last)
 {
-    emit headerDataChanged(orientation, list[first], (last != list.size() - 1 ? list[last + 1] : rowcount) - 1);
+    emit headerDataChanged(orientation, list[first], (last != tosigned(list.size()) - 1 ? list[last + 1] : rowcount) - 1);
 }
 
 //void MultiLineDictionaryItemModel::sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
@@ -2231,18 +2233,18 @@ void MultiLineDictionaryItemModel::sourceRowsInserted(const smartvector<Interval
     if (intervals.empty())
         return;
 
-    int listsiz = list.size();
+    int listsiz = tosigned(list.size());
 
     // Adding fake item to make the algorithm simpler. It is removed afterwards.
     list.push_back(rowcount);
 
     smartvector<Interval> inserted;
 
-    ZAbstractTableModel *model = sourceModel();
+    ZAbstractTableModel *source = sourceModel();
 
     int dif = 0;
     int idif = 0;
-    for (int ix = 0, siz = intervals.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(intervals.size()); ix != siz; ++ix)
     {
         const Interval *i = intervals[ix];
 
@@ -2250,8 +2252,8 @@ void MultiLineDictionaryItemModel::sourceRowsInserted(const smartvector<Interval
 
         for (int iy = 0; iy != i->count; ++iy)
         {
-            WordEntry *e = model->data(model->index(i->index + idif + iy, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>();
-            int cnt = e->defs.size();
+            WordEntry *e = source->data(source->index(i->index + idif + iy, 0), (int)DictRowRoles::WordEntry).value<WordEntry*>();
+            int cnt = tosigned(e->defs.size());
 
             inserted.back()->count += cnt;
             list.insert(list.begin() + (i->index + idif + iy + 1), list[i->index + idif + iy] + cnt);
@@ -2261,7 +2263,7 @@ void MultiLineDictionaryItemModel::sourceRowsInserted(const smartvector<Interval
 
         idif += i->count;
 
-        int next = ix == siz - 1 ? list.size() : (intervals[ix + 1]->index + idif + 1);
+        int next = ix == siz - 1 ? tosigned(list.size()) : (intervals[ix + 1]->index + idif + 1);
         for (int iy = i->index + idif + 1; iy != next; ++iy)
             list[iy] += dif;
     }
@@ -2308,12 +2310,12 @@ void MultiLineDictionaryItemModel::sourceRowsInserted(const smartvector<Interval
     //endInsertRows();
 }
 
-void MultiLineDictionaryItemModel::sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+void MultiLineDictionaryItemModel::sourceColumnsAboutToBeInserted(const QModelIndex &/*parent*/, int start, int end)
 {
     beginInsertColumns(QModelIndex(), start, end);
 }
 
-void MultiLineDictionaryItemModel::sourceColumnsInserted(const QModelIndex &parent, int first, int last)
+void MultiLineDictionaryItemModel::sourceColumnsInserted(const QModelIndex &/*parent*/, int /*first*/, int /*last*/)
 {
     endInsertColumns();
 }
@@ -2339,24 +2341,24 @@ void MultiLineDictionaryItemModel::sourceRowsRemoved(const smartvector<Range> &r
     const Range *rnext = ranges.size() == 1 ? nullptr : ranges[1];
 
     int f = list[r->first];
-    int l = (r->last + 1 < list.size() ? list[r->last + 1] : rowcount) - 1;
-    removed.push_back({ list[r->first], (r->last + 1 < list.size() ? list[r->last + 1] : rowcount) - 1 });
+    int l = (r->last + 1 < tosigned(list.size()) ? list[r->last + 1] : rowcount) - 1;
+    removed.push_back({ list[r->first], (r->last + 1 < tosigned(list.size()) ? list[r->last + 1] : rowcount) - 1 });
 
     int cnt = l - f + 1;
 
-    for (int ix = r->first, siz = list.size(); ix != siz; ++ix)
+    for (int ix = r->first, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         if (rnext && ix == rnext->first)
         {
             r = rnext;
 
             f = list[r->first];
-            l = (r->last + 1 < list.size() ? list[r->last + 1] : rowcount) - 1;
+            l = (r->last + 1 < tosigned(list.size()) ? list[r->last + 1] : rowcount) - 1;
             removed.push_back({ f, l });
 
             cnt += l - f + 1;
             ++rnextpos;
-            rnext = ranges.size() <= rnextpos ? nullptr : ranges[rnextpos];
+            rnext = tosigned(ranges.size()) <= rnextpos ? nullptr : ranges[rnextpos];
         }
         if (r != nullptr && ix <= r->last)
             list[ix] = -1;
@@ -2387,12 +2389,12 @@ void MultiLineDictionaryItemModel::sourceRowsRemoved(const smartvector<Range> &r
     //endRemoveRows();
 }
 
-void MultiLineDictionaryItemModel::sourceColumnsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+void MultiLineDictionaryItemModel::sourceColumnsAboutToBeRemoved(const QModelIndex &/*parent*/, int first, int last)
 {
     beginRemoveColumns(QModelIndex(), first, last);
 }
 
-void MultiLineDictionaryItemModel::sourceColumnsRemoved(const QModelIndex &parent, int first, int last)
+void MultiLineDictionaryItemModel::sourceColumnsRemoved(const QModelIndex &/*parent*/, int /*first*/, int /*last*/)
 {
     endRemoveColumns();
 }
@@ -2413,16 +2415,16 @@ void MultiLineDictionaryItemModel::sourceRowsMoved(const smartvector<Range> &ran
         return;
 
     smartvector<Range> moved;
-    int movepos = pos >= list.size() ? rowcount : list[pos];
+    int movepos = pos >= tosigned(list.size()) ? rowcount : list[pos];
 
-    for (int ix = 0, siz = ranges.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(ranges.size()); ix != siz; ++ix)
     {
         const Range *r = ranges[ix];
-        moved.push_back({ list[r->first], (r->last + 1 == list.size() ? rowcount : list[r->last + 1]) - 1 });
+        moved.push_back({ list[r->first], (r->last + 1 == tosigned(list.size()) ? rowcount : list[r->last + 1]) - 1 });
     }
 
     // Convert list to hold the number of definitions of each source row temporarily.
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         list[ix] = (ix == siz - 1 ? rowcount : list[ix + 1]) - list[ix];
 
     _moveRanges(ranges, pos, list);
@@ -2430,7 +2432,7 @@ void MultiLineDictionaryItemModel::sourceRowsMoved(const smartvector<Range> &ran
     // Restore list after the move.
     int prev = 0;
     std::swap(prev, list[0]);
-    for (int ix = 1, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 1, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         std::swap(prev, list[ix]);
         list[ix] += list[ix - 1];
@@ -2483,17 +2485,17 @@ void MultiLineDictionaryItemModel::sourceRowsMoved(const smartvector<Range> &ran
     //endMoveRows();
 }
 
-void MultiLineDictionaryItemModel::sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationColumn)
+void MultiLineDictionaryItemModel::sourceColumnsAboutToBeMoved(const QModelIndex &/*sourceParent*/, int sourceStart, int sourceEnd, const QModelIndex &/*destinationParent*/, int destinationColumn)
 {
     beginMoveColumns(QModelIndex(), sourceStart, sourceEnd, QModelIndex(), destinationColumn);
 }
 
-void MultiLineDictionaryItemModel::sourceColumnsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int column)
+void MultiLineDictionaryItemModel::sourceColumnsMoved(const QModelIndex &/*parent*/, int /*start*/, int /*end*/, const QModelIndex &/*destination*/, int /*column*/)
 {
     endMoveColumns();
 }
 
-void MultiLineDictionaryItemModel::sourceLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void MultiLineDictionaryItemModel::sourceLayoutAboutToBeChanged(const QList<QPersistentModelIndex> &/*parents*/, QAbstractItemModel::LayoutChangeHint hint)
 {
     emit layoutAboutToBeChanged(QList<QPersistentModelIndex>(), hint);
 
@@ -2508,7 +2510,7 @@ void MultiLineDictionaryItemModel::sourceLayoutAboutToBeChanged(const QList<QPer
     }
 }
 
-void MultiLineDictionaryItemModel::sourceLayoutChanged(const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint)
+void MultiLineDictionaryItemModel::sourceLayoutChanged(const QList<QPersistentModelIndex> &/*parents*/, QAbstractItemModel::LayoutChangeHint hint)
 {
     resetData(sourceModel());
 

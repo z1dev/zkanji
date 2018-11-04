@@ -129,7 +129,7 @@ void KanjiToGroupForm::on_dictCBox_currentIndexChanged(int index)
     ui->groupWidget->setDictionary(ZKanji::dictionary(ZKanji::dictionaryPosition(index)));
 }
 
-void KanjiToGroupForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void KanjiToGroupForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict)
         close();

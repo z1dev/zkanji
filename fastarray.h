@@ -8,9 +8,10 @@
 #define FASTARRAY_H
 
 #include <vector>
+#include "checked_cast.h"
 
 // Dynamically allocated array holding only the array size and the array data.
-template<typename T, typename S = int>
+template<typename T, typename S = size_t>
 class fastarray
 {
 public:
@@ -233,7 +234,7 @@ typename std::enable_if<std::is_copy_assignable<K>::value && !std::is_trivially_
 {
     vec.resize(s);
     auto *dat = &vec[0];
-    for (int ix = 0; ix != s; ++ix)
+    for (size_type ix = 0; ix != s; ++ix)
         dat[ix] = arr[ix];
 }
 
@@ -344,7 +345,8 @@ typename std::enable_if<std::is_move_assignable<K>::value && !std::is_trivially_
 {
     size_type cnt = s;
     resize(s + other.size());
-    for (int ix = 0; ix != other.size(); ++ix)
+
+    for (size_type ix = 0, siz = tosignedness<size_type>(other.size()); ix != siz; ++ix)
         arr[cnt + ix] = std::move(other[ix]);
 }
 
@@ -354,7 +356,8 @@ typename std::enable_if<!std::is_move_assignable<K>::value && std::is_copy_assig
 {
     size_type cnt = s;
     resize(s + other.size());
-    for (int ix = 0; ix != other.size(); ++ix)
+
+    for (size_type ix = 0, siz = tosignedness<size_type>(other.size()); ix != siz; ++ix)
         arr[cnt + ix] = other[ix];
 }
 
@@ -413,7 +416,9 @@ typename std::enable_if<std::is_copy_assignable<K>::value && !std::is_trivially_
     }
     delete[] arr;
     arr = new value_type[src.size()];
-    int siz = src.size();
+
+    size_type siz = tosignedness<size_type>(src.size());
+
     auto *dat = &src[0];
     for (size_type ix = 0; ix != siz; ++ix)
         arr[ix] = dat[ix];
@@ -430,7 +435,9 @@ typename std::enable_if<std::is_trivially_copyable<K>::value, void>::type fastar
         return;
     }
     delete[] arr;
-    int siz = src.size();
+
+    size_type siz = tosignedness<size_type>(src.size());
+
     arr = new value_type[siz];
     memcpy(arr, &src[0], sizeof(value_type) * siz); // std::min(s, siz));
     s = siz;

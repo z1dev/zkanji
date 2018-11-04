@@ -164,26 +164,26 @@ KanjiInfoForm::~KanjiInfoForm()
 
 void KanjiInfoForm::saveXMLSettings(QXmlStreamWriter &writer)
 {
-    KanjiInfoFormData data;
-    saveState(data);
-    FormStates::saveXMLSettings(data, writer);
+    KanjiInfoFormData dat;
+    saveState(dat);
+    FormStates::saveXMLSettings(dat, writer);
 }
 
 bool KanjiInfoForm::loadXMLSettings(QXmlStreamReader &reader)
 {
-    KanjiInfoFormData data;
-    FormStates::loadXMLSettings(data, reader);
-    return restoreState(data);
+    KanjiInfoFormData dat;
+    FormStates::loadXMLSettings(dat, reader);
+    return restoreState(dat);
 }
 
-void KanjiInfoForm::saveState(KanjiInfoData &data) const
+void KanjiInfoForm::saveState(KanjiInfoData &dat) const
 {
     QRect g = geometry();
-    data.siz = isMaximized() ? normalGeometry().size() : g.size();
-    data.pos = g.topLeft();
-    data.screen = qApp->desktop()->screenGeometry(screenNumber(QRect(data.pos, data.siz)));
+    dat.siz = isMaximized() ? normalGeometry().size() : g.size();
+    dat.pos = g.topLeft();
+    dat.screen = qApp->desktop()->screenGeometry(screenNumber(QRect(dat.pos, dat.siz)));
 
-    int h = data.siz.height();
+    int h = dat.siz.height();
     if (ui->sodWidget->isVisibleTo(this))
         h -= ui->sodWidget->height() + ui->sodWidget->parentWidget()->layout()->spacing();
     if (ui->similarWidget->isVisibleTo(this))
@@ -199,67 +199,67 @@ void KanjiInfoForm::saveState(KanjiInfoData &data) const
         dh = ui->dictWidget->height();
         h -= ui->dictWidget->height() + ui->splitter->handleWidth();
     }
-    data.siz.setHeight(h);
+    dat.siz.setHeight(h);
 
-    data.sod = ui->sodButton->isChecked();
-    data.grid = ui->gridButton->isChecked();
-    data.loop = ui->loopButton->isChecked();
-    data.shadow = ui->shadowButton->isChecked();
-    data.numbers = ui->numberButton->isChecked();
-    data.dir = ui->dirButton->isChecked();
-    data.speed = ui->speedSlider->value();
-    data.similar = ui->simButton->isChecked();
-    data.parts = ui->partsButton->isChecked();
-    data.partof = ui->partofButton->isChecked();
-    data.words = ui->wordsButton->isChecked();
-    ui->dictWidget->saveState(data.dict);
-    data.refdict = readingFilterButton->isChecked();
+    dat.sod = ui->sodButton->isChecked();
+    dat.grid = ui->gridButton->isChecked();
+    dat.loop = ui->loopButton->isChecked();
+    dat.shadow = ui->shadowButton->isChecked();
+    dat.numbers = ui->numberButton->isChecked();
+    dat.dir = ui->dirButton->isChecked();
+    dat.speed = ui->speedSlider->value();
+    dat.similar = ui->simButton->isChecked();
+    dat.parts = ui->partsButton->isChecked();
+    dat.partof = ui->partofButton->isChecked();
+    dat.words = ui->wordsButton->isChecked();
+    ui->dictWidget->saveState(dat.dict);
+    dat.refdict = readingFilterButton->isChecked();
 
-    data.toph = ui->dictWidget->isVisibleTo(ui->dictWidget->parentWidget()) ? ui->splitter->sizes().at(0) : ui->dataWidget->height();
-    data.dicth = dh;
+    dat.toph = ui->dictWidget->isVisibleTo(ui->dictWidget->parentWidget()) ? ui->splitter->sizes().at(0) : ui->dataWidget->height();
+    dat.dicth = dh;
 }
 
-void KanjiInfoForm::restoreState(const KanjiInfoData &data)
+void KanjiInfoForm::restoreState(const KanjiInfoData &dat)
 {
     ignoreresize = true;
 
     int kindex = ui->kanjiView->kanjiIndex();
 
-    ui->sodButton->setChecked(ZKanji::elements()->size() != 0 && data.sod);
+    ui->sodButton->setChecked(ZKanji::elements()->size() != 0 && dat.sod);
     ui->sodButton->setEnabled(ZKanji::elements()->size() != 0 && kindex >= 0);
-    ui->gridButton->setChecked(data.grid);
-    ui->loopButton->setChecked(data.loop);
-    on_loopButton_clicked(data.loop);
+    ui->gridButton->setChecked(dat.grid);
+    ui->loopButton->setChecked(dat.loop);
+    on_loopButton_clicked(dat.loop);
 
-    ui->shadowButton->setChecked(data.shadow);
-    ui->numberButton->setChecked(data.numbers);
-    ui->dirButton->setChecked(data.dir);
-    ui->speedSlider->setValue(data.speed);
-    ui->simButton->setChecked(data.similar);
-    ui->partsButton->setChecked(ZKanji::elements()->size() != 0 && data.parts);
-    ui->partofButton->setChecked(ZKanji::elements()->size() != 0 && data.partof);
-    ui->simButton->setEnabled(kindex < 0 || !data.words);
-    ui->partsButton->setEnabled(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words));
-    ui->partofButton->setEnabled(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words));
-    ui->wordsButton->setChecked(data.words);
+    ui->shadowButton->setChecked(dat.shadow);
+    ui->numberButton->setChecked(dat.numbers);
+    ui->dirButton->setChecked(dat.dir);
+    ui->speedSlider->setValue(dat.speed);
+    ui->simButton->setChecked(dat.similar);
+    ui->partsButton->setChecked(ZKanji::elements()->size() != 0 && dat.parts);
+    ui->partofButton->setChecked(ZKanji::elements()->size() != 0 && dat.partof);
+    ui->simButton->setEnabled(kindex < 0 || !dat.words);
+    ui->partsButton->setEnabled(ZKanji::elements()->size() != 0 && (kindex < 0 || !dat.words));
+    ui->partofButton->setEnabled(ZKanji::elements()->size() != 0 && (kindex < 0 || !dat.words));
+    ui->wordsButton->setChecked(dat.words);
     ui->wordsButton->setEnabled(kindex >= 0);
-    readingFilterButton->setChecked(data.refdict);
-    ui->dictWidget->restoreState(data.dict);
+    readingFilterButton->setChecked(dat.refdict);
+    ui->dictWidget->restoreState(dat.dict);
 
-    ui->kanjiView->setDiagram(kindex < 0 || data.sod);
-    ui->kanjiView->setGrid(data.grid);
-    ui->kanjiView->setShadow(data.shadow);
-    ui->kanjiView->setNumbers(data.numbers);
-    ui->kanjiView->setDirection(data.dir);
-    ui->sodWidget->setVisible(kindex < 0 || data.sod);
-    ui->similarWidget->setVisible((kindex < 0 || !data.words) && data.similar);
-    ui->partsWidget->setVisible(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words) && data.parts);
-    ui->partofWidget->setVisible(ZKanji::elements()->size() != 0 && (kindex < 0 || !data.words) && data.partof);
-    ui->dictWidget->setVisible(kindex >= 0 && data.words);
+    ui->kanjiView->setDiagram(kindex < 0 || dat.sod);
+    ui->kanjiView->setGrid(dat.grid);
+    ui->kanjiView->setShadow(dat.shadow);
+    ui->kanjiView->setNumbers(dat.numbers);
+    ui->kanjiView->setDirection(dat.dir);
+    ui->sodWidget->setVisible(kindex < 0 || dat.sod);
+    ui->similarWidget->setVisible((kindex < 0 || !dat.words) && dat.similar);
+    ui->partsWidget->setVisible(ZKanji::elements()->size() != 0 && (kindex < 0 || !dat.words) && dat.parts);
+    ui->partofWidget->setVisible(ZKanji::elements()->size() != 0 && (kindex < 0 || !dat.words) && dat.partof);
+    ui->dictWidget->setVisible(kindex >= 0 && dat.words);
 
-    ui->kanjiView->setSpeed(data.speed);
+    ui->kanjiView->setSpeed(dat.speed);
 
-    if (kindex >= 0 && data.words)
+    if (kindex >= 0 && dat.words)
     {
         disconnect(ui->splitter, &QSplitter::splitterMoved, this, &KanjiInfoForm::restrictKanjiViewSize);
         if (!wordsmodel)
@@ -284,18 +284,18 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     //layout()->update();
 
 
-    if (data.dicth == -1)
+    if (dat.dicth == -1)
         dicth = ui->dataWidget->minimumSizeHint().height();
     else
-        dicth = data.dicth;
+        dicth = dat.dicth;
 
-    ui->splitter->setSizes({ data.toph, dicth });
+    ui->splitter->setSizes({ dat.toph, dicth });
 
-    //QRect geom = QRect(data.pos, data.siz);
+    //QRect geom = QRect(dat.pos, dat.siz);
     int geomh = 0;
-    if (data.siz.isValid())
+    if (dat.siz.isValid())
     {
-        geomh = data.siz.height();
+        geomh = dat.siz.height();
         if (ui->sodWidget->isVisibleTo(this))
         {
             ui->sodWidget->adjustSize();
@@ -327,14 +327,14 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     else
         geomh = geometry().height(); // .setSize(geometry().size());
 
-    //int screennum = !data.siz.isValid() ? -1 : screenNumber(QRect(data.pos, geom.size()));
+    //int screennum = !dat.siz.isValid() ? -1 : screenNumber(QRect(dat.pos, geom.size()));
     //QRect sg;
     //if (screennum == -1)
     //{
     //    screennum = qApp->desktop()->screenNumber((QWidget*)gUI->mainForm());
     //    sg = qApp->desktop()->screenGeometry(screennum);
-    //    if (data.siz.isValid())
-    //        geom.moveTo(sg.topLeft() + (data.pos - data.screenpos));
+    //    if (dat.siz.isValid())
+    //        geom.moveTo(sg.topLeft() + (dat.pos - dat.screenpos));
     //    else
     //        geom.moveTo(sg.center() - QPoint(geom.width() / 2, geom.height() / 2));
     //}
@@ -358,15 +358,15 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
 
     //move(geom.topLeft());
 
-    resize(QSize(data.siz.width(), geomh)/*geom.size()*/);
+    resize(QSize(dat.siz.width(), geomh)/*geom.size()*/);
 
     //updateWindowGeometry(this);
 
     if (Settings::kanji.showpos == KanjiSettings::RestoreLast)
     {
-        QRect sg = qApp->desktop()->screenGeometry(screenNumber(QRect(data.pos, data.siz)));
-        if (data.screen == sg)
-            move(std::max(sg.left(), std::min(data.pos.x(), sg.left() + sg.width() - data.siz.width())), std::max(sg.top(), std::min(data.pos.y(), sg.top() + sg.height() - geomh)));
+        QRect sg = qApp->desktop()->screenGeometry(screenNumber(QRect(dat.pos, dat.siz)));
+        if (dat.screen == sg)
+            move(std::max(sg.left(), std::min(dat.pos.x(), sg.left() + sg.width() - dat.siz.width())), std::max(sg.top(), std::min(dat.pos.y(), sg.top() + sg.height() - geomh)));
     }
     else if (Settings::kanji.showpos == KanjiSettings::NearCursor)
     {
@@ -380,9 +380,9 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
 
         QPoint pos;
         if (toleft)
-            pos.setX(std::max(sg.left(), p.x() - data.siz.width() - Settings::scaled(32)));
+            pos.setX(std::max(sg.left(), p.x() - dat.siz.width() - Settings::scaled(32)));
         else
-            pos.setX(std::min(sg.left() + sg.width() - data.siz.width(), p.x() + Settings::scaled(64)));
+            pos.setX(std::min(sg.left() + sg.width() - dat.siz.width(), p.x() + Settings::scaled(64)));
         if (toabove)
             pos.setY(std::max(sg.top(), p.y() - geomh - Settings::scaled(32)));
         else
@@ -395,25 +395,25 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &data)
     _resized(true);
 }
 
-void KanjiInfoForm::saveState(KanjiInfoFormData &data) const
+void KanjiInfoForm::saveState(KanjiInfoFormData &dat) const
 {
-    data.kindex = ui->kanjiView->kanjiIndex();
-    data.dictname = dict == nullptr ? QString() : dict->name();
-    data.locked = ui->lockButton->isChecked();
-    saveState(data.data);
+    dat.kindex = ui->kanjiView->kanjiIndex();
+    dat.dictname = dict == nullptr ? QString() : dict->name();
+    dat.locked = ui->lockButton->isChecked();
+    saveState(dat.data);
 }
 
-bool KanjiInfoForm::restoreState(const KanjiInfoFormData &data)
+bool KanjiInfoForm::restoreState(const KanjiInfoFormData &dat)
 {
     ignoreresize = true;
-    int dix = ZKanji::dictionaryIndex(data.dictname);
+    int dix = ZKanji::dictionaryIndex(dat.dictname);
     if (dix != -1)
-        setKanji(ZKanji::dictionary(dix), data.kindex);
-    ui->lockButton->setChecked(data.locked);
+        setKanji(ZKanji::dictionary(dix), dat.kindex);
+    ui->lockButton->setChecked(dat.locked);
     ui->lockButton->setEnabled(!ui->lockButton->isChecked());
     ignoreresize = false;
 
-    restoreState(data.data);
+    restoreState(dat.data);
 
     return dix != -1;
 }
@@ -454,7 +454,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
         {
             auto &arr = simit->second.second;
             l.reserve(arr.size());
-            for (int ix = 0; ix != arr.size(); ++ix)
+            for (int ix = 0, siz = tosigned(arr.size()); ix != siz; ++ix)
                 l.push_back(arr[ix]);
             simmodel->setItems(l, simit->second.first);
             l.clear();
@@ -491,7 +491,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
         rl.push_back("-");
         //: Irregular readings
         rl.push_back(tr("Irreg."));
-        for (int ix = 0; ix != k->on.size(); ++ix)
+        for (int ix = 0, siz = tosigned(k->on.size()); ix != siz; ++ix)
             rl.push_back(k->on[ix].toQString());
 
         if (!k->kun.empty())
@@ -504,7 +504,7 @@ void KanjiInfoForm::setKanji(Dictionary *d, int kindex)
 
             rl.push_back(k->kun[0].toQString(0, p - w));
 
-            for (int ix = 1; ix != k->kun.size(); ++ix)
+            for (int ix = 1, siz = tosigned(k->kun.size()); ix != siz; ++ix)
             {
                 const QChar *kun = k->kun[ix].data();
                 const QChar *kp = qcharchr(kun, '.');
@@ -1116,7 +1116,7 @@ void KanjiInfoForm::readingFilterClicked(bool checked)
     }
 }
 
-void KanjiInfoForm::readingBoxChanged(int index)
+void KanjiInfoForm::readingBoxChanged(int /*index*/)
 {
     if (wordsmodel != nullptr && ui->kanjiView->kanjiIndex() >= 0)
     {
@@ -1125,7 +1125,7 @@ void KanjiInfoForm::readingBoxChanged(int index)
     }
 }
 
-void KanjiInfoForm::exampleSelButtonClicked(bool checked)
+void KanjiInfoForm::exampleSelButtonClicked(bool /*checked*/)
 {
     //int ix = ui->dictWidget->currentIndex();
     int kindex = ui->kanjiView->kanjiIndex();
@@ -1211,7 +1211,7 @@ void KanjiInfoForm::dictionaryReset()
     setKanji(d, kindex);
 }
 
-void KanjiInfoForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void KanjiInfoForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict)
         close();
@@ -1325,7 +1325,7 @@ void KanjiInfoForm::showContextMenu(QPoint pos)
         if (ui->sodButton->isChecked())
         {
             menu.addSeparator();
-            QMenu *sub = menu.addMenu(tr("Diagram options"));
+            sub = menu.addMenu(tr("Diagram options"));
             a = sub->addAction(tr("Indicator shadows"));
             a->setCheckable(true);
             a->setChecked(ui->shadowButton->isChecked());

@@ -426,7 +426,10 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
 
     QColor pencol;
     QColor brushcol;
-    while (top != rows.size() && r.top() <= size.height())
+
+    int rowcnt = tosigned(rows.size());
+
+    while (top != rowcnt && r.top() <= size.height())
     {
         p.setPen(gridColor);
         while (pos != rows[top])
@@ -462,11 +465,12 @@ void ZRadicalGrid::paintEvent(QPaintEvent *event)
 
         r = ZRect(0, r.bottom() + 1, -1, heights - 1);
     }
-    if (top == rows.size())
+
+    if (top == rowcnt)
         p.fillRect(QRect(QPoint(0, r.top()), QPoint(size.width(), size.height())), Settings::textColor(this, ColorSettings::Bg));
 }
 
-void ZRadicalGrid::resizeEvent(QResizeEvent *event)
+void ZRadicalGrid::resizeEvent(QResizeEvent * /*event*/)
 {
     const QSize &size = viewport()->size();
     recompute(size);
@@ -649,7 +653,7 @@ void ZRadicalGrid::setFromModel(KanjiGridModel *model)
 {
     std::vector<ushort> dest;
     dest.reserve(model->size());
-    for (int ix = 0; ix != model->size(); ++ix)
+    for (int ix = 0, siz = tosigned(model->size()); ix != siz; ++ix)
         dest.push_back(model->kanjiAt(ix));
 
     std::sort(dest.begin(), dest.end());
@@ -681,7 +685,7 @@ void ZRadicalGrid::filterIncluded()
     included.clear();
     if (mode == RadicalFilterModes::Radicals)
     {
-        for (int ix = 0, siz = kanjilist.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(kanjilist.size()); ix != siz; ++ix)
             included.insert(ZKanji::kanjis[kanjilist[ix]]->rad);
     }
     else if (mode == RadicalFilterModes::Parts)
@@ -698,7 +702,7 @@ void ZRadicalGrid::filterIncluded()
         //    }
         //}
 
-        for (int ix = 0, siz = kanjilist.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(kanjilist.size()); ix != siz; ++ix)
         {
             auto &rads = ZKanji::kanjis[kanjilist[ix]]->radks;
             //included.insert(rads.begin(), rads.end());
@@ -730,7 +734,7 @@ void ZRadicalGrid::filterIncluded()
 
         if (kanjilist.size() != ZKanji::kanjicount)
         {
-            for (int ix = 0, siz = kanjilist.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(kanjilist.size()); ix != siz; ++ix)
             {
                 auto &rads = ZKanji::kanjis[kanjilist[ix]]->rads;
                 if (group)
@@ -745,7 +749,7 @@ void ZRadicalGrid::filterIncluded()
         else
         {
             v.reserve(ZKanji::radlist.size());
-            for (int ix = 0, siz = ZKanji::radlist.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(ZKanji::radlist.size()); ix != siz; ++ix)
                 if (group)
                     v.push_back(ix);
                 else
@@ -759,7 +763,7 @@ void ZRadicalGrid::filterIncluded()
 
             int vpos = 0;
             bool inserted = false;
-            for (int ix = 0, siz = ZKanji::radlist.size(), vsiz = v.size(); ix != siz && vpos != vsiz; ++ix)
+            for (int ix = 0, siz = tosigned(ZKanji::radlist.size()), vsiz = tosigned(v.size()); ix != siz && vpos != vsiz; ++ix)
             {
                 if (ix == 0 || ZKanji::radlist[ix]->radical != ZKanji::radlist[ix - 1]->radical)
                     inserted = false;
@@ -782,10 +786,10 @@ void ZRadicalGrid::filter()
 
     // Radicals that were already added to a previous selection shouldn't be shown again.
     std::set<ushort> excluded;
-    for (int ix = 0; ix != filters.size(); ++ix)
+    for (int ix = 0, siz = tosigned(filters.size()); ix != siz; ++ix)
     {
         std::vector<ushort> &v = filters[ix];
-        for (int iy = 0; iy != v.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(v.size()); iy != sizy; ++iy)
             excluded.insert(v[iy]);
     }
 
@@ -793,8 +797,8 @@ void ZRadicalGrid::filter()
     {
         int cnt = 231;
         QChar *arr = radsymbols;
-        int strokeindex;
-        if (smin == 0 || smin == 1 && smax >= 17)
+        int strokeindex = -1;
+        if (smin == 0 || (smin == 1 && smax >= 17))
         {
             for (int ix = 0; ix != cnt; ++ix)
             {
@@ -851,9 +855,9 @@ void ZRadicalGrid::filter()
     {
         int spos = std::max(0, smin - 1);
         bool newspos = true;
-        for (int ix = ZKanji::radkcnt[spos]; ix != ZKanji::radklist.size(); ++ix)
+        for (int ix = ZKanji::radkcnt[spos], siz = tosigned(ZKanji::radklist.size()); ix != siz; ++ix)
         {
-            while (spos < ZKanji::radkcnt.size() - 1 && ix == ZKanji::radkcnt[spos + 1])
+            while (spos < tosigned(ZKanji::radkcnt.size()) - 1 && ix == ZKanji::radkcnt[spos + 1])
             {
                 ++spos;
                 newspos = true;
@@ -875,7 +879,7 @@ void ZRadicalGrid::filter()
     else
     {
         int ix = 0;
-        int radcnt = ZKanji::radlist.size();
+        int radcnt = tosigned(ZKanji::radlist.size());
         int radpos = 0; // Holds the index of the first previous radical with the same radical number.
         for (; smin != 0 && ix != radcnt && ZKanji::radlist[ix]->strokes != smin; ++ix)
             ;   
@@ -908,16 +912,10 @@ void ZRadicalGrid::recomputeItems()
         return;
 
     items.clear();
-    //QFont::StyleStrategy ss;
     QFont radfont = Settings::radicalFont();
-    //ss = QFont::StyleStrategy(radfont.styleStrategy() | QFont::NoSubpixelAntialias);
-    //radfont.setStyleStrategy(ss);
-    //radfont.setFamily(radicalsFontName());
     radfont.setPointSize(radfontsize);
     QFontMetrics radmet(radfont);
     QFont namefont;
-    //ss = QFont::StyleStrategy(namefont.styleStrategy() | QFont::NoSubpixelAntialias);
-    //namefont.setStyleStrategy(ss);
     namefont.setFamily(Settings::fonts.kana);
     namefont.setPointSize(namefontsize);
     QFontMetrics namemet(namefont);
@@ -930,13 +928,13 @@ void ZRadicalGrid::recomputeItems()
 
     int radcommaw = radmet.width(comma);
     int namecommaw = namemet.width(comma);
-    int radcnt = ZKanji::radlist.size();
+    int radcnt = tosigned(ZKanji::radlist.size());
 
     int namesiz;
     int radpos;
 
     int spacingw = std::max(1., heights  * 0.1);
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         dat = new ItemData;
         dat->size = 1;
@@ -1017,7 +1015,7 @@ void ZRadicalGrid::recompute(const QSize &size)
     int nextw = 0;
 
     int x = 0;
-    int cnt = list.size();
+    int cnt = tosigned(list.size());
     for (int ix = 0; ix != cnt; ++ix)
     {
         int w = nextw == 0 ? itemWidth(ix) : nextw;
@@ -1039,7 +1037,7 @@ void ZRadicalGrid::recompute(const QSize &size)
 
 void ZRadicalGrid::recomputeScrollbar(const QSize &size)
 {
-    int fullheight = heights * rows.size();
+    int fullheight = heights * tosigned(rows.size());
     verticalScrollBar()->setMaximum(std::max(0, fullheight - size.height()));
     verticalScrollBar()->setSingleStep(heights * 0.7);
     verticalScrollBar()->setPageStep(std::max(size.height() - heights * 1.2, heights * 0.9));
@@ -1076,12 +1074,10 @@ void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r, QColor
     QFontMetrics namemet(namefont);
 
     QFont infofont{ Settings::fonts.info, notesfontsize };
-    //QFontMetrics infomet(infofont);
 
     QChar comma(0x3001);
 
     int radcommaw = radmet.width(comma);
-    int namecommaw = namemet.width(comma);
     int spacingw = std::max(1., heights  * 0.1);
 
     int radwidth = 0;
@@ -1110,40 +1106,40 @@ void ZRadicalGrid::paintItem(int index, QStylePainter &p, const ZRect &r, QColor
     else
     {
 
-        ItemData *data = items[index];
+        ItemData *dat = items[index];
 
         int x = r.left();
 
         p.setFont(radfont);
         // Draw the radicals.
-        for (int ix = 0; ix != data->size; ++ix)
+        for (int ix = 0; ix != dat->size; ++ix)
         {
             p.drawText(x, r.top(), heights - 1, heights - 1 - heights * 0.25, Qt::AlignHCenter | Qt::AlignVCenter, ZKanji::radlist[list[index] + ix]->ch);
             x += heights - 1;
-            if (ix != data->size - 1)
+            if (ix != dat->size - 1)
             {
                 p.drawText(x, r.top(), radcommaw, heights - 1 - heights * 0.25, Qt::AlignHCenter | Qt::AlignVCenter, comma);
                 x += radcommaw;
             }
         }
-        radwidth = (heights - 1) * (data->size * 2 - 1);
+        radwidth = (heights - 1) * (dat->size * 2 - 1);
 
         if (names)
         {
             p.setFont(namefont);
             x += spacingw;
-            for (int ix = 0; ix != data->namebreak; ++ix)
+            for (int ix = 0; ix != dat->namebreak; ++ix)
             {
-                str += data->names[ix].toQString();
-                if (data->names.size() != 1)
+                str += dat->names[ix].toQString();
+                if (dat->names.size() != 1)
                     str += comma;
             }
-            p.drawText(x, r.top(), r.width() - (x - r.left()), data->names.size() == 1 ? heights - 1 : ((heights - 1) / 2), Qt::AlignVCenter | Qt::AlignLeft , str);
+            p.drawText(x, r.top(), r.width() - (x - r.left()), dat->names.size() == 1 ? heights - 1 : ((heights - 1) / 2), Qt::AlignVCenter | Qt::AlignLeft , str);
             str.clear();
-            for (int ix = data->namebreak; ix != data->names.size(); ++ix)
+            for (int ix = dat->namebreak, siz = tosigned(dat->names.size()); ix != siz; ++ix)
             {
-                str += data->names[ix].toQString();
-                if (ix != data->names.size() - 1)
+                str += dat->names[ix].toQString();
+                if (ix != siz - 1)
                     str += comma;
             }
             if (!str.isEmpty())
@@ -1178,16 +1174,16 @@ int ZRadicalGrid::indexAt(int x, int y)
 
     // Row at the y coordinate.
     int row = top + y / heights;
-    if (row >= rows.size())
+    if (row >= tosigned(rows.size()))
         return -1;
 
     // First item in the row at y.
     int pos = row == 0 ? 0 : rows[row - 1];
 
-    while (pos != std::min<int>(list.size(), rows[row]) && x >= itemWidth(pos))
+    while (pos != std::min<int>(tosigned(list.size()), rows[row]) && x >= itemWidth(pos))
         x -= itemWidth(pos++);
 
-    if (pos == std::min<int>(list.size(), rows[row]) || itemChar(pos).unicode() < 0x20)
+    if (pos == std::min<int>(tosigned(list.size()), rows[row]) || itemChar(pos).unicode() < 0x20)
         return -1;
 
     return pos;
@@ -1208,7 +1204,7 @@ int ZRadicalGrid::indexOf(ushort val)
 
 ZRect ZRadicalGrid::itemRect(int index)
 {
-    if (index < 0 || index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         return ZRect();
 
     int vpos = verticalScrollBar()->value();
@@ -1223,7 +1219,9 @@ ZRect ZRadicalGrid::itemRect(int index)
     if (index < pos)
         return ZRect();
 
-    while (top != rows.size() && rows[top] <= index)
+    int rowcnt = tosigned(rows.size());
+
+    while (top != rowcnt && rows[top] <= index)
     {
         ++top;
         y += heights;
@@ -1265,7 +1263,7 @@ QString ZRadicalGrid::generateFiltersText()
             {
                 if (group)
                 {
-                    for (int iy = ix, siz = ZKanji::radlist.size(); iy != siz; ++iy)
+                    for (int iy = ix, sizy = tosigned(ZKanji::radlist.size()); iy != sizy; ++iy)
                         if (iy != ix && iy != 0 && ZKanji::radlist[iy]->radical != ZKanji::radlist[iy - 1]->radical)
                             break;
                         else if (iy == ix || ZKanji::radlist[iy]->ch != ZKanji::radlist[iy - 1]->ch)
@@ -1281,11 +1279,12 @@ QString ZRadicalGrid::generateFiltersText()
             seltext += "]";
     }
 
-    for (int ix = filters.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(filters.size()) - 1; ix != -1; --ix)
     {
         int partpos = 0;
         const std::vector<ushort> &sel = filters[ix];
-        for (int iy = 0; iy != sel.size(); ++iy)
+
+        for (int iy = 0, sizy = tosigned(sel.size()); iy != sizy; ++iy)
         {
             if (mode == RadicalFilterModes::Radicals)
             {
@@ -1299,7 +1298,7 @@ QString ZRadicalGrid::generateFiltersText()
             {
                 if (group)
                 {
-                    for (int j = sel[iy], siz = ZKanji::radlist.size(); j != siz; ++j)
+                    for (int j = sel[iy], jsiz = tosigned(ZKanji::radlist.size()); j != jsiz; ++j)
                         if (j != sel[iy] && j != 0 && ZKanji::radlist[j]->radical != ZKanji::radlist[j - 1]->radical)
                             break;
                         else if (j == sel[iy] || ZKanji::radlist[j]->ch != ZKanji::radlist[j - 1]->ch)
@@ -1353,7 +1352,7 @@ bool RadicalFiltersModel::empty() const
     return list.empty();
 }
 
-int RadicalFiltersModel::size() const
+RadicalFiltersModel::size_type RadicalFiltersModel::size() const
 {
     return list.size();
 }
@@ -1369,7 +1368,7 @@ int RadicalFiltersModel::add(const RadicalFilter &src)
     list.push_back(src);
     emit filterAdded();
 
-    return list.size() - 1;
+    return tosigned(list.size()) - 1;
 }
 
 void RadicalFiltersModel::clear()
@@ -1386,7 +1385,7 @@ void RadicalFiltersModel::remove(int index)
 
 void RadicalFiltersModel::move(int index, bool up)
 {
-    if ((index == 0 && up) || (index == list.size() - 1 && !up))
+    if ((index == 0 && up) || (index == tosigned(list.size()) - 1 && !up))
         return;
 
     RadicalFilter *f = list[index];
@@ -1418,11 +1417,11 @@ QString RadicalFiltersModel::filterText(const RadicalFilter &filter) const
             str += "(";
         break;
     }
-    for (int ix = 0, siz = filter.groups.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(filter.groups.size()); ix != siz; ++ix)
     {
         int partpos = 0;
         const std::vector<ushort> &sel = filter.groups[ix];
-        for (int iy = 0; iy != sel.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(sel.size()); iy != sizy; ++iy)
         {
             if (filter.mode == RadicalFilterModes::Radicals)
             {
@@ -1436,7 +1435,7 @@ QString RadicalFiltersModel::filterText(const RadicalFilter &filter) const
             {
                 if (filter.grouped)
                 {
-                    for (int j = sel[iy], siz = ZKanji::radlist.size(); j != siz; ++j)
+                    for (int j = sel[iy], jsiz = tosigned(ZKanji::radlist.size()); j != jsiz; ++j)
                         if (j != sel[iy] && ZKanji::radlist[j]->radical != ZKanji::radlist[j - 1]->radical)
                             break;
                         else if (j == sel[iy] || ZKanji::radlist[j]->ch != ZKanji::radlist[j - 1]->ch)
@@ -1446,7 +1445,7 @@ QString RadicalFiltersModel::filterText(const RadicalFilter &filter) const
                     str += ZKanji::radlist[sel[iy]]->ch;
             }
         }
-        if (ix != filter.groups.size() - 1)
+        if (ix != siz - 1)
             str += QStringLiteral(" + ");
     }
 

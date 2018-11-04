@@ -19,6 +19,7 @@
 #include "generalsettings.h"
 #include "globalui.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -70,14 +71,14 @@ void TestWordsItemModel::reset(bool dorefresh)
 
     if (display == TestWordsDisplay::All)
     {
-        for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
             if (showexcluded || !items[ix].excluded)
                 list.push_back(ix);
     }
     else
     {
         std::vector<int> order(items.size(), 0);
-        for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
             order[ix] = ix;
 
         auto func = [&order, this](const std::function<const QChar* (int windex)> &wfunc) {
@@ -105,7 +106,7 @@ void TestWordsItemModel::reset(bool dorefresh)
                 order.pop_back();
 
             // Throw out unique words.
-            for (int ix = order.size() - 1; ix != -1; --ix)
+            for (int ix = tosigned(order.size()) - 1; ix != -1; --ix)
             {
                 int wix = items[order[ix]].windex; 
                 int iy = ix;
@@ -157,14 +158,14 @@ void TestWordsItemModel::setShowExcluded(bool shown)
 
     showexcluded = shown;
 
-    std::map<int, QString> cache;
-
     if (!showexcluded)
     {
         // Remove excluded items and signal the view.
 
         std::vector<int> ex;
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        std::map<int, QString> cache;
+
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
             if (items[list[ix]].excluded)
             {
                 int pre = 0;
@@ -186,7 +187,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
                             ++pre;
                         first = iy;
                     }
-                    for (int iy = ix + 1, end = list.size(); iy != end; ++iy)
+                    for (int iy = ix + 1, end = tosigned(list.size()); iy != end; ++iy)
                     {
                         if (!comparedEqual(display, windex, items[list[iy]].windex, cache))
                             break;
@@ -224,7 +225,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
         smartvector<Range> ranges;
         _rangeFromIndexes(ex, ranges);
 
-        for (int ix = ranges.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
             list.erase(list.begin() + ranges[ix]->first, list.begin() + ranges[ix]->last + 1);
         signalRowsRemoved(ranges);
         return;
@@ -234,7 +235,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
 
     if (display == TestWordsDisplay::All)
     {
-        for (int lpos = list.size() - 1, pos = items.size() - 1, prev = pos; prev != -1;)
+        for (int lpos = tosigned(list.size()) - 1, pos = tosigned(items.size()) - 1, prev = pos; prev != -1;)
         {
             while (prev != -1 && !items[prev].excluded)
             {
@@ -256,7 +257,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
     else
     {
         std::vector<int> order(items.size(), 0);
-        for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
             order[ix] = ix;
 
         auto func = [&order, this](const std::function<const QChar* (int windex)> &wfunc) {
@@ -270,7 +271,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
             });
 
             // Throw out unique words.
-            for (int ix = order.size() - 1; ix != -1; --ix)
+            for (int ix = tosigned(order.size()) - 1; ix != -1; --ix)
             {
                 int wix = items[order[ix]].windex;
                 int iy = ix;
@@ -305,7 +306,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
 
         // Compare order with list and add the missing parts to interval.
 
-        for (int pos = 0, lpos = 0, siz = order.size(), lsiz = list.size(); pos != siz;)
+        for (int pos = 0, lpos = 0, siz = tosigned(order.size()), lsiz = tosigned(list.size()); pos != siz;)
         {
             while (pos != siz && lpos != lsiz && order[pos] == list[lpos])
                 ++pos, ++lpos;
@@ -333,7 +334,7 @@ void TestWordsItemModel::setShowExcluded(bool shown)
 void TestWordsItemModel::setExcluded(const std::vector<int> &rows, bool exclude)
 {
     std::vector<int> changed;
-    for (int ix = 0, siz = rows.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(rows.size()); ix != siz; ++ix)
     {
         int row = rows[ix];
         int pos = list[row];
@@ -352,7 +353,7 @@ void TestWordsItemModel::setExcluded(const std::vector<int> &rows, bool exclude)
     if (showexcluded)
     {
         _rangeFromIndexes(changed, ranges);
-        for (int ix = 0, siz = ranges.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ranges.size()); ix != siz; ++ix)
             emit dataChanged(index(ranges[ix]->first, 0), index(ranges[ix]->last, columnCount() - 1));
         return;
     }
@@ -362,7 +363,7 @@ void TestWordsItemModel::setExcluded(const std::vector<int> &rows, bool exclude)
         std::map<int, QString> cache;
 
         std::vector<int> tmp;
-        for (int ix = 0, siz = changed.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(changed.size()); ix != siz; ++ix)
         {
             int row = changed[ix];
 
@@ -383,7 +384,7 @@ void TestWordsItemModel::setExcluded(const std::vector<int> &rows, bool exclude)
             }
 
             int sufrow = -1;
-            for (int iy = row + 1, siz = list.size(); iy != siz; ++iy)
+            for (int iy = row + 1, sizy = tosigned(list.size()); iy != sizy; ++iy)
             {
                 if (items[list[iy]].excluded)
                 {
@@ -415,7 +416,7 @@ void TestWordsItemModel::setExcluded(const std::vector<int> &rows, bool exclude)
 
     _rangeFromIndexes(changed, ranges);
 
-    for (int ix = ranges.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
         list.erase(list.begin() + ranges[ix]->first, list.begin() + ranges[ix]->last + 1);
     signalRowsRemoved(ranges);
 }
@@ -423,7 +424,7 @@ void TestWordsItemModel::setExcluded(const std::vector<int> &rows, bool exclude)
 void TestWordsItemModel::resetScore(const std::vector<int> &rows)
 {
     std::vector<int> changed;
-    for (int ix = 0, siz = rows.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(rows.size()); ix != siz; ++ix)
     {
         int row = rows[ix];
         int pos = list[row];
@@ -442,7 +443,7 @@ void TestWordsItemModel::resetScore(const std::vector<int> &rows)
     smartvector<Range> ranges;
     _rangeFromIndexes(changed, ranges);
 
-    for (int ix = 0, siz = ranges.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(ranges.size()); ix != siz; ++ix)
         emit dataChanged(index(ranges[ix]->first, 0), index(ranges[ix]->last, columnCount() - 1));
 }
 
@@ -471,9 +472,9 @@ Dictionary* TestWordsItemModel::dictionary() const
     return group->dictionary();
 }
 
-int TestWordsItemModel::rowCount(const QModelIndex &parent) const
+int TestWordsItemModel::rowCount(const QModelIndex &/*parent*/) const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 QVariant TestWordsItemModel::data(const QModelIndex &index, int role) const
@@ -550,7 +551,7 @@ bool TestWordsItemModel::sortOrder(int c, int a, int b) const
     return list[a] < list[b];
 }
 
-void TestWordsItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void TestWordsItemModel::entryRemoved(int /*windex*/, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     ;
 }
@@ -560,7 +561,7 @@ void TestWordsItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex
 //    ;
 //}
 
-void TestWordsItemModel::entryAdded(int windex)
+void TestWordsItemModel::entryAdded(int /*windex*/)
 {
     ;
 }
@@ -592,20 +593,20 @@ void TestWordsItemModel::entryAdded(int windex)
 //        signalRowsRemoved({ { lpos, lpos } });
 //}
 
-void TestWordsItemModel::entryChanged(int windex, bool studydef)
+void TestWordsItemModel::entryChanged(int windex, bool /*studydef*/)
 {
     int wpos = std::find_if(items.begin(), items.end(), [windex](const WordStudyItem &item) {
         return item.windex == windex;
     }) - items.begin();
 
-    if (wpos == items.size())
+    if (wpos == tosigned(items.size()))
         return;
 
     if (!showexcluded && /*display != TestWordsDisplay::DefinitionConflict && */items[wpos].excluded)
         return;
 
     int lpos = std::find(list.begin(), list.end(), wpos) - list.begin();
-    if (lpos == list.size())
+    if (lpos == tosigned(list.size()))
         lpos = -1;
 
     if (display != TestWordsDisplay::DefinitionConflict)
@@ -617,13 +618,13 @@ void TestWordsItemModel::entryChanged(int windex, bool studydef)
 
     std::vector<int> order;
     order.reserve(items.size());
-    for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
         if (showexcluded || !items[ix].excluded)
             order.push_back(ix);
 
     std::vector<QString> defs;
     defs.reserve(items.size());
-    for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
     {
         if (showexcluded || !items[ix].excluded)
             defs.push_back(group->dictionary()->displayedStudyDefinition(items[ix].windex).toLower());
@@ -650,7 +651,8 @@ void TestWordsItemModel::entryChanged(int windex, bool studydef)
 
     // Position after the last position with the same definition as the word at wpos.
     int next = first + 1;
-    while (next != order.size() && qcharcmp(defs[order[first]].constData(), defs[order[next]].constData()) == 0)
+    int osiz = tosigned(order.size());
+    while (next != osiz && qcharcmp(defs[order[first]].constData(), defs[order[next]].constData()) == 0)
         ++next;
 
     // Number of words to insert if the word at wpos conflicts with them, including wpos.
@@ -702,9 +704,9 @@ void TestWordsItemModel::entryChanged(int windex, bool studydef)
 
     // Last word in list to be removed if it's alone.
     int back = lpos + 1;
-    while (back < list.size() - 1 && qcharcmp(defs[list[back]].constData(), defs[list[back + 1]].constData()) == 0)
+    while (back < tosigned(list.size()) - 1 && qcharcmp(defs[list[back]].constData(), defs[list[back + 1]].constData()) == 0)
         ++back;
-    back = std::min<int>(back, list.size() - 1);
+    back = std::min<int>(back, tosigned(list.size()) - 1);
 
     bool delfront = front == lpos - 1 && qcharcmp(defs[list[front]].constData(), defs[list[lpos]].constData()) != 0;
     bool delback = back == lpos + 1 && qcharcmp(defs[list[back]].constData(), defs[list[lpos]].constData()) != 0;
@@ -793,7 +795,7 @@ void TestWordsItemModel::entryChanged(int windex, bool studydef)
 
     // Insert words coming after wpos in the ordered items list. If the words are already
     // inserted (because they conflict with other words,) there's nothing to do.
-    if (next > opos + 1 && (insertpos == list.size() || order[opos + 1] != list[insertpos]))
+    if (next > opos + 1 && (insertpos == tosigned(list.size()) || order[opos + 1] != list[insertpos]))
     {
         list.insert(list.begin() + insertpos, order.begin() + (opos + 1), order.begin() + next);
         signalRowsInserted({ { insertpos, next - opos - 1 } });
@@ -979,7 +981,7 @@ void WordTestSettingsForm::exec()
     ui->dictWidget->setSelectionType(ListSelectionType::Extended);
     ui->dictWidget->setSortIndicatorVisible(true);
     ui->dictWidget->setInflButtonVisible(false);
-    ui->dictWidget->setSortFunction([this](DictionaryItemModel *d, int c, int a, int b){ return model->sortOrder(c, a, b); });
+    ui->dictWidget->setSortFunction([this](DictionaryItemModel * /*d*/, int c, int a, int b){ return model->sortOrder(c, a, b); });
     ui->dictWidget->setSortIndicator(0, Qt::AscendingOrder);
 
     adjustSize();
@@ -1086,7 +1088,7 @@ void WordTestSettingsForm::closeEvent(QCloseEvent *e)
         // start. Update WordStudy::initTest() too if this part changes.
         const std::vector<WordStudyItem> &items = model->getItems();
         bool onlykanjikana = (settings.tested & ~((int)WordStudyQuestion::Kanji | (int)WordStudyQuestion::Kana)) == 0;
-        int sum = items.size();
+        int sum = tosigned(items.size());
         for (int ix = sum - 1; ix != -1; --ix)
             if (items[ix].excluded || (onlykanjikana && hiraganize(group->dictionary()->wordEntry(items[ix].windex)->kanji) == hiraganize(group->dictionary()->wordEntry(items[ix].windex)->kana)))
                 --sum;
@@ -1163,7 +1165,7 @@ void WordTestSettingsForm::on_methodCBox_currentIndexChanged(int index)
     updateStartSave();
 }
 
-void WordTestSettingsForm::on_timeCBox_currentIndexChanged(int index)
+void WordTestSettingsForm::on_timeCBox_currentIndexChanged(int /*index*/)
 {
     ui->timerBox->setChecked(true);
 }
@@ -1196,7 +1198,7 @@ void WordTestSettingsForm::on_displayBox_currentIndexChanged(int index)
     if (index == 0)
     {
         ui->dictWidget->setSortIndicator(scolumn, sorder);
-        ui->dictWidget->setSortFunction([this](DictionaryItemModel *d, int c, int a, int b){ return model->sortOrder(c, a, b); });
+        ui->dictWidget->setSortFunction([this](DictionaryItemModel * /*d*/, int c, int a, int b){ return model->sortOrder(c, a, b); });
     }
     else
         ui->dictWidget->setSortFunction(nullptr);
@@ -1280,7 +1282,7 @@ void WordTestSettingsForm::selectionChanged()
     bool hasex = false;
     bool hasinc = false;
     bool hasscore = false;
-    for (int ix = 0, siz = rows.size(); ix != siz && (!hasex || !hasinc); ++ix)
+    for (int ix = 0, siz = tosigned(rows.size()); ix != siz && (!hasex || !hasinc); ++ix)
     {
         if (model->isRowExcluded(rows[ix]))
             hasex = true;

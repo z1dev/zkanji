@@ -9,6 +9,9 @@
 #include "zkanjimain.h"
 #include "treebuilder.h"
 
+#include "checked_cast.h"
+
+
 //-------------------------------------------------------------
 
 
@@ -87,11 +90,11 @@ void TextNode::save(QDataStream &stream) const
     stream << make_zstr(label, ZStrFormat::Byte);
 
     stream << (quint32)lines.size();
-    for (int ix = 0; ix != lines.size(); ++ix)
+    for (int ix = 0, siz = tosigned(lines.size()); ix != siz; ++ix)
         stream << (qint32)lines[ix];
 
     stream << (quint16)nodes.size();
-    for (int ix = 0; ix != nodes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(nodes.size()); ix != siz; ++ix)
         nodes.items(ix)->save(stream);
 }
 
@@ -154,7 +157,7 @@ void TextNodeList::copy(TextNodeList *src)
     list.clear();
     list.reserve(src->list.size());
 
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         list.push_back(new TextNode(owner, src->list[ix]->label.data(), -1));
         list.back()->copy(src->list[ix]);
@@ -225,17 +228,17 @@ void TextNodeList::sort()
     });
 }
 
-TextNode* const TextNodeList::items(int index)
+TextNode* TextNodeList::items(int index)
 {
     return list[index];
 }
 
-const TextNode* const TextNodeList::items(int index) const
+const TextNode* TextNodeList::items(int index) const
 {
     return list[index];
 }
 
-int TextNodeList::size() const
+TextNodeList::size_type TextNodeList::size() const
 {
     return list.size();
 }
@@ -260,12 +263,13 @@ TextNode* TextNodeList::searchContainer(const QChar *str, int length)
     TextNode *node1, *node2 = nullptr;
 
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     //node1 = nodeSearch(c);
-    int mid, n;
+    int mid = 0;
+    int n;
     int min = 0;
-    int max = list.size() - 1;
+    int max = tosigned(list.size()) - 1;
     QChar *label;
     int lblen;
 
@@ -274,7 +278,7 @@ TextNode* TextNodeList::searchContainer(const QChar *str, int length)
         mid = (min + max) / 2;
 
         label = list[mid]->label.data();
-        lblen = qcharlen(label);
+        lblen = tosigned(qcharlen(label));
         n = qcharncmp(label, str, std::min(lblen, length)); //GenCompareIN
         if (length < lblen && n == 0)
             n = 1;
@@ -306,12 +310,13 @@ TextNode* TextNodeList::searchContainer(const QChar *str, int length)
     const TextNode *node1, *node2 = nullptr;
 
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     //node1 = nodeSearch(c);
-    int mid, n;
+    int mid = 0;
+    int n;
     int min = 0;
-    int max = list.size() - 1;
+    int max = tosigned(list.size()) - 1;
     QChar *label;
     int lblen;
 
@@ -320,7 +325,7 @@ TextNode* TextNodeList::searchContainer(const QChar *str, int length)
         mid = (min + max) / 2;
 
         label = list[mid]->label.data();
-        lblen = qcharlen(label);
+        lblen = tosigned(qcharlen(label));
         n = qcharncmp(label, str, std::min(lblen, length)); //GenCompareIN
         if (length < lblen && n == 0)
             n = 1;
@@ -350,13 +355,13 @@ TextNode* TextNodeList::searchContainer(const QChar *str, int length)
 void TextNodeList::collectLines(std::vector<int> &result, const QChar *str, int length)
 {
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     TextNode *n;
-    for (int ix = 0; ix < list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         n = list[ix];
-        int nlen = n->label.size();
+        int nlen = tosigned(n->label.size());
         if (qcharncmp(str, n->label.data(), std::min(length, nlen)))
             continue;
 
@@ -369,7 +374,7 @@ void TextNodeList::collectLines(std::vector<int> &result, const QChar *str, int 
 int TextNodeList::removeLine(int line, bool deleted)
 {
     int removed = 0;
-    for (int ix = size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(size()) - 1; ix != -1; --ix)
     {
         removed += list[ix]->nodes.removeLine(line, deleted);
         if (list[ix]->lines.empty() && list[ix]->nodes.empty() && owner != nullptr)
@@ -401,9 +406,9 @@ int TextNodeList::removeLine(int line, bool deleted)
 int TextNodeList::nodePosition(const QChar *label, int length)
 {
     if (length == -1)
-        length = qcharlen(label);
+        length = tosigned(qcharlen(label));
 
-    int min = 0, max = list.size() - 1, mid;
+    int min = 0, max = tosigned(list.size()) - 1, mid;
     int cmp;
     TextNode *n;
 
@@ -413,7 +418,7 @@ int TextNodeList::nodePosition(const QChar *label, int length)
 
         n = list[mid];
         cmp = qcharncmp(label, n->label.data(), length);
-        if (cmp == 0 && length < n->label.size())
+        if (cmp == 0 && length < tosigned(n->label.size()))
             cmp = -1;
 
         if (cmp < 0)
@@ -488,7 +493,7 @@ void TextSearchTreeBase::load(QDataStream& stream)
 void TextSearchTreeBase::save(QDataStream &stream) const
 {
     stream << (quint16)nodes.size();
-    for (int ix = 0; ix != nodes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(nodes.size()); ix != siz; ++ix)
         nodes.items(ix)->save(stream);
 
 }
@@ -525,7 +530,7 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, TextNode* &
         throw "Replace throws with some other thingy.";
 
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     result = cache;
     TextNode *n;
@@ -534,7 +539,9 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, TextNode* &
 
     if (result == nullptr || (result != nullptr && result->label[0] != cfirst))
     {
-        int min = 0, mid, max = nodes.size() - 1;
+        int min = 0;
+        int mid = 0;
+        int max = tosigned(nodes.size()) - 1;
         int cmp;
         while (min <= max)
         {
@@ -563,7 +570,7 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, TextNode* &
         }
     }
 
-    int slen = result->label.size();
+    int slen = tosigned(result->label.size());
 
     // Get out of selected node while it's not a container of the searched one.
     while (slen > length || qcharncmp(str, result->label.data(), slen)) // GenCompareIN
@@ -597,7 +604,7 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, const TextN
         throw "Replace throws with some other thingy.";
 
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     result = cache;
     const TextNode *n;
@@ -606,7 +613,9 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, const TextN
 
     if (result == nullptr || (result != nullptr && result->label[0] != cfirst))
     {
-        int min = 0, mid, max = nodes.size() - 1;
+        int min = 0;
+        int mid = 0;
+        int max = tosigned(nodes.size()) - 1;
         int cmp;
         while (min <= max)
         {
@@ -666,7 +675,7 @@ bool TextSearchTreeBase::findContainer(const QChar *str, int length, const TextN
 TextNode* TextSearchTreeBase::createRoot(QChar ch)
 {
 #ifdef _DEBUG
-    for (int ix = nodes.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(nodes.size()) - 1; ix != -1; --ix)
         if (nodes.items(ix)->label[0] == ch && nodes.items(ix)->label[1] == 0)
             throw "This node already exists.";
 #endif
@@ -815,7 +824,7 @@ void TextSearchTreeBase::doExpand(int index, bool inserted)
         // Increase all lines with index equal or higher by one.
         walkthrough((intptr_t)index, [](TextNode *n, intptr_t value)
         {
-            for (int ix = 0; ix != n->lines.size(); ++ix)
+            for (int ix = 0, siz = tosigned(n->lines.size()); ix != siz; ++ix)
                 if (n->lines[ix] >= (int)value)
                     ++n->lines[ix];
         });
@@ -846,7 +855,7 @@ void TextSearchTreeBase::doExpand(int index, bool inserted)
 
         // Line to be added to the node matches the node's label. It couldn't be put in a
         // child node.
-        bool match = (ssiz == node->label.size());
+        bool match = (ssiz == tosigned(node->label.size()));
 
         if ((node->lines.size() < NODEFULLCOUNT && node->nodes.empty()) || (match && !node->nodes.empty()))
         {
@@ -879,7 +888,7 @@ void TextSearchTreeBase::doExpand(int index, bool inserted)
 
                 findContainer(str, ssiz, newnode);
 
-                match = (ssiz == newnode->label.size());
+                match = (ssiz == tosigned(newnode->label.size()));
                 if (!match && ((newcache == newnode && newnode->lines.size() >= NODEFULLCOUNT) || !newnode->nodes.empty()))
                 {
                     newnode = newnode->nodes.addNode(str, newnode->label.size() + 1, true);
@@ -923,11 +932,11 @@ void TextSearchTreeBase::distributeChildren(TextNode *parent)
     // and future sub-nodes.
 
     QString label = parent->label.toQStringRaw();
-    int labellen = label.size();
+    int labellen = tosigned(label.size());
 
     std::vector<std::pair<QString, int>> lines;
 
-    for (int ix = 0; ix != parent->lines.size(); ++ix)
+    for (int ix = 0, siz = tosigned(parent->lines.size()); ix != siz; ++ix)
     {
         int index = parent->lines[ix];
 
@@ -967,7 +976,7 @@ void TextSearchTreeBase::distributeChildren(TextNode *parent)
     parent->lines.clear();
 
     int ix = 0;
-    for (; ix != lines.size(); ++ix)
+    for (int siz = tosigned(lines.size()); ix != siz; ++ix)
     {
         if (lines[ix].first.size() != labellen)
             break;
@@ -979,17 +988,18 @@ void TextSearchTreeBase::distributeChildren(TextNode *parent)
     TextNode *n = parent;
     while (n->parent)
     {
-        n->parent->sum += parent->lines.size() - parent->sum;
+        n->parent->sum += tosigned(parent->lines.size()) - parent->sum;
         n = n->parent;
     }
-    parent->sum = parent->lines.size();
+    parent->sum = tosigned(parent->lines.size());
 
     std::set<int> added;
-    while (ix != lines.size())
+    int lsiz = tosigned(lines.size());
+    while (ix != lsiz)
     {
         QChar c = lines[ix].first.at(labellen);
         TextNode *node = parent->nodes.addNode(lines[ix].first.constData(), labellen + 1, false);
-        while (ix != lines.size() && lines[ix].first.at(labellen) == c)
+        while (ix != lsiz && lines[ix].first.at(labellen) == c)
         {
             if (added.count(lines[ix].second) == 0)
             {
@@ -999,7 +1009,7 @@ void TextSearchTreeBase::distributeChildren(TextNode *parent)
             ++ix;
         }
 
-        node->sum = node->lines.size();
+        node->sum = tosigned(node->lines.size());
         // Fixing the sum.
         n = node;
         while (n->parent)
@@ -1116,13 +1126,13 @@ void TextSearchTreeBase::removeLine(int line, bool deleted)
 void TextSearchTreeBase::walkReq(TextNode *n, intptr_t data, std::function<void(TextNode*, intptr_t)> func)
 {
     func(n, data);
-    for (int ix = 0; ix != n->nodes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(n->nodes.size()); ix != siz; ++ix)
         walkReq(n->nodes.items(ix), data, func);
 }
 
 void TextSearchTreeBase::walkthrough(intptr_t data, std::function<void(TextNode*, intptr_t)> afunc)
 {
-    for (int ix = 0; ix != nodes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(nodes.size()); ix != siz; ++ix)
         walkReq(nodes.items(ix), data, afunc);
 }
 
@@ -1131,7 +1141,7 @@ void TextSearchTreeBase::rebuild(const std::function<bool()> &callback)
     cache = nullptr;
     nodes.clear();
 
-    TreeBuilder rebuilder(*this, size(), [this](int ix, QStringList &list) { doGetWord(ix, list); }, callback);
+    TreeBuilder rebuilder(*this, tosigned(size()), [this](int ix, QStringList &list) { doGetWord(ix, list); }, callback);
 
     while (rebuilder.initNext())
     {

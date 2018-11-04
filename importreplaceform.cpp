@@ -22,7 +22,7 @@ LabelDialog::LabelDialog(QWidget *parent) : base(parent)
 {
     setWindowTitle("zkanji");
     QHBoxLayout *ly = new QHBoxLayout(this);
-    QLabel *lb = new QLabel(this);
+    lb = new QLabel(this);
     lb->setText(tr("Looking for differences in the dictionaries. Please wait..."));
     ly->addWidget(lb);
     setAttribute(Qt::WA_QuitOnClose, false);
@@ -149,7 +149,7 @@ bool ImportReplaceForm::event(QEvent *e)
     return base::event(e);
 }
 
-void ImportReplaceForm::dictRowChanged(int row, int oldrow)
+void ImportReplaceForm::dictRowChanged(int row, int /*oldrow*/)
 {
     ui->useButton->setEnabled(row != -1);
 }
@@ -178,7 +178,7 @@ void ImportReplaceForm::skipClicked()
     ui->missingTable->setCurrentRow(ui->missingTable->currentRow() + 1);
 }
 
-void ImportReplaceForm::missingRowChanged(int row, int prev)
+void ImportReplaceForm::missingRowChanged(int row, int /*prev*/)
 {
     if (row == -1)
     {
@@ -218,7 +218,7 @@ bool ImportReplaceForm::init()
     // Modified words not in the new dictionary are ignored. When bringing over originals
     // from old version, their inf and freq are taken from the new dictionary.
 
-    for (int ix = 0; owndir && ix != ZKanji::originals.size(); ++ix)
+    for (int ix = 0, siz = tosigned(ZKanji::originals.size()); owndir && ix != siz; ++ix)
     {
         const OriginalWord *o = ZKanji::originals.items(ix);
         if (o->change != OriginalWord::Added && o->change != OriginalWord::Modified)

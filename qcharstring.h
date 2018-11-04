@@ -12,21 +12,25 @@
 
 enum class QCharKind;
 
-uint ushortlen(const ushort *str);
-uint qcharlen(const QChar *str);
+size_t ushortlen(const ushort *str);
+size_t qcharlen(const QChar *str);
 int qcharcmp(const QChar *s1, const QChar *s2);
 int qcharncmp(const QChar *s1, const QChar *s2, int len);
-// Returns the number of characters that match in s1 and s2 starting from the
-// first character. If maxlen is reached, it's returned. The ending null is
-// not counted.
-uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen = -1);
+
+//// Returns the number of characters that match in s1 and s2 starting from the
+//// first character. If maxlen is reached, it's returned. The ending null is
+//// not counted.
+//uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen = -1);
+
 // Copies src to dest. Dest must have space for qcharlen(src) + 1 characters
 // and src must be null terminated.
 void qcharcpy(QChar *dest, const QChar *src);
+
 // Copies src to dest. Dest is created with new.
 //void qcharccpy(QChar* &dest, const QChar *src);
 // Copies length characters from src to dest, and appends a 0 at the end. Dest is created with new.
 //void qcharnccpy(QChar* &dest, const QChar *src, int srclength);
+
 // Copies len characters from src to dest, even if 0 is encountered. Dest must have enough space.
 void qcharncpy(QChar *dest, const QChar *src, int len);
 // Finds needle in hay and returns a pointer to its position or 0 if not found.
@@ -46,8 +50,6 @@ int wordcompare(const QChar *kanjia, const QChar *kanaa, const QChar *kanjib, co
 class QCharString;
 class QCharStringIterator;
 class QCharStringConstIterator;
-QCharStringIterator operator+(int n, const QCharStringIterator &b);
-QCharStringConstIterator operator+(int n, const QCharStringConstIterator &b);
 
 class QCharStringConstIterator
 {
@@ -55,7 +57,7 @@ public:
     typedef QCharString str_type;
     typedef QChar*  value_type;
     typedef QChar** pointer;
-    typedef int difference_type;
+    typedef qint32 difference_type;
     typedef QChar*& reference;
     typedef std::random_access_iterator_tag iterator_category;
 
@@ -67,11 +69,11 @@ public:
     QCharStringConstIterator operator++(int);
     QCharStringConstIterator& operator--();
     QCharStringConstIterator operator--(int);
-    QCharStringConstIterator operator+(int n) const;
-    QCharStringConstIterator operator-(int n) const;
-    QCharStringConstIterator& operator+=(int n);
-    QCharStringConstIterator& operator-=(int n);
-    int operator-(const QCharStringConstIterator &b) const;
+    QCharStringConstIterator operator+(difference_type n) const;
+    QCharStringConstIterator operator-(difference_type n) const;
+    QCharStringConstIterator& operator+=(difference_type n);
+    QCharStringConstIterator& operator-=(difference_type n);
+    difference_type operator-(const QCharStringConstIterator &b) const;
     bool operator==(const QCharStringConstIterator &b) const;
     bool operator!=(const QCharStringConstIterator &b) const;
     bool operator<(const QCharStringConstIterator &b) const;
@@ -79,7 +81,7 @@ public:
     bool operator<=(const QCharStringConstIterator &b) const;
     bool operator>=(const QCharStringConstIterator &b) const;
 
-    const QChar* operator[](int n) const;
+    const QChar* operator[](difference_type n) const;
     const QChar* operator*() const;
     const QChar* operator->() const;
 
@@ -113,15 +115,15 @@ public:
     QCharStringIterator operator++(int);
     QCharStringIterator& operator--();
     QCharStringIterator operator--(int);
-    QCharStringIterator operator+(int n) const;
-    QCharStringIterator operator-(int n) const;
-    QCharStringIterator& operator+=(int n);
-    QCharStringIterator& operator-=(int n);
+    QCharStringIterator operator+(difference_type n) const;
+    QCharStringIterator operator-(difference_type n) const;
+    QCharStringIterator& operator+=(difference_type n);
+    QCharStringIterator& operator-=(difference_type n);
 
-    QChar* operator[](int n);
+    QChar* operator[](difference_type n);
     QChar* operator*();
     QChar* operator->();
-    const QChar* operator[](int n) const;
+    const QChar* operator[](difference_type n) const;
     const QChar* operator*() const;
     const QChar* operator->() const;
 private:
@@ -129,6 +131,9 @@ private:
 
     friend class QCharString;
 };
+
+QCharStringIterator operator+(QCharStringIterator::difference_type n, const QCharStringIterator &b);
+QCharStringConstIterator operator+(QCharStringConstIterator::difference_type n, const QCharStringConstIterator &b);
 
 
 // Class for storing qstring like strings. These strings are meant to be faster compared
@@ -149,8 +154,8 @@ public:
     typedef const QChar*& const_reference;
     typedef QChar** pointer;
     typedef const QChar** const_pointer;
-    typedef int difference_type;
-    typedef int size_type;
+    typedef qint32 difference_type;
+    typedef qint32 size_type;
 
     QCharString();
     QCharString(QCharString &&src);
@@ -174,29 +179,26 @@ public:
     const_iterator cend() const;
     const_reverse_iterator crend() const;
 
-    // Fills the array with a copy of str to at most length characters.
-    // If length is -1, first qcharlen() is called on str, so it must
-    // be null terminated in that case.
+    // Fills the array with a copy of str to at most length characters. If length is -1, first
+    // qcharlen() is called on str, so it must be null terminated in that case.
     void copy(const QChar *str, int length = -1);
 
-    // Allocates data for length + 1 characters filled with space and the
-    // trailing zero. Use the non constant data() function to access the
-    // allocated string.
-    // Does not copy old contents.
-    void setSize(int length);
+    // Allocates data for length + 1 characters filled with space and the trailing zero. Use
+    // the non constant data() function to access the allocated string. Does not copy old
+    // contents.
+    void setSize(size_type length);
 
     // Allocates data for length + 1 characters, copying the old contents up to the last
     // character in the old data that fits the length. If the new size is larger, the
     // remaining characters are filled with space and a trailing zero.
-    void resize(int length);
+    void resize(size_type length);
 
-    // Number of characters in the string data, not counting the null
-    // terminating character. It is always re-computed when this
-    // function is called.
-    uint size() const;
+    // Number of characters in the string data, not counting the null terminating character.
+    // It is always re-computed when this function is called.
+    size_type size() const;
 
-    // Returns true if the data is not initialized or it contains an array
-    // with only the terminating null character.
+    // Returns true if the data is not initialized or it contains an array with only the
+    // terminating null character.
     bool empty() const;
 
     // Frees the data in the array setting it to nullptr.
@@ -211,57 +213,41 @@ public:
 
     // Returns the array of the n rightmost characters. If n is greater than the
     // string size, the whole string is returned.
-    const QChar* rightData(uint n) const;
+    const QChar* rightData(size_type n) const;
 
-    // Returns the n-th character in array. There is no error checking, so
-    // make sure the passed index is valid.
-    QChar& operator[](uint n);
-    // Returns the n-th character in array. There is no error checking, so
-    // make sure the passed index is valid.
-    const QChar& operator[](uint n) const;
-    // Returns true if the string and the other string results in 0 when
-    // compared with qcharcmp.
+    // Returns the n-th character in array. There is no error checking, so make sure the
+    // passed index is valid.
+    QChar& operator[](size_type n);
+    // Returns the n-th character in array. There is no error checking, so make sure the
+    // passed index is valid.
+    const QChar& operator[](size_type n) const;
+    // Returns true if the string and the other string results in 0 when compared with
+    // qcharcmp().
     bool operator==(const QCharString &other) const;
-    // Returns false if the string and the other string results in 0 when
-    // compared with qcharcmp.
+    // Returns false if the string and the other string results in 0 when compared with
+    // qcharcmp.
     bool operator!=(const QCharString &other) const;
-
-    // Creates a QString with at most len characters from the data in the string array.
-    // If len is larger than the size of the string, the behavior is undefined, unless
-    // the array is uninitialized, in which case it returns an empty string.
-    // Set len to -1 to make the function determine the length of the string.
-    //QString toQString(int len = -1) const;
 
     // Creates a QString from pos with at most len characters from the data of the
     // string array. The length counted from pos shouldn't go beyond the data, or the
     // behavior is undefined.
-    QString toQString(int pos = 0, int len = -1) const;
+    QString toQString(size_type pos = 0, int len = -1) const;
     // Returns a lower case version of toQString.
     QString toLower() const;
     // Returns an upper case version of toQString.
     QString toUpper() const;
 
-    // Creates a QString with at most len characters from the data in the string array,
-    // without copying the string data. The data must be available and unmodified while
-    // the returned QString exists.
-    // If len is larger than the size of the string, the behavior is undefined, unless
-    // the array is uninitialized, in which case it returns an empty string.
-    // Set len to -1 to make the function determine the length of the string.
-    QString toQStringRaw(/*int len = -1*/) const;
-    // Creates a QString from pos with at most len characters from the data of the
-    // string array, without copying the string data. The data must be available and
-    // unmodified while the returned QString exists. The length counted from pos
-    // shouldn't go beyond the data, or the behavior is undefined.
-    //QString toQStringRaw(int pos, int len) const;
+    // Creates a QString from the data in the string array without copying the string data.
+    // The data must be available and unmodified while the returned QString exists.
+    QString toQStringRaw() const;
 
-    // Converts the stored string and returns the result. Set len to use at most len
-    // number of characters from the string.
+    // Converts the stored string and returns the result. Set len to use at most len number of
+    // characters from the string.
     QByteArray toUtf8(int len = - 1) const;
 
 
-    // Looks for the index of at most length characters of str in the
-    // string array and returns an index to the first character if
-    // found. Otherwise returns -1.
+    // Looks for the index of at most `length` number of characters of str in the string array
+    // and returns an index to the first character if found. Otherwise returns -1.
     int find(const QChar *str, int length = -1) const;
 
     // Returns the first index of ch in the string if found. Otherwise returns -1.
@@ -279,7 +265,7 @@ private:
     friend bool operator!=(const QCharString &a, const STR &b);
 
 #ifdef _DEBUG
-    int siz; // Only used in error checking.
+    size_type siz; // Only used in error checking.
 #endif
 };
 
@@ -317,9 +303,6 @@ bool operator!=(const QCharString &a, const QChar *b);
 
 class QCharStringList;
 class QCharStringListIterator;
-class QCharStringListConstIterator;
-QCharStringListIterator operator+(int n, const QCharStringListIterator &b);
-QCharStringListConstIterator operator+(int n, const QCharStringListConstIterator &b);
 
 class QCharStringListConstIterator
 {
@@ -327,7 +310,7 @@ public:
     typedef QCharStringList str_type;
     typedef QCharString  value_type;
     typedef QCharString* pointer;
-    typedef int difference_type;
+    typedef qint32 difference_type;
     typedef QCharString& reference;
     typedef std::random_access_iterator_tag iterator_category;
 
@@ -339,11 +322,11 @@ public:
     QCharStringListConstIterator operator++(int);
     QCharStringListConstIterator& operator--();
     QCharStringListConstIterator operator--(int);
-    QCharStringListConstIterator operator+(int n) const;
-    QCharStringListConstIterator operator-(int n) const;
-    QCharStringListConstIterator& operator+=(int n);
-    QCharStringListConstIterator& operator-=(int n);
-    int operator-(const QCharStringListConstIterator &b) const;
+    QCharStringListConstIterator operator+(difference_type n) const;
+    QCharStringListConstIterator operator-(difference_type n) const;
+    QCharStringListConstIterator& operator+=(difference_type n);
+    QCharStringListConstIterator& operator-=(difference_type n);
+    difference_type operator-(const QCharStringListConstIterator &b) const;
     bool operator==(const QCharStringListConstIterator &b) const;
     bool operator!=(const QCharStringListConstIterator &b) const;
     bool operator<(const QCharStringListConstIterator &b) const;
@@ -384,10 +367,10 @@ public:
     QCharStringListIterator operator++(int);
     QCharStringListIterator& operator--();
     QCharStringListIterator operator--(int);
-    QCharStringListIterator operator+(int n) const;
-    QCharStringListIterator operator-(int n) const;
-    QCharStringListIterator& operator+=(int n);
-    QCharStringListIterator& operator-=(int n);
+    QCharStringListIterator operator+(difference_type n) const;
+    QCharStringListIterator operator-(difference_type n) const;
+    QCharStringListIterator& operator+=(difference_type n);
+    QCharStringListIterator& operator-=(difference_type n);
 
     QCharString& operator*();
     QCharString* operator->();
@@ -400,9 +383,12 @@ private:
 };
 
 
+QCharStringListIterator operator+(QCharStringListIterator::difference_type n, const QCharStringListIterator &b);
+QCharStringListConstIterator operator+(QCharStringListConstIterator::difference_type n, const QCharStringListConstIterator &b);
 
-// Very simple class of holding QCharString objects that don't change after
-// they have been added.
+
+// Very simple class of holding QCharString objects that don't change after they have been
+// added. Uses 32 bit sizes instead of being platform dependent, to follow Qt standards.
 class QCharStringList
 {
 public:
@@ -415,8 +401,8 @@ public:
     typedef const QCharString& const_reference;
     typedef QCharString* pointer;
     typedef const QCharString* const_pointer;
-    typedef int difference_type;
-    typedef int size_type;
+    typedef qint32 difference_type;
+    typedef qint32 size_type;
 
     QCharStringList();
     QCharStringList(QCharStringList &&src);
@@ -425,7 +411,7 @@ public:
     QCharStringList& operator=(const QCharStringList &);
     ~QCharStringList();
 
-    static int maxSize();
+    static size_type maxSize();
 
     bool operator==(const QCharStringList &) const;
 
@@ -446,7 +432,7 @@ public:
 
     // Reserves space for n QCharString objects if there's not enough
     // reserved. The size remains unchanged.
-    void reserve(uint n);
+    void reserve(size_type n);
     // Copies str into a new QCharString in the list.
     void add(const QChar *str, int length = -1);
     // Copies str into a new QCharString in the list.
@@ -463,14 +449,14 @@ public:
     // Sets the contents to match src.
     void copy(const QStringList &src);
 
-    int size() const;
+    size_type size() const;
     bool empty() const;
     // Removes every element of the list and frees up the used space.
     void clear();
-    QCharString& items(int ix);
-    QCharString& operator[](int ix);
-    const QCharString& items(int ix) const;
-    const QCharString& operator[](int ix) const;
+    QCharString& items(size_type ix);
+    QCharString& operator[](size_type ix);
+    const QCharString& items(size_type ix) const;
+    const QCharString& operator[](size_type ix) const;
     // Returns a string constructed by joining every member of the list with
     // sep. If the list has a single item it's returned unchanged. Sep can
     // be an empty string.
@@ -481,8 +467,8 @@ private:
     // is not optimized and can make it slow to insert many items.
     void grow();
 
-    int reserved;
-    int used;
+    size_type reserved;
+    size_type used;
     QCharString *arr;
 };
 

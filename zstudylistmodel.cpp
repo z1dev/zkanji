@@ -112,21 +112,21 @@ int StudyListModel::queueColCount()
 {
     if (scale != Settings::general.scale)
         updateColData();
-    return queuedata.size();
+    return tosigned(queuedata.size());
 }
 
 int StudyListModel::studiedColCount()
 {
     if (scale != Settings::general.scale)
         updateColData();
-    return studieddata.size();
+    return tosigned(studieddata.size());
 }
 
 int StudyListModel::testedColCount()
 {
     if (scale != Settings::general.scale)
         updateColData();
-    return testeddata.size();
+    return tosigned(testeddata.size());
 }
 
 //-------------------------------------------------------------
@@ -138,9 +138,10 @@ void StudyListModel::defaultColumnWidths(DeckItemViewModes mode, std::vector<int
     {
         result.resize(queueColCount() - 1);
         int ix = 0;
+        int siz = tosigned(result.size());
         for (const DictColumnData &dat : queueData())
         {
-            if (ix == result.size())
+            if (ix == siz)
                 break;
             result[ix++] = dat.width;
         }
@@ -149,9 +150,10 @@ void StudyListModel::defaultColumnWidths(DeckItemViewModes mode, std::vector<int
     {
         result.resize(studiedColCount() - 1);
         int ix = 0;
+        int siz = tosigned(result.size());
         for (const DictColumnData &dat : studiedData())
         {
-            if (ix == result.size())
+            if (ix == siz)
                 break;
             result[ix++] = dat.width;
         }
@@ -160,9 +162,10 @@ void StudyListModel::defaultColumnWidths(DeckItemViewModes mode, std::vector<int
     {
         result.resize(testedColCount() - 1);
         int ix = 0;
+        int siz = tosigned(result.size());
         for (const DictColumnData &dat : testedData())
         {
-            if (ix == result.size())
+            if (ix == siz)
                 break;
             result[ix++] = dat.width;
         }
@@ -173,19 +176,19 @@ int StudyListModel::defaultColumnWidth(DeckItemViewModes mode, int columnindex)
 {
     if (mode == DeckItemViewModes::Queued)
     {
-        if (columnindex < 0 || columnindex >= queueColCount())
+        if (columnindex < 0 || columnindex >= tosigned(queueColCount()))
             return -1;
         return (queueData().begin() + columnindex)->width;
     }
     else if (mode == DeckItemViewModes::Studied)
     {
-        if (columnindex < 0 || columnindex >= studiedColCount())
+        if (columnindex < 0 || columnindex >= tosigned(studiedColCount()))
             return -1;
         return (studiedData().begin() + columnindex)->width;
     }
     else if (mode == DeckItemViewModes::Tested)
     {
-        if (columnindex < 0 || columnindex >= testedColCount())
+        if (columnindex < 0 || columnindex >= tosigned(testedColCount()))
             return -1;
         return (testedData().begin() + columnindex)->width;
     }
@@ -529,7 +532,7 @@ void StudyListModel::setShownParts(bool showkanji, bool showkana, bool showdefin
         WordPartBits question = mode == DeckItemViewModes::Queued ? deck->queuedItems(list.back())->questiontype : deck->studiedItems(list.back())->questiontype;
 
         bool lastmatch = !matchesFilter(question);
-        for (int pos = list.size() - 1, prev = pos - 1; pos != -1; --prev)
+        for (int pos = tosigned(list.size()) - 1, prev = pos - 1; pos != -1; --prev)
         {
             bool match = prev == -1 ? !lastmatch : !matchesFilter(mode == DeckItemViewModes::Queued ? deck->queuedItems(list[prev])->questiontype : deck->studiedItems(list[prev])->questiontype);
             if (prev != -1 && lastmatch == match)
@@ -555,7 +558,7 @@ void StudyListModel::setShownParts(bool showkanji, bool showkana, bool showdefin
         // Current position in the deck.
         int pos = (mode == DeckItemViewModes::Queued ? deck->queueSize() : mode == DeckItemViewModes::Studied ? deck->studySize() : deck->testedSize()) - 1;
         // Insert position in list.
-        int inspos = list.size() - 1;
+        int inspos = tosigned(list.size()) - 1;
 
         while (pos != -1)
         {
@@ -609,12 +612,12 @@ int StudyListModel::indexes(int pos) const
     return deck->studiedItems(pos)->data->index;
 }
 
-int StudyListModel::rowCount(const QModelIndex &parent) const
+int StudyListModel::rowCount(const QModelIndex &/*parent*/) const
 {
     //if (mode == DeckItemViewModes::Queued)
     //    return deck->queueSize();
     //return deck->studySize();
-    return list.size();
+    return tosigned(list.size());
 }
 
 QVariant StudyListModel::data(const QModelIndex &index, int role) const
@@ -749,7 +752,7 @@ Qt::DropActions StudyListModel::supportedDragActions() const
     return 0;
 }
 
-Qt::DropActions StudyListModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions StudyListModel::supportedDropActions(bool /*samesource*/, const QMimeData *mime) const
 {
     if (mode != DeckItemViewModes::Queued)
         return 0;
@@ -765,7 +768,7 @@ Qt::DropActions StudyListModel::supportedDropActions(bool samesource, const QMim
 //    return result;
 //}
 
-bool StudyListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool StudyListModel::canDropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int row, int column, const QModelIndex &parent) const
 {
     return mode == DeckItemViewModes::Queued && row == -1 && column == -1 && !parent.isValid() && data->formats().contains(QStringLiteral("zkanji/words")) &&
             *(intptr_t*)data->data(QStringLiteral("zkanji/words")).constData() == (intptr_t)deck->dictionary();
@@ -779,7 +782,7 @@ bool StudyListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     const QByteArray &arr = data->data(QStringLiteral("zkanji/words"));
 
     int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(int);
-    if (cnt <= 0 || cnt * sizeof(int) + sizeof(intptr_t) * 2 != arr.size())
+    if (cnt <= 0 || tosigned(cnt * sizeof(int) + sizeof(intptr_t) * 2) != arr.size())
         return false;
 
     const int *dat = (const int*)(arr.constData() + sizeof(intptr_t) * 2);
@@ -798,7 +801,7 @@ int StudyListModel::statusCount() const
     return 1;
 }
 
-StatusTypes StudyListModel::statusType(int statusindex) const
+StatusTypes StudyListModel::statusType(int /*statusindex*/) const
 {
     return StatusTypes::TitleValue;
 }
@@ -854,12 +857,12 @@ QString StudyListModel::statusText(int statusindex, int labelindex, int rowpos) 
     return result;
 }
 
-int StudyListModel::statusSize(int statusindex, int labelindex) const
+int StudyListModel::statusSize(int /*statusindex*/, int /*labelindex*/) const
 {
     return 0;
 }
 
-bool StudyListModel::statusAlignRight(int statusindex) const
+bool StudyListModel::statusAlignRight(int /*statusindex*/) const
 {
     return false;
 }
@@ -912,7 +915,7 @@ void StudyListModel::setColumnTexts()
     }
 }
 
-void StudyListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void StudyListModel::entryRemoved(int /*windex*/, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     // Let the deck handle this and notify the model.
 
@@ -952,12 +955,12 @@ void StudyListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
     //emit dataChanged(base::index(0, 0), base::index(list.size(), 0), { Qt::DisplayRole });
 }
 
-void StudyListModel::entryChanged(int windex, bool studydef)
+void StudyListModel::entryChanged(int windex, bool /*studydef*/)
 {
     // There can be multiple versions of the same item in the queue. The whole lists must be
     // checked in case the rows must be updated.
 
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         int pos = list[ix];
         if ((mode == DeckItemViewModes::Queued && deck->queuedItems(pos)->data->index == windex) ||
@@ -982,7 +985,7 @@ void StudyListModel::entryChanged(int windex, bool studydef)
     //}
 }
 
-void StudyListModel::entryAdded(int windex)
+void StudyListModel::entryAdded(int /*windex*/)
 {
     // New dictionary entry. Nothing to do here.
 }
@@ -994,13 +997,13 @@ void StudyListModel::itemsQueued(int count)
 
     // Items added to the queue.
 
-    int lsiz = list.size();
+    int lsiz = tosigned(list.size());
     if (kanjion && kanaon && defon)
     {
         int newsiz = deck->queueSize();
         list.reserve(newsiz);
-        while (list.size() != newsiz)
-            list.push_back(list.size());
+        while (tosigned(list.size()) != newsiz)
+            list.push_back(tosigned(list.size()));
     }
     else
     {
@@ -1009,7 +1012,7 @@ void StudyListModel::itemsQueued(int count)
                 list.push_back(ix);
     }
 
-    if (lsiz == list.size())
+    if (lsiz == tosigned(list.size()))
         return;
 
     //beginInsertRows(QModelIndex(), lsiz, list.size() - 1);
@@ -1039,10 +1042,10 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
 
         order.reserve(list.size());
         while (order.size() != list.size())
-            order.push_back(order.size());
+            order.push_back(tosigned(order.size()));
         std::sort(order.begin(), order.end(), [this](int a, int b) { return list[a] < list[b]; });
 
-        for (int ix = 0, siz = order.size(), pos = 0, isiz = indexes.size(); ix != siz && pos != isiz; ++ix)
+        for (int ix = 0, siz = tosigned(order.size()), pos = 0, isiz = tosigned(indexes.size()); ix != siz && pos != isiz; ++ix)
         {
             while (pos < isiz && list[order[ix]] > indexes[pos])
                 ++pos;
@@ -1054,7 +1057,7 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
     else
     {
         // Filling items with values in indexes that are found in list.
-        for (int ix = 0, siz = list.size(), pos = 0, isiz = indexes.size(); ix != siz && pos != isiz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()), pos = 0, isiz = tosigned(indexes.size()); ix != siz && pos != isiz; ++ix)
         {
             while (pos < isiz && list[ix] > indexes[pos])
                 ++pos;
@@ -1064,7 +1067,7 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
     }
 
     smartvector<Range> removed;
-    for (int pos = items.size() - 1, prev = pos - 1; pos != -1; --prev)
+    for (int pos = tosigned(items.size()) - 1, prev = pos - 1; pos != -1; --prev)
     {
         if (prev == -1 || items[prev] != items[prev + 1] - 1)
         {
@@ -1072,16 +1075,16 @@ void StudyListModel::itemsRemoved(const std::vector<int> &indexes, bool queued, 
             {
                 if (mode != DeckItemViewModes::Tested)
                 {
-                    for (int ix = list.size() - 1, last = items[pos]; ix != last; --ix)
+                    for (int ix = tosigned(list.size()) - 1, last = items[pos]; ix != last; --ix)
                         list[ix] -= (pos - prev);
                 }
                 else
                 {
                     std::vector<int> sorted(list.begin() + items[prev + 1], list.begin() + items[pos] + 1);
                     std::sort(sorted.begin(), sorted.end());
-                    for (int ix = 0, siz = order.size(), sortpos = 0; ix != siz; ++ix)
+                    for (int ix = 0, siz = tosigned(order.size()), sortpos = 0; ix != siz; ++ix)
                     {
-                        while (sortpos < sorted.size() && list[order[ix]] >= sorted[sortpos])
+                        while (sortpos < tosigned(sorted.size()) && list[order[ix]] >= sorted[sortpos])
                             ++sortpos;
 
                         if (sortpos)
@@ -1125,11 +1128,11 @@ void StudyListModel::itemDataChanged(const std::vector<int> &indexes, bool queue
 
     std::vector<int> ordered;
     ordered.reserve(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         ordered.push_back(ix);
     std::sort(ordered.begin(), ordered.end(), [this](int a, int b) { return list[a] < list[b]; });
 
-    for (int pos = 0, siz = ordered.size(), ipos = 0, isiz = indexes.size(); pos != siz;)
+    for (int pos = 0, siz = tosigned(ordered.size()), ipos = 0, isiz = tosigned(indexes.size()); pos != siz;)
     {
         while (ipos != isiz && indexes[ipos] < ordered[pos])
             ++ipos;
@@ -1144,7 +1147,7 @@ void StudyListModel::itemDataChanged(const std::vector<int> &indexes, bool queue
 
     std::sort(ordered.begin(), ordered.end());
 
-    for (int pos = 0, next = pos + 1, siz = ordered.size(); pos != siz; ++next)
+    for (int pos = 0, next = pos + 1, siz = tosigned(ordered.size()); pos != siz; ++next)
     {
         if (ordered[pos] == -1)
         {
@@ -1168,8 +1171,8 @@ void StudyListModel::fillList(std::vector<int> &dest)
     if (kanjion && kanaon && defon)
     {
         dest.reserve(cnt);
-        while (dest.size() != cnt)
-            dest.push_back(mode == DeckItemViewModes::Tested ? deck->testedIndex(dest.size()) : dest.size());
+        while (tosigned(dest.size()) != cnt)
+            dest.push_back(mode == DeckItemViewModes::Tested ? deck->testedIndex(tosigned(dest.size())) : tosigned(dest.size()));
     }
     else
     {
@@ -1228,7 +1231,7 @@ QString StudyListModel::shortQuestionString(WordDeckItem *item) const
 QString StudyListModel::definitionString(int index) const
 {
     const fastarray<WordDefinition> &defs = deck->dictionary()->wordEntry(index)->defs;
-    int cnt = defs.size();
+    int cnt = tosigned(defs.size());
 
     QString result;
 

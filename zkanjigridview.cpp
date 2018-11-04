@@ -218,7 +218,7 @@ void ZKanjiGridView::settingsChanged()
     viewport()->update();
 }
 
-void ZKanjiGridView::dictionaryToBeRemoved(int oldix, int newix, Dictionary *d)
+void ZKanjiGridView::dictionaryToBeRemoved(int /*oldix*/, int /*newix*/, Dictionary *d)
 {
     if (connected && dict == d && itemmodel != nullptr)
     {
@@ -414,7 +414,7 @@ void ZKanjiGridView::layoutToChange()
     for (int ix = 0, siz = selection->rangeCount(); ix != siz; ++ix)
     {
         const Range &r = selection->ranges(ix);
-        for (int iy = r.first, siz = r.last + 1; iy != siz; ++iy)
+        for (int iy = r.first, sizy = r.last + 1; iy != sizy; ++iy)
             persel.push_back(iy);
     }
     persel.push_back(current);
@@ -433,7 +433,7 @@ void ZKanjiGridView::layoutChanged()
 
     std::sort(persel.begin(), persel.end());
 
-    for (int pos = 0, next = 1, siz = persel.size(); pos != siz; ++next)
+    for (int pos = 0, next = 1, siz = tosigned(persel.size()); pos != siz; ++next)
     {
         if (next == siz || persel[next] - persel[next - 1] > 1)
         {
@@ -456,11 +456,11 @@ void ZKanjiGridView::layoutChanged()
 
 void ZKanjiGridView::selectAll()
 {
-    if (model() == nullptr || selection->rangeSelected(0, model()->size() - 1))
+    if (model() == nullptr || selection->rangeSelected(0, tosigned(model()->size()) - 1))
         return;
 
     selpivot = -1;
-    selection->selectRange(0, model()->size() - 1, true);
+    selection->selectRange(0, tosigned(model()->size()) - 1, true);
 
     viewport()->update();
 
@@ -563,7 +563,7 @@ int ZKanjiGridView::cellAt(int x, int y) const
     int col = x / cellsize;
     int row = (y - yshift) / cellsize + top;
 
-    if (col >= cols || row >= rows || (cols * row) + col >= itemmodel->size())
+    if (col >= cols || row >= rows || (cols * row) + col >= tosigned(itemmodel->size()))
         return -1;
 
     return (cols * row) + col;
@@ -571,7 +571,7 @@ int ZKanjiGridView::cellAt(int x, int y) const
 
 QRect ZKanjiGridView::cellRect(int index) const
 {
-    if (index < 0 || index >= itemmodel->size())
+    if (index < 0 || index >= tosigned(itemmodel->size()))
         return QRect();
 
     int vpos = verticalScrollBar()->value();
@@ -610,7 +610,7 @@ int ZKanjiGridView::cellRowAt(int y) const
 void ZKanjiGridView::select(int index)
 {
 #ifdef _DEBUG
-    if (index < 0 || model() == nullptr || index >= model()->size())
+    if (index < 0 || model() == nullptr || index >= tosigned(model()->size()))
         throw "Invalid index to select.";
 #endif
 
@@ -637,7 +637,7 @@ void ZKanjiGridView::select(int index)
 bool ZKanjiGridView::toggleSelect(int index)
 {
 #ifdef _DEBUG
-    if (index < 0 || model() == nullptr || index >= model()->size())
+    if (index < 0 || model() == nullptr || index >= tosigned(model()->size()))
         throw "Invalid index to select.";
 #endif
 
@@ -695,7 +695,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
             selection->selectedRanges(0, first - 1, r);
             if (!r.empty())
             {
-                for (int ix = 0; ix != r.size(); ++ix)
+                for (int ix = 0, siz = tosigned(r.size()); ix != siz; ++ix)
                 {
                     const Range *range = r[ix];
                     int to = std::min(first, range->last + 1);
@@ -707,12 +707,12 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
             }
         }
 
-        if (last < model()->size() - 1)
+        if (last < tosigned(model()->size()) - 1)
         {
-            selection->selectedRanges(last + 1, model()->size() - 1, r);
+            selection->selectedRanges(last + 1, tosigned(model()->size()) - 1, r);
             if (!r.empty())
             {
-                for (int ix = 0; ix != r.size(); ++ix)
+                for (int ix = 0, siz = tosigned(r.size()); ix != siz; ++ix)
                 {
                     const Range *range = r[ix];
                     int from = std::max(last + 1, range->first);
@@ -736,7 +736,7 @@ void ZKanjiGridView::multiSelect(int endindex, bool deselect)
     else
     {
         int pos = first;
-        for (int ix = 0; ix != r.size() && pos <= last; ++ix)
+        for (int ix = 0, siz = tosigned(r.size()); ix != siz && pos <= last; ++ix)
         {
             const Range *range = r[ix];
             for (int iy = pos; iy < range->first; ++iy)
@@ -792,7 +792,7 @@ void ZKanjiGridView::selectedCells(std::vector<int> &result) const
 void ZKanjiGridView::selKanji(std::vector<ushort> &result) const
 {
     result.reserve(selection->size());
-    int pos = 0;
+    //int pos = 0;
     for (int ix = 0; ix != selection->rangeCount(); ++ix)
     {
         auto &r = selection->ranges(ix);
@@ -807,8 +807,8 @@ QString ZKanjiGridView::selString() const
     selKanji(selkanji);
 
     QString str;
-    str.resize(selkanji.size());
-    for (int ix = 0, siz = selkanji.size(); ix != siz; ++ix)
+    str.resize(tosigned(selkanji.size()));
+    for (int ix = 0, siz = tosigned(selkanji.size()); ix != siz; ++ix)
         str[ix] = ZKanji::kanjis[selkanji[ix]]->ch;
 
     return str;
@@ -829,9 +829,9 @@ void ZKanjiGridView::updateSelected()
     for (int ix = 0; ix != selection->rangeCount(); ++ix)
     {
         auto &range = selection->ranges(ix);
-        for (int ix = range.first, last = range.last + 1; ix != last; ++ix)
+        for (int iy = range.first, last = range.last + 1; iy != last; ++iy)
         {
-            QRect r = cellRect(ix);
+            QRect r = cellRect(iy);
             if (!r.isEmpty())
                 viewport()->update(r);
         }
@@ -989,6 +989,8 @@ bool ZKanjiGridView::viewportEvent(QEvent *e)
             status->clear();
         updateStatus();
         break;
+    default:
+        break;
     }
 
     return base::viewportEvent(e);
@@ -1043,7 +1045,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     int y2 = std::min((rows - top) * cellsize + y, size.height());
 
     // Number of columns at the bottom-most visible row.
-    int bcols = ((rows - top - 1) * cellsize + y > size.height()) ? cols : cols - (cols * rows - itemmodel->size());
+    int bcols = ((rows - top - 1) * cellsize + y > size.height()) ? cols : cols - (cols * rows - tosigned(itemmodel->size()));
 
     // Draw the vertical grid lines till the lowest visible row's bottom.
     int x = cellsize - 1;
@@ -1091,7 +1093,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
     p.setFont(kfont);
 
     // Fill the backgrounds and draw the kanji.
-    for (; drawpos != itemmodel->size() && y < size.height(); ++drawpos, x += cellsize)
+    for (int isiz = tosigned(itemmodel->size()); drawpos != isiz && y < size.height(); ++drawpos, x += cellsize)
     {
         if (x != 0 && x + cellsize > size.width())
         {
@@ -1176,7 +1178,7 @@ void ZKanjiGridView::paintEvent(QPaintEvent *event)
 
         p.setBrush(selcolor);
 
-        QRect r = dragind < model()->size() ? cellRect(dragind) : QRect();
+        QRect r = dragind < tosigned(model()->size()) ? cellRect(dragind) : QRect();
         QRect r2 = dragind > 0 ? cellRect(dragind - 1) : QRect();
         if (!r.isEmpty())
         {
@@ -1280,7 +1282,7 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *e)
     else if (e->key() == Qt::Key_PageDown)
     {
         int change = std::max(1, size.height() / cellsize) * cols;
-        while (current + change >= itemmodel->size())
+        while (current + change >= tosigned(itemmodel->size()))
             change -= cols;
         endindex = current + change;
     }
@@ -1294,7 +1296,7 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *e)
     {
         toggle = false;
 
-        endindex = itemmodel->size() - 1;
+        endindex = tosigned(itemmodel->size()) - 1;
     }
     else if (e->key() == Qt::Key_Home && !toggle)
     {
@@ -1306,7 +1308,7 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *e)
     {
         toggle = false;
 
-        endindex = std::min(itemmodel->size() - 1, current + (cols - (current % cols)) - 1);
+        endindex = std::min(tosigned(itemmodel->size()) - 1, current + (cols - (current % cols)) - 1);
     }
     else if (e->key() == Qt::Key_Up)
     {
@@ -1314,7 +1316,7 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *e)
     }
     else if (e->key() == Qt::Key_Down)
     {
-        if (current + cols < itemmodel->size())
+        if (current + cols < tosigned(itemmodel->size()))
             endindex = current + cols;
         else
             endindex = current;
@@ -1325,7 +1327,7 @@ void ZKanjiGridView::keyPressEvent(QKeyEvent *e)
     }
     else if (e->key() == Qt::Key_Right)
     {
-        endindex = std::min(itemmodel->size() - 1, current + 1);
+        endindex = std::min(tosigned(itemmodel->size()) - 1, current + 1);
     }
     else
     {
@@ -1548,12 +1550,12 @@ void ZKanjiGridView::contextMenuEvent(QContextMenuEvent *e)
     e->accept();
 }
 
-void ZKanjiGridView::focusInEvent(QFocusEvent *e)
+void ZKanjiGridView::focusInEvent(QFocusEvent * /*e*/)
 {
     viewport()->update();
 }
 
-void ZKanjiGridView::focusOutEvent(QFocusEvent *e)
+void ZKanjiGridView::focusOutEvent(QFocusEvent * /*e*/)
 {
     cancelActions();
     viewport()->update();
@@ -1585,7 +1587,7 @@ void ZKanjiGridView::dragEnterEvent(QDragEnterEvent *e)
     viewport()->update();
 }
 
-void ZKanjiGridView::dragLeaveEvent(QDragLeaveEvent *event)
+void ZKanjiGridView::dragLeaveEvent(QDragLeaveEvent * /*event*/)
 {
     if (state != State::Dragging)
         return;
@@ -1733,7 +1735,7 @@ void ZKanjiGridView::updateStatus()
         return;
     }
 
-    if ((itemmodel->statusCount() == 0 && status->size() != 2) || (itemmodel->statusCount() != 0 && status->size() != itemmodel->statusCount() + 1))
+    if ((itemmodel->statusCount() == 0 && status->size() != 2) || (itemmodel->statusCount() != 0 && tosigned(status->size()) != itemmodel->statusCount() + 1))
     {
         status->clear();
 
@@ -1807,7 +1809,7 @@ void ZKanjiGridView::recompute(const QSize &size)
     else
     {
         cols = std::max(1, size.width() / cellsize);
-        rows = (itemmodel->size() + cols - 1) / cols;
+        rows = (tosigned(itemmodel->size()) + cols - 1) / cols;
     }
 }
 
@@ -1836,7 +1838,7 @@ void ZKanjiGridView::updateDragIndicator()
     if (dragind == -1)
         return;
 
-    QRect r = dragind < model()->size() ? cellRect(dragind) : QRect();
+    QRect r = dragind < tosigned(model()->size()) ? cellRect(dragind) : QRect();
     QRect r2 = dragind > 0 ? cellRect(dragind - 1) : QRect();
     if (!r.isEmpty())
     {
@@ -1877,13 +1879,13 @@ int ZKanjiGridView::dragCell(QPoint pt) const
         // The mouse might be to the right side of the last column.
         int row = cellRowAt(pt.y());
         if (row == -1)
-            cell = model()->size() - 1;
+            cell = tosigned(model()->size()) - 1;
         else
-            cell = std::min(model()->size() - 1, (row + 1) * cols - 1);
+            cell = std::min(tosigned(model()->size()) - 1, (row + 1) * cols - 1);
     }
 
     QRect crect = cellRect(cell);
-    if ((cell == model()->size() - 1 && pt.y() > crect.bottom()) || pt.x() - crect.left() > crect.width() / 2)
+    if ((cell == tosigned(model()->size()) - 1 && pt.y() > crect.bottom()) || pt.x() - crect.left() > crect.width() / 2)
         ++cell;
 
     return cell;
@@ -1914,14 +1916,14 @@ CommandCategories ZKanjiGridView::activeCategory() const
     if (!isVisibleTo(window()) || dynamic_cast<ZKanjiForm*>(window()) == nullptr)
         return CommandCategories::NoCateg;
 
-    const QWidget *w = parentWidget();
-    while (w != nullptr && dynamic_cast<const ZKanjiWidget*>(w) == nullptr)
-        w = w->parentWidget();
+    const QWidget *p = parentWidget();
+    while (p != nullptr && dynamic_cast<const ZKanjiWidget*>(p) == nullptr)
+        p = p->parentWidget();
 
-    if (w == nullptr)
+    if (p == nullptr)
         return CommandCategories::NoCateg;
 
-    ZKanjiWidget *zw = ((ZKanjiWidget*)w);
+    ZKanjiWidget *zw = ((ZKanjiWidget*)p);
     if (zw->isActiveWidget())
         return zw->mode() == ViewModes::KanjiSearch ? CommandCategories::SearchCateg : CommandCategories::GroupCateg;
 
@@ -1983,7 +1985,7 @@ void ZKanjiGridView::definitionEdit() const
     if (selkanji.size() == 1)
     {
         selkanji.reserve(itemmodel->size() - selection->ranges(0).first);
-        for (int ix = selection->ranges(0).first + 1, siz = itemmodel->size(); ix != siz; ++ix)
+        for (int ix = selection->ranges(0).first + 1, siz = tosigned(itemmodel->size()); ix != siz; ++ix)
             selkanji.push_back(itemmodel->kanjiAt(ix));
     }
     editKanjiDefinition(dict, selkanji);

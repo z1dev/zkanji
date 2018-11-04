@@ -8,6 +8,8 @@
 #include "ui_definitionwidget.h"
 #include "words.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -39,7 +41,7 @@ void DefinitionWidget::setWords(Dictionary *d, const std::vector<int> &words)
 
     // Find out if any word on the list has custom meaning set.
     data.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         data[ix] = dict->studyDefinition(list[ix]) != nullptr ? 1 : 0;
 
     //if (list.size() != 1)
@@ -70,7 +72,7 @@ bool DefinitionWidget::event(QEvent *e)
 void DefinitionWidget::on_defResetButton_clicked(bool)
 {
     ignorechange = true;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         data[ix] = 0;
         dict->setWordStudyDefinition(list[ix], QString());
@@ -90,7 +92,7 @@ void DefinitionWidget::on_defResetButton_clicked(bool)
 void DefinitionWidget::dictEntryRemoved(int windex)
 {
     int pos = indexpos(windex);
-    if (pos == list.size())
+    if (pos == tosigned(list.size()))
         return;
 
     if (list.size() == 1 && list[pos] != windex)
@@ -105,7 +107,7 @@ void DefinitionWidget::dictEntryRemoved(int windex)
         data.erase(data.begin() + pos);
     }
 
-    while (pos != list.size())
+    while (pos != tosigned(list.size()))
     {
         --list[pos];
         ++pos;
@@ -114,17 +116,16 @@ void DefinitionWidget::dictEntryRemoved(int windex)
     update();
 }
 
-void DefinitionWidget::dictEntryChanged(int windex, bool studydef)
+void DefinitionWidget::dictEntryChanged(int windex, bool /*studydef*/)
 {
     int pos = indexpos(windex);
-    if (pos != list.size() && list[pos] == windex)
+    if (pos != tosigned(list.size()) && list[pos] == windex)
         data[pos] = dict->studyDefinition(list[pos]) != nullptr ? 1 : 0;
 
     if (list.size() != 1)
         update();
     else if (list.front() == windex)
     {
-
         original = dict->wordDefinitionString(windex, false);
         if (!ui->defEdit->hasFocus())
             ui->defEdit->setPlaceholderText(original);
@@ -134,7 +135,6 @@ void DefinitionWidget::dictEntryChanged(int windex, bool studydef)
             ui->defEdit->setText(def == nullptr ? (!ui->defEdit->hasFocus() ? QString() : original) : def->toQString());
         
         ui->defResetButton->setEnabled(def != nullptr);
-
     }
 }
 
@@ -158,7 +158,7 @@ void DefinitionWidget::on_defEdit_focusChanged(bool activated)
     ui->defSaveButton->setEnabled(!ui->defEdit->text().isEmpty() && ui->defEdit->text() != original);
 }
 
-void DefinitionWidget::on_defSaveButton_clicked(bool checked)
+void DefinitionWidget::on_defSaveButton_clicked(bool /*checked*/)
 {
     if (list.empty() || list.size() != 1)
         return;
@@ -186,7 +186,7 @@ void DefinitionWidget::update()
         //ui->defSaveButton->setEnabled(false);
 
         bool found = false;
-        for (int ix = 0, siz = data.size(); !found && ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(data.size()); !found && ix != siz; ++ix)
             found = data[ix] == 1;
 
         ui->defResetButton->setEnabled(found);

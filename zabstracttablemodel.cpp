@@ -65,7 +65,7 @@ QVariant ZAbstractTableModel::rowData(int row, int role) const
     return data(index(row, 0), role);
 }
 
-bool ZAbstractTableModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool ZAbstractTableModel::canDropMimeData(const QMimeData * /*data*/, Qt::DropAction /*action*/, int row, int column, const QModelIndex &/*parent*/) const
 {
     return (row != -1 && column != -1);
 }
@@ -75,7 +75,7 @@ Qt::DropActions ZAbstractTableModel::supportedDragActions() const
     return 0;
 }
 
-Qt::DropActions ZAbstractTableModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions ZAbstractTableModel::supportedDropActions(bool /*samesource*/, const QMimeData * /*mime*/) const
 {
     return 0;
 }
@@ -85,22 +85,22 @@ int ZAbstractTableModel::statusCount() const
     return 0;
 }
 
-StatusTypes ZAbstractTableModel::statusType(int statusindex) const
+StatusTypes ZAbstractTableModel::statusType(int /*statusindex*/) const
 {
     return StatusTypes::TitleValue;
 }
 
-QString ZAbstractTableModel::statusText(int statusindex, int labelindex, int kanjipos) const
+QString ZAbstractTableModel::statusText(int /*statusindex*/, int /*labelindex*/, int /*kanjipos*/) const
 {
     return QString();
 }
 
-int ZAbstractTableModel::statusSize(int statusindex, int labelindex) const
+int ZAbstractTableModel::statusSize(int /*statusindex*/, int /*labelindex*/) const
 {
     return 0;
 }
 
-bool ZAbstractTableModel::statusAlignRight(int statusindex) const
+bool ZAbstractTableModel::statusAlignRight(int /*statusindex*/) const
 {
     return false;
 }

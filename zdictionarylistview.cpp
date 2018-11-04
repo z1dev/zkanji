@@ -37,6 +37,8 @@
 #include "worddeck.h"
 #include "sites.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -139,7 +141,7 @@ void ZDictionaryListView::indexes(const std::vector<int> &rows, std::vector<int>
     while (dynamic_cast<DictionarySearchFilterProxyModel*>(m) != nullptr)
     {
         DictionarySearchFilterProxyModel *proxy = (DictionarySearchFilterProxyModel*)m;
-        for (int ix = 0, siz = rows.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(rows.size()); ix != siz; ++ix)
             result[ix] = proxy->mapToSource(proxy->index(result[ix], 0)).row();
 
         m = proxy->sourceModel();
@@ -480,9 +482,6 @@ void ZDictionaryListView::setModel(ZAbstractTableModel *newmodel)
         base::setModel(newmodel);
     else
     {
-
-        MultiLineDictionaryItemModel *oldmulti = multiModel();
-
         if (newmodel != nullptr)
         {
             if (base::model() == nullptr)
@@ -740,7 +739,7 @@ void ZDictionaryListView::baseRows(const std::vector<int> &src, std::vector<int>
         if (dynamic_cast<DictionarySearchFilterProxyModel*>(m) != nullptr)
         {
             DictionarySearchFilterProxyModel *proxy = (DictionarySearchFilterProxyModel*)m;
-            for (int ix = 0; ix != result.size(); ++ix)
+            for (int ix = 0, siz = tosigned(result.size()); ix != siz; ++ix)
             {
                 // Result and src might match, but setting the corresponding value of result
                 // directly from src makes sure changed items are not touched twice.
@@ -795,9 +794,9 @@ QMimeData* ZDictionaryListView::dragMimeData() const
     selectedRows(rows);
 
     QModelIndexList indexes;
-    indexes.reserve(rows.size());
+    indexes.reserve(tosigned(rows.size()));
 
-    for (int ix = 0, siz = rows.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(rows.size()); ix != siz; ++ix)
         indexes.push_back(m->index(rows[ix], 0));
 
     return m->mimeData(indexes);
@@ -889,6 +888,8 @@ bool ZDictionaryListView::viewportEvent(QEvent *e)
         kanjitippos = -1;
         kanjitipcell = QModelIndex();
         unsetCursor();
+        break;
+    default:
         break;
     }
 
@@ -1038,7 +1039,7 @@ void ZDictionaryListView::leaveEvent(QEvent *e)
     kanjitipcell = QModelIndex();
 }
 
-bool ZDictionaryListView::requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int selindex)
+bool ZDictionaryListView::requestingContextMenu(const QPoint &pos, const QPoint &globalpos, int /*selindex*/)
 {
     QModelIndex index = indexAt(pos);
     if (!index.isValid())
@@ -1271,14 +1272,14 @@ CommandCategories ZDictionaryListView::activeCategory() const
     if (!isVisibleTo(window()) || dynamic_cast<ZKanjiForm*>(window()) == nullptr)
         return CommandCategories::NoCateg;
 
-    const QWidget *w = parentWidget();
-    while (w != nullptr && dynamic_cast<const ZKanjiWidget*>(w) == nullptr)
-        w = w->parentWidget();
+    const QWidget *pw = parentWidget();
+    while (pw != nullptr && dynamic_cast<const ZKanjiWidget*>(pw) == nullptr)
+        pw = pw->parentWidget();
 
-    if (w == nullptr)
+    if (pw == nullptr)
         return CommandCategories::NoCateg;
 
-    ZKanjiWidget *zw = ((ZKanjiWidget*)w);
+    ZKanjiWidget *zw = ((ZKanjiWidget*)pw);
     if (zw->isActiveWidget())
         return zw->mode() == ViewModes::WordSearch ? CommandCategories::SearchCateg : CommandCategories::GroupCateg;
 
@@ -1372,7 +1373,7 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
     if (ZKanji::lookup_sites.size() != 0 && hasdict && dict != nullptr && (!selstr.isEmpty() || windexes.size() == 1) && coltype != DictColumnTypes::Definition)
     {
         QMenu *sub = popup->addMenu(tr("Online lookup"));
-        for (int ix = 0, siz = ZKanji::lookup_sites.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::lookup_sites.size()); ix != siz; ++ix)
         {
             QAction *a = sub->addAction(ZKanji::lookup_sites[ix].name);
             connect(a, &QAction::triggered, [dict, coltype, selstr, &windexes, ix]() {
@@ -1778,7 +1779,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 
     QPen p = painter->pen();
     painter->setPen(gridColor);
-    if (defix == -1 || defix == e->defs.size() - 1)
+    if (defix == -1 || defix == tosigned(e->defs.size()) - 1)
         painter->drawLine(option.rect.left(), option.rect.bottom(), option.rect.right(), option.rect.bottom());
 
     painter->drawLine(option.rect.right(), option.rect.top(), option.rect.right(), option.rect.bottom());
@@ -1855,7 +1856,7 @@ void DictionaryListDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         QRect imgrect = r.adjusted(3, 3, -3, -3);
         if (imgrect.width() != imgrect.height())
         {
-            int dif = imgrect.height() - imgrect.width();
+            //int dif = imgrect.height() - imgrect.width();
             imgrect.setWidth(imgrect.height());
             imgrect.moveLeft(r.left() + (r.width() - imgrect.width()) / 2);
         }
@@ -2128,7 +2129,7 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
 
     // Definitions.
 
-    for (int ix = 0; ix < e->defs.size(); ++ix)
+    for (int ix = 0, siz = tosigned(e->defs.size()); ix != siz; ++ix)
     {
         if (defix != -1)
             ix = defix;
@@ -2224,7 +2225,7 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
     }
 }
 
-void DictionaryListDelegate::paintKanji(QPainter *painter, const QModelIndex &index, int left, int top, int basey, QRect r) const
+void DictionaryListDelegate::paintKanji(QPainter *painter, const QModelIndex &index, int left, int /*top*/, int basey, QRect r) const
 {
     QString str = index.data(Qt::DisplayRole).toString();
     if (owner()->isTextSelecting() && owner()->textSelectionIndex() == index)

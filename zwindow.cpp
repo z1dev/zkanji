@@ -202,7 +202,7 @@ void ZWindow::setBorderStyle(BorderStyle style)
     }
 }
 
-QRect ZWindow::resizing(int side, QRect r)
+QRect ZWindow::resizing(int /*side*/, QRect r)
 {
     return r;
 }
@@ -412,7 +412,7 @@ bool ZWindow::event(QEvent *e)
         DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &val, sizeof(DWMNCRENDERINGPOLICY));
 
         MARGINS m = { -1 };
-        HRESULT hr = DwmExtendFrameIntoClientArea(hwnd, &m);
+        /*HRESULT hr =*/ DwmExtendFrameIntoClientArea(hwnd, &m);
     }
 #endif
 
@@ -453,6 +453,8 @@ bool ZWindow::eventFilter(QObject *obj, QEvent *e)
             if (!grabbing || me->button() != Qt::LeftButton)
                 break;
             grabbing = false;
+            break;
+        default:
             break;
         }
     }

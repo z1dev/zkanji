@@ -169,7 +169,7 @@ public:
     bool error() const;
 
     // File size of the opened file.
-    int size() const;
+    qint64 size() const;
     // File position in the opened file.
     int pos() const;
     // Reads the next line into result and returns true if a line was read. Sets result to an

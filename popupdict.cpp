@@ -89,7 +89,7 @@ void PopupDictionary::hidePopup()
         instance->hide();
 }
 
-PopupDictionary* const PopupDictionary::getInstance()
+PopupDictionary* PopupDictionary::getInstance()
 {
     return instance;
 }
@@ -216,19 +216,19 @@ void PopupDictionary::closeEvent(QCloseEvent *e)
     base::closeEvent(e);
 }
 
-void PopupDictionary::on_pinButton_clicked(bool checked)
+void PopupDictionary::on_pinButton_clicked(bool /*checked*/)
 {
     if (!Settings::popup.autohide)
         close();
 }
 
-void PopupDictionary::on_floatButton_clicked(bool checked)
+void PopupDictionary::on_floatButton_clicked(bool /*checked*/)
 {
     FormStates::popupdict.floating = !FormStates::popupdict.floating;
     floatWindow(FormStates::popupdict.floating);
 }
 
-void PopupDictionary::on_dictionary_wordDoubleClicked(int windex, int dindex)
+void PopupDictionary::on_dictionary_wordDoubleClicked(int windex, int /*dindex*/)
 {
     gUI->wordToDestSelect(ZKanji::dictionary(dictindex), windex);
 }

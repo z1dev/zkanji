@@ -26,6 +26,21 @@
 #include "formstates.h"
 
 
+#ifndef NDEBUG
+#ifndef _DEBUG
+#define NDEBUG
+#define NDEBUG_ADDED_SEPARATELY
+#endif
+#endif
+
+#include <cassert>
+
+#ifdef NDEBUG_ADDED_SEPARATELY
+#undef NDEBUG_ADDED_SEPARATELY
+#undef NDEBUG
+#endif
+
+
 //-------------------------------------------------------------
 
 
@@ -39,10 +54,7 @@ StatsThread::StatsThread(DictionaryStatsForm *owner, Dictionary *dict) : base(),
 
 StatsThread::~StatsThread()
 {
-#ifdef _DEBUG
-    if (!done)
-        throw "Deleting thread during work.";
-#endif
+    assert(done);
 }
 
 void StatsThread::run()
@@ -97,7 +109,7 @@ bool StatsThread::calculateEntries()
 
         if (ea->defs.size() != eb->defs.size())
             return ea->defs.size() < eb->defs.size();
-        for (int ix = 0, siz = ea->defs.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ea->defs.size()); ix != siz; ++ix)
         {
             int res = ea->defs[ix].def.compare(eb->defs[ix].def);
             if (res != 0)
@@ -110,7 +122,7 @@ bool StatsThread::calculateEntries()
         return false;
 
     valentry = 1;
-    for (int ix = 1, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 1, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         const auto &defa = dict->wordEntry(list[ix - 1])->defs;
         const auto &defb = dict->wordEntry(list[ix])->defs;
@@ -119,7 +131,7 @@ bool StatsThread::calculateEntries()
             ++valentry;
         else
         {
-            for (int iy = 0, siz = defa.size(); iy != siz; ++iy)
+            for (int iy = 0, sizy = tosigned(defa.size()); iy != sizy; ++iy)
             {
                 if (defa[iy].def != defb[iy].def)
                 {
@@ -148,7 +160,7 @@ bool StatsThread::calculateDefinitions()
     for (int ix = 0, siz = dict->entryCount(); ix != siz; ++ix)
     {
         WordEntry *e = dict->wordEntry(ix);
-        for (int iy = 0, siz = e->defs.size(); iy != siz; ++iy)
+        for (int iy = 0, sizy = tosigned(e->defs.size()); iy != sizy; ++iy)
             pairs.push_back(std::make_pair(ix, iy));
     }
 
@@ -172,7 +184,7 @@ bool StatsThread::calculateDefinitions()
         return false;
 
     valdef = 1;
-    for (int ix = 1, siz = pairs.size(); ix != siz; ++ix)
+    for (int ix = 1, siz = tosigned(pairs.size()); ix != siz; ++ix)
     {
         if (dict->wordEntry(pairs[ix - 1].first)->defs[pairs[ix - 1].second].def != dict->wordEntry(pairs[ix].first)->defs[pairs[ix].second].def)
             ++valdef;
@@ -206,10 +218,10 @@ bool StatsThread::calculateKanji()
         if (checkTerminate())
             return false;
 
-        for (int ix = 0, siz = cat->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(cat->size()); ix != siz; ++ix)
         {
             KanjiGroup *grp = cat->items(ix);
-            for (int iy = 0, siy = grp->size(); iy != siy; ++iy)
+            for (int iy = 0, siy = tosigned(grp->size()); iy != siy; ++iy)
             {
                 if ((iy % 10) == 0 && checkTerminate())
                     return false;
@@ -309,7 +321,7 @@ DictionaryStatsForm::~DictionaryStatsForm()
     delete ui;
 }
 
-void DictionaryStatsForm::on_dictCBox_currentIndexChanged(int newindex)
+void DictionaryStatsForm::on_dictCBox_currentIndexChanged(int /*newindex*/)
 {
     updateData();
 }
@@ -395,7 +407,7 @@ void DictionaryStatsForm::updateData()
 
     ui->kanjiNumLabel->setText(QString::number(ZKanji::kanjis.size()));
     int cnt = 0;
-    for (int ix = 0, siz = ZKanji::kanjis.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(ZKanji::kanjis.size()); ix != siz; ++ix)
         if (d->hasKanjiMeaning(ix))
             ++cnt;
     ui->kanjiDefLabel->setText(QString::number(cnt));
@@ -403,7 +415,7 @@ void DictionaryStatsForm::updateData()
     ui->entryNumLabel->setText(QString::number(d->entryCount()));
     cnt = 0;
     for (int ix = 0, siz = d->entryCount(); ix != siz; ++ix)
-        cnt += d->wordEntry(ix)->defs.size();
+        cnt += tosigned(d->wordEntry(ix)->defs.size());
     ui->defNumLabel->setText(QString::number(cnt));
 
     cnt = 0;
@@ -424,7 +436,7 @@ void DictionaryStatsForm::updateData()
 
     cnt = 0;
     cnt2 = 0;
-    for (int ix = 0, siz = ZKanji::kanjis.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(ZKanji::kanjis.size()); ix != siz; ++ix)
     {
         if (ZKanji::kanjis[ix]->jouyou < 7)
             ++cnt;

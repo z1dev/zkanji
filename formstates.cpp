@@ -26,6 +26,7 @@
 #include "generalsettings.h"
 #include "dialogs.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -64,7 +65,7 @@ namespace FormStates
     {
         return data.mode == (SearchMode)1 && !data.multi && !data.filter && data.showex && data.exmode == (ExampleDisplay)0 &&
                 !data.frombefore && data.fromafter && !data.fromstrict && !data.frominfl && data.toafter && !data.tostrict &&
-                data.conditionex == (Inclusion)0 && data.conditiongroup == (Inclusion)0 && data.conditions.empty() && 
+                data.conditionex == (Inclusion)0 && data.conditiongroup == (Inclusion)0 && data.conditions.empty() &&
                 (!data.savecolumndata || (data.sortcolumn == -1 && emptyState(data.tabledata)));
     }
 
@@ -123,10 +124,10 @@ namespace FormStates
     void loadXMLSettings(SplitterFormData &data, QXmlStreamReader &reader)
     {
         bool ok = false;
-        int x;
-        int y;
-        int sx;
-        int sy;
+        //int x;
+        //int y;
+        //int sx;
+        //int sy;
         int w;
         int h;
         //x = reader.attributes().value("x").toInt(&ok);
@@ -139,14 +140,15 @@ namespace FormStates
         //if (ok)
 
         //if (Settings::general.savewinpos)
-            w = reader.attributes().value("width").toInt(&ok);
-        if (ok)
-            h = reader.attributes().value("height").toInt(&ok);
+        w = reader.attributes().value("width").toInt(&ok);
 
         if (ok)
         {
+            h = reader.attributes().value("height").toInt(&ok);
+
             //data.pos = QPoint(x, y);
             //data.screenpos = QPoint(sx, sy);
+
             data.siz = QSize(w, h);
         }
         else
@@ -200,7 +202,7 @@ namespace FormStates
             data.kanjinum = "3";
 
         bool ok = false;
-        int val;
+        int val = 0;
         if (reader.attributes().hasAttribute("kanalength"))
         {
             val = reader.attributes().value("kanalength").toInt(&ok);
@@ -298,7 +300,7 @@ namespace FormStates
             if (data.conditiongroup != Inclusion::Ignore)
                 writer.writeAttribute("ingroup", data.conditiongroup == Inclusion::Include ? Include : data.conditiongroup == Inclusion::Exclude ? Exclude : Ignore);
 
-            for (int ix = 0, siz = data.conditions.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.conditions.size()); ix != siz; ++ix)
             {
                 if (data.conditions[ix].second == Inclusion::Ignore)
                     continue;
@@ -341,7 +343,7 @@ namespace FormStates
 
         data.multi = reader.attributes().value("multiline") == True;
 
-        bool usefilters = false;
+        //bool usefilters = false;
         data.filter = reader.attributes().value("filtering") == True;
 
         while (reader.readNextStartElement())
@@ -354,7 +356,7 @@ namespace FormStates
                     data.exmode = ExampleDisplay::Both;
                 else if (ref == "to")
                     data.exmode = ExampleDisplay::Translated;
-                else 
+                else
                     data.exmode = ExampleDisplay::Japanese;
 
                 reader.skipCurrentElement();
@@ -511,7 +513,7 @@ namespace FormStates
 
         if (data.speed != 3)
             writer.writeAttribute("speed", QString::number(data.speed));
-        
+
         if (data.toph != -1)
             writer.writeAttribute("topheight", QString::number(data.toph));
         if (data.dicth != -1)
@@ -677,7 +679,7 @@ namespace FormStates
         if (reader.attributes().hasAttribute("kanjiindex"))
         {
             val = reader.attributes().value("kanjiindex").toInt(&ok);
-            if (val < -1 - ZKanji::elements()->size() || val >= ZKanji::kanjis.size())
+            if (val < -1 - tosigned(ZKanji::elements()->size()) || val >= tosigned(ZKanji::kanjis.size()))
                 ok = false;
             if (ok)
                 data.kindex = val;
@@ -735,11 +737,11 @@ namespace FormStates
         {
             writer.writeEmptyElement("Queue");
             QString str;
-            for (int ix = 0, siz = data.queuesizes.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.queuesizes.size()); ix != siz; ++ix)
                 str.append(QString::number(data.queuesizes[ix]) % ",");
             writer.writeAttribute("sizes", str.left(str.size() - 1));
             str = QString();
-            for (int ix = 0, siz = data.queuecols.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.queuecols.size()); ix != siz; ++ix)
                 str.append(QString::number(data.queuecols[ix]) % ",");
             writer.writeAttribute("shown", str.left(str.size() - 1));
         }
@@ -748,11 +750,11 @@ namespace FormStates
         {
             writer.writeEmptyElement("Study");
             QString str;
-            for (int ix = 0, siz = data.studysizes.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.studysizes.size()); ix != siz; ++ix)
                 str.append(QString::number(data.studysizes[ix]) % ",");
             writer.writeAttribute("sizes", str.left(str.size() - 1));
             str = QString();
-            for (int ix = 0, siz = data.studycols.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.studycols.size()); ix != siz; ++ix)
                 str.append(QString::number(data.studycols[ix]) % ",");
             writer.writeAttribute("shown", str.left(str.size() - 1));
         }
@@ -761,11 +763,11 @@ namespace FormStates
         {
             writer.writeEmptyElement("LastTest");
             QString str;
-            for (int ix = 0, siz = data.testedsizes.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.testedsizes.size()); ix != siz; ++ix)
                 str.append(QString::number(data.testedsizes[ix]) % ",");
             writer.writeAttribute("sizes", str.left(str.size() - 1));
             str = QString();
-            for (int ix = 0, siz = data.testedcols.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(data.testedcols.size()); ix != siz; ++ix)
                 str.append(QString::number(data.testedcols[ix]) % ",");
             writer.writeAttribute("shown", str.left(str.size() - 1));
         }
@@ -817,23 +819,23 @@ namespace FormStates
                     QStringRef elemname = reader.name();
                     if (elemname == "Queue" || elemname == "Study" || elemname == "LastTest")
                     {
-                        std::vector<int> &sizes = elemname == "Queue" ? data.queuesizes : elemname == "Study" ? data.studysizes : data.testedsizes;
+                        std::vector<int> &colsizes = elemname == "Queue" ? data.queuesizes : elemname == "Study" ? data.studysizes : data.testedsizes;
                         std::vector<char> &cols = elemname == "Queue" ? data.queuecols : elemname == "Study" ? data.studycols : data.testedcols;
 
                         QVector<QStringRef> refs = reader.attributes().value("sizes").split(',');
-                        sizes.clear();
-                        sizes.resize((elemname == "Queue" ? StudyListModel::queueColCount() : elemname == "Study" ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
-                        for (int ix = 0, siz = std::min<int>(refs.size(), sizes.size()); ix != siz; ++ix)
+                        colsizes.clear();
+                        colsizes.resize((elemname == "Queue" ? StudyListModel::queueColCount() : elemname == "Study" ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 1, -1);
+                        for (int ix = 0, siz = std::min<int>(refs.size(), tosigned(colsizes.size())); ix != siz; ++ix)
                         {
                             val = refs.at(ix).toInt(&ok);
                             if (ok && val >= 0 && val < 9999)
-                                sizes[ix] = val;
+                                colsizes[ix] = val;
                         }
 
                         refs = reader.attributes().value("shown").split(',');
                         cols.clear();
                         cols.resize((elemname == "Queue" ? StudyListModel::queueColCount() : elemname == "Study" ? StudyListModel::studiedColCount() : StudyListModel::testedColCount()) - 3, 1);
-                        for (int ix = 0, siz = std::min<int>(refs.size(), cols.size()); ix != siz; ++ix)
+                        for (int ix = 0, siz = std::min<int>(refs.size(), tosigned(cols.size())); ix != siz; ++ix)
                         {
                             val = refs.at(ix).toInt(&ok);
                             if (ok && val == 0)
@@ -1025,7 +1027,7 @@ namespace FormStates
     void saveXMLSettings(const KanarPracticeData &data, QXmlStreamWriter &writer)
     {
         writer.writeStartElement("Hiragana");
-        for (int ix = 0, siz = data.hirause.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(data.hirause.size()); ix != siz; ++ix)
         {
             if (data.hirause[ix] == 1 && (ix == 0 || data.hirause[ix - 1] != 1))
             {
@@ -1045,7 +1047,7 @@ namespace FormStates
         writer.writeEndElement(); /* Hiragana */
 
         writer.writeStartElement("Katakana");
-        for (int ix = 0, siz = data.katause.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(data.katause.size()); ix != siz; ++ix)
         {
             if (data.katause[ix] == 1 && (ix == 0 || data.katause[ix - 1] != 1))
             {
@@ -1082,9 +1084,8 @@ namespace FormStates
                 {
                     if (reader.name() == "On")
                     {
-                        int c;
-                        int v;
-                        v = reader.attributes().value("v").toInt(&ok);
+                        int c = 0;
+                        int v = reader.attributes().value("v").toInt(&ok);
                         if (ok)
                             c = reader.attributes().value("c").toInt(&ok);
                         ok = ok && (v >= 0 && v < (int)KanaSounds::Count && c > 0 && v + c <= (int)KanaSounds::Count);
@@ -1124,7 +1125,7 @@ namespace FormStates
         data.showgrid = !reader.attributes().hasAttribute("grid") || reader.attributes().value("grid").toString() != False;
         data.allresults = !reader.attributes().hasAttribute("allresults") || reader.attributes().value("allresults").toString() != False;
 
-        bool ok;
+        bool ok = false;
         int val;
         if (reader.attributes().hasAttribute("x"))
         {
@@ -1377,7 +1378,7 @@ namespace FormStates
     void saveDialogMaximizedAndSize(QString sizename, QMainWindow *window)
     {
         FormSizeStateData &dat = FormStates::maxsizes[sizename];
-        dat.siz = window->isMaximized() ? window->normalGeometry().size() :  window->size();
+        dat.siz = window->isMaximized() ? window->normalGeometry().size() : window->size();
         dat.maximized = window->isMaximized();
     }
 
@@ -1413,23 +1414,25 @@ namespace FormStates
         bool ok = false;
         //if (Settings::general.savewinpos)
         //{
-            int val;
-            if (reader.attributes().hasAttribute("width"))
-            {
-                val = reader.attributes().value("width").toInt(&ok);
-                if (val < 0 || val > 999999)
-                    ok = false;
-                if (ok)
-                    size.setWidth(val);
-            }
-            if (ok && reader.attributes().hasAttribute("height"))
-            {
-                val = reader.attributes().value("height").toInt(&ok);
-                if (val < 0 || val > 999999)
-                    ok = false;
-                if (ok)
-                    size.setHeight(val);
-            }
+
+        int val;
+        if (reader.attributes().hasAttribute("width"))
+        {
+            val = reader.attributes().value("width").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                size.setWidth(val);
+        }
+        if (ok && reader.attributes().hasAttribute("height"))
+        {
+            val = reader.attributes().value("height").toInt(&ok);
+            if (val < 0 || val > 999999)
+                ok = false;
+            if (ok)
+                size.setHeight(val);
+        }
+
         //}
         if (!ok)
             size = QSize();

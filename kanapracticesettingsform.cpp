@@ -17,6 +17,8 @@
 #include "kanareadingpracticeform.h"
 #include "kanawritingpracticeform.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -199,7 +201,7 @@ void KanaPracticeSettingsForm::boxToggled(int index)
     }
 
     QCheckBox *ch = boxes[index];
-    int pos = 0;
+    //int pos = 0;
     int sum = 0;
     for (int ix = 0, siz = sizeof(KanaGroupSizes) / sizeof(int); ix != siz; ++ix)
     {
@@ -224,11 +226,11 @@ void KanaPracticeSettingsForm::on_checkButton_clicked()
     std::vector<QCheckBox*> &boxes = ui->hiraButton->isChecked() ? hiraboxes : kataboxes;
 
     bool unchecked = false;
-    for (int ix = 0, siz = vec.size(); !unchecked && ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(vec.size()); !unchecked && ix != siz; ++ix)
         if (vec[ix] == 0)
             unchecked = true;
 
-    for (int ix = 0, siz = boxes.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(boxes.size()); ix != siz; ++ix)
     {
         //vec[ix] = unchecked ? 1 : 0;
         boxes[ix]->setChecked(unchecked);
@@ -257,24 +259,24 @@ void KanaPracticeSettingsForm::on_test2Button_clicked()
     });
 }
 
-void KanaPracticeSettingsForm::saveState(KanarPracticeData &data)
+void KanaPracticeSettingsForm::saveState(KanarPracticeData &dat)
 {
-    data.hirause = hirause;
-    data.katause = katause;
+    dat.hirause = hirause;
+    dat.katause = katause;
 }
 
-void KanaPracticeSettingsForm::restoreState(const KanarPracticeData &data)
+void KanaPracticeSettingsForm::restoreState(const KanarPracticeData &dat)
 {
     updating = true;
-    hirause = data.hirause;
-    katause = data.katause;
+    hirause = dat.hirause;
+    katause = dat.katause;
     hirause.resize((int)KanaSounds::Count, 0);
     katause.resize((int)KanaSounds::Count, 0);
 
     hiracheckcnt = 0;
     katacheckcnt = 0;
 
-    for (int ix = 0, siz = hirause.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(hirause.size()); ix != siz; ++ix)
     {
         if (hirause[ix] == 1)
         {
@@ -284,7 +286,7 @@ void KanaPracticeSettingsForm::restoreState(const KanarPracticeData &data)
         else
             hiraboxes[ix]->setChecked(false);
     }
-    for (int ix = 0, siz = katause.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(katause.size()) ; ix != siz; ++ix)
     {
         if (katause[ix] == 1)
         {

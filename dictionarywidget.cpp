@@ -31,6 +31,8 @@
 #include "popupdict.h"
 #include "popupsettings.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -42,8 +44,8 @@ QStringListModel DictionaryWidget::ensearches;
 
 
 DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::DictionaryWidget),
-        dict(ZKanji::dictionaryCount() != 0 ? ZKanji::dictionary(0) : nullptr), commandmap(nullptr), model(nullptr), /*browsemodel(nullptr), grp(nullptr), filtermodel(nullptr),*/
-        updatepending(false), updateforced(true), savecolumndata(true), listmode(DictSearch), mode(SearchMode::Japanese), browseorder(Settings::dictionary.browseorder)
+dict(ZKanji::dictionaryCount() != 0 ? ZKanji::dictionary(0) : nullptr), model(nullptr), commandmap(nullptr), /*browsemodel(nullptr), grp(nullptr), filtermodel(nullptr),*/
+updatepending(false), updateforced(true), savecolumndata(true), listmode(DictSearch), mode(SearchMode::Japanese), browseorder(Settings::dictionary.browseorder)
 {
     ui->setupUi(this);
 
@@ -79,7 +81,7 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
 
     connect((ZLineEdit*)ui->jpCBox->lineEdit(), &ZLineEdit::textChanged, this, &DictionaryWidget::searchEdited);
     connect((ZLineEdit*)ui->enCBox->lineEdit(), &ZLineEdit::textChanged, this, &DictionaryWidget::searchEdited);
-    
+
     connect((ZLineEdit*)ui->jpCBox->lineEdit(), &ZLineEdit::textEdited, this, &DictionaryWidget::updateWords);
     connect((ZLineEdit*)ui->enCBox->lineEdit(), &ZLineEdit::textEdited, this, &DictionaryWidget::updateWords);
     connect(ui->browseEdit, &ZLineEdit::textEdited, this, &DictionaryWidget::updateWords);
@@ -113,7 +115,7 @@ DictionaryWidget::DictionaryWidget(QWidget *parent) : base(parent), ui(new Ui::D
     installRecognizer(ui->recognizeButton, ui->jpCBox);
 
     updateSearchMode();
-    
+
     qApp->postEvent(this, new StartEvent());
 
     if (dynamic_cast<ZKanjiForm*>(window()) != nullptr || (dynamic_cast<PopupDictionary*>(window()) != nullptr && Settings::popup.statusbar))
@@ -129,119 +131,120 @@ DictionaryWidget::~DictionaryWidget()
 
 void DictionaryWidget::saveXMLSettings(QXmlStreamWriter &writer) const
 {
-    DictionaryWidgetData data;
-    saveState(data);
-    FormStates::saveXMLSettings(data, writer);
+    DictionaryWidgetData dat;
+    saveState(dat);
+    FormStates::saveXMLSettings(dat, writer);
 }
 
 void DictionaryWidget::loadXMLSettings(QXmlStreamReader &reader)
 {
-    DictionaryWidgetData data;
-    FormStates::loadXMLSettings(data, reader);
-    restoreState(data);
+    DictionaryWidgetData dat;
+    FormStates::loadXMLSettings(dat, reader);
+    restoreState(dat);
 }
 
-void DictionaryWidget::saveState(DictionaryWidgetData &data) const
+void DictionaryWidget::saveState(DictionaryWidgetData &dat) const
 {
-    data.mode = mode;
-    data.multi = ui->multilineButton->isVisibleTo(ui->multilineButton->parentWidget()) && ui->multilineButton->isChecked();
-    data.filter = ui->filterWidget->isVisibleTo(ui->filterWidget->parentWidget()) && ui->filterButton->isChecked();
-    data.showex = ui->examplesButton->isVisibleTo(this) && ui->examplesButton->isChecked();
-    data.exmode = ui->examplesButton->isVisibleTo(this) ? ui->examples->displayed() : (ExampleDisplay)0;
+    dat.mode = mode;
+    dat.multi = ui->multilineButton->isVisibleTo(ui->multilineButton->parentWidget()) && ui->multilineButton->isChecked();
+    dat.filter = ui->filterWidget->isVisibleTo(ui->filterWidget->parentWidget()) && ui->filterButton->isChecked();
+    dat.showex = ui->examplesButton->isVisibleTo(this) && ui->examplesButton->isChecked();
+    dat.exmode = ui->examplesButton->isVisibleTo(this) ? ui->examples->displayed() : (ExampleDisplay)0;
 
-    data.frombefore = ui->jpBeforeButton->isChecked();
-    data.fromafter = ui->jpAfterButton->isChecked();
-    data.fromstrict = ui->jpStrictButton->isChecked();
-    data.frominfl = inflButtonVisible() && ui->inflButton->isChecked();
+    dat.frombefore = ui->jpBeforeButton->isChecked();
+    dat.fromafter = ui->jpAfterButton->isChecked();
+    dat.fromstrict = ui->jpStrictButton->isChecked();
+    dat.frominfl = inflButtonVisible() && ui->inflButton->isChecked();
 
-    data.toafter = ui->enAfterButton->isChecked();
-    data.tostrict = ui->enStrictButton->isChecked();
+    dat.toafter = ui->enAfterButton->isChecked();
+    dat.tostrict = ui->enStrictButton->isChecked();
 
-    data.conditionex = Inclusion::Ignore;
-    data.conditiongroup = Inclusion::Ignore;
+    dat.conditionex = Inclusion::Ignore;
+    dat.conditiongroup = Inclusion::Ignore;
     if (ui->filterWidget->isVisibleTo(ui->filterWidget->parentWidget()) && !conditionsEmpty())
     {
-        data.conditionex = conditions->examples;
-        data.conditiongroup = conditions->groups;
+        dat.conditionex = conditions->examples;
+        dat.conditiongroup = conditions->groups;
     }
 
-    data.conditions.clear();
+    dat.conditions.clear();
 
-    for (int ix = 0, siz = conditions->inclusions.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(conditions->inclusions.size()); ix != siz; ++ix)
     {
         if (conditions->inclusions[ix] == Inclusion::Ignore)
             continue;
-        data.conditions.push_back(std::make_pair(ZKanji::wordfilters().items(ix).name, conditions->inclusions[ix]));
+        dat.conditions.push_back(std::make_pair(ZKanji::wordfilters().items(ix).name, conditions->inclusions[ix]));
     }
 
-    data.savecolumndata = savecolumndata;
+    dat.savecolumndata = savecolumndata;
 
     if (ui->wordsTable->horizontalHeader()->isSortIndicatorShown())
     {
-        data.sortcolumn = ui->wordsTable->horizontalHeader()->sortIndicatorSection();
-        data.sortorder = ui->wordsTable->horizontalHeader()->sortIndicatorOrder();
+        dat.sortcolumn = ui->wordsTable->horizontalHeader()->sortIndicatorSection();
+        dat.sortorder = ui->wordsTable->horizontalHeader()->sortIndicatorOrder();
     }
     else
-        data.sortcolumn = -1;
+        dat.sortcolumn = -1;
 
-    ui->wordsTable->saveColumnState(data.tabledata);
+    ui->wordsTable->saveColumnState(dat.tabledata);
 }
 
-void DictionaryWidget::restoreState(const DictionaryWidgetData &data)
+void DictionaryWidget::restoreState(const DictionaryWidgetData &dat)
 {
-    if (data.mode == SearchMode::Browse)
+    if (dat.mode == SearchMode::Browse)
         ui->browseButton->setChecked(true);
-    else if (data.mode == SearchMode::Japanese)
+    else if (dat.mode == SearchMode::Japanese)
         ui->jpButton->setChecked(true);
-    else if (data.mode == SearchMode::Definition)
+    else if (dat.mode == SearchMode::Definition)
         ui->enButton->setChecked(true);
     updateSearchMode();
 
     if (ui->multilineButton->isVisibleTo(ui->multilineButton->parentWidget()))
     {
-        ui->multilineButton->setChecked(data.multi);
+        ui->multilineButton->setChecked(dat.multi);
         updateMultiline();
     }
 
     bool usefilters = false;
     if (ui->filterWidget->isVisibleTo(ui->filterWidget->parentWidget()))
-        usefilters = data.filter;
+        usefilters = dat.filter;
 
     if (ui->examplesButton->isVisibleTo(this))
     {
-        ui->examplesButton->setChecked(data.showex);
+        ui->examplesButton->setChecked(dat.showex);
         emit ui->examplesButton->clicked(ui->examplesButton->isChecked());
-        ui->examples->setDisplayed(data.exmode);
+        ui->examples->setDisplayed(dat.exmode);
     }
 
-    ui->jpBeforeButton->setChecked(data.frombefore);
-    ui->jpAfterButton->setChecked(data.fromafter);
-    ui->jpStrictButton->setChecked(data.fromstrict);
+    ui->jpBeforeButton->setChecked(dat.frombefore);
+    ui->jpAfterButton->setChecked(dat.fromafter);
+    ui->jpStrictButton->setChecked(dat.fromstrict);
     if (inflButtonVisible())
-        ui->inflButton->setChecked(data.frominfl);
+        ui->inflButton->setChecked(dat.frominfl);
 
-    ui->enAfterButton->setChecked(data.toafter);
-    ui->enStrictButton->setChecked(data.tostrict);
+    ui->enAfterButton->setChecked(dat.toafter);
+    ui->enStrictButton->setChecked(dat.tostrict);
 
-    conditions->examples = data.conditionex;
-    conditions->groups = data.conditiongroup;
+    conditions->examples = dat.conditionex;
+    conditions->groups = dat.conditiongroup;
 
-    for (int ix = 0, siz = data.conditions.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(dat.conditions.size()); ix != siz; ++ix)
     {
-        int filterix = ZKanji::wordfilters().itemIndex(data.conditions[ix].first);
+        int filterix = ZKanji::wordfilters().itemIndex(dat.conditions[ix].first);
         if (filterix != -1)
         {
-            while (conditions->inclusions.size() != filterix + 1)
+            int csiz = tosigned(conditions->inclusions.size());
+            while (csiz++ != filterix + 1)
                 conditions->inclusions.push_back(Inclusion::Ignore);
-            conditions->inclusions[filterix] = data.conditions[ix].second;
+            conditions->inclusions[filterix] = dat.conditions[ix].second;
         }
     }
     ui->filterButton->setChecked(usefilters);
 
     if (savecolumndata)
     {
-        ui->wordsTable->horizontalHeader()->setSortIndicator(data.sortcolumn, data.sortorder);
-        ui->wordsTable->restoreColumnState(data.tabledata, model);
+        ui->wordsTable->horizontalHeader()->setSortIndicator(dat.sortcolumn, dat.sortorder);
+        ui->wordsTable->restoreColumnState(dat.tabledata, model);
     }
 
     updateWords();
@@ -828,7 +831,7 @@ void DictionaryWidget::unfilteredRows(const std::vector<int> &filteredrows, std:
         return;
     }
     result.resize(filteredrows.size());
-    for (int ix = 0, siz = filteredrows.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(filteredrows.size()); ix != siz; ++ix)
         result[ix] = filtermodel->mapToSource(filtermodel->index(filteredrows[ix], 0)).row();
 }
 
@@ -942,10 +945,11 @@ void DictionaryWidget::setWordFiltersVisible(bool shown)
 
 void DictionaryWidget::turnOnWordFilter(int index, Inclusion inc)
 {
-    if (index < 0 || index >= ZKanji::wordfilters().size())
+    if (index < 0 || index >= tosigned(ZKanji::wordfilters().size()))
         return;
 
-    while (conditions->inclusions.size() <= index)
+    int csiz = tosigned(conditions->inclusions.size());
+    while (csiz++ <= index)
         conditions->inclusions.push_back(Inclusion::Ignore);
     conditions->inclusions[index] = inc;
 
@@ -991,7 +995,7 @@ void DictionaryWidget::browseTo(Dictionary *d, int windex)
     WordEntry *e = dict->wordEntry(windex);
     QString kana = e->kana.toQString();
 
-    int browserow;
+    int browserow = -1;
 
     if (mode == SearchMode::Japanese)
     {
@@ -1185,7 +1189,7 @@ void DictionaryWidget::exampleWordSelected(ushort block, uchar line, int wordpos
     ui->examples->unlock(dictionary(), ix, wordpos, wordform);
 }
 
-void DictionaryWidget::showFilterContext(const QPoint &pos)
+void DictionaryWidget::showFilterContext(const QPoint &/*pos*/)
 {
     if (!ui->filterButton->isChecked())
     {
@@ -1201,7 +1205,7 @@ void DictionaryWidget::showFilterContext(const QPoint &pos)
 
 }
 
-void DictionaryWidget::filterInclude(int index, Inclusion oldinclude)
+void DictionaryWidget::filterInclude(int /*index*/, Inclusion /*oldinclude*/)
 {
     if (ui->filterButton->isChecked())
         updateWords();
@@ -1220,7 +1224,7 @@ void DictionaryWidget::filterErased(int index)
         throw "Conditions not initialized. Shouldn't happen, unless filters can change after program shutdown.";
 #endif
 
-    if (conditions->inclusions.size() <= index)
+    if (index < 0 || index >= tosigned(conditions->inclusions.size()))
         return;
 
     bool changed = conditions->inclusions[index] != Inclusion::Ignore && ui->filterButton->isChecked();
@@ -1254,7 +1258,7 @@ void DictionaryWidget::filterChanged(int index)
         throw "Conditions not initialized. Shouldn't happen, unless filters can change after program shutdown.";
 #endif
 
-    if (conditions->inclusions.size() <= index || conditions->inclusions[index] == Inclusion::Ignore || !ui->filterButton->isChecked())
+    if (index < 0 || index >= tosigned(conditions->inclusions.size())  || conditions->inclusions[index] == Inclusion::Ignore || !ui->filterButton->isChecked())
         return;
 
     if (listmode == DictSearch)
@@ -1284,21 +1288,21 @@ void DictionaryWidget::filterMoved(int index, int to)
 #endif
 
     std::vector<Inclusion> &inc = conditions->inclusions;
-    if (index >= inc.size() && to >= inc.size())
+    if ((index < 0 || index >= tosigned(inc.size())) && (to < 0 || to >= tosigned(inc.size())))
         return;
 
     if (to > index)
         --to;
 
-    Inclusion moved = index >= inc.size() ? Inclusion::Ignore : inc[index];
-    if (index < inc.size())
+    Inclusion moved = index >= tosigned(inc.size()) ? Inclusion::Ignore : inc[index];
+    if (index < tosigned(inc.size()))
         inc.erase(inc.begin() + index);
 
-    if (to >= inc.size())
+    if (to >= tosigned(inc.size()))
     {
         if (moved == Inclusion::Ignore)
             return;
-        while (inc.size() <= to)
+        while (tosigned(inc.size()) <= to)
             inc.push_back(Inclusion::Ignore);
         inc[to] = moved;
         return;
@@ -1311,17 +1315,17 @@ void DictionaryWidget::filterMoved(int index, int to)
         inc.pop_back();
 }
 
-void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *dict, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes)
+void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictionary *d, DictColumnTypes coltype, QString selstr, const std::vector<int> &windexes, const std::vector<ushort> &kindexes)
 {
-    if (dict == nullptr || (!ui->jpButton->isVisibleTo(this) && !ui->browseButton->isVisibleTo(this) && searchMode() == SearchMode::Definition))
+    if (d == nullptr || (!ui->jpButton->isVisibleTo(this) && !ui->browseButton->isVisibleTo(this) && searchMode() == SearchMode::Definition))
     {
-        emit customizeContextMenu(menu, insertpos, dict, coltype, selstr, windexes, kindexes);
+        emit customizeContextMenu(menu, insertpos, d, coltype, selstr, windexes, kindexes);
         return;
     }
 
     if (!selstr.isEmpty() || (windexes.size() == 1 && (ui->jpButton->isVisibleTo(this) || ui->browseButton->isVisibleTo(this)) && (coltype == DictColumnTypes::Kanji || coltype == DictColumnTypes::Kana)))
     {
-        QString str = !selstr.isEmpty() ? selstr : coltype == DictColumnTypes::Kanji ? dict->wordEntry(windexes[0])->kanji.toQString() : dict->wordEntry(windexes[0])->kana.toQString();
+        QString str = !selstr.isEmpty() ? selstr : coltype == DictColumnTypes::Kanji ? d->wordEntry(windexes[0])->kanji.toQString() : d->wordEntry(windexes[0])->kana.toQString();
 
         bool haskanji = false;
         for (int ix = 0, siz = str.size(); !haskanji && ix != siz; ++ix)
@@ -1355,7 +1359,7 @@ void DictionaryWidget::showContextMenu(QMenu *menu, QAction *insertpos, Dictiona
         }
     }
 
-    emit customizeContextMenu(menu, insertpos, dict, coltype, selstr, windexes, kindexes);
+    emit customizeContextMenu(menu, insertpos, d, coltype, selstr, windexes, kindexes);
 }
 
 void DictionaryWidget::searchEdited()
@@ -1423,7 +1427,7 @@ void DictionaryWidget::dictionaryReset()
     updateWords();
 }
 
-void DictionaryWidget::dictionaryRemoved(int index, int order, void *oldaddress)
+void DictionaryWidget::dictionaryRemoved(int /*index*/, int /*order*/, void *oldaddress)
 {
     if (dict != oldaddress)
         return;
@@ -1433,7 +1437,7 @@ void DictionaryWidget::dictionaryRemoved(int index, int order, void *oldaddress)
     updateWords();
 }
 
-void DictionaryWidget::dictionaryFlagChanged(int index, int order)
+void DictionaryWidget::dictionaryFlagChanged(int index, int /*order*/)
 {
     if (ZKanji::dictionary(index) != dict)
         return;
@@ -1460,18 +1464,18 @@ CommandCategories DictionaryWidget::activeCategory() const
         return (zw->mode() == ViewModes::WordSearch ? CommandCategories::SearchCateg : CommandCategories::GroupCateg);
 
     QList<ZKanjiWidget*> wlist = ((ZKanjiForm*)window())->findChildren<ZKanjiWidget*>();
-    for (ZKanjiWidget *w : wlist)
+    for (ZKanjiWidget *lw : wlist)
     {
-        if (w == zw || w->window() != window())
+        if (lw == zw || lw->window() != window())
             continue;
-        else if (w->mode() == zw->mode())
+        else if (lw->mode() == zw->mode())
             return CommandCategories::NoCateg;
     }
 
     return (zw->mode() == ViewModes::WordSearch ? CommandCategories::SearchCateg : CommandCategories::GroupCateg);
 }
 
-void DictionaryWidget::on_jpBeforeButton_clicked(bool checked)
+void DictionaryWidget::on_jpBeforeButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1480,7 +1484,7 @@ void DictionaryWidget::on_jpBeforeButton_clicked(bool checked)
     updateWords();
 }
 
-void DictionaryWidget::on_jpAfterButton_clicked(bool checked)
+void DictionaryWidget::on_jpAfterButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1489,7 +1493,7 @@ void DictionaryWidget::on_jpAfterButton_clicked(bool checked)
     updateWords();
 }
 
-void DictionaryWidget::on_enAfterButton_clicked(bool checked)
+void DictionaryWidget::on_enAfterButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1498,7 +1502,7 @@ void DictionaryWidget::on_enAfterButton_clicked(bool checked)
     updateWords();
 }
 
-void DictionaryWidget::on_jpStrictButton_clicked(bool checked)
+void DictionaryWidget::on_jpStrictButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1507,7 +1511,7 @@ void DictionaryWidget::on_jpStrictButton_clicked(bool checked)
     updateWords();
 }
 
-void DictionaryWidget::on_enStrictButton_clicked(bool checked)
+void DictionaryWidget::on_enStrictButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1516,7 +1520,7 @@ void DictionaryWidget::on_enStrictButton_clicked(bool checked)
     updateWords();
 }
 
-void DictionaryWidget::on_examplesButton_clicked(bool checked)
+void DictionaryWidget::on_examplesButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1524,7 +1528,7 @@ void DictionaryWidget::on_examplesButton_clicked(bool checked)
     ui->examples->setVisible(ui->examplesButton->isChecked());
 }
 
-void DictionaryWidget::on_inflButton_clicked(bool checked)
+void DictionaryWidget::on_inflButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1533,7 +1537,7 @@ void DictionaryWidget::on_inflButton_clicked(bool checked)
     updateWords();
 }
 
-void DictionaryWidget::on_filterButton_clicked(bool checked)
+void DictionaryWidget::on_filterButton_clicked(bool /*checked*/)
 {
     CommandCategories categ = activeCategory();
     if (categ != CommandCategories::NoCateg)
@@ -1576,8 +1580,6 @@ void DictionaryWidget::addCommandShortcut(const QKeySequence &keyseq, int comman
 
 void DictionaryWidget::updateSearchMode()
 {
-    QObject *s = sender();
-
     CommandCategories categ = activeCategory();
 
     if (ui->browseButton->isChecked())
@@ -1836,14 +1838,14 @@ void DictionaryWidget::storeLastSearch(ZComboBox *box)
     if (pos == 0)
         return;
 
-    QStringListModel *model = (QStringListModel*)box->model();
+    QStringListModel *m = (QStringListModel*)box->model();
     if (pos != -1)
-        model->removeRows(pos, 1);
-    model->insertRows(0, 1);
-    model->setData(model->index(0), str, Qt::DisplayRole);
+        m->removeRows(pos, 1);
+    m->insertRows(0, 1);
+    m->setData(m->index(0), str, Qt::DisplayRole);
 
-    if (model->rowCount() > Settings::dictionary.historylimit)
-        model->removeRows(Settings::dictionary.historylimit, model->rowCount() - Settings::dictionary.historylimit);
+    if (m->rowCount() > Settings::dictionary.historylimit)
+        m->removeRows(Settings::dictionary.historylimit, m->rowCount() - Settings::dictionary.historylimit);
 
     box->view()->setCurrentIndex(box->view()->model()->index(0, 0));
     box->setCurrentIndex(0);

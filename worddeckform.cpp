@@ -39,7 +39,7 @@ void DeckListModel::addTempItem()
     if (tempitem)
         return;
     tempitem = true;
-    signalRowsInserted({ { decks->size(), 1 } });
+    signalRowsInserted({ { tosigned(decks->size()), 1 } });
 }
 
 void DeckListModel::removeTempItem()
@@ -47,7 +47,7 @@ void DeckListModel::removeTempItem()
     if (!tempitem)
         return;
     tempitem = false;
-    signalRowsRemoved({ { decks->size(), decks->size() } });
+    signalRowsRemoved({ { tosigned(decks->size()), tosigned(decks->size()) } });
 }
 
 bool DeckListModel::hasTempItem() const
@@ -60,7 +60,7 @@ int DeckListModel::rowCount(const QModelIndex &parent) const
     if (parent.isValid() || decks == nullptr)
         return 0;
 
-    return decks->size() + (tempitem ? 1 : 0);
+    return tosigned(decks->size()) + (tempitem ? 1 : 0);
 }
 
 int DeckListModel::columnCount(const QModelIndex &parent) const
@@ -70,7 +70,7 @@ int DeckListModel::columnCount(const QModelIndex &parent) const
     return 5;
 }
 
-QModelIndex DeckListModel::parent(const QModelIndex &index) const
+QModelIndex DeckListModel::parent(const QModelIndex &/*index*/) const
 {
     return QModelIndex();
 }
@@ -115,12 +115,12 @@ QVariant DeckListModel::headerData(int section, Qt::Orientation orientation, int
     return base::headerData(section, orientation, role);
 }
 
-bool DeckListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool DeckListModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
     if (!index.isValid() || index.column() != 0)
         return false;
 
-    if (tempitem && index.row() == decks->size())
+    if (tempitem && index.row() == tosigned(decks->size()))
     {
         QString str = value.toString().left(255);
         if (decks->nameTakenOrInvalid(str))
@@ -142,7 +142,7 @@ QVariant DeckListModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
-        if (tempitem && row == decks->size())
+        if (tempitem && row == tosigned(decks->size()))
             return QString();
 
         if (col == 1)
@@ -173,10 +173,10 @@ Qt::ItemFlags DeckListModel::flags(const QModelIndex &index) const
     return base::flags(index) | Qt::ItemIsEditable;
 }
 
-bool DeckListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool DeckListModel::canDropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int row, int column, const QModelIndex &parent) const
 {
     return ((row != -1 && data->hasFormat("zkanji/decks")) ||
-        (row == -1 && column == -1 && parent.isValid() && data->hasFormat("zkanji/words")) && *(intptr_t*)data->data("zkanji/words").constData() == (intptr_t)decks->dictionary());
+        (row == -1 && column == -1 && parent.isValid() && data->hasFormat("zkanji/words") && *(intptr_t*)data->data("zkanji/words").constData() == (intptr_t)decks->dictionary()));
 }
 
 Qt::DropActions DeckListModel::supportedDropActions(bool samesource, const QMimeData *mime) const
@@ -205,13 +205,13 @@ bool DeckListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     {
         auto arr = data->data("zkanji/words");
 
-        if (arr.size() <= sizeof(intptr_t) * 2 && decks->dictionary() != (void*)*(intptr_t*)arr.constData())
+        if (arr.size() <= tosigned(sizeof(intptr_t)) * 2 && decks->dictionary() != (void*)*(intptr_t*)arr.constData())
             return false;
 
         const int *dat = (const int*)(arr.constData() + sizeof(intptr_t) * 2);
 
         int cnt = (arr.size() - sizeof(intptr_t) * 2) / sizeof(int);
-        if (cnt * sizeof(int) + sizeof(intptr_t) * 2 != arr.size())
+        if (tosigned(cnt * sizeof(int) + sizeof(intptr_t) * 2) != arr.size())
             return false;
 
         std::vector<int> windexes;
@@ -230,7 +230,7 @@ bool DeckListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         const int *dat = (const int*)(arr.constData());
 
         int cnt = arr.size() / sizeof(int);
-        if (cnt * sizeof(int) != arr.size())
+        if (tosigned(cnt * sizeof(int)) != arr.size())
             return false;
 
         std::vector<int> windexes;
@@ -356,11 +356,10 @@ WordDeckForm::WordDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordDeckF
     QHeaderView *h = ui->deckTable->horizontalHeader();
     h->setSectionResizeMode(QHeaderView::Fixed);
 
-    QFont f = h->font();
-    QFontMetrics fm(f);
-    int col1w = fm.boundingRect(ui->deckTable->model()->headerData(1, Qt::Horizontal, Qt::DisplayRole).toString()).width() + 8;
-    int col2w = fm.boundingRect(ui->deckTable->model()->headerData(2, Qt::Horizontal, Qt::DisplayRole).toString()).width() + 8;
-
+    //QFont f = h->font();
+    //QFontMetrics fm(f);
+    //int col1w = fm.boundingRect(ui->deckTable->model()->headerData(1, Qt::Horizontal, Qt::DisplayRole).toString()).width() + 8;
+    //int col2w = fm.boundingRect(ui->deckTable->model()->headerData(2, Qt::Horizontal, Qt::DisplayRole).toString()).width() + 8;
 }
 
 WordDeckForm::~WordDeckForm()
@@ -390,7 +389,7 @@ void WordDeckForm::setDictionary(int index)
 //    }
 //}
 
-void WordDeckForm::on_delButton_clicked(bool checked)
+void WordDeckForm::on_delButton_clicked(bool /*checked*/)
 {
     int row = ui->deckTable->selectedRow(0);
     if (!decks->items(row)->empty() && QMessageBox::question(this, "zkanji", tr("Once deleted, the study data in the selected deck will be lost and cannot be restored.\n\nDo you want to delete the deck?")) != QMessageBox::Yes)
@@ -400,7 +399,7 @@ void WordDeckForm::on_delButton_clicked(bool checked)
     ui->addButton->setEnabled(ui->deckTable->model()->rowCount() < 255);
 }
 
-void WordDeckForm::on_addButton_clicked(bool checked)
+void WordDeckForm::on_addButton_clicked(bool /*checked*/)
 {
     cacherow = ui->deckTable->selectedRow(0);
 
@@ -410,7 +409,7 @@ void WordDeckForm::on_addButton_clicked(bool checked)
     ui->deckTable->edit(model->index(row, 0));
 }
 
-void WordDeckForm::on_statsButton_clicked(bool checked)
+void WordDeckForm::on_statsButton_clicked(bool /*checked*/)
 {
     WordStudyListForm::Instance(decks->items(ui->deckTable->currentRow()), DeckStudyPages::Stats, true);
 }
@@ -526,7 +525,7 @@ void WordDeckForm::studyClicked()
     WordStudyForm::studyDeck(decks->items(ui->deckTable->currentRow()));
 }
 
-void WordDeckForm::currentDeckChanged(int current, int previous)
+void WordDeckForm::currentDeckChanged(int /*current*/, int /*previous*/)
 {
     ui->addButton->setEnabled(!model->hasTempItem());
     //ui->viewButton->setEnabled(current != -1);

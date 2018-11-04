@@ -129,6 +129,8 @@ namespace RecMath
 class Stroke
 {
 public:
+    typedef size_t  size_type;
+
     Stroke();
     Stroke(const Stroke &src);
     Stroke(Stroke &&src);
@@ -137,7 +139,7 @@ public:
     Stroke& operator=(Stroke &&src);
 
     // Number of points in the stroke.
-    int size() const;
+    size_type size() const;
     // There are no points added to the stroke.
     bool empty() const;
     // Adds a new point at the end of the stroke. If a point at the same
@@ -253,6 +255,8 @@ typedef fastarray<RecognizerComparison> RecognizerComparisons;
 class StrokeList
 {
 public:
+    typedef size_t  size_type;
+
     StrokeList();
 
     // Adds a stroke to the list of strokes, simplifying it. If mousedrawn is
@@ -267,7 +271,7 @@ public:
     void resize(int newsize);
 
     // Number of strokes added.
-    int size() const;
+    size_type size() const;
 
     // Removes drawn strokes.
     void clear();
@@ -480,7 +484,7 @@ bool surroundingPattern(KanjiPattern p);
 struct KanjiElement
 {
 
-    // Kanji index this data represents or "-1".
+    // Kanji index this data represents or (ushort)-1.
     ushort owner;
 
     // Unicode this data represents. It's 0 if owner is a valid kanji or
@@ -526,6 +530,8 @@ enum class StrokeDirection { Unset, Left, Up, Right, Down, UpLeft, UpRight, Down
 class KanjiElementList
 {
 public:
+    typedef size_t  size_type;
+
     // Removes all data from the recognizer. Set full to true to remove kanji stroke model
     // data as well.
     void clear(bool full = false);
@@ -551,14 +557,14 @@ public:
     // Generates stroke position data for the handwriting recognition.
     void computeStrokePositions(BitArray &bits, QRectF orig, QRectF comp, const QRectF &fullsize);
 
-    // Matches the strokes in stroke list with characters that have recognizer
-    // data. Stores the indexes of possible character element matches in their
-    // order of similarity to strokes in results.
-    void findCandidates(const StrokeList &strokes, std::vector<int> &result, int size = -1, bool includekanji = true, bool includekana = true, bool includeother = true);
+    // Matches the strokes in stroke list with characters that have recognizer data. Stores
+    // the indexes of possible character element matches in their order of similarity to
+    // strokes in results.
+    void findCandidates(const StrokeList &strokes, std::vector<int> &result, int strokecnt = -1, bool includekanji = true, bool includekana = true, bool includeother = true);
 
-    // Number of elements in the recognizer list. Not all elements correspond
-    // to a valid character, many are parts of others.
-    int size() const;
+    // Number of elements in the recognizer list. Not all elements correspond to a valid
+    // character, many are parts of others.
+    size_type size() const;
 
     // The kanji owner of the item at index. If no owner is set for an element the returned
     // value is null. 
@@ -594,7 +600,7 @@ public:
     void drawElement(QPainter &painter, int element, int variant, const QRectF &rect, bool animated);
 
     // Returns the number of strokes that make up a variant of an element.
-    int strokeCount(int element, int variant) const;
+    uchar strokeCount(int element, int variant) const;
 
     // Number of parts a stroke in an element's variant can be drawn. Pass a valid pixel size
     // in partlen. It'll be used as a unit when dividing a line or curve in the stroke. The

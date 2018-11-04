@@ -15,6 +15,7 @@
 #include "words.h"
 #include "zkanjiwidget.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -259,7 +260,7 @@ void GroupWidget::updateGroups()
         ui->groupsTree->expandAll();
 }
 
-void GroupWidget::on_groupsTree_currentItemChanged(const TreeItem *tcurr, const TreeItem *tprev)
+void GroupWidget::on_groupsTree_currentItemChanged(const TreeItem *tcurr, const TreeItem * /*tprev*/)
 {
     // Only enable any kind of interaction if the current item is a fully created category or
     // group. When the editor is open for a new item, we should report that no item is
@@ -336,18 +337,21 @@ void GroupWidget::on_btnDelGroup_clicked()
     ui->groupsTree->selectedGroups(groups);
 
     bool haswords = false;
-    for (int ix = 0; !haswords && ix != groups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(groups.size()); !haswords && ix != siz; ++ix)
     {
         GroupBase *g = groups[ix];
         if (g == nullptr)
             continue;
         if (g->isCategory())
         {
-            GroupCategoryBase *g = (GroupCategoryBase*)groups[ix];
-            for (int iy = 0, siz = g->categoryCount(); iy != siz; ++iy)
-                groups.push_back(g->categories(iy));
-            for (int iy = 0, siz = g->size(); iy != siz; ++iy)
-                haswords = !g->items(iy)->isEmpty();
+            GroupCategoryBase *cat = (GroupCategoryBase*)groups[ix];
+            for (int iy = 0, sizy = cat->categoryCount(); iy != sizy; ++iy)
+            {
+                groups.push_back(cat->categories(iy));
+                ++siz;
+            }
+            for (int iy = 0, sizy = tosigned(cat->size()); iy != sizy; ++iy)
+                haswords = !cat->items(iy)->isEmpty();
         }
         else
             haswords = !g->isEmpty();

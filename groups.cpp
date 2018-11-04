@@ -20,6 +20,8 @@
 #include "zdictionarymodel.h"
 #include "zkanjigridmodel.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -262,12 +264,12 @@ void GroupCategoryBase::save(QDataStream &stream) const
 
     // Saving categories.
     stream << (qint32)list.size();
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         list[ix]->save(stream);
 
     // Saving groups;
     stream << (qint32)groups.size();
-    for (int ix = 0; ix != groups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(groups.size()); ix != siz; ++ix)
         groups[ix]->save(stream);
 }
 
@@ -300,13 +302,13 @@ void GroupCategoryBase::copy(GroupCategoryBase *src)
     list.reserve(src->list.size());
     groups.reserve(src->groups.size());
 
-    for (int ix = 0, siz = src->list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->list.size()); ix != siz; ++ix)
     {
         list.push_back(createCategory(src->list[ix]->name()));
         list.back()->copy(src->list[ix]);
     }
 
-    for (int ix = 0, siz = src->groups.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->groups.size()); ix != siz; ++ix)
     {
         groups.push_back(createGroup(src->groups[ix]->name()));
         groups.back()->copy(src->groups[ix]);
@@ -329,8 +331,8 @@ int GroupCategoryBase::addCategory(QString name)
     list.push_back(createCategory(name));
 
     dictionary()->setToUserModified();
-    emit owner->categoryAdded(this, list.size() - 1);
-    return list.size() - 1;
+    emit owner->categoryAdded(this, tosigned(list.size()) - 1);
+    return tosigned(list.size()) - 1;
 }
 
 int GroupCategoryBase::addGroup(QString name)
@@ -338,15 +340,15 @@ int GroupCategoryBase::addGroup(QString name)
     groups.push_back(createGroup(name));
 
     dictionary()->setToUserModified();
-    emit owner->groupAdded(this, groups.size() - 1);
+    emit owner->groupAdded(this, tosigned(groups.size()) - 1);
 
-    return groups.size() - 1;
+    return tosigned(groups.size()) - 1;
 }
 
 void GroupCategoryBase::deleteCategory(int index)
 {
 #ifdef _DEBUG
-    if (index < 0 || index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         throw "Invalid category index.";
 #endif
 
@@ -369,7 +371,7 @@ void GroupCategoryBase::deleteCategory(int index)
 void GroupCategoryBase::deleteGroup(int index)
 {
 #ifdef _DEBUG
-    if (index < 0 || index >= groups.size())
+    if (index < 0 || index >= tosigned(groups.size()))
         throw "Invalid category index.";
 #endif
 
@@ -389,7 +391,7 @@ void GroupCategoryBase::remove(const std::vector<GroupBase*> &which)
     std::vector<GroupBase*> items;
     selectTopItems(which, items);
 
-    for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
     {
         GroupCategoryBase *p = items[ix]->parentCategory();
         if (items[ix]->isCategory())
@@ -418,7 +420,7 @@ void GroupCategoryBase::remove(const std::vector<GroupBase*> &which)
 bool GroupCategoryBase::moveCategory(GroupCategoryBase *what, GroupCategoryBase *destparent, int destindex)
 {
 #ifdef _DEBUG
-    if (destindex < 0 || destindex > destparent->list.size())
+    if (destindex < 0 || destindex > tosigned(destparent->list.size()))
         throw "Index out of range.";
 #endif
 
@@ -468,7 +470,7 @@ bool GroupCategoryBase::moveCategory(GroupCategoryBase *what, GroupCategoryBase 
 bool GroupCategoryBase::moveGroup(GroupBase *what, GroupCategoryBase *destparent, int destindex)
 {
 #ifdef _DEBUG
-    if (destindex < 0 || destindex > destparent->groups.size())
+    if (destindex < 0 || destindex > tosigned(destparent->groups.size()))
         throw "Index out of range.";
 #endif
 
@@ -518,7 +520,7 @@ bool GroupCategoryBase::moveGroup(GroupBase *what, GroupCategoryBase *destparent
 void GroupCategoryBase::moveCategories(const std::vector<GroupCategoryBase*> &moved, GroupCategoryBase *destparent, int destindex)
 {
 #ifdef _DEBUG
-    if (destindex < 0 || destindex > destparent->list.size())
+    if (destindex < 0 || destindex > tosigned(destparent->list.size()))
         throw "Index out of range.";
 #endif
     if (moved.empty())
@@ -531,7 +533,7 @@ void GroupCategoryBase::moveCategories(const std::vector<GroupCategoryBase*> &mo
     // Source indexes.
     std::vector<int> indexes;
     indexes.reserve(moved.size());
-    for (int ix = 0, siz = moved.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(moved.size()); ix != siz; ++ix)
         indexes.push_back(p->categoryIndex(moved[ix]));
     std::sort(indexes.begin(), indexes.end());
 
@@ -542,7 +544,7 @@ void GroupCategoryBase::moveCategories(const std::vector<GroupCategoryBase*> &mo
     {
 
         GroupCategoryBase **ldata = destparent->list.data();
-        int lsiz = destparent->list.size();
+        int lsiz = tosigned(destparent->list.size());
 
         _moveRanges(ranges, destindex, [this, &ldata, lsiz, p](const Range &range, int pos) {
             _moveRange(ldata,
@@ -558,7 +560,7 @@ void GroupCategoryBase::moveCategories(const std::vector<GroupCategoryBase*> &mo
         // Erasing groups from source and placing them in dest going backwards, one range at a
         // time.
 
-        for (int ix = ranges.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
         {
             Range *r = ranges[ix];
             for (auto b = p->list.begin() + r->first, e = p->list.begin() + (r->last + 1); b != e; ++b)
@@ -575,7 +577,7 @@ void GroupCategoryBase::moveCategories(const std::vector<GroupCategoryBase*> &mo
 void GroupCategoryBase::moveGroups(const std::vector<GroupBase*> &moved, GroupCategoryBase *destparent, int destindex)
 {
 #ifdef _DEBUG
-    if (destindex < 0 || destindex > destparent->groups.size())
+    if (destindex < 0 || destindex > tosigned(destparent->groups.size()))
         throw "Index out of range.";
 #endif
     if (moved.empty())
@@ -588,7 +590,7 @@ void GroupCategoryBase::moveGroups(const std::vector<GroupBase*> &moved, GroupCa
     // Source indexes.
     std::vector<int> indexes;
     indexes.reserve(moved.size());
-    for (int ix = 0, siz = moved.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(moved.size()); ix != siz; ++ix)
         indexes.push_back(p->groupIndex(moved[ix]));
     std::sort(indexes.begin(), indexes.end());
 
@@ -599,7 +601,7 @@ void GroupCategoryBase::moveGroups(const std::vector<GroupBase*> &moved, GroupCa
     {
 
         GroupBase **ldata = destparent->groups.data();
-        int lsiz = destparent->groups.size();
+        int lsiz = tosigned(destparent->groups.size());
 
         _moveRanges(ranges, destindex, [this, &ldata, lsiz, p](const Range &range, int pos) {
             _moveRange(ldata,
@@ -615,7 +617,7 @@ void GroupCategoryBase::moveGroups(const std::vector<GroupBase*> &moved, GroupCa
         // Erasing groups from source and placing them in dest going backwards, one range at a
         // time.
 
-        for (int ix = ranges.size() - 1; ix != -1; --ix)
+        for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
         {
             Range *r = ranges[ix];
             for (auto b = p->groups.begin() + r->first, e = p->groups.begin() + (r->last + 1); b != e; ++b)
@@ -638,7 +640,7 @@ int GroupCategoryBase::categoryIndex(GroupCategoryBase *child)
 int GroupCategoryBase::categoryIndex(QString name)
 {
     name = name.toLower();
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix]->name().toLower() == name)
             return ix;
     return -1;
@@ -646,7 +648,7 @@ int GroupCategoryBase::categoryIndex(QString name)
 
 int GroupCategoryBase::categoryCount() const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 GroupCategoryBase* GroupCategoryBase::categories(int index)
@@ -662,12 +664,12 @@ const GroupCategoryBase* GroupCategoryBase::categories(int index) const
 int GroupCategoryBase::groupCount() const
 {
     int cnt = 0;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         cnt += list[ix]->groupCount();
-    return cnt + groups.size();
+    return cnt + tosigned(groups.size());
 }
 
-int GroupCategoryBase::size() const
+size_t GroupCategoryBase::size() const
 {
     return groups.size();
 }
@@ -685,7 +687,7 @@ const GroupBase* GroupCategoryBase::items(int ix) const
 int GroupCategoryBase::groupIndex(QString name) const
 {
     name = name.toLower();
-    for (int ix = 0; ix != groups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(groups.size()); ix != siz; ++ix)
         if (groups[ix]->name().toLower() == name)
             return ix;
     return -1;
@@ -693,7 +695,7 @@ int GroupCategoryBase::groupIndex(QString name) const
 
 int GroupCategoryBase::groupIndex(GroupBase *group) const
 {
-    for (int ix = 0; ix != groups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(groups.size()); ix != siz; ++ix)
         if (groups[ix] == group)
             return ix;
     return -1;
@@ -757,17 +759,17 @@ void GroupCategoryBase::walkGroups(const std::function<void(GroupBase*)> &callba
         GroupCategoryBase *pos = stack.top();
         stack.pop();
 
-        for (int ix = 0; ix != pos->groups.size(); ++ix)
+        for (int ix = 0; ix != tosigned(pos->groups.size()); ++ix)
             callback(pos->groups[ix]);
 
-        for (int ix = 0; ix != pos->list.size(); ++ix)
+        for (int ix = 0; ix != tosigned(pos->list.size()); ++ix)
             stack.push(pos->list[ix]);
     }
 }
 
 bool GroupCategoryBase::isChild(GroupBase *item, bool recursive) const
 {
-    for (int ix = 0, siz = size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(size()); ix != siz; ++ix)
         if (groups[ix] == item)
             return true;
     if (!recursive)
@@ -791,9 +793,9 @@ void GroupCategoryBase::emitDeleted()
     }
 }
 
-void GroupCategoryBase::emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress)
+void GroupCategoryBase::emitGroupDeleted(GroupCategoryBase *p, int index, void *oldaddress)
 {
-    emit groupDeleted(parent, index, oldaddress);
+    emit groupDeleted(p, index, oldaddress);
 }
 
 void GroupCategoryBase::selectTopItems(const std::vector<GroupBase*> &src, std::vector<GroupBase*> &items) const
@@ -803,11 +805,11 @@ void GroupCategoryBase::selectTopItems(const std::vector<GroupBase*> &src, std::
 
     // Positions of items found in which.
     std::map<GroupBase*, int> pos;
-    for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
         pos.insert(std::make_pair(items[ix], ix));
 
     QSet<GroupBase*> found;
-    for (int ix = 0, siz = items.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(items.size()); ix != siz; ++ix)
     {
         GroupBase *g = items[ix];
         if (!g->isCategory())
@@ -828,7 +830,7 @@ void GroupCategoryBase::selectTopItems(const std::vector<GroupBase*> &src, std::
                 found.insert(c);
                 stack.push_back(c);
             }
-            for (int iy = 0, ysiz = cat->size(); iy != ysiz; ++iy)
+            for (int iy = 0, ysiz = tosigned(cat->size()); iy != ysiz; ++iy)
                 found.insert(cat->items(iy));
         }
     }
@@ -1033,7 +1035,7 @@ void WordGroup::load(QDataStream &stream)
     base::load(stream);
 
     stream >> make_zvec<qint32, qint32>(list);
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         owner().groupsOfWord(list[ix])->push_front(this);
         dictionary()->wordEntry(list[ix])->dat |= (1 << (int)WordRuntimeData::InGroup);
@@ -1078,12 +1080,13 @@ void WordGroup::applyChanges(const std::map<int, int> &changes)
     QSet<int> found;
 
     bool changed = false;
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         auto it = changes.find(list[ix]);
         if (it == changes.end() || it->second == -1 || found.contains(it->second))
         {
             list.erase(list.begin() + ix);
+            --siz;
             --ix;
             changed = true;
             continue;
@@ -1110,7 +1113,7 @@ void WordGroup::processRemovedWord(int windex)
 
 void WordGroup::clear()
 {
-    for (int ix = 0; ix != size(); ++ix)
+    for (int ix = 0, siz = tosigned(size()); ix != siz; ++ix)
     {
         auto &g = *owner().groupsOfWord(list[ix]);
         auto it = g.before_begin();
@@ -1132,7 +1135,7 @@ void WordGroup::clear()
     list.clear();
 }
 
-int WordGroup::size() const
+size_t WordGroup::size() const
 {
     return list.size();
 }
@@ -1215,7 +1218,7 @@ void WordGroup::indexOf(const std::vector<int> &windexes, std::vector<int> &posi
     // An ordering of list by word index.
     std::vector<int> order;
     order.reserve(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         order.push_back(ix);
     std::sort(order.begin(), order.end(), [this](int a, int b) { return list[a] < list[b]; });
 
@@ -1225,7 +1228,7 @@ void WordGroup::indexOf(const std::vector<int> &windexes, std::vector<int> &posi
     positions.clear();
 
     int opos = std::lower_bound(order.begin(), order.end(), worder.front(), [this](int ord, int wix) { return list[ord] < wix; }) - order.begin();
-    for (int wpos = 0, wsiz = worder.size(), osiz = order.size(); wpos != wsiz && opos != osiz;)
+    for (int wpos = 0, wsiz = tosigned(worder.size()), osiz = tosigned(order.size()); wpos != wsiz && opos != osiz;)
     {
         while (wpos != wsiz && worder[wpos] < list[order[opos]])
             ++wpos;
@@ -1300,18 +1303,18 @@ void WordGroup::indexOf(const std::vector<int> &windexes, std::vector<int> &posi
 
 int WordGroup::add(int index)
 {
-    return insert(index, list.size());
+    return insert(index, tosigned(list.size()));
 }
 
 int WordGroup::insert(int windex, int pos)
 {
 #ifdef _DEBUG
-    if (pos < -1 || pos > list.size())
+    if (pos < -1 || pos > tosigned(list.size()))
         throw "Index out of range at word insertion to group.";
 #endif
 
     if (pos == -1)
-        pos = list.size();
+        pos = tosigned(list.size());
 
     // Check whether the entry is already added to this group to not add it again.
 
@@ -1341,18 +1344,18 @@ int WordGroup::insert(int windex, int pos)
 
 int WordGroup::add(const std::vector<int> &windexes, std::vector<int> *positions)
 {
-    return insert(windexes, list.size(), positions);
+    return insert(windexes, tosigned(list.size()), positions);
 }
 
 int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int> *positions)
 {
 #ifdef _DEBUG
-    if (pos < -1 || pos > list.size())
+    if (pos < -1 || pos > tosigned(list.size()))
         throw "Index out of range at word insertion to group.";
 #endif
 
     if (pos == -1)
-        pos = list.size();
+        pos = tosigned(list.size());
 
     // To avoid adding duplicate words, the list of words and the windexes are both sorted
     // and checked for duplicates.
@@ -1364,36 +1367,37 @@ int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int
     {
         // Special case.
 
-        int s = list.size();
+        int s = tosigned(list.size());
 
         pos = insert(windexes.front(), pos);
 
         if (positions != nullptr)
             positions->push_back(pos);
 
-        return s == list.size() ? 0 : 1;
+        // list size is changed in the insert() above.
+        return s == tosigned(list.size()) ? 0 : 1;
     }
 
     // Pairs of [index in list, word index].
     std::vector<std::pair<int, int>> listorder;
     listorder.reserve(list.size());
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         listorder.push_back(std::make_pair(ix, list[ix]));
     std::sort(listorder.begin(), listorder.end(), [](const std::pair<int, int> &a, const std::pair<int, int> &b) { return a.second < b.second; });
 
     // Pairs of [index in windexes, word index].
     std::vector<std::pair<int, int>> worder;
     worder.reserve(windexes.size());
-    for (int ix = 0; ix != windexes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(windexes.size()); ix != siz; ++ix)
         worder.push_back(std::make_pair(ix, windexes[ix]));
     std::sort(worder.begin(), worder.end(), [](const std::pair<int, int> &a, const std::pair<int, int> &b) { return a.second < b.second; });
 
     if (positions != nullptr)
         positions->reserve(windexes.size());
 
-    int added = windexes.size();
+    int added = tosigned(windexes.size());
 
-    for (int ix = 0, wix = 0; ix != listorder.size() && wix != worder.size(); )
+    for (int ix = 0, wix = 0, siz = tosigned(listorder.size()), wsiz = tosigned(worder.size()); ix != siz && wix != wsiz; )
     {
         if (listorder[ix].second < worder[wix].second)
         {
@@ -1401,7 +1405,7 @@ int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int
             ++ix;
             continue;
         }
-    
+
         if (listorder[ix].second == worder[wix].second)
         {
             // To show that a word has already been added, its word index is changed to a
@@ -1425,7 +1429,7 @@ int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int
         return 0;
 
     list.insert(list.begin() + pos, added, 0);
-    for (int ix = 0, aix = 0; ix != worder.size(); ++ix)
+    for (int ix = 0, aix = 0, siz = tosigned(worder.size()); ix != siz; ++ix)
     {
         int val = worder[ix].second;
         if (val < 0)
@@ -1473,7 +1477,7 @@ int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int
 void WordGroup::remove(WordEntry *e)
 {
     Dictionary *d = dictionary();
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (d->wordEntry(list[ix]) == e)
         {
             removeAt(ix);
@@ -1513,7 +1517,7 @@ void WordGroup::remove(const smartvector<Range> &ranges)
     //    lastpos = firstpos;
     //}
 
-    for (int ix = ranges.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
     {
         const Range *r = ranges[ix];
         for (int iy = r->first, last = r->last; iy != last + 1; ++iy)
@@ -1538,7 +1542,7 @@ void WordGroup::move(const smartvector<Range> &ranges, int pos)
         return;
 
     if (pos == -1)
-        pos = list.size();
+        pos = tosigned(list.size());
 
     if (_moveRanges(ranges, pos, list))
         dictionary()->setToUserModified();
@@ -1981,7 +1985,7 @@ void WordGroups::clear()
     wordsgroups.clear();
 
     //if (qApp->eventDispatcher() != nullptr)
-        emit groupsReseted();
+    emit groupsReseted();
 }
 
 void WordGroups::applyChanges(const std::map<int, int> &changes)
@@ -2009,7 +2013,7 @@ void WordGroups::applyChanges(const std::map<int, int> &changes)
         it->second.sort();
         it->second.unique();
     }
-    
+
     // Apply changes in categories and their groups recursively.
     groupsApplyChanges(this, changes);
     //for (int ix = 0; ix != groups.size(); ++ix)
@@ -2070,7 +2074,7 @@ std::forward_list<WordGroup*>* WordGroups::groupsOfWord(int windex, bool creatio
 
 int WordGroups::wordsInGroups() const
 {
-    return wordsgroups.size();
+    return tosigned(wordsgroups.size());
 }
 
 void WordGroups::checkGroupsOfWord(int windex)
@@ -2110,16 +2114,16 @@ void WordGroups::setLastSelected(const QString &name)
         lastgroup = groupFromEncodedName(name);
 }
 
-void WordGroups::emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress)
+void WordGroups::emitGroupDeleted(GroupCategoryBase *p, int index, void *oldaddress)
 {
-    base::emitGroupDeleted(parent, index, oldaddress);
+    base::emitGroupDeleted(p, index, oldaddress);
     if (lastgroup == oldaddress)
         lastgroup = nullptr;
 }
 
 void WordGroups::groupsApplyChanges(GroupCategoryBase *cat, const std::map<int, int> &changes)
 {
-    for (int ix = 0, siz = cat->size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(cat->size()); ix != siz; ++ix)
         ((WordGroup*)cat->items(ix))->applyChanges(changes);
 
     for (int ix = 0, siz = cat->categoryCount(); ix != siz; ++ix)
@@ -2142,10 +2146,10 @@ void WordGroups::fixWordsGroups()
         for (int ix = 0, siz = cat->categoryCount(); ix != siz; ++ix)
             stack.push_back(cat->categories(ix));
 
-        for (int ix = 0, siz = cat->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(cat->size()); ix != siz; ++ix)
         {
             WordGroup *g = cat->items(ix);
-            for (int iy = 0, siy = g->size(); iy != siy; ++iy)
+            for (int iy = 0, siy = tosigned(g->size()); iy != siy; ++iy)
             {
                 auto &wg = *groupsOfWord(g->indexes(iy), true);
                 wg.push_front(g);
@@ -2240,7 +2244,7 @@ const KanjiEntry* KanjiGroup::items(int index) const
 //    return items(index);
 //}
 
-int KanjiGroup::size() const
+KanjiGroup::size_type KanjiGroup::size() const
 {
     return list.size();
 }
@@ -2289,7 +2293,7 @@ void KanjiGroup::indexOf(const std::vector<ushort> &kindexes, std::vector<int> &
     // Pairs of [index in list, kanji index].
     std::vector<std::pair<int, ushort>> listorder;
     listorder.reserve(list.size());
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         listorder.push_back(std::make_pair(ix, list[ix]));
 
     std::sort(listorder.begin(), listorder.end(), [](const std::pair<int, ushort> &a, const std::pair<int, ushort> &b) {
@@ -2302,7 +2306,7 @@ void KanjiGroup::indexOf(const std::vector<ushort> &kindexes, std::vector<int> &
     positions.clear();
     positions.reserve(ordered.size());
 
-    for (int ix = 0, iy = 0; ix != listorder.size() && iy != ordered.size(); )
+    for (int ix = 0, iy = 0, siz = tosigned(listorder.size()), ysiz = tosigned(ordered.size()); ix != siz && iy != ysiz; )
     {
         if (listorder[ix].second < ordered[iy])
         {
@@ -2323,13 +2327,13 @@ void KanjiGroup::indexOf(const std::vector<ushort> &kindexes, std::vector<int> &
 
 int KanjiGroup::add(ushort kindex)
 {
-    return insert(kindex, list.size());
+    return insert(kindex, tosigned(list.size()));
 }
 
 int KanjiGroup::insert(ushort kindex, int pos)
 {
     if (pos == -1)
-        pos = list.size();
+        pos = tosigned(list.size());
 
     auto it = std::find(list.begin(), list.end(), kindex);
     if (it != list.end())
@@ -2344,7 +2348,7 @@ int KanjiGroup::insert(ushort kindex, int pos)
 
 int KanjiGroup::add(const std::vector<ushort> &indexes, std::vector<int> *positions)
 {
-    return insert(indexes, list.size(), positions);
+    return insert(indexes, tosigned(list.size()), positions);
 }
 
 void KanjiGroup::remove(const smartvector<Range> &ranges)
@@ -2371,7 +2375,7 @@ void KanjiGroup::remove(const smartvector<Range> &ranges)
     //    lastpos = firstpos;
     //}
 
-    for (int ix = ranges.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(ranges.size()) - 1; ix != -1; --ix)
     {
         const Range *r = ranges[ix];
 
@@ -2392,12 +2396,12 @@ void KanjiGroup::remove(const smartvector<Range> &ranges)
 int KanjiGroup::insert(const std::vector<ushort> &kindexes, int pos, std::vector<int> *positions)
 {
 #ifdef _DEBUG
-    if (pos < -1 || pos > list.size())
+    if (pos < -1 || pos > tosigned(list.size()))
         throw "Index out of range at word insertion to group.";
 #endif
 
     if (pos == -1)
-        pos = list.size();
+        pos = tosigned(list.size());
 
     // To avoid adding duplicate kanji, the list of kanji and the kindexes are both sorted
     // and checked for duplicates.
@@ -2409,36 +2413,37 @@ int KanjiGroup::insert(const std::vector<ushort> &kindexes, int pos, std::vector
     {
         // Special case.
 
-        int s = list.size();
+        int s = tosigned(list.size());
 
         pos = insert(kindexes.front(), pos);
 
         if (positions != nullptr)
             positions->push_back(pos);
 
-        return s == list.size() ? 0 : 1;
+        // list size is changed in the insert() above.
+        return s == tosigned(list.size()) ? 0 : 1;
     }
 
     // Pairs of [index in list, kanji index].
     std::vector<std::pair<int, int>> listorder;
     listorder.reserve(list.size());
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         listorder.push_back(std::make_pair(ix, list[ix]));
     std::sort(listorder.begin(), listorder.end(), [](const std::pair<int, int> &a, const std::pair<int, int> &b) { return a.second < b.second; });
 
     // Pairs of [index in kindexes, kanji index].
     std::vector<std::pair<int, int>> korder;
     korder.reserve(kindexes.size());
-    for (int ix = 0; ix != kindexes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(kindexes.size()); ix != siz; ++ix)
         korder.push_back(std::make_pair(ix, kindexes[ix]));
     std::sort(korder.begin(), korder.end(), [](const std::pair<int, int> &a, const std::pair<int, int> &b) { return a.second < b.second; });
 
     if (positions != nullptr)
         positions->reserve(kindexes.size());
 
-    int added = kindexes.size();
+    int added = tosigned(kindexes.size());
 
-    for (int ix = 0, wix = 0; ix != listorder.size() && wix != korder.size();)
+    for (int ix = 0, wix = 0, siz = tosigned(listorder.size()), wsiz = tosigned(korder.size()); ix != siz && wix != wsiz; )
     {
         if (listorder[ix].second < korder[wix].second)
         {
@@ -2470,7 +2475,7 @@ int KanjiGroup::insert(const std::vector<ushort> &kindexes, int pos, std::vector
     });
 
     list.insert(list.begin() + pos, added, 0);
-    for (int ix = 0, aix = 0; ix != korder.size(); ++ix)
+    for (int ix = 0, aix = 0, siz = tosigned(korder.size()); ix != siz; ++ix)
     {
         int val = korder[ix].second;
         if (val < 0)
@@ -2519,7 +2524,7 @@ void KanjiGroup::move(const smartvector<Range> &ranges, int pos)
 void KanjiGroup::removeAt(int index)
 {
 #ifdef _DEBUG
-    if (index < 0 || index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         throw "Kanji remove index out of range.";
 #endif
 
@@ -2533,7 +2538,7 @@ void KanjiGroup::removeAt(int index)
 void KanjiGroup::removeRange(int first, int last)
 {
 #ifdef _DEBUG
-    if (first > last || first < 0 || first >= list.size() || last < 0 || last >= list.size())
+    if (first > last || first < 0 || first >= tosigned(list.size()) || last < 0 || last >= tosigned(list.size()))
         throw "Kanji remove index out of range.";
 #endif
 
@@ -2636,7 +2641,7 @@ void KanjiGroups::clear()
     base::clear();
 
     //if (qApp->eventDispatcher() != nullptr)
-        emit groupsReseted();
+    emit groupsReseted();
 }
 
 Dictionary* KanjiGroups::dictionary()
@@ -2675,9 +2680,9 @@ void KanjiGroups::setLastSelected(const QString &name)
         lastgroup = groupFromEncodedName(name);
 }
 
-void KanjiGroups::emitGroupDeleted(GroupCategoryBase *parent, int index, void *oldaddress)
+void KanjiGroups::emitGroupDeleted(GroupCategoryBase *p, int index, void *oldaddress)
 {
-    base::emitGroupDeleted(parent, index, oldaddress);
+    base::emitGroupDeleted(p, index, oldaddress);
     if (lastgroup == oldaddress)
         lastgroup = nullptr;
 }

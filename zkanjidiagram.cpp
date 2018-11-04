@@ -23,13 +23,16 @@
 #include "globalui.h"
 #include "zkanjimain.h"
 
+#include "checked_cast.h"
+
+
 //-------------------------------------------------------------
 
 
 const double kanjiRectMul = 0.87;
 const double partcountdiv = 75.0;
 
-ZKanjiDiagram::ZKanjiDiagram(QWidget *parent) : base(parent), kindex(INT_MIN), showstrokes(false), showradical(false), showdiagram(true), showgrid(false),
+ZKanjiDiagram::ZKanjiDiagram(QWidget *parent) : base(parent), kindex(INT_MIN), showdiagram(true), showstrokes(false), showradical(false), showgrid(false),
         showshadow(false), shownumbers(false), showdir(false), drawspeed(3), strokepos(0), partcnt(0), partpos(0), delaycnt(0), drawnpos(0), loop(false)
 {
     setAutoFillBackground(false);
@@ -362,7 +365,7 @@ void ZKanjiDiagram::next()
     }
     else
     {
-        strokepos = strokepos + 1;
+        ++strokepos;
         partpos = 0;
         delaycnt = 0;
     }
@@ -471,7 +474,7 @@ bool ZKanjiDiagram::event(QEvent *e)
 
                 if (strokepos != ZKanji::elements()->strokeCount(elem, 0))
                 {
-                    int siz = std::min(stroke->width(), stroke->height());
+                    siz = std::min(stroke->width(), stroke->height());
                     partcnt = ZKanji::elements()->strokePartCount(elem, 0, strokepos, QRectF(0, 0, stroke->width(), stroke->height()), siz / partcountdiv, parts);
                     emit strokeChanged(strokepos, false);
                 }
@@ -488,8 +491,8 @@ bool ZKanjiDiagram::event(QEvent *e)
                         numrects.clear();
                         delaycnt = 32;
 
-                        QRect r = rect();
-                        int siz = std::min(r.width(), r.height()) * kanjiRectMul;
+                        r = rect();
+                        siz = std::min(r.width(), r.height()) * kanjiRectMul;
                         partcnt = ZKanji::elements()->strokePartCount(elem, 0, 0, QRectF(0, 0, siz, siz), siz / partcountdiv, parts);
                     }
                     emit strokeChanged(strokepos, !loop);
@@ -518,7 +521,7 @@ namespace ZKanji
     extern QChar radsymbols[214];
 }
 
-void ZKanjiDiagram::paintEvent(QPaintEvent *e)
+void ZKanjiDiagram::paintEvent(QPaintEvent * /*e*/)
 {
     // Size the kanji should take up inside the drawing. Between 0 and 1.
     const double kanjifontsize = kanjiRectMul;
@@ -630,9 +633,9 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
             }
         }
 
-        while (numrects.size() > strokepos + (partpos != 0 ? 1 : 0))
+        while (tosigned(numrects.size()) > strokepos + (partpos != 0 ? 1 : 0))
             numrects.pop_back();
-        for (int ix = numrects.size(), siz = strokepos + (partpos != 0 ? 1 : 0); ix != siz; ++ix)
+        for (int ix = tosigned(numrects.size()), siz = strokepos + (partpos != 0 ? 1 : 0); ix != siz; ++ix)
         {
             StrokeDirection dir;
             QPoint pt;
@@ -655,9 +658,9 @@ void ZKanjiDiagram::paintEvent(QPaintEvent *e)
 
         if (shownumbers)
         {
-            for (int ix = 0, siz = numrects.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(numrects.size()); ix != siz; ++ix)
                 drawNumberRect(p, ix, false);
-            for (int ix = 0, siz = numrects.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(numrects.size()); ix != siz; ++ix)
                 drawNumberRect(p, ix, true);
         }
     }
@@ -845,8 +848,8 @@ void ZKanjiDiagram::addNumberRect(int strokeix, StrokeDirection dir, QPoint pt)
     double pw3 = pw / 1; //1.1;
     double pw4 = pw / 2.5; //3.5;
     double pw4b = pw / 3.5;
-    double pw5 = pw * 1.7;
-    double pw6 = pw / 1.8;
+    //double pw5 = pw * 1.7;
+    //double pw6 = pw / 1.8;
     double pw6b = pw / 2.0;
     switch (dir)
     {
@@ -910,7 +913,7 @@ void ZKanjiDiagram::addNumberRect(int strokeix, StrokeDirection dir, QPoint pt)
     bool moved[7] = { false, false, false, false, false, false, false };
 
     int d = std::ceil(pw * 0.1);
-    for (int ix = 0, siz = numrects.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(numrects.size()); ix != siz; ++ix)
     {
         if (!numrects[ix].second.isValid())
             continue;
@@ -980,7 +983,7 @@ void ZKanjiDiagram::addNumberRect(int strokeix, StrokeDirection dir, QPoint pt)
 
 void ZKanjiDiagram::drawNumberRect(QPainter &p, int strokeix, bool numdraw)
 {
-    if (numrects.size() <= strokeix)
+    if (tosigned(numrects.size()) <= strokeix)
         return;
 
     // [stroke position of next color, current color]

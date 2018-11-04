@@ -87,7 +87,7 @@ bool RecognizerArea::empty() const
 
 bool RecognizerArea::hasNext() const
 {
-    return strokepos == strokes.size();
+    return strokepos == tosigned(strokes.size());
 }
 
 bool RecognizerArea::showGrid()
@@ -127,7 +127,7 @@ void RecognizerArea::prev()
 
 void RecognizerArea::next()
 {
-    if (strokepos >= strokes.size())
+    if (strokepos >= tosigned(strokes.size()))
         return;
 
     ++strokepos;
@@ -141,7 +141,7 @@ void RecognizerArea::clear()
     updateCandidates();
 }
 
-void RecognizerArea::resizeEvent(QResizeEvent *event)
+void RecognizerArea::resizeEvent(QResizeEvent * /*event*/)
 {
     recalc = true;
     update();
@@ -198,7 +198,7 @@ void RecognizerArea::paintEvent(QPaintEvent *event)
 
     p.setPen(Settings::textColor(this, ColorSettings::Text));
     // Paint the strokes already in drawn.
-    for (int ix = 0, siz = std::min(strokes.size(), strokepos); ix != siz; ++ix)
+    for (int ix = 0, siz = std::min(tosigned(strokes.size()), strokepos); ix != siz; ++ix)
         paintStroke(ix, p, Settings::textColor(this, ColorSettings::Text), event->rect());
 
     // Paint the currently drawn stroke.
@@ -328,8 +328,8 @@ void RecognizerArea::paintStroke(int index, QStylePainter &p, QColor color, cons
 int RecognizerArea::segmentCount(int index)
 {
     if (index == -1)
-        return std::max(0, newstroke.size() - 1);
-    return std::max(0, strokes[index].size() - 1);
+        return std::max(0, tosigned(newstroke.size()) - 1);
+    return std::max(0, tosigned(strokes[index].size()) - 1);
 }
 
 double RecognizerArea::segmentLength(int index, int seg)
@@ -368,10 +368,10 @@ double RecognizerArea::segmentWidth(int index, int seg)
         return 0.02;
 
     if (seg == -1)
-        seg = newstroke.size() - 2;
+        seg = tosigned(newstroke.size()) - 2;
 
 #ifdef _DEBUG
-    if (newstroke.size() < seg + 2)
+    if (tosigned(newstroke.size()) < seg + 2)
         throw "At least 2 points required.";
 #endif
 
@@ -441,7 +441,7 @@ void RecognizerArea::recalculate()
         ptsize -= ptdif - 1;
     }
 
-    bool w = size().width() >= size().height();
+    //bool w = size().width() >= size().height();
     area = QRect(QPoint((size().width() - siz) / 2, (size().height() - siz) / 2), QSize(siz, siz));
 
     recalc = false;
@@ -530,7 +530,7 @@ RecognizerForm::~RecognizerForm()
     RecognizerForm::connected = nullptr;
 }
 
-void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPosition pos)
+void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *ledit, RecognizerPosition pos)
 {
     if (controls.count(btn) != 0)
         return;
@@ -538,8 +538,8 @@ void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPo
     if (p == nullptr)
         p = new RecognizerObject;
 
-    controls[btn] = std::make_pair(edit, pos);
-    editforbuttons[edit] = btn;
+    controls[btn] = std::make_pair(ledit, pos);
+    editforbuttons[ledit] = btn;
 
     btn->setCheckable(true);
     btn->setFocusPolicy(Qt::NoFocus);
@@ -547,12 +547,12 @@ void RecognizerForm::install(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPo
     connect(btn, &QToolButton::clicked, p, &RecognizerObject::buttonClicked);
     connect(btn, &QToolButton::destroyed, p, &RecognizerObject::buttonDestroyed);
 
-    edit->installEventFilter(p);
-    if (dynamic_cast<ZKanaComboBox*>(edit->parent()) != nullptr)
-        edit->parent()->installEventFilter(p);
+    ledit->installEventFilter(p);
+    if (dynamic_cast<ZKanaComboBox*>(ledit->parent()) != nullptr)
+        ledit->parent()->installEventFilter(p);
 
 
-    if (edit->isReadOnly() || !edit->isEnabled())
+    if (ledit->isReadOnly() || !ledit->isEnabled())
         btn->setEnabled(false);
 }
 
@@ -686,9 +686,9 @@ QRect RecognizerForm::resizing(int side, QRect r)
     if (side == (int)GrabSide::None)
         return r;
 
-    QSize sdif = size() - ui->drawArea->size();
-    QSize rdif = r.size() - sdif;
-    int dif = rdif.width() - rdif.height();
+    QSize sizdif = size() - ui->drawArea->size();
+    QSize rectdif = r.size() - sizdif;
+    int dif = rectdif.width() - rectdif.height();
     if (dif < 0)
     {
         if (side == (int)GrabSide::Left || side == (int)GrabSide::Right)
@@ -809,7 +809,7 @@ void RecognizerForm::resizeEvent(QResizeEvent *e)
     base::resizeEvent(e);
 }
 
-void RecognizerForm::appFocusChanged(QWidget *lost, QWidget *received)
+void RecognizerForm::appFocusChanged(QWidget * /*lost*/, QWidget *received)
 {
     if (!isVisible() || received == this || received == edit || received == nullptr || (dynamic_cast<ZKanaComboBox*>(edit->parent()) != nullptr && received == edit->parent()) || (received != nullptr && received->window() == this) || qApp->activeWindow() == this)
         return;

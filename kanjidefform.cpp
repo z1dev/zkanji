@@ -13,11 +13,12 @@
 #include "zui.h"
 #include "formstates.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
 
-KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new Ui::KanjiDefinitionForm), model(nullptr), nextpos(-1)
+KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new Ui::KanjiDefinitionForm), nextpos(-1), model(nullptr)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -85,14 +86,14 @@ void KanjiDefinitionForm::exec(Dictionary *d, const std::vector<ushort> &l)
     show();
 }
 
-void KanjiDefinitionForm::on_discardButton_clicked(bool checked)
+void KanjiDefinitionForm::on_discardButton_clicked(bool /*checked*/)
 {
     pos = prevkanji.back();
     prevkanji.pop_back();
     updateKanji();
 }
 
-void KanjiDefinitionForm::on_acceptButton_clicked(bool checked)
+void KanjiDefinitionForm::on_acceptButton_clicked(bool /*checked*/)
 {
     prevkanji.push_back(pos);
     dict->setKanjiMeaning(list[pos], ui->defText->toPlainText());
@@ -103,9 +104,9 @@ void KanjiDefinitionForm::on_acceptButton_clicked(bool checked)
     updateKanji();
 }
 
-void KanjiDefinitionForm::on_dictCBox_currentIndexChanged(int index)
+void KanjiDefinitionForm::on_dictCBox_currentIndexChanged(int /*index*/)
 {
-	updateDictionary();
+    updateDictionary();
 }
 
 void KanjiDefinitionForm::ok()
@@ -114,10 +115,10 @@ void KanjiDefinitionForm::ok()
     close();
 }
 
-void KanjiDefinitionForm::dictionaryRemoved(int index, int orderindex, void *oldaddress)
+void KanjiDefinitionForm::dictionaryRemoved(int /*index*/, int /*orderindex*/, void *oldaddress)
 {
-	if (dict == oldaddress)
-		close();
+    if (dict == oldaddress)
+        close();
 }
 
 bool KanjiDefinitionForm::event(QEvent *e)
@@ -147,13 +148,15 @@ void KanjiDefinitionForm::updateKanji()
     }
 
     nextpos = pos + 1;
-    while (nextpos != list.size() && dict->hasKanjiMeaning(list[nextpos]))
+
+    int lsiz = tosigned(list.size());
+    while (nextpos != lsiz && dict->hasKanjiMeaning(list[nextpos]))
         ++nextpos;
-    if (nextpos == list.size())
+    if (nextpos == lsiz)
         nextpos = -1;
 
     ui->discardButton->setEnabled(!prevkanji.empty());
-    ui->acceptButton->setEnabled(ui->skipBox->isChecked() ? nextpos != -1 : pos < list.size() - 1);
+    ui->acceptButton->setEnabled(ui->skipBox->isChecked() ? nextpos != -1 : pos < lsiz - 1);
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(!ui->acceptButton->isEnabled());
     ui->acceptButton->setDefault(ui->acceptButton->isEnabled());
@@ -162,7 +165,7 @@ void KanjiDefinitionForm::updateKanji()
     ui->kanjiDiagram->setKanjiIndex(list[pos]);
     updateDictionary();
 
-    if (pos < list.size())
+    if (pos < lsiz)
         ui->defText->setText(dict->kanjiMeaning(list[pos], "\n"));
     else
         ui->defText->clear();
@@ -183,10 +186,10 @@ void KanjiDefinitionForm::updateDictionary()
     std::vector<int> words;
     Dictionary *d = ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
 
-    if (pos < list.size())
+    if (pos < tosigned(list.size()))
         d->getKanjiWords(list[pos], words);
 
-    if (pos < list.size())
+    if (pos < tosigned(list.size()))
         ui->origText->setText(d->kanjiMeaning(list[pos], "\n"));
     else
         ui->origText->clear();

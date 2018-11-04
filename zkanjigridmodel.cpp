@@ -43,22 +43,22 @@ int KanjiGridModel::statusCount() const
     return 0;
 }
 
-StatusTypes KanjiGridModel::statusType(int statusindex) const
+StatusTypes KanjiGridModel::statusType(int /*statusindex*/) const
 {
     return StatusTypes::TitleValue;
 }
 
-QString KanjiGridModel::statusText(int statusindex, int labelindex, int kanjipos) const
+QString KanjiGridModel::statusText(int /*statusindex*/, int /*labelindex*/, int /*kanjipos*/) const
 {
     return QString();
 }
 
-int KanjiGridModel::statusSize(int statusindex, int labelindex) const
+int KanjiGridModel::statusSize(int /*statusindex*/, int /*labelindex*/) const
 {
     return 0;
 }
 
-bool KanjiGridModel::statusAlignRight(int statusindex) const
+bool KanjiGridModel::statusAlignRight(int /*statusindex*/) const
 {
     return false;
 }
@@ -72,7 +72,7 @@ QMimeData* KanjiGridModel::mimeData(const std::vector<int> &indexes) const
 
     QMimeData *dat = new QMimeData();
     QByteArray arr;
-    arr.resize(indexes.size() * sizeof(ushort) + sizeof(intptr_t) * 2);
+    arr.resize(tosigned(indexes.size()) * sizeof(ushort) + sizeof(intptr_t) * 2);
 
     Dictionary *dict = kanjiGroup() == nullptr ? nullptr : kanjiGroup()->dictionary();
     *(intptr_t*)arr.data() = (intptr_t)dict;
@@ -90,12 +90,12 @@ QMimeData* KanjiGridModel::mimeData(const std::vector<int> &indexes) const
     return dat;
 }
 
-bool KanjiGridModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int index) const
+bool KanjiGridModel::canDropMimeData(const QMimeData * /*data*/, Qt::DropAction /*action*/, int /*index*/) const
 {
     return false;
 }
 
-bool KanjiGridModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int index)
+bool KanjiGridModel::dropMimeData(const QMimeData * /*data*/, Qt::DropAction /*action*/, int /*index*/)
 {
     return false;
 }
@@ -105,7 +105,7 @@ Qt::DropActions KanjiGridModel::supportedDragActions() const
     return Qt::CopyAction;
 }
 
-Qt::DropActions KanjiGridModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions KanjiGridModel::supportedDropActions(bool /*samesource*/, const QMimeData * /*mime*/) const
 {
     return 0;
 }
@@ -137,19 +137,19 @@ void KanjiGridModel::getPersistentIndexes(std::vector<int> &result)
 
 void KanjiGridModel::changePersistentLists(const std::vector<int> &from, const std::vector<int> &to)
 {
-    int fsiz = std::min(from.size(), to.size());
+    int fsiz = tosigned(std::min(from.size(), to.size()));
     for (auto &perpair : persistents)
     {
         std::vector<int> &list = perpair.second;
         std::vector<int> order;
         order.reserve(list.size());
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
             order.push_back(ix);
         std::sort(order.begin(), order.end(), [&list](int a, int b) { return list[a] < list[b]; });
 
         int fpos = 0;
         int opos = 0;
-        int osiz = order.size();
+        int osiz = tosigned(order.size());
 
         while (fpos != fsiz && opos != osiz)
         {
@@ -213,15 +213,14 @@ MainKanjiListModel::~MainKanjiListModel()
 
 }
 
-int MainKanjiListModel::size() const
+MainKanjiListModel::size_type MainKanjiListModel::size() const
 {
     return ZKanji::kanjicount;
 }
 
-// Returns the index of the kanji in the main kanji list at pos position.
-ushort MainKanjiListModel::kanjiAt(int pos) const
+int MainKanjiListModel::kanjiAt(int pos) const
 {
-    if (pos < 0 || pos >= size())
+    if (pos < 0 || pos >= tosigned(size()))
         return -1;
     return pos;
 }
@@ -231,7 +230,7 @@ int MainKanjiListModel::statusCount() const
     return 3;
 }
 
-StatusTypes MainKanjiListModel::statusType(int statusindex) const
+StatusTypes MainKanjiListModel::statusType(int /*statusindex*/) const
 {
     return StatusTypes::TitleValue;
 }
@@ -309,7 +308,7 @@ int MainKanjiListModel::statusSize(int statusindex, int labelindex) const
     }
 }
 
-bool MainKanjiListModel::statusAlignRight(int statusindex) const
+bool MainKanjiListModel::statusAlignRight(int /*statusindex*/) const
 {
     return false;
 }
@@ -356,17 +355,20 @@ void KanjiListModel::setAcceptDrop(bool acceptdrop)
     candrop = acceptdrop;
 }
 
-int KanjiListModel::size() const
+KanjiListModel::size_type KanjiListModel::size() const
 {
     return list.size();
 }
 
-ushort KanjiListModel::kanjiAt(int pos) const
+int KanjiListModel::kanjiAt(int pos) const
 {
+    if (pos < 0 || pos >= tosigned(list.size()))
+        return -1;
+
     return list[pos];
 }
 
-bool KanjiListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int index) const
+bool KanjiListModel::canDropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int index) const
 {
     return candrop && index == -1 && data->hasFormat("zkanji/kanji") && (((data->data("zkanji/kanji")).size() - sizeof(intptr_t) * 2) % sizeof(ushort)) == 0;
 }
@@ -391,18 +393,18 @@ bool KanjiListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     std::vector<int> lorder;
     lorder.reserve(list.size());
     while (lorder.size() != list.size())
-        lorder.push_back(lorder.size());
+        lorder.push_back(tosigned(lorder.size()));
 
     std::vector<int> aorder;
     aorder.reserve(cnt);
-    while (aorder.size() != cnt)
-        aorder.push_back(aorder.size());
+    while (tosigned(aorder.size()) != cnt)
+        aorder.push_back(tosigned(aorder.size()));
 
     std::sort(lorder.begin(), lorder.end(), [this](int a, int b) { return list[a] < list[b]; });
     std::sort(aorder.begin(), aorder.end(), [dat](int a, int b) { return dat[a] < dat[b]; });
 
     int skipped = 0;
-    for (int lsiz = lorder.size(), lpos = 0, asiz = aorder.size(), apos = 0; lpos != lsiz && apos != asiz;)
+    for (int lsiz = tosigned(lorder.size()), lpos = 0, asiz = tosigned(aorder.size()), apos = 0; lpos != lsiz && apos != asiz;)
     {
         while (lpos != lsiz && list[lorder[lpos]] < dat[aorder[apos]])
             ++lpos;
@@ -422,7 +424,7 @@ bool KanjiListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         }
     }
 
-    if (skipped == aorder.size())
+    if (skipped == tosigned(aorder.size()))
         return true;
 
     list.reserve(list.size() + aorder.size() - skipped);
@@ -431,7 +433,7 @@ bool KanjiListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     });
 
 
-    for (int ix = 0, siz = aorder.size(); ix != siz && aorder[ix] != -1; ++ix)
+    for (int ix = 0, siz = tosigned(aorder.size()); ix != siz && aorder[ix] != -1; ++ix)
         list.push_back(dat[aorder[ix]]);
 
     smartvector<Interval> intervals;
@@ -487,17 +489,17 @@ KanjiGroup* KanjiGroupModel::kanjiGroup() const
     return group;
 }
 
-int KanjiGroupModel::size() const
+KanjiGroupModel::size_type KanjiGroupModel::size() const
 {
     return group->size();
 }
 
-ushort KanjiGroupModel::kanjiAt(int pos) const
+int KanjiGroupModel::kanjiAt(int pos) const
 {
     return group->getIndexes()[pos];
 }
 
-bool KanjiGroupModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int index) const
+bool KanjiGroupModel::canDropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int /*index*/) const
 {
     return group != nullptr && data->hasFormat("zkanji/kanji");
 }
@@ -519,14 +521,14 @@ bool KanjiGroupModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     std::vector<ushort> kindexes;
     kindexes.reserve(cnt);
 
-    while (kindexes.size() != cnt)
+    while (tosigned(kindexes.size()) != cnt)
     {
         kindexes.push_back(*dat);
         ++dat;
     }
 
     if (index == -1)
-        index = size();
+        index = tosigned(size());
 
     if (group == (KanjiGroup*)*((intptr_t*)arr.constData() + 1))
     {
@@ -535,7 +537,7 @@ bool KanjiGroupModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         std::vector<int> positions;
         group->indexOf(kindexes, positions);
 
-        for (int pos = 0, next = 1, siz = positions.size(); pos != siz; ++next)
+        for (int pos = 0, next = 1, siz = tosigned(positions.size()); pos != siz; ++next)
         {
             if (next == siz || positions[next] - positions[next - 1] != 1)
             {
@@ -598,7 +600,7 @@ void KanjiGroupModel::itemsMoved(GroupBase *parent, const smartvector<Range> &ra
 KanjiGridSortModel::KanjiGridSortModel(KanjiGridModel *basemodel, KanjiGridSortOrder order, Dictionary *dict, QObject *parent) : base(parent), basemodel(basemodel), order(KanjiGridSortOrder::NoSort), sortcount(-1)
 {
     list.reserve(basemodel->size());
-    for (int ix = 0; ix != basemodel->size(); ++ix)
+    for (int ix = 0, siz = tosigned(basemodel->size()); ix != siz; ++ix)
         list.push_back(ix);
 
     sort(order, dict);
@@ -634,7 +636,7 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
     getPersistentIndexes(perix);
 
     std::vector<int> newix = perix;
-    for (int ix = 0, siz = newix.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(newix.size()); ix != siz; ++ix)
         newix[ix] = list[newix[ix]];
 
     switch (order)
@@ -675,7 +677,7 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
             return ka->ch.unicode() < kb->ch.unicode();
         });
 
-        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int b) {
+        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int /*b*/) {
             a = ZKanji::kanjis[basemodel->kanjiAt(a)]->jouyou;
             return a != 0;
         });
@@ -719,7 +721,7 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
             return ka->ch.unicode() < kb->ch.unicode();
         });
 
-        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int b) {
+        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int /*b*/) {
             a = ZKanji::kanjis[basemodel->kanjiAt(a)]->jlpt;
             return a != 0;
         });
@@ -762,7 +764,7 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
                 return vala > valb;
             return ka->ch.unicode() < kb->ch.unicode();
         });
-        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int b) {
+        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int /*b*/) {
             a = ZKanji::kanjis[basemodel->kanjiAt(a)]->frequency;
             return a != 0;
         });
@@ -793,7 +795,7 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
                 return vala < valb;
             return ka->ch.unicode() < kb->ch.unicode();
         });
-        auto it = std::lower_bound(list.begin(), list.end(), 0, [this, dict](int a, int b) {
+        auto it = std::lower_bound(list.begin(), list.end(), 0, [this, dict](int a, int /*b*/) {
             a = dict->kanjiWordCount(basemodel->kanjiAt(a));
             return a != 0;
         });
@@ -840,7 +842,7 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
             //    return vala > valb;
             return ka->ch.unicode() < kb->ch.unicode();
         });
-        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int b) {
+        auto it = std::lower_bound(list.begin(), list.end(), 0, [this](int a, int /*b*/) {
             a = ZKanji::kanjis[basemodel->kanjiAt(a)]->word_freq;
             return a != 0;
         });
@@ -935,17 +937,17 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
     std::vector<int> lorder;
     lorder.reserve(list.size());
     while (lorder.size() != list.size())
-        lorder.push_back(lorder.size());
+        lorder.push_back(tosigned(lorder.size()));
     std::sort(lorder.begin(), lorder.end(), [this](int a, int b) { return list[a] < list[b]; });
 
     std::vector<int> xorder;
     xorder.reserve(newix.size());
     while (xorder.size() != newix.size())
-        xorder.push_back(xorder.size());
+        xorder.push_back(tosigned(xorder.size()));
     std::sort(xorder.begin(), xorder.end(), [&newix](int a, int b) { return newix[a] < newix[b]; });
 
-    int lsiz = lorder.size();
-    int xsiz = xorder.size();
+    int lsiz = tosigned(lorder.size());
+    int xsiz = tosigned(xorder.size());
     int lpos = 0;
     int xpos = 0;
     while (lpos != lsiz && xpos != xsiz)
@@ -979,13 +981,15 @@ void KanjiGridSortModel::sort(KanjiGridSortOrder sorder, Dictionary *dict)
 //    return basemodel;
 //}
 
-int KanjiGridSortModel::size() const
+KanjiGridSortModel::size_type KanjiGridSortModel::size() const
 {
     return list.size();
 }
 
-ushort KanjiGridSortModel::kanjiAt(int pos) const
+int KanjiGridSortModel::kanjiAt(int pos) const
 {
+    if (pos < 0 || pos >= tosigned(list.size()))
+        return -1;
     return basemodel->kanjiAt(list[pos]);
 }
 
@@ -1001,7 +1005,7 @@ StatusTypes KanjiGridSortModel::statusType(int statusindex) const
 
 QString KanjiGridSortModel::statusText(int statusindex, int labelindex, int kanjipos) const
 {
-    return basemodel->statusText(statusindex, labelindex, kanjipos < 0 || kanjipos >= list.size() ? kanjipos : list[kanjipos]);
+    return basemodel->statusText(statusindex, labelindex, kanjipos < 0 || kanjipos >= tosigned(list.size()) ? kanjipos : list[kanjipos]);
 }
 
 int KanjiGridSortModel::statusSize(int statusindex, int labelindex) const

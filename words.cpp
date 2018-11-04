@@ -40,6 +40,9 @@
 #include "sentences.h"
 #include "zui.h"
 
+#include "checked_cast.h"
+
+
 // WARNING: none of these strings should be longer than 255 bytes.
 
 extern char ZKANJI_PROGRAM_VERSION[];
@@ -75,7 +78,7 @@ namespace ZKanji
 
     void findEntriesByKana(std::vector<WordEntriesResult> &result, const QString &kana)
     {
-        int oldsiz = result.size();
+        int oldsiz = tosigned(result.size());
 
         std::vector<int> l;
 
@@ -131,13 +134,13 @@ namespace ZKanji
 
     int dictionaryCount()
     {
-        return dictionaries.size();
+        return tosigned(dictionaries.size());
     }
 
     void addDictionary(Dictionary *dict)
     {
         dictionaries.push_back(dict);
-        dictionaryorder.push_back(dictionaryorder.size());
+        dictionaryorder.push_back((uchar)dictionaryorder.size());
 
         gUI->signalDictionaryAdded();
     }
@@ -145,7 +148,7 @@ namespace ZKanji
     Dictionary* addDictionary()
     {
         dictionaries.push_back(new Dictionary());
-        dictionaryorder.push_back(dictionaryorder.size());
+        dictionaryorder.push_back((uchar)dictionaryorder.size());
 
         gUI->signalDictionaryAdded();
         return dictionaries.back();
@@ -216,7 +219,7 @@ namespace ZKanji
     Dictionary* dictionary(int index)
     {
 #ifdef _DEBUG
-        if (index < 0 || index >= dictionaries.size())
+        if (index < 0 || index >= tosigned(dictionaries.size()))
             throw "?";
 #endif
         return dictionaries[index];
@@ -225,7 +228,7 @@ namespace ZKanji
     int dictionaryIndex(Dictionary *dict)
     {
         int pos = std::find(dictionaries.begin(), dictionaries.end(), dict) - dictionaries.begin();
-        if (pos == dictionaries.size())
+        if (pos == tosigned(dictionaries.size()))
             return -1;
         return pos;
     }
@@ -234,7 +237,7 @@ namespace ZKanji
     {
         dictname = dictname.toLower();
         int pos = std::find_if(dictionaries.begin(), dictionaries.end(), [&dictname](const Dictionary *d) { return d->name().toLower() == dictname; }) - dictionaries.begin();
-        if (pos == dictionaries.size())
+        if (pos == tosigned(dictionaries.size()))
             return -1;
         return pos;
     }
@@ -255,7 +258,7 @@ namespace ZKanji
     int dictionaryPosition(int index)
     {
 #ifdef _DEBUG
-        if (index < 0 || index >= dictionaryorder.size())
+        if (index < 0 || index >= tosigned(dictionaryorder.size()))
             throw "?";
 #endif
         return dictionaryorder[index];
@@ -424,7 +427,7 @@ namespace ZKanji
         if (!dates.empty() && dates.back().daysTo(now) < Settings::data.backupskip)
             return;
 
-        while (dates.size() >= Settings::data.backupcnt)
+        while (tosigned(dates.size()) >= Settings::data.backupcnt)
         {
             dir.cd(dirs.at(0));
 
@@ -483,7 +486,7 @@ namespace ZKanji
         dest->inf = src->inf; //(src->inf & ~infmask) | (dest->inf & infmask);
 
         dest->defs.setSize(src->defs.size());
-        for (int ix = 0; ix != dest->defs.size(); ++ix)
+        for (int ix = 0, siz = tosigned(dest->defs.size()); ix != siz; ++ix)
             dest->defs[ix] = src->defs[ix];
     }
 
@@ -496,7 +499,7 @@ namespace ZKanji
         //if ((a->inf & ~infmask) != (b->inf & ~infmask))
         //    return false;
 
-        for (int ix = 0; ix != a->defs.size(); ++ix)
+        for (int ix = 0, siz = tosigned(a->defs.size()); ix != siz; ++ix)
         {
             if (a->defs[ix] != b->defs[ix])
                 return false;
@@ -542,7 +545,7 @@ bool operator!(const WordFilterConditions &a)
     if (a.inclusions.empty())
         return true;
 
-    for (int ix = 0; ix != a.inclusions.size(); ++ix)
+    for (int ix = 0, siz = tosigned(a.inclusions.size()); ix != siz; ++ix)
         if (a.inclusions[ix] != Inclusion::Ignore)
             return false;
 
@@ -563,7 +566,7 @@ WordAttributeFilterList::~WordAttributeFilterList()
 
 void WordAttributeFilterList::saveXMLSettings(QXmlStreamWriter &writer) const
 {
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         const WordAttributeFilter &f = list[ix];
 
@@ -631,7 +634,7 @@ void WordAttributeFilterList::loadXMLSettings(QXmlStreamReader &reader)
     }
 }
 
-int WordAttributeFilterList::size() const
+WordAttributeFilterList::size_type WordAttributeFilterList::size() const
 {
     return list.size();
 }
@@ -676,7 +679,7 @@ void WordAttributeFilterList::erase(int index)
 
 void WordAttributeFilterList::move(int index, int to)
 {
-    if (to < 0 || to > list.size() || to == index || to == index + 1)
+    if (to < 0 || to > tosigned(list.size()) || to == index || to == index + 1)
         return;
     WordAttributeFilter f = list[index];
     list.erase(list.begin() + index);
@@ -733,16 +736,21 @@ bool WordAttributeFilterList::match(const WordEntry *w, const WordFilterConditio
     if (conditions->examples != Inclusion::Ignore && (conditions->examples == Inclusion::Include) == (commons == nullptr || commons->examples.empty()))
         return false;
 
-    for (int ix = 0; commons == nullptr && ix != conditions->inclusions.size(); ++ix)
+    if (commons == nullptr)
     {
-        if (list[ix].jlpt != 0)
+        assert(list.size() >= conditions->inclusions.size());
+
+        for (int ix = 0, siz = tosigned(conditions->inclusions.size()); ix != siz; ++ix)
         {
-            commons = ZKanji::commons.findWord(w->kanji.data(), w->kana.data(), w->romaji.data());
-            break;
+            if (list[ix].jlpt != 0)
+            {
+                commons = ZKanji::commons.findWord(w->kanji.data(), w->kana.data(), w->romaji.data());
+                break;
+            }
         }
     }
 
-    for (int ix = 0; ix != conditions->inclusions.size(); ++ix)
+    for (int ix = 0, siz = tosigned(conditions->inclusions.size()); ix != siz; ++ix)
     {
         if (conditions->inclusions[ix] != Inclusion::Ignore && domatch(w, commons, ix) != (conditions->inclusions[ix] == Inclusion::Include))
             return false;
@@ -763,7 +771,7 @@ bool WordAttributeFilterList::domatch(const WordEntry *w, const WordCommons *com
         }
 
         WordDefAttrib attrib;
-        for (int ix = 0; ix != w->defs.size(); ++ix)
+        for (int ix = 0, siz = tosigned(w->defs.size()); ix != siz; ++ix)
         {
             attrib.types |= w->defs[ix].attrib.types;
             attrib.notes |= w->defs[ix].attrib.notes;
@@ -779,15 +787,10 @@ bool WordAttributeFilterList::domatch(const WordEntry *w, const WordCommons *com
 
         if (f.jlpt != 0)
         {
-            //if (!commonsset)
-            //{
-            //    commons = ZKanji::commons.findWord(w->kanji.data(), w->kana.data(), w->romaji.data());
-            //    commonsset = true;
-            //}
-
             if (commons == nullptr || (1 << (5 - commons->jlptn)) != f.jlpt)
                 return false;
         }
+
         return true;
     }
 
@@ -799,7 +802,7 @@ bool WordAttributeFilterList::domatch(const WordEntry *w, const WordCommons *com
             return true;
     }
 
-    for (int ix = 0; ix != w->defs.size(); ++ix)
+    for (int ix = 0, siz = tosigned(w->defs.size()); ix != siz; ++ix)
     {
         if ((f.attrib.types & w->defs[ix].attrib.types) != 0 ||
             (f.attrib.notes & w->defs[ix].attrib.notes) != 0 ||
@@ -942,7 +945,7 @@ bool OriginalWordsList::skip(QDataStream &stream)
     return true;
 }
 
-int OriginalWordsList::size() const
+OriginalWordsList::size_type OriginalWordsList::size() const
 {
     return list.size();
 }
@@ -954,7 +957,7 @@ const OriginalWord* OriginalWordsList::items(int index) const
 
 int OriginalWordsList::wordIndex(int windex) const
 {
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix]->index == windex)
             return ix;
     return -1;
@@ -974,7 +977,7 @@ const OriginalWord* OriginalWordsList::find(int windex)const
 //    list.erase(list.begin() + index);
 //}
 
-bool OriginalWordsList::createAdded(int windex, const QChar *kanji, const QChar *kana, int kanjilen, int kanalen)
+void OriginalWordsList::createAdded(int windex, const QChar *kanji, const QChar *kana, int kanjilen, int kanalen)
 {
     OriginalWord *o = new OriginalWord;
     o->change = OriginalWord::Added;
@@ -987,10 +990,10 @@ bool OriginalWordsList::createAdded(int windex, const QChar *kanji, const QChar 
 
     list.push_back(o);
 
-    return true;
+    //return true;
 }
 
-bool OriginalWordsList::createModified(int windex, WordEntry *w)
+void OriginalWordsList::createModified(int windex, WordEntry *w)
 {
     OriginalWord *o = new OriginalWord;
     o->change = OriginalWord::Modified;
@@ -1002,21 +1005,21 @@ bool OriginalWordsList::createModified(int windex, WordEntry *w)
     o->inf = w->inf; // (w->inf & ~(1 << (int)WordInfo::InGroup));
 
     o->defs.setSize(w->defs.size());
-    for (int ix = 0, siz = w->defs.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(w->defs.size()); ix != siz; ++ix)
         o->defs[ix] = w->defs[ix];
 
     list.push_back(o);
 
-    return true;
+    //return true;
 }
 
 bool OriginalWordsList::revertModified(int windex, WordEntry *w)
 {
-    int ix = wordIndex(windex);
-    if (ix == -1)
+    int wix = wordIndex(windex);
+    if (wix == -1)
         return false;
 
-    OriginalWord *o = list[ix];
+    OriginalWord *o = list[wix];
 
     if (o->change != OriginalWord::Modified)
         return false;
@@ -1029,10 +1032,10 @@ bool OriginalWordsList::revertModified(int windex, WordEntry *w)
     w->freq = o->freq;
     w->inf = o->inf;
     w->defs.setSize(o->defs.size());
-    for (int ix = 0, siz = o->defs.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(o->defs.size()); ix != siz; ++ix)
         w->defs[ix] = o->defs[ix];
 
-    list.erase(list.begin() + ix);
+    list.erase(list.begin() + wix);
 
     return true;
 }
@@ -1041,7 +1044,7 @@ bool OriginalWordsList::processRemovedWord(int windex)
 {
     int indexindex = -1;
     bool changed = false;
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         OriginalWord *w = list[ix];
         if (w->index == windex)
@@ -1075,7 +1078,7 @@ bool definitionsMatch(WordEntry *e1, WordEntry *e2)
 {
     if (e1->defs.size() != e2->defs.size())
         return false;
-    for (int ix = 0; ix != e1->defs.size(); ++ix)
+    for (int ix = 0, siz = tosigned(e1->defs.size()); ix != siz; ++ix)
         if (e1->defs[ix] != e2->defs[ix])
             return false;
     return true;
@@ -1225,7 +1228,7 @@ bool WordResultList::empty() const
     return indexes.empty();
 }
 
-int WordResultList::size() const
+WordResultList::size_type WordResultList::size() const
 {
     return indexes.size();
 }
@@ -1267,11 +1270,11 @@ void WordResultList::sortByList(const std::vector<int> &list)
     infs.swap(inftmp);
     indexes.resize(list.size());
     int maxinf = -1;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         indexes[ix] = indextmp[list[ix]];
 
-        if (maxinf < ix && inftmp.size() > list[ix])
+        if (maxinf < ix && tosigned(inftmp.size()) > list[ix])
             maxinf = ix;
     }
 
@@ -1279,15 +1282,15 @@ void WordResultList::sortByList(const std::vector<int> &list)
         return;
 
     infs.resizeAddNull(maxinf + 1);
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
-        if (inftmp.size() > list[ix])
+    for (int ix = 0, siz = tosigned(list.size()), isiz = tosigned(inftmp.size()); ix != siz; ++ix)
+        if (isiz > list[ix])
             infs[ix] = inftmp[list[ix]];
 }
 
 void WordResultList::sortByIndex()
 {
     std::vector<std::pair<int, int>> ordered;
-    int siz = indexes.size();
+    int siz = tosigned(indexes.size());
     ordered.reserve(siz);
     for (int ix = 0; ix != siz; ++ix)
         ordered.push_back(std::make_pair(ix, indexes[ix]));
@@ -1301,7 +1304,7 @@ void WordResultList::sortByIndex()
     std::vector<int>().swap(indexes);
     indexes.resize(siz);
 
-    int infsiz = inftmp.size();
+    int infsiz = tosigned(inftmp.size());
     for (int ix = 0; ix != siz; ++ix)
     {
         auto &p = ordered[ix];
@@ -1309,7 +1312,7 @@ void WordResultList::sortByIndex()
         if (infsiz > p.first && inftmp[p.first] != nullptr)
         {
             infs.reserve(ix + 1);
-            while (infs.size() <= ix)
+            while (tosigned(infs.size()) <= ix)
                 infs.push_back(nullptr);
             infs[ix] = inftmp[p.first];
         }
@@ -1330,15 +1333,15 @@ void WordResultList::jpSort(std::vector<int> *pindexes)
     if (pindexes != nullptr)
     {
         psortdata.resize(pindexes->size());
-        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(pindexes->size()); ix != siz; ++ix)
         {
             int index = pindexes->operator[](ix);
-            psortdata[ix] = Dictionary::jpSortDataGen(dict->wordEntry(indexes[index]), infs.size() > index ? infs[index] : nullptr);
+            psortdata[ix] = Dictionary::jpSortDataGen(dict->wordEntry(indexes[index]), tosigned(infs.size()) > index ? infs[index] : nullptr);
         }
     }
 
-    for (int ix = 0, siz = indexes.size(); ix != siz; ++ix)
-        pairlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(indexes[ix]), infs.size() > ix ? infs[ix] : nullptr);
+    for (int ix = 0, siz = tosigned(indexes.size()); ix != siz; ++ix)
+        pairlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(indexes[ix]), tosigned(infs.size()) > ix ? infs[ix] : nullptr);
 
     std::sort(list.begin(), list.end(), [&pairlist](int aix, int bix) {
         return Dictionary::jpSortFunc(pairlist[aix], pairlist[bix]);
@@ -1353,10 +1356,10 @@ void WordResultList::jpSort(std::vector<int> *pindexes)
         std::vector<Dictionary::JPResultSortData> pairtmp;
         pairtmp.swap(pairlist);
         pairlist.resize(pairtmp.size());
-        for (int ix = 0, siz = pairtmp.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(pairtmp.size()); ix != siz; ++ix)
             pairlist[ix] = pairtmp[list[ix]];
         
-        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(pindexes->size()); ix != siz; ++ix)
         {
             int pos = std::lower_bound(pairlist.begin(), pairlist.end(), psortdata[ix], [](Dictionary::JPResultSortData apair, Dictionary::JPResultSortData bpair) {
                 return Dictionary::jpSortFunc(apair, bpair);
@@ -1371,7 +1374,7 @@ int WordResultList::jpInsertPos(int windex, const std::vector<InfTypes> &winfs, 
     std::vector<Dictionary::JPResultSortData> list;
 
     int wpos = -1;
-    for (int ix = 0, siz = indexes.size(); ix != siz && wpos == -1; ++ix)
+    for (int ix = 0, siz = tosigned(indexes.size()); ix != siz && wpos == -1; ++ix)
     {
         if (windex == indexes[ix])
         {
@@ -1390,7 +1393,7 @@ int WordResultList::jpInsertPos(int windex, const std::vector<InfTypes> &winfs, 
     Dictionary::JPResultSortData *data = list.data();
 
     int ix = 0;
-    int siz = list.size();
+    int siz = tosigned(list.size());
     for (; ix != siz; ++ix)
     {
         if (ix == wpos)
@@ -1400,13 +1403,13 @@ int WordResultList::jpInsertPos(int windex, const std::vector<InfTypes> &winfs, 
         }
 
         WordEntry *w = dict->wordEntry(indexes[ix]);
-        data[ix] = Dictionary::jpSortDataGen(w, infs.size() > ix ? infs[ix] : nullptr);
+        data[ix] = Dictionary::jpSortDataGen(w, tosigned(infs.size()) > ix ? infs[ix] : nullptr);
     }
 
     for (; ix != siz; ++ix)
     {
         WordEntry *w = dict->wordEntry(indexes[ix]);
-        data[ix - 1] = Dictionary::jpSortDataGen(w, infs.size() > ix ? infs[ix] : nullptr);
+        data[ix - 1] = Dictionary::jpSortDataGen(w, tosigned(infs.size()) > ix ? infs[ix] : nullptr);
     }
 
     WordEntry *w = dict->wordEntry(windex);
@@ -1414,7 +1417,7 @@ int WordResultList::jpInsertPos(int windex, const std::vector<InfTypes> &winfs, 
     // Finding the insert position for windex.
     auto it = std::lower_bound(list.begin(), list.end(), Dictionary::jpSortDataGen(w, &winfs), &Dictionary::jpSortFunc);
 
-    int pos = it == list.end() ? list.size() : it - list.begin();
+    int pos = it == list.end() ? tosigned(list.size()) : it - list.begin();
 
     return pos;
 }
@@ -1437,14 +1440,14 @@ void WordResultList::defSort(QString searchstr, std::vector<int> *pindexes)
     if (pindexes != nullptr)
     {
         psortdata.resize(pindexes->size());
-        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(pindexes->size()); ix != siz; ++ix)
         {
             int index = pindexes->operator[](ix);
             psortdata[ix] = Dictionary::defSortDataGen(searchstr, dict->wordEntry(indexes[index]));
         }
     }
 
-    for (int ix = 0, siz = indexes.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(indexes.size()); ix != siz; ++ix)
         sortlist[ix] = Dictionary::defSortDataGen(searchstr, dict->wordEntry(indexes[ix]));
 
     std::sort(list.begin(), list.end(), [this, &sortlist](int ax, int bx) {
@@ -1460,10 +1463,10 @@ void WordResultList::defSort(QString searchstr, std::vector<int> *pindexes)
         std::vector<Dictionary::DefResultSortData> sorttmp;
         sorttmp.swap(sortlist);
         sortlist.resize(sorttmp.size());
-        for (int ix = 0, siz = sorttmp.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(sorttmp.size()); ix != siz; ++ix)
             sortlist[ix] = sorttmp[list[ix]];
 
-        for (int ix = 0, siz = pindexes->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(pindexes->size()); ix != siz; ++ix)
         {
             int pos = std::lower_bound(sortlist.begin(), sortlist.end(), psortdata[ix], [](Dictionary::DefResultSortData apair, Dictionary::DefResultSortData bpair) {
                 return Dictionary::defSortFunc(apair, bpair);
@@ -1476,7 +1479,7 @@ void WordResultList::defSort(QString searchstr, std::vector<int> *pindexes)
 int WordResultList::defInsertPos(QString searchstr, int windex, int *oldpos)
 {
     int wpos = -1;
-    for (int ix = 0; ix != indexes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(indexes.size()); ix != siz; ++ix)
     {
         if (windex == indexes[ix])
         {
@@ -1488,17 +1491,18 @@ int WordResultList::defInsertPos(QString searchstr, int windex, int *oldpos)
     if (oldpos != nullptr)
         *oldpos = wpos;
 
-    int siz = indexes.size() - (wpos == -1 ? 0 : 1);
+    int sortsize = tosigned(indexes.size()) - (wpos == -1 ? 0 : 1);
 
     // Before the words can be sorted by definition, some data must be collected
     // and cached till the end of the sort to speed the sort up.
     searchstr = searchstr.toLower();
 
     std::vector<Dictionary::DefResultSortData> sortlist;
-    sortlist.resize(siz);
+    sortlist.resize(sortsize);
 
     int ix = 0;
-    for (; ix != indexes.size(); ++ix)
+    int siz = tosigned(indexes.size());
+    for (; ix != siz; ++ix)
     {
         if (ix == wpos)
         {
@@ -1508,18 +1512,18 @@ int WordResultList::defInsertPos(QString searchstr, int windex, int *oldpos)
         WordEntry *w = dict->wordEntry(indexes[ix]);
         sortlist[ix] = Dictionary::defSortDataGen(searchstr, w);
     }
-    for (; ix != indexes.size(); ++ix)
+    for (; ix != siz; ++ix)
     {
         WordEntry *w = dict->wordEntry(indexes[ix]);
         sortlist[ix - 1] = Dictionary::defSortDataGen(searchstr, w);
     }
 
-    const WordEntry *w = dict->wordEntry(windex);
+    //const WordEntry *w = dict->wordEntry(windex);
     Dictionary::DefResultSortData wdata = Dictionary::defSortDataGen(searchstr, dict->wordEntry(windex));
 
     auto it = std::lower_bound(sortlist.begin(), sortlist.end(), wdata, &Dictionary::defSortFunc);
 
-    int pos = it == sortlist.end() ? sortlist.size() : it - sortlist.begin();
+    int pos = it == sortlist.end() ? tosigned(sortlist.size()) : it - sortlist.begin();
 
     return pos;
 }
@@ -1527,14 +1531,14 @@ int WordResultList::defInsertPos(QString searchstr, int windex, int *oldpos)
 void WordResultList::removeAt(int ix)
 {
     indexes.erase(indexes.begin() + ix);
-    if (infs.size() > ix)
+    if (tosigned(infs.size()) > ix)
         infs.erase(infs.begin() + ix);
 }
 
 void WordResultList::insert(int pos, int wordindex)
 {
     indexes.insert(indexes.begin() + pos, wordindex);
-    if (infs.size() > pos)
+    if (tosigned(infs.size()) > pos)
         infs.insert(infs.begin() + pos, nullptr);
 }
 
@@ -1548,7 +1552,7 @@ void WordResultList::insert(int pos, int wordindex, const std::vector<InfTypes> 
 
     indexes.insert(indexes.begin() + pos, wordindex);
 
-    if (infs.size() < pos)
+    if (tosigned(infs.size()) < pos)
         infs.insert(infs.end(), pos - infs.size(), nullptr);
     infs.insert(infs.begin() + pos, inf);
 }
@@ -1637,7 +1641,7 @@ void TextSearchTree::copy(TextSearchTree *src)
 //}
 
                                
-void TextSearchTree::findWords(std::vector<int> &result, QString search, bool exact, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize) 
+void TextSearchTree::findWords(std::vector<int> &result, QString search, bool exact, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, int infsize) 
 {
     // When changing this: update wordMatches() as well.
 
@@ -1648,11 +1652,11 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
     // Because we go backwards in the result list, we have to go backwards in wordpool too
     // as both are sorted in increasing order.
 
-    uint filterpos = -2;
+    int filterpos = -2;
     const int *wordpooldata = nullptr;
     if (wordpool != nullptr)
     {
-        filterpos = wordpool->size() - 1;
+        filterpos = tosigned(wordpool->size()) - 1;
         wordpooldata = wordpool->data();
     }
 
@@ -1673,7 +1677,7 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
         TextNode *selected = nullptr;
         TextNode *n = nullptr;
 
-        int contained = std::numeric_limits<int>::max();
+        //int contained = std::numeric_limits<int>::max();
         while (tokens.next())
         {
             findContainer(tokens.token(), tokens.tokenSize(), n);
@@ -1714,8 +1718,8 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
                     --filterpos;
                 if (filterpos == -1)
                 {
-                    // There are no more possible matches in tmp to the ix-th word, when
-                    // we run out of wordpool.
+                    // There are no more possible matches in tmp to the ix-th word, when we
+                    // run out of wordpool.
                     break;
                 }
 
@@ -1798,7 +1802,7 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
 
     if (!sameform)
         search = romaji;
-    else if (infsize != 0)
+    else if (infsize > 0)
         search = search.left(search.size() - infsize) + hiraganize(search.right(infsize));
 
     // Remove duplicates and invalid matches.
@@ -1845,16 +1849,16 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
         //int klen;
 
         word = sameform ? w->kana.data() : w->romaji.data();
-        wlen = qcharlen(word);
+        wlen = tosigned(qcharlen(word));
 
         if (wlen < search.size() || (exact && wlen != search.size()))
             ;// result.erase(result.begin() + ix);
-        else if ((!sameform || infsize == 0 || search.size() <= infsize) &&
+        else if ((!sameform || infsize <= 0 || search.size() <= infsize) &&
             ((exact && qcharcmp(word, search.constData())) ||
             (!reversed && qcharncmp(search.constData(), word, search.size())) ||
             (reversed && qcharncmp(search.constData(), word + wlen - search.size(), search.size()))))
             ;// result.erase(result.begin() + ix);
-        else if ((sameform && infsize != 0 && search.size() > infsize) &&
+        else if ((sameform && infsize > 0 && search.size() > infsize) &&
             ((exact && (qcharncmp(word, search.constData(), wlen - infsize) || hiraganize(word + wlen - infsize) != search.rightRef(infsize))) ||
             (!reversed && !exact /* in theory reversed is always true, because only word endings are checked when deinflecting. */) ||
             ((reversed || exact) && (qcharncmp(search.constData(), word + wlen - search.size(), search.size() - infsize) ||
@@ -1865,7 +1869,7 @@ void TextSearchTree::findWords(std::vector<int> &result, QString search, bool ex
     }
 }
 
-bool TextSearchTree::wordMatches(int windex, QString search, bool exact, bool sameform, uint infsize, bool *f)
+bool TextSearchTree::wordMatches(int windex, QString search, bool exact, bool sameform, int infsize, bool *f)
 {
     if (!kana)
     {
@@ -1916,22 +1920,22 @@ bool TextSearchTree::wordMatches(int windex, QString search, bool exact, bool sa
 
     if (!sameform)
         search = romaji;
-    else if (infsize != 0)
+    else if (infsize > 0)
         search = search.left(search.size() - infsize) + hiraganize(search.right(infsize));
 
     WordEntry *w = dict->wordEntry(windex);
 
     QChar *word = sameform ? w->kana.data() : w->romaji.data();
-    int wlen = qcharlen(word);
+    int wlen = tosigned(qcharlen(word));
 
     if (wlen < search.size() || (exact && wlen != search.size()))
         return false;// result.erase(result.begin() + ix);
-    else if ((!sameform || infsize == 0 || search.size() <= infsize) &&
+    else if ((!sameform || infsize <= 0 || search.size() <= infsize) &&
         ((exact && qcharcmp(word, search.constData())) ||
         (!reversed && qcharncmp(search.constData(), word, search.size())) ||
         (reversed && qcharncmp(search.constData(), word + wlen - search.size(), search.size()))))
         return false;// result.erase(result.begin() + ix);
-    else if ((sameform && infsize != 0 && search.size() > infsize) &&
+    else if ((sameform && infsize > 0 && search.size() > infsize) &&
         ((exact && (qcharncmp(word, search.constData(), wlen - infsize) || hiraganize(word + wlen - infsize) != search.rightRef(infsize))) ||
         (!reversed && !exact /* in theory reversed is always true, because only word endings are checked when deinflecting. */) ||
         ((reversed || exact) && (qcharncmp(search.constData(), word + wlen - search.size(), search.size() - infsize) ||
@@ -1976,7 +1980,7 @@ int TextSearchTree::lineForWord(int windex) const
 
 int TextSearchTree::lineDefinitionCount(int line) const
 {
-    return dict->wordEntry(line)->defs.size();
+    return tosigned(dict->wordEntry(line)->defs.size());
 }
 
 QString TextSearchTree::lineDefinition(int line, int def) const
@@ -1997,7 +2001,7 @@ void TextSearchTree::doGetWord(int index, QStringList &texts) const
     }
 
     QCharString k;
-    for (int ix = 0; ix < w->defs.size(); ++ix)
+    for (int ix = 0, siz = tosigned(w->defs.size()); ix != siz; ++ix)
     {
         k.copy(w->defs[ix].def.toLower().constData()); // AnsiStrLower
         QCharTokenizer tokens(k.data());
@@ -2007,7 +2011,7 @@ void TextSearchTree::doGetWord(int index, QStringList &texts) const
     }
 }
 
-int TextSearchTree::size() const
+TextSearchTree::size_type TextSearchTree::size() const
 {
     return dict->entryCount();
 }
@@ -2136,9 +2140,9 @@ void StudyDefinitionTree::save(QDataStream &stream) const
     }
 }
 
-void StudyDefinitionTree::swap(StudyDefinitionTree &src, Dictionary *dict)
+void StudyDefinitionTree::swap(StudyDefinitionTree &src, Dictionary *srcdict)
 {
-   base::swap(src, dict);
+   base::swap(src, srcdict);
    std::swap(list, src.list);
 }
 
@@ -2155,7 +2159,7 @@ void StudyDefinitionTree::applyChanges(std::map<int, int> &changes)
 {
     std::set<int> found;
     int delcnt = 0;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         int newval = changes[list[ix].first];
 
@@ -2191,7 +2195,7 @@ void StudyDefinitionTree::processRemovedWord(int windex)
 
     // The list is ordered by word indexes. Any item starting at pos will be equal or greater
     // than windex.
-    for (int ix = pos, siz = list.size(); ix != siz; ++ix)
+    for (int ix = pos, siz = tosigned(list.size()); ix != siz; ++ix)
         --list[ix].first;
 
     // The item's value at it was decremented above, so matching windex - 1 instead of windex.
@@ -2202,7 +2206,7 @@ void StudyDefinitionTree::processRemovedWord(int windex)
     list.erase(it);
 }
 
-int StudyDefinitionTree::size() const
+StudyDefinitionTree::size_type StudyDefinitionTree::size() const
 {
     return list.size();
 }
@@ -2252,7 +2256,7 @@ bool StudyDefinitionTree::setDefinition(int windex, QString def)
 
 void StudyDefinitionTree::listWordIndexes(std::vector<int> &result) const
 {
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         result.push_back(list[ix].first);
 }
 
@@ -2269,19 +2273,23 @@ int StudyDefinitionTree::lineForWord(int windex) const
     return it - list.begin();
 }
 
+#ifdef _DEBUG
 int StudyDefinitionTree::lineDefinitionCount(int line) const
+#else
+int StudyDefinitionTree::lineDefinitionCount(int /*line*/) const
+#endif
 {
 #ifdef _DEBUG
-    if (line < 0 || line >= list.size())
+    if (line < 0 || line >= tosigned(list.size()))
         throw "index out of bounds";
 #endif
     return 1;
 }
 
-QString StudyDefinitionTree::lineDefinition(int line, int def) const
+QString StudyDefinitionTree::lineDefinition(int line, int /*def*/) const
 {
 #ifdef _DEBUG
-    if (line < 0 || line >= list.size())
+    if (line < 0 || line >= tosigned(list.size()))
         throw "index out of bounds";
 #endif
     return list[line].second.toQString();
@@ -2364,7 +2372,7 @@ void WordCommonsTree::save(QDataStream &stream) const
 {
     stream << (quint32)list.size();
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         stream << make_zstr(list[ix]->kanji, ZStrFormat::Byte);
         stream << make_zstr(list[ix]->kana, ZStrFormat::Byte);
@@ -2377,7 +2385,7 @@ void WordCommonsTree::save(QDataStream &stream) const
 
 void WordCommonsTree::clearJLPTData()
 {
-    int cnt = list.size();
+    int cnt = tosigned(list.size());
     bool erased = false;
     for (int ix = cnt - 1; ix >= 0; --ix)
     {
@@ -2398,7 +2406,7 @@ void WordCommonsTree::clearJLPTData()
 
 void WordCommonsTree::clearExamplesData()
 {
-    int cnt = list.size();
+    int cnt = tosigned(list.size());
     bool erased = false;
     for (int ix = cnt - 1; ix >= 0; --ix)
     {
@@ -2419,7 +2427,7 @@ void WordCommonsTree::clearExamplesData()
 
 int WordCommonsTree::addJLPTN(const QChar *kanji, const QChar *kana, int jlptN, bool insertsorted)
 {
-    int ix = list.size();
+    int ix = tosigned(list.size());
     
     WordCommons *wc = nullptr;
     if (insertsorted)
@@ -2451,7 +2459,7 @@ int WordCommonsTree::addJLPTN(const QChar *kanji, const QChar *kana, int jlptN, 
 bool WordCommonsTree::removeJLPTN(int commonsindex)
 {
 #ifdef _DEBUG
-    if (commonsindex < 0 || commonsindex >= list.size())
+    if (commonsindex < 0 || commonsindex >= tosigned(list.size()))
         throw "Index out of bounds.";
 #endif
 
@@ -2570,7 +2578,7 @@ WordCommons* WordCommonsTree::findWord(const QChar *kanji, const QChar *kana, co
     if (n == nullptr)
         return nullptr;
 
-    for (int ix = 0; ix != n->lines.size(); ++ix)
+    for (int ix = 0, siz = tosigned(n->lines.size()); ix != siz; ++ix)
     {
         WordCommons *dat = list[n->lines[ix]];
         if (dat->kanji != kanji || dat->kana != kana)
@@ -2602,7 +2610,7 @@ void WordCommonsTree::doGetWord(int index, QStringList &texts) const
     texts << romanize(list[index]->kana.data());
 }
 
-int WordCommonsTree::size() const
+WordCommonsTree::size_type WordCommonsTree::size() const
 {
     return list.size();
 }
@@ -2615,7 +2623,7 @@ bool WordCommonsTree::insertIndex(const QChar *kanji, const QChar *kana, int &in
 
     if (it == list.end())
     {
-        index = list.size();
+        index = tosigned(list.size());
         return true;
     }
     index = it - list.begin();
@@ -2688,14 +2696,14 @@ void WordExamplesTree::save(QDataStream &stream) const
     if (list.empty())
         return;
 
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         WordExamples *wex = list[ix];
         stream << make_zstr(wex->kanji, ZStrFormat::Byte);
         stream << make_zstr(wex->kana, ZStrFormat::Byte);
 
         stream << (qint32)wex->data.size();
-        for (int iy = 0, siz2 = wex->data.size(); iy != siz2; ++iy)
+        for (int iy = 0, siz2 = tosigned(wex->data.size()); iy != siz2; ++iy)
         {
             stream << (qint32)std::get<0>(wex->data[iy]);
             stream << (qint32)std::get<1>(wex->data[iy]);
@@ -2717,8 +2725,8 @@ bool WordExamplesTree::isReversed() const
 
 void WordExamplesTree::reset()
 {
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
-        for (int iy = 0, siz2 = list[ix]->data.size(); iy != siz2; ++iy)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
+        for (int iy = 0, siz2 = tosigned(list[ix]->data.size()); iy != siz2; ++iy)
             std::get<2>(list[ix]->data[iy]) = -1;
 }
 
@@ -2741,11 +2749,11 @@ void WordExamplesTree::rebuild()
         return ids[a].second < ids[b].second;
     });
 
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         auto &arr = list[ix]->data;
         auto pos = order.begin();
-        for (int iy = 0, siz2 = arr.size(); iy != siz2; ++iy)
+        for (int iy = 0, siz2 = tosigned(arr.size()); iy != siz2; ++iy)
         {
             auto it = std::lower_bound(pos, order.end(), arr[iy], [&ids](int o, const std::tuple<int, int, int> &val) {
                 int dif = ids[o].first - std::get<0>(val);
@@ -2783,7 +2791,7 @@ void WordExamplesTree::linkExample(const QChar *kanji, const QChar *kana, int ex
         std::get<1>(wex->data[0]) = ids[exampleindex].second;
         std::get<2>(wex->data[0]) = exampleindex;
         list.push_back(wex);
-        doExpand(list.size() - 1);
+        doExpand(tosigned(list.size()) - 1);
 
         ZKanji::dictionary(0)->setToUserModified();
         return;
@@ -2829,7 +2837,7 @@ bool WordExamplesTree::isExample(const QChar *kanji, const QChar *kana, int exam
     if (wix == -1)
         return false;
     const WordExamples *wex = list[wix];
-    for (int ix = 0, siz = wex->data.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(wex->data.size()); ix != siz; ++ix)
         if (std::get<2>(wex->data[ix]) == exampleindex)
             return true;
     return false;
@@ -2845,7 +2853,7 @@ void WordExamplesTree::doGetWord(int index, QStringList &texts) const
     texts << romanize(list[index]->kana.data());
 }
 
-int WordExamplesTree::size() const
+WordExamplesTree::size_type WordExamplesTree::size() const
 {
     return list.size();
 }
@@ -2863,12 +2871,12 @@ int WordExamplesTree::findWordIndex(const QChar *kanji, const QChar *kana, const
     }
 
     const TextNode *n;
-    findContainer(romaji, qcharlen(romaji), n);
+    findContainer(romaji, tosigned(qcharlen(romaji)), n);
 
     if (n == nullptr)
         return -1;
 
-    for (int ix = 0; ix != n->lines.size(); ++ix)
+    for (int ix = 0, siz = tosigned(n->lines.size()); ix != siz; ++ix)
     {
         WordExamples *dat = list[n->lines[ix]];
         if (dat->kanji != kanji || dat->kana != kana)
@@ -2982,8 +2990,8 @@ void Dictionary::loadBase(QDataStream &stream)
     KanjiEntry *k;
     //uchar b;
 
-    quint8 rcnt = 0; // Count of readings for kanji.
-    QChar *rtmp = nullptr; // Temporary array for reading in old format kanji readings.
+    //quint8 rcnt = 0; // Count of readings for kanji.
+    //QChar *rtmp = nullptr; // Temporary array for reading in old format kanji readings.
 
     for (int ix = 0; ix < ZKanji::kanjicount; ++ix)
     {
@@ -3067,7 +3075,6 @@ void Dictionary::loadBase(QDataStream &stream)
         k->tuttle = u16;
 
         stream.readRawData(k->snh, 8);
-
         stream.readRawData(k->busy, 4);
 
         qint32 i32;
@@ -3086,13 +3093,13 @@ void Dictionary::loadBase(QDataStream &stream)
     quint16 u16;
     stream >> u16;
     ZKanji::radklist.resize(u16);
-    for (int ix = 0; ix != ZKanji::radklist.size(); ++ix)
+    for (int ix = 0, siz = tosigned(ZKanji::radklist.size()); ix != siz; ++ix)
     {
         stream >> u16;
         ZKanji::radklist[ix].first = u16;
         stream >> u16;
         ZKanji::radklist[ix].second.setSize(u16);
-        for (int iy = 0; iy != ZKanji::radklist[ix].second.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(ZKanji::radklist[ix].second.size()); iy != sizy; ++iy)
         {
             stream >> u16;
             ZKanji::radklist[ix].second[iy] = u16;
@@ -3103,7 +3110,7 @@ void Dictionary::loadBase(QDataStream &stream)
     quint8 u8;
     stream >> u8;
     ZKanji::radkcnt.resize(u8);
-    for (int ix = 0; ix != ZKanji::radkcnt.size(); ++ix)
+    for (int ix = 0, siz = tosigned(ZKanji::radkcnt.size()); ix != siz; ++ix)
     {
         stream >> u8;
         ZKanji::radkcnt[ix] = u8;
@@ -3130,7 +3137,7 @@ void Dictionary::loadFile(const QString &filename, bool basedict, bool skiporigi
     stream.readRawData(tmp, 8);
 
     bool oldver;
-    int version;
+    int version = -1;
     bool good = !strncmp("zwrds", tmp, 5);
     oldver = good;
     if (!good)
@@ -3203,7 +3210,7 @@ void Dictionary::load(QDataStream &stream)
 
         stream >> u8;
         w->defs.resize(u8);
-        for (int iy = 0; iy != w->defs.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(w->defs.size()); iy != sizy; ++iy)
         {
             WordDefinition &d = w->defs[iy];
             stream >> make_zstr(d.def, ZStrFormat::Word);
@@ -3306,12 +3313,12 @@ void Dictionary::load(QDataStream &stream)
     {
         dstream >> u16;
         dstream >> u32;
-        std::vector<int> &data = symdata[u16];
-        data.resize(u32);
-        for (int iy = 0; iy != data.size(); ++iy)
+        std::vector<int> &dat = symdata[u16];
+        dat.resize(u32);
+        for (int iy = 0, sizy = tosigned(dat.size()); iy != sizy; ++iy)
         {
             dstream >> u32;
-            data[iy] = u32;
+            dat[iy] = u32;
         }
     }
 
@@ -3323,12 +3330,12 @@ void Dictionary::load(QDataStream &stream)
     {
         dstream >> u16;
         dstream >> u32;
-        std::vector<int> &data = kanadata[u16];
-        data.resize(u32);
-        for (int iy = 0; iy != data.size(); ++iy)
+        std::vector<int> &dat = kanadata[u16];
+        dat.resize(u32);
+        for (int iy = 0, sizy = tosigned(dat.size()); iy != sizy; ++iy)
         {
             dstream >> u32;
-            data[iy] = u32;
+            dat[iy] = u32;
         }
     }
 
@@ -3344,7 +3351,7 @@ void Dictionary::load(QDataStream &stream)
     qint32 i32;
 
     // Read word alphabet.
-    for (int ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         dstream >> i32;
         abcde[ix] = i32;
@@ -3401,7 +3408,7 @@ void Dictionary::loadUserDataFile(const QString &filename)
         // the clear.
 
         std::map<int, QCharStringList> meanings;
-        for (int ix = 0, siz = kanjidata.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(kanjidata.size()); ix != siz; ++ix)
             if (!kanjidata[ix]->meanings.empty())
                 meanings[ix] = std::move(kanjidata[ix]->meanings);
         clearUserData();
@@ -3442,7 +3449,7 @@ void Dictionary::loadUserData(QDataStream &stream, int version)
         throw ZException("User date does not match dictionary date.");
 
     quint8 b;
-    qint8 c;
+    //qint8 c;
     qint32 i;
 
 #if TIMED_LOAD == 1
@@ -3487,7 +3494,7 @@ void Dictionary::loadUserData(QDataStream &stream, int version)
 
             stream >> u8;
             w.defs.resize(u8);
-            for (int iy = 0; iy != w.defs.size(); ++iy)
+            for (int iy = 0, sizy = tosigned(w.defs.size()); iy != sizy; ++iy)
             {
                 WordDefinition &d = w.defs[iy];
                 stream >> make_zstr(d.def, ZStrFormat::Word);
@@ -3597,7 +3604,7 @@ void Dictionary::clearUserData()
     studydecks->clear();
     wordstudydefs.clear();
 
-    for (int ix = 0, siz = kanjidata.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(kanjidata.size()); ix != siz; ++ix)
     {
         kanjidata[ix]->ex.clear();
         kanjidata[ix]->meanings.clear();
@@ -3625,7 +3632,7 @@ QDateTime Dictionary::fileWriteDate(const QString &filename)
     if (!good)
         good = !strncmp("zkdat", tmp, 5);
 
-    int version;
+    int version = -1;
     if (good)
         version = strtol(tmp + 5, nullptr, 10);
 
@@ -3697,7 +3704,7 @@ Error Dictionary::saveBase(const QString &filename)
         errorcode = 4;
 
         // Kanji data
-        for (int ix = 0; ix != ZKanji::kanjis.size(); ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::kanjis.size()); ix != siz; ++ix)
         {
             KanjiEntry *k = ZKanji::kanjis[ix];
             stream << (quint16)k->ch.unicode()
@@ -3748,18 +3755,18 @@ Error Dictionary::saveBase(const QString &filename)
         errorcode = 5;
 
         stream << (quint16)ZKanji::radklist.size();
-        for (int ix = 0; ix != ZKanji::radklist.size(); ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::radklist.size()); ix != siz; ++ix)
         {
             stream << (quint16)ZKanji::radklist[ix].first;
             stream << (quint16)ZKanji::radklist[ix].second.size();
-            for (int iy = 0; iy != ZKanji::radklist[ix].second.size(); ++iy)
+            for (int iy = 0, sizy = tosigned(ZKanji::radklist[ix].second.size()); iy != sizy; ++iy)
                 stream << (quint16)ZKanji::radklist[ix].second[iy];
         }
 
         errorcode = 6;
 
         stream << (quint8)ZKanji::radkcnt.size();
-        for (int ix = 0; ix != ZKanji::radkcnt.size(); ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::radkcnt.size()); ix != siz; ++ix)
             stream << (quint8)ZKanji::radkcnt[ix];
 
         errorcode = 7;
@@ -3815,7 +3822,7 @@ Error Dictionary::save(const QString &filename)
         stream << (quint32)words.size();
 
         // Writing the words.
-        for (int ix = 0; ix != words.size(); ++ix)
+        for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
         {
             WordEntry *w = words[ix];
 
@@ -3825,7 +3832,7 @@ Error Dictionary::save(const QString &filename)
 
             stream << (quint16)w->freq;
             stream << (quint8)(w->inf & 0xff);
-            quint8 cnt = w->defs.size();
+            quint8 cnt = tounsigned<quint8>(w->defs.size());
             stream << cnt;
             for (int iy = 0; iy != cnt; ++iy)
             {
@@ -3875,9 +3882,9 @@ Error Dictionary::save(const QString &filename)
         int kfirst = -1;
         int kend = -1;
         KanjiDictData *kd = nullptr;
-        for (int ix = 0; ix != ZKanji::kanjis.size() + 1; ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::kanjis.size()); ix != siz + 1; ++ix)
         {
-            if (ix != ZKanji::kanjis.size())
+            if (ix != siz)
             {
                 kd = kanjidata[ix];
 
@@ -3934,7 +3941,7 @@ Error Dictionary::save(const QString &filename)
         {
             dstream << (quint16)syms.first;
             dstream << (quint32)syms.second.size();
-            for (int ix = 0; ix != syms.second.size(); ++ix)
+            for (int ix = 0, siz = tosigned(syms.second.size()); ix != siz; ++ix)
                 dstream << (qint32)syms.second[ix];
         }
 
@@ -3945,14 +3952,16 @@ Error Dictionary::save(const QString &filename)
         {
             dstream << (quint16)kds.first;
             dstream << (quint32)kds.second.size();
-            for (int ix = 0; ix != kds.second.size(); ++ix)
+            for (int ix = 0, siz = tosigned(kds.second.size()); ix != siz; ++ix)
                 dstream << (qint32)kds.second[ix];
         }
 
         errorcode = 9;
 
+        assert(words.size() == abcde.size() && words.size() == aiueo.size());
+
         // Writing alphabetic and aiueo ordering. They have the same size as words.
-        for (int ix = 0; ix != words.size(); ++ix)
+        for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
         {
             dstream << (qint32)abcde[ix];
             dstream << (qint32)aiueo[ix];
@@ -4024,7 +4033,7 @@ Error Dictionary::saveUserData(const QString &filename)
         {
             stream << (quint8)1;
             stream << (qint32)ZKanji::originals.size();
-            for (int ix = 0; ix != ZKanji::originals.size(); ++ix)
+            for (int ix = 0, siz = tosigned(ZKanji::originals.size()); ix != siz; ++ix)
             {
                 stream << (quint8)ZKanji::originals.items(ix)->change;
                 stream << (qint32)ZKanji::originals.items(ix)->index;
@@ -4039,7 +4048,7 @@ Error Dictionary::saveUserData(const QString &filename)
                 stream << (uint16_t)w->freq;
                 stream << (uint8_t)(w->inf & 0xff);
 
-                uint8_t cnt = w->defs.size();
+                uint8_t cnt = tounsigned<uint8_t>(w->defs.size());
                 stream << cnt;
                 for (int iy = 0; iy != cnt; ++iy)
                 {
@@ -4081,7 +4090,7 @@ Error Dictionary::saveUserData(const QString &filename)
         // meaning. The data is saved in blocks. Each block starts with the kanji index (16bit
         // ushort) and number of kanji in the block (16bit ushort). Writes a 0 length block after
         // the last one. (The kanji index is not important.)
-        for (int ix = 0, siz = kanjidata.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(kanjidata.size()); ix != siz; ++ix)
         {
             if (kanjidata[ix]->ex.empty() && kanjidata[ix]->meanings.empty())
                 continue;
@@ -4089,7 +4098,8 @@ Error Dictionary::saveUserData(const QString &filename)
             // Count kanji with data to fit in the next block, where ix is the
             // index of the first kanji in the block.
             int end = ix + 1;
-            while (end != kanjidata.size() && (!kanjidata[end]->ex.empty() || !kanjidata[end]->meanings.empty()))
+            int kdatasiz = tosigned(kanjidata.size());
+            while (end != kdatasiz && (!kanjidata[end]->ex.empty() || !kanjidata[end]->meanings.empty()))
                 ++end;
 
             stream << (quint16)ix;
@@ -4203,10 +4213,10 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
 
     // Check if there are words as kanji examples, and whether there are user definitions for
     // them (unless usermeanings is false).
-    for (int ix = 0; (kexamples || usermeanings) && ix != kgroups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(kgroups.size()); (kexamples || usermeanings) && ix != siz; ++ix)
     {
         KanjiGroup *g = kgroups[ix];
-        for (int iy = 0; (kexamples || usermeanings) && iy != g->size(); ++iy)
+        for (int iy = 0, sizy = tosigned(g->size()); (kexamples || usermeanings) && iy != sizy; ++iy)
         {
             int kix = g->items(iy)->index;
             const std::vector<int> &ex = kanjidata[kix]->ex;
@@ -4217,7 +4227,7 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
                 kwords.push_back(std::make_pair(kix, ex));
             }
 
-            for (int iz = 0; usermeanings && iz != ex.size(); ++iz)
+            for (int iz = 0, sizz = tosigned(ex.size()); usermeanings && iz != sizz; ++iz)
             {
                 int wix = ex[iz];
                 if (found.count(wix) != 0)
@@ -4232,11 +4242,11 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
     }
 
     // Check for user definitions for words in words list.
-    for (int ix = 0; usermeanings && ix != wgroups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(wgroups.size()); usermeanings && ix != siz; ++ix)
     {
         WordGroup *g = wgroups[ix];
         const std::vector<int> &indexes = g->getIndexes();
-        for (int iy = 0; iy != indexes.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(indexes.size()); iy != sizy; ++iy)
         {
             int wix = indexes[iy];
             if (found.count(wix))
@@ -4253,7 +4263,7 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
     {
         // Writing user definitions section.
         stream << "[StudyDefinitions]\n";
-        for (int ix = 0; ix != defs.size(); ++ix)
+        for (int ix = 0, siz = tosigned(defs.size()); ix != siz; ++ix)
         {
             WordEntry *w = words[defs[ix].first];
             stream << w->kanji.toQStringRaw() << "(" << w->kana.toQStringRaw() << ")" << "\t" << defs[ix].second.toQStringRaw() << "\n";
@@ -4266,10 +4276,10 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
         // Writing kanji example words section. Only write at most 4 example
         // words on each line to avoid too long lines.
         stream << "[KanjiWordExamples]";
-        for (int ix = 0; ix != kwords.size(); ++ix)
+        for (int ix = 0, siz = tosigned(kwords.size()); ix != siz; ++ix)
         {
             const std::vector<int> &ex = kwords[ix].second;
-            for (int iy = 0; iy != ex.size(); ++iy)
+            for (int iy = 0, sizy = tosigned(ex.size()); iy != sizy; ++iy)
             {
                 bool newline = (iy % 4) == 0;
                 if (newline)
@@ -4286,7 +4296,7 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
         // Writing kanji groups and kanji inside them. At most 32 kanji is
         // written on a single line to avoid long lines.
         stream << "[KanjiGroups]";
-        for (int ix = 0; ix != kgroups.size(); ++ix)
+        for (int ix = 0, siz = tosigned(kgroups.size()); ix != siz; ++ix)
         {
             KanjiGroup *g = kgroups[ix];
             if (g->isEmpty())
@@ -4298,7 +4308,7 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
             }
 
             const std::vector<ushort> &indexes = g->getIndexes();
-            for (int iy = 0; iy != g->size(); ++iy)
+            for (int iy = 0, sizy = tosigned(g->size()); iy != sizy; ++iy)
             {
                 bool newline = (iy % 32) == 0;
                 if (newline)
@@ -4314,7 +4324,7 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
         // Writing word groups and words inside them. Only write at most 4
         // words on each line to avoid too long lines.
         stream << "[WordGroups]";
-        for (int ix = 0; ix != wgroups.size(); ++ix)
+        for (int ix = 0, siz = tosigned(wgroups.size()); ix != siz; ++ix)
         {
             WordGroup *g = wgroups[ix];
             if (g->isEmpty())
@@ -4326,7 +4336,7 @@ void Dictionary::exportUserData(const QString &filename, std::vector<KanjiGroup*
             }
 
             const std::vector<int> &indexes = g->getIndexes();
-            for (int iy = 0; iy != g->size(); ++iy)
+            for (int iy = 0, sizy = tosigned(g->size()); iy != sizy; ++iy)
             {
                 bool newline = (iy % 4) == 0;
                 if (newline)
@@ -4420,7 +4430,7 @@ void Dictionary::exportDictionary(const QString &filename, bool limit, const std
         stream << "[About]\n";
         QStringList infs = info.split("\n");
 
-        for (int ix = 0, siz = infs.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(infs.size()); ix != siz; ++ix)
         {
             QString str = infs.at(ix);
             stream << "*";
@@ -4438,12 +4448,12 @@ void Dictionary::exportDictionary(const QString &filename, bool limit, const std
     if (!limit || !wordlimit.empty())
         stream << "[Words]\n";
 
-    for (int ix = 0, siz = !limit ? words.size() : wordlimit.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(!limit ? words.size() : wordlimit.size()); ix != siz; ++ix)
     {
         WordEntry *e = words[!limit ? ix : wordlimit[ix]];
         stream << QString("%1(%2) %3 %4\n").arg(e->kanji.toQStringRaw()).arg(e->kana.toQStringRaw()).arg(e->freq).arg(Strings::wordInfoTags(e->inf));
 
-        for (int iy = 0, siy = e->defs.size(); iy != siy; ++iy)
+        for (int iy = 0, siy = tounsigned(e->defs.size()); iy != siy; ++iy)
         {
             auto &def = e->defs[iy];
             stream << QString("D: %1%2%3%4\t%5\n").arg(Strings::wordTypeTags(def.attrib.types)).arg(Strings::wordNoteTags(def.attrib.notes)).arg(Strings::wordFieldTags(def.attrib.fields)).arg(Strings::wordDialectTags(def.attrib.dialects)).arg(def.def.toQStringRaw());
@@ -4455,7 +4465,7 @@ void Dictionary::exportDictionary(const QString &filename, bool limit, const std
         stream << "\n";
         stream << "[KanjiDefinitions]\n";
     }
-    for (int ix = 0, siz = !limit ? kanjidata.size() : kanjilimit.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(!limit ? kanjidata.size() : kanjilimit.size()); ix != siz; ++ix)
     {
         int kix = !limit ? ix : kanjilimit[ix];
         if (kanjidata[kix]->meanings.empty())
@@ -4688,7 +4698,7 @@ void Dictionary::swapDictionaries(Dictionary *src, std::map<int, int> &changes)
     src->studydecks.reset(new StudyDeckList);
     src->decks->copy(decks);
 
-    for (int ix = 0, siz = src->kanjidata.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(src->kanjidata.size()); ix != siz; ++ix)
     {
         if (src->kanjidata[ix]->ex.empty())
             continue;
@@ -4696,7 +4706,7 @@ void Dictionary::swapDictionaries(Dictionary *src, std::map<int, int> &changes)
         std::set<int> found;
         kanjidata[ix]->ex.clear();
         kanjidata[ix]->ex.reserve(src->kanjidata[ix]->ex.size());
-        for (int iy = 0, siy = src->kanjidata[ix]->ex.size(); iy != siy; ++iy)
+        for (int iy = 0, siy = tounsigned(src->kanjidata[ix]->ex.size()); iy != siy; ++iy)
         {
             int val = changes[src->kanjidata[ix]->ex[iy]];
 
@@ -4804,7 +4814,7 @@ const KanjiGroups& Dictionary::kanjiGroups() const
 
 int Dictionary::entryCount() const
 {
-    return words.size();
+    return tounsigned(words.size());
 }
 
 WordEntry* Dictionary::wordEntry(int ix)
@@ -5022,7 +5032,7 @@ QString Dictionary::wordDefinitionString(int index, bool numbers) const
 
     QString separator = tr(", ");
 
-    for (int ix = 0, siz = defs.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(defs.size()); ix != siz; ++ix)
     {
         if (drawnumbers)
             result += QString::number(ix + 1) + ") ";
@@ -5083,7 +5093,7 @@ void Dictionary::getKanjiWords(short kindex, std::vector<int> &dest) const
 
 void Dictionary::getKanjiWords(const std::vector<ushort> &kanji, std::vector<int> &dest) const
 {
-    for (int ix = 0, siz = kanji.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(kanji.size()); ix != siz; ++ix)
     {
         const std::vector<int> &w = kanjidata[kanji[ix]]->words;
         dest.insert(dest.end(), w.begin(), w.end());
@@ -5094,7 +5104,7 @@ void Dictionary::getKanjiWords(const std::vector<ushort> &kanji, std::vector<int
 
 int Dictionary::kanjiWordCount(short kindex) const
 {
-    return kanjidata[kindex]->words.size();
+    return tounsigned(kanjidata[kindex]->words.size());
 }
 
 int Dictionary::kanjiWordAt(short kindex, int ix) const
@@ -5250,13 +5260,9 @@ void Dictionary::findWords(WordResultList &result, SearchMode searchmode, QStrin
 
         result.set(lines);
         if (deinfs.empty())
-        {
-            //if (sort)
-            //    result.jpSort();
             return;
-        }
 
-        for (int ix = 0; ix != deinfs.size(); ++ix)
+        for (int ix = 0, siz = tosigned(deinfs.size()); ix != siz; ++ix)
         {
             std::vector<int> tmp;
             std::vector<std::vector<InfTypes>*> inftmp;
@@ -5268,30 +5274,30 @@ void Dictionary::findWords(WordResultList &result, SearchMode searchmode, QStrin
                 findKanaWords(tmp, deinfs[ix]->form, wildcards, sameform, wordpool != nullptr ? &wpool : nullptr, conditions, deinfs[ix]->infsize);
             inftmp.resize(tmp.size());
 
-            for (int j = 0; j != tmp.size(); ++j)
+            for (int iy = 0, sizy = tosigned(tmp.size()); iy != sizy; ++iy)
             {
                 bool found = false;
-                for (int k = 0; !found && k != result.dictionary()->wordEntry(tmp[j])->defs.size(); ++k)
-                    if ((result.dictionary()->wordEntry(tmp[j])->defs[k].attrib.types & (1 << (int)deinfs[ix]->type)) != 0/* ||
-                        ((result.dictionary()->wordEntry(tmp[j])->defs[k].types & (1 << (int)WordTypes::AuxAdj)) != 0
+                for (int k = 0, sizk = tosigned(result.dictionary()->wordEntry(tmp[iy])->defs.size()); !found && k != sizk; ++k)
+                    if ((result.dictionary()->wordEntry(tmp[iy])->defs[k].attrib.types & (1 << (int)deinfs[ix]->type)) != 0/* ||
+                        ((result.dictionary()->wordEntry(tmp[iy])->defs[k].types & (1 << (int)WordTypes::AuxAdj)) != 0
                         && deinfs[ix]->type == WordTypes::TrueAdj)*/)
                         found = true;
                 if (!found)
-                    tmp[j] = -1; // No match, disable this index. We check for -1 just below when adding to result. It's not used elsewhere.
+                    tmp[iy] = -1; // No match, disable this index. We check for -1 just below when adding to result. It's not used elsewhere.
                 else
                 {
-                    inftmp[j] = &deinfs[ix]->inf;
+                    inftmp[iy] = &deinfs[ix]->inf;
                     ++foundcnt;
                 }
             }
 
-            result.reserve(result.size() + foundcnt, true);
+            result.reserve(tounsigned(result.size()) + foundcnt, true);
 
-            for (int j = 0; j != tmp.size(); ++j)
+            for (int iy = 0, sizy = tosigned(tmp.size()); iy != sizy; ++iy)
             {
-                if (tmp[j] == -1)
+                if (tmp[iy] == -1)
                     continue;
-                result.add(tmp[j], *inftmp[j]);
+                result.add(tmp[iy], *inftmp[iy]);
             }
         }
 
@@ -5314,8 +5320,8 @@ void Dictionary::findWords(WordResultList &result, SearchMode searchmode, QStrin
             {
                 // Both wpool and studyexclude are ordered. After this wpool shouldn't include
                 // anything found in studyexclude.
-                int spos = studyexclude.size() - 1;
-                int wpos = wpool.size() - 1;
+                int spos = tounsigned(studyexclude.size()) - 1;
+                int wpos = tounsigned(wpool.size()) - 1;
                 while (spos != -1 && wpos != -1)
                 {
                     if (wpool[wpos] > studyexclude[spos])
@@ -5342,8 +5348,8 @@ void Dictionary::findWords(WordResultList &result, SearchMode searchmode, QStrin
             // Remove anything from lines found in wordstudydefs.
             std::sort(lines.begin(), lines.end());
 
-            int spos = studyexclude.size() - 1;
-            int lpos = lines.size() - 1;
+            int spos = tounsigned(studyexclude.size()) - 1;
+            int lpos = tounsigned(lines.size()) - 1;
             while (spos != -1 && lpos != -1)
             {
                 if (lines[lpos] > studyexclude[spos])
@@ -5428,11 +5434,12 @@ bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, 
         if (deinfs.empty())
             return false;
 
-        for (int ix = 0; ix != deinfs.size(); ++ix)
+        for (int ix = 0, siz = tosigned(deinfs.size()); ix != siz; ++ix)
         {
             //std::vector<int> tmp;
             //std::vector<std::vector<InfTypes>*> inftmp;
-            int foundcnt = 0;
+
+            //int foundcnt = 0;
 
             if (kanjisearch)
             {
@@ -5445,40 +5452,24 @@ bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, 
                     continue;
             }
 
-            //inftmp.resize(tmp.size());
+            bool found = false;
+            for (int k = 0, sizk = tosigned(wordEntry(windex)->defs.size()); !found && k != sizk; ++k)
+            {
+                if ((wordEntry(windex)->defs[k].attrib.types & (1 << (int)deinfs[ix]->type)) != 0)
+                    found = true;
+            }
 
-            //for (int j = 0; j != tmp.size(); ++j)
-            //{
-                bool found = false;
-                for (int k = 0; !found && k != /*result.dictionary()->*/wordEntry(windex)->defs.size(); ++k)
-                    if ((/*result.dictionary()->*/wordEntry(windex)->defs[k].attrib.types & (1 << (int)deinfs[ix]->type)) != 0/* ||
-                                                                                                                          ((result.dictionary()->wordEntry(tmp[j])->defs[k].types & (1 << (int)WordTypes::AuxAdj)) != 0
-                                                                                                                          && deinfs[ix]->type == WordTypes::TrueAdj)*/)
-                                                                                                                          found = true;
-                if (!found)
-                    //tmp[j] = -1; // No match, disable this index. We check for -1 just below when adding to result. It's not used elsewhere.
-                    continue;
-                else
-                {
-                    if (inflections && inftypes != nullptr)
-                        *inftypes = deinfs[ix]->inf;
-                    //inftmp[j] = &deinfs[ix]->inf;
-                    //++foundcnt;
-                    return true;
-                }
-            //}
-
-            //result.reserve(result.size() + foundcnt, true);
-
-            //for (int j = 0; j != tmp.size(); ++j)
-            //{
-            //    if (tmp[j] == -1)
-            //        continue;
-            //    result.add(tmp[j], *inftmp[j]);
-            //}
+            if (!found)
+            {
+                continue;
+            }
+            else
+            {
+                if (inflections && inftypes != nullptr)
+                    *inftypes = deinfs[ix]->inf;
+                return true;
+            }
         }
-
-        //result.jpSort();
     }
     else if (searchmode == SearchMode::Definition)
     {
@@ -5502,7 +5493,7 @@ bool Dictionary::wordMatches(int windex, SearchMode searchmode, QString search, 
     return false;
 }
 
-void Dictionary::findKanjiWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize) const
+void Dictionary::findKanjiWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, int infsize) const
 {
     // When changing this, also update wordMatchesKanjiSearch().
 
@@ -5543,13 +5534,14 @@ void Dictionary::findKanjiWords(std::vector<int> &result, QString search, Search
         }
         else
         {
-            for (int ix = 0; ix != 3; ++ix)
+            for (int iy = 0; iy != 3; ++iy)
             {
-                if (symwords[ix]->size() > wordlist->size())
+                if (symwords[iy]->size() > wordlist->size())
                 {
-                    for (int j = ix; j != 2; ++j)
+                    for (int j = iy; j != 2; ++j)
                         symwords[j + 1] = symwords[j];
-                    symwords[ix] = wordlist;
+
+                    symwords[iy] = wordlist;
                     break;
                 }
             }
@@ -5588,7 +5580,7 @@ void Dictionary::findKanjiWords(std::vector<int> &result, QString search, Search
 
         int last = -1;
         int foundsym = 0;
-        for (int ix = 0; ix != temp.size(); ++ix)
+        for (int ix = 0, siz = tosigned(temp.size()); ix != siz; ++ix)
         {
             if (temp[ix] == last)
                 ++foundsym;
@@ -5605,7 +5597,7 @@ void Dictionary::findKanjiWords(std::vector<int> &result, QString search, Search
     {
         std::vector<int> temp;
         temp.swap(wordlist);
-        for (int ix = 0; ix != temp.size(); ++ix)
+        for (int ix = 0, siz = tosigned(temp.size()); ix != siz; ++ix)
             if (ZKanji::wordfilters().match(words[temp[ix]], conditions))
                 wordlist.push_back(temp[ix]);
     }
@@ -5613,10 +5605,10 @@ void Dictionary::findKanjiWords(std::vector<int> &result, QString search, Search
     // Words list now only contains unique items. Look for the search string the classic way.
     if (!sameform)
         search = hiraganize(search);
-    else if (infsize != 0)
+    else if (infsize > 0)
         search = search.left(search.size() - infsize) + hiraganize(search.right(infsize));
 
-    for (int ix = 0; ix != wordlist.size(); ++ix)
+    for (int ix = 0, siz = tosigned(wordlist.size()); ix != siz; ++ix)
     {
         const WordEntry *e = words[wordlist[ix]];
 
@@ -5626,9 +5618,7 @@ void Dictionary::findKanjiWords(std::vector<int> &result, QString search, Search
         if (klen < search.size())
             continue;
 
-
-
-        QString k = !sameform ? hiraganize(e->kanji.data()) : (infsize == 0 || infsize >= search.size()) ? e->kanji.toQString() : e->kanji.toQString(0, klen - infsize) + hiraganize(e->kanji.data() + klen - infsize, infsize);
+        QString k = !sameform ? hiraganize(e->kanji.data()) : (infsize <= 0 || infsize >= search.size()) ? e->kanji.toQString() : e->kanji.toQString(0, klen - infsize) + hiraganize(e->kanji.data() + klen - infsize, infsize);
         if (wildcards == 0) // Kanji must exactly match search string.
         {
             if (k == search)
@@ -5652,12 +5642,12 @@ void Dictionary::findKanjiWords(std::vector<int> &result, QString search, Search
     }
 }
 
-bool Dictionary::wordMatchesKanjiSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, uint infsize) const
+bool Dictionary::wordMatchesKanjiSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, int infsize) const
 {
     // The word index can be found in at least the most important kanji. Look for the search string the classic way.
     if (!sameform)
         search = hiraganize(search);
-    else if (infsize != 0)
+    else if (infsize > 0)
         search = search.left(search.size() - infsize) + hiraganize(search.right(infsize));
 
     const WordEntry *e = words[windex];
@@ -5666,7 +5656,7 @@ bool Dictionary::wordMatchesKanjiSearch(int windex, QString search, SearchWildca
     if (klen < search.size())
         return false;
 
-    QString k = !sameform ? hiraganize(e->kanji.data()) : (infsize == 0 || infsize >= search.size()) ? e->kanji.toQString() : e->kanji.toQString(0, klen - infsize) + hiraganize(e->kanji.data() + klen - infsize, infsize);
+    QString k = !sameform ? hiraganize(e->kanji.data()) : (infsize <= 0 || infsize >= search.size()) ? e->kanji.toQString() : e->kanji.toQString(0, klen - infsize) + hiraganize(e->kanji.data() + klen - infsize, infsize);
     if (wildcards == 0) // Kanji must exactly match search string.
     {
         if (k == search)
@@ -5692,7 +5682,7 @@ bool Dictionary::wordMatchesKanjiSearch(int windex, QString search, SearchWildca
     return false;
 }
 
-void Dictionary::findKanaWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, uint infsize)
+void Dictionary::findKanaWords(std::vector<int> &result, QString search, SearchWildcards wildcards, bool sameform, const std::vector<int> *wordpool, const WordFilterConditions *conditions, int infsize)
 {
     // When changing this, also update wordMatchesKanaSearch().
 
@@ -5752,7 +5742,9 @@ void Dictionary::findKanaWords(std::vector<int> &result, QString search, SearchW
             int lpos = 0;
             int kpos = 0;
 
-            while (lpos != list.size() && kpos != klist.size())
+            int lsiz = tosigned(list.size());
+            int ksiz = tosigned(klist.size());
+            while (lpos != lsiz && kpos != ksiz)
             {
                 int lval = list[lpos];
                 int kval = klist[kpos];
@@ -5776,9 +5768,9 @@ void Dictionary::findKanaWords(std::vector<int> &result, QString search, SearchW
             }
 
 
-            while (lpos != list.size())
+            while (lpos != lsiz)
                 llist.push_back(list[lpos++]);
-            while (kpos != klist.size())
+            while (kpos != ksiz)
                 llist.push_back(klist[kpos++]);
 
             list.swap(llist);
@@ -5801,7 +5793,7 @@ void Dictionary::findKanaWords(std::vector<int> &result, QString search, SearchW
 
     int found = 1;
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         if (ix == 0 || list[ix - 1] != list[ix])
             found = 1;
@@ -5818,7 +5810,7 @@ void Dictionary::findKanaWords(std::vector<int> &result, QString search, SearchW
     //return WordResultList(this, result);
 }
 
-bool Dictionary::wordMatchesKanaSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, const uint infsize)
+bool Dictionary::wordMatchesKanaSearch(int windex, QString search, SearchWildcards wildcards, bool sameform, const int infsize)
 {
     if (wildcards == (int)SearchWildcard::AnyBefore)
         return btree.wordMatches(windex, search, false, sameform, infsize);
@@ -5852,21 +5844,21 @@ int Dictionary::findKanjiKanaWord(const QChar *kanji, const QChar *kana, const Q
     }
 
     if (kanjilen == -1)
-        kanjilen = qcharlen(kanji);
+        kanjilen = tosigned(qcharlen(kanji));
     if (kanalen == -1)
-        kanalen = qcharlen(kana);
+        kanalen = tosigned(qcharlen(kana));
     if (romajilen == -1)
-        romajilen = qcharlen(romaji);
+        romajilen = tosigned(qcharlen(romaji));
 
     // l will contain words that have a romanized kana starting with romaji.
     std::vector<int> l;
     ktree.getSiblings(l, romaji, romajilen);
 
     // The kana can still be different and the kanji must be checked as well.
-    for (int ix = 0; ix != l.size(); ++ix)
+    for (int ix = 0, siz = tosigned(l.size()); ix != siz; ++ix)
     {
         WordEntry *e = words[l[ix]];
-        if (e->kanji.size() != kanjilen || e->kana.size() != kanalen || qcharncmp(e->kanji.data(), kanji, kanjilen) || qcharncmp(e->kana.data(), kana, kanalen))
+        if (tosigned(e->kanji.size()) != kanjilen || tosigned(e->kana.size()) != kanalen || qcharncmp(e->kanji.data(), kanji, kanjilen) || qcharncmp(e->kana.data(), kana, kanalen))
             continue;
         return l[ix];
     }
@@ -5914,7 +5906,7 @@ std::function<bool(int, int, const QChar*, const QChar*)> Dictionary::browseOrde
 {
     if (order == BrowseOrder::ABCDE)
     {
-        return [this](int a, int b, const QChar *astr, const QChar *bstr) {
+        return [this](int a, int b, const QChar * /*astr*/, const QChar * /*bstr*/) {
             const QChar* ra = words[a]->romaji.data();
             const QChar* rb = words[b]->romaji.data();
             return qcharcmp(ra, rb) < 0;
@@ -6067,7 +6059,8 @@ Dictionary::DefResultSortData Dictionary::defSortDataGen(QString searchstr, Word
     QString def;
 
     int ix = 0;
-    while (ix != w->defs.size() && data.len + data.pos != 0)
+    int siz = tosigned(w->defs.size());
+    while (ix != siz && data.len + data.pos != 0)
     {
         if (indexof == -1)
             def = w->defs[ix].def.toLower();
@@ -6254,13 +6247,13 @@ void Dictionary::listUsedWords(std::vector<int> &result)
     // - words marked as kanji example
     // - user defined word study definitions
     // the list might not be full.
-    for (int ix = 0; ix != groups->wordGroups().size(); ++ix)
+    for (int ix = 0, siz = tosigned(groups->wordGroups().size()); ix != siz; ++ix)
     {
         auto vec = groups->wordGroups().items(ix)->getIndexes();
         result.insert(result.end(), vec.begin(), vec.end());
     }
 
-    for (int ix = 0, siz = decks->size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(decks->size()); ix != siz; ++ix)
     {
         WordDeck *deck = decks->items(ix);
         result.reserve(result.size() + deck->wordDataSize());
@@ -6269,13 +6262,13 @@ void Dictionary::listUsedWords(std::vector<int> &result)
     }
 
     int s = 0;
-    for (int ix = 0; ix != kanjidata.size(); ++ix)
-        s += kanjidata[ix]->ex.size();
+    for (int ix = 0, siz = tosigned(kanjidata.size()); ix != siz; ++ix)
+        s += tounsigned(kanjidata[ix]->ex.size());
 
     result.reserve(result.size() + s + wordstudydefs.size());
-    for (int ix = 0; ix != kanjidata.size(); ++ix)
+    for (int ix = 0, siz = tosigned(kanjidata.size()); ix != siz; ++ix)
     {
-        for (int iy = 0; iy != kanjidata[ix]->ex.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(kanjidata[ix]->ex.size()); iy != sizy; ++iy)
             result.push_back(kanjidata[ix]->ex[iy]);
     }
 
@@ -6293,7 +6286,7 @@ std::map<int, int> Dictionary::mapWords(Dictionary *src, const std::vector<int> 
     std::map<int, int> tmp;
     //tmp.reserve(wlist.size());
 
-    for (int ix = 0; ix != wlist.size(); ++ix)
+    for (int ix = 0, siz = tosigned(wlist.size()); ix != siz; ++ix)
     {
         WordEntry *e = src->wordEntry(wlist[ix]);
         tmp.insert(std::make_pair(wlist[ix], findKanjiKanaWord(e)));
@@ -6326,7 +6319,7 @@ void Dictionary::diff(Dictionary *other, std::vector<std::pair<int, int>> &resul
     //std::vector<std::pair<int, int>> tmp;
     if (words.empty() || other->words.empty())
     {
-        int siz = std::max(words.size(), other->words.size());
+        int siz = tosigned(std::max(words.size(), other->words.size()));
         result.reserve(siz);
         for (int ix = 0; ix != siz; ++ix)
         {
@@ -6342,13 +6335,13 @@ void Dictionary::diff(Dictionary *other, std::vector<std::pair<int, int>> &resul
 
     int lpos = 0;
     int opos = 0;
-    int lsiz = words.size();
-    int osiz = other->words.size();
+    int lsiz = tounsigned(words.size());
+    int osiz = tounsigned(other->words.size());
 
     WordEntry *l = words[abcde[0]];
     WordEntry *o = other->words[other->abcde[0]];
 
-    int siz = std::min(lsiz, osiz);
+    //int siz = std::min(lsiz, osiz);
     result.reserve(std::max(lsiz, osiz) * 1.2);
 
     std::map<QCharString, QString> hira;
@@ -6416,8 +6409,8 @@ int Dictionary::addWordCopy(WordEntry *src, bool originals)
 {
     if (originals && this == ZKanji::dictionary(0))
     {
-        if (ZKanji::originals.createAdded(words.size(), src->kanji.data(), src->kana.data()))
-            setToUserModified();
+        ZKanji::originals.createAdded(tounsigned(words.size()), src->kanji.data(), src->kana.data());
+        setToUserModified();
     }
 
     WordEntry *w = new WordEntry;
@@ -6428,7 +6421,7 @@ int Dictionary::addWordCopy(WordEntry *src, bool originals)
     // Insert word into aiueo and abcde ordered lists.
     addWordData();
 
-    int windex = words.size() - 1;
+    int windex = tounsigned(words.size()) - 1;
     emit entryAdded(windex);
 
     if (this != ZKanji::dictionary(0))
@@ -6442,11 +6435,14 @@ void Dictionary::cloneWordData(int windex, WordEntry *src, bool originals, bool 
     WordEntry *w = words[windex];
 
     bool orichanged = false;
-    if (originals && this == ZKanji::dictionary(0) && (!checkoriginals || ZKanji::originals.find(windex) == nullptr))
+    if (originals && this == ZKanji::dictionary(0))
     {
         orichanged = true;
-        if (ZKanji::originals.createModified(windex, w))
-            setToUserModified();
+
+        if (!checkoriginals || ZKanji::originals.find(windex) == nullptr)
+            ZKanji::originals.createModified(windex, w);
+
+        setToUserModified();
     }
 
     ZKanji::cloneWordData(w, src, false);
@@ -6482,7 +6478,7 @@ void Dictionary::addWordData()
 {
     WordEntry *w = words.back();
 
-    int windex = words.size() - 1;
+    int windex = tounsigned(words.size()) - 1;
 
     std::map<QCharString, QString> hira;
     auto it = std::upper_bound(abcde.begin(), abcde.end(), -1, [this, w, &hira](int a, int b) {
@@ -6606,9 +6602,9 @@ void Dictionary::addWordData()
 
     // Expand dtree, ktree and btree.
     if (!w->defs.empty())
-        dtree.expandWith(words.size() - 1, false);
-    ktree.expandWith(words.size() - 1, false);
-    btree.expandWith(words.size() - 1, false);
+        dtree.expandWith(tounsigned(words.size()) - 1, false);
+    ktree.expandWith(tounsigned(words.size()) - 1, false);
+    btree.expandWith(tounsigned(words.size()) - 1, false);
 }
 
 void Dictionary::removeWordData(int index, int &abcdeindex, int &aiueoindex)
@@ -6616,7 +6612,7 @@ void Dictionary::removeWordData(int index, int &abcdeindex, int &aiueoindex)
     // Remove word from alphabetic ordering.
 
     int *abcdat = abcde.data();
-    for (int ix = 0, pos = 0, siz = abcde.size(); ix != siz; ++ix, ++pos)
+    for (int ix = 0, pos = 0, siz = tosigned(abcde.size()); ix != siz; ++ix, ++pos)
     {
         if (abcdat[ix] < index)
             abcdat[pos] = abcdat[ix];
@@ -6631,7 +6627,7 @@ void Dictionary::removeWordData(int index, int &abcdeindex, int &aiueoindex)
     abcde.resize(abcde.size() - 1);
 
     abcdat = aiueo.data();
-    for (int ix = 0, pos = 0; ix != aiueo.size(); ++ix, ++pos)
+    for (int ix = 0, pos = 0, siz = tosigned(aiueo.size()); ix != siz; ++ix, ++pos)
     {
         if (abcdat[ix] < index)
             abcdat[pos] = abcdat[ix];
@@ -6663,7 +6659,7 @@ void Dictionary::removeWordData(int index, int &abcdeindex, int &aiueoindex)
         }
     }
 
-    for (int ix = 0; ix != kanjidata.size(); ++ix)
+    for (int ix = 0, siz = tosigned(kanjidata.size()); ix != siz; ++ix)
     {
         removeIndexFromList(index, kanjidata[ix]->ex);
         removeIndexFromList(index, kanjidata[ix]->words);

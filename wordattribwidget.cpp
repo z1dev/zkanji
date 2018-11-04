@@ -11,6 +11,8 @@
 #include "zstrings.h"
 #include "qcharstring.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -501,8 +503,7 @@ bool WordAttribModel::setData(TreeItem *item, const QVariant &value, int role)
             // Emit data changed for item and parents.
             emit dataChanged(i, i, { Qt::CheckStateRole });
 
-            TreeItem *pindex = item;
-
+            //TreeItem *pindex = item;
             //while ((pindex = pindex->parent()) != nullptr)
             //    emit dataChanged(pindex, pindex, { Qt::CheckStateRole });
 
@@ -535,7 +536,7 @@ void WordAttribModel::collectChildren(TreeItem *parent, QSet<TreeItem*> &result)
     if (parent->empty())
         return;
 
-    for (int ix = 0, siz = parent->size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(parent->size()); ix != siz; ++ix)
     {
         result.insert(parent->items(ix));
         collectChildren(parent->items(ix), result);
@@ -657,7 +658,7 @@ void WordAttribProxyModel::setFilterText(QString str)
                 stack.push_front(ix);
                 parent = item;
                 ix = -1;
-                cnt = parent->size();
+                cnt = tosigned(parent->size());
                 continue;
             }
 
@@ -668,7 +669,7 @@ void WordAttribProxyModel::setFilterText(QString str)
             {
                 ix = stack.front();
                 parent = parent->parent();
-                cnt = parent == nullptr ? model->rowCount() : parent->size();
+                cnt = parent == nullptr ? model->rowCount() : tosigned(parent->size());
                 stack.pop_front();
             }
         }
@@ -708,12 +709,12 @@ QModelIndex WordAttribProxyModel::mapFromSource(const QModelIndex &index) const
 
 QModelIndex WordAttribProxyModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (parent.isValid() || row < 0 || row >= list.size() || column != 0)
+    if (parent.isValid() || row < 0 || row >= tosigned(list.size()) || column != 0)
         return QModelIndex();
     return createIndex(row, 0, nullptr);
 }
 
-QModelIndex WordAttribProxyModel::parent(const QModelIndex &child) const
+QModelIndex WordAttribProxyModel::parent(const QModelIndex &/*child*/) const
 {
     return QModelIndex();
 }
@@ -722,7 +723,7 @@ int WordAttribProxyModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
-    return list.size();
+    return tosigned(list.size());
 }
 
 int WordAttribProxyModel::columnCount(const QModelIndex &parent) const

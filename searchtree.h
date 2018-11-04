@@ -60,6 +60,7 @@ class TextNodeList
 {
 public:
     typedef smartvector<TextNode>::iterator    iterator;
+    typedef size_t  size_type;
 
     TextNodeList() = delete;
     TextNodeList(const TextNodeList &src) = delete;
@@ -103,11 +104,11 @@ public:
     // Sorts the nodes by their labels with memcmp.
     void sort();
 
-    int size() const;
+    size_type size() const;
     bool empty() const;
     void reserve(int alloc);
-    TextNode* const items(int index);
-    const TextNode* const items(int index) const;
+    TextNode* items(int index);
+    const TextNode* items(int index) const;
     TextNode* ownerNode() const;
 
     // Returns a child node at the deepest possible level, which could store the passed string.
@@ -168,12 +169,12 @@ struct TextNode
 class TextSearchTreeBase
 {
 public:
-    // Number of items in a node after which the items must be distributed
-    // in child nodes. Only items with the same string as the node's label
-    // will be kept in the node and not in child nodes.
+    // Number of items in a node after which the items must be distributed in child nodes.
+    // Only items with the same string as the node's label will be kept in the node and not in
+    // child nodes.
     static const int NODEFULLCOUNT;
-    // If at least this many same string items as the node's label are placed
-    // in a node, they must be blacklisted.
+    // If at least this many same string items as the node's label are placed in a node, they
+    // must be blacklisted.
     //static const int NODETOOMUCHCOUNT;
 
     TextSearchTreeBase(const TextSearchTreeBase&) = delete;
@@ -249,7 +250,7 @@ protected:
     virtual void doGetWord(int index, QStringList &texts) const = 0;
 
     // Return the number of lines in this tree.
-    virtual int size() const = 0;
+    virtual size_t size() const = 0;
 
     // Notifies the tree that a line with the passed index has been added to the data
     // referenced by the tree. When doGetWord is called with this index, derived classes must

@@ -99,7 +99,7 @@ void KanjiGroupWidget::kanjiSelectionChanged()
     bool hassel = ui->kanjiGrid->selCount() != 0;
     ui->delButton->setEnabled(hassel);
     ui->upButton->setEnabled(hassel && !ui->kanjiGrid->selected(0) && ui->kanjiGrid->continuousSelection());
-    ui->downButton->setEnabled(hassel && !ui->kanjiGrid->selected(ui->kanjiGrid->model()->size() - 1) && ui->kanjiGrid->continuousSelection());
+    ui->downButton->setEnabled(hassel && !ui->kanjiGrid->selected(tosigned(ui->kanjiGrid->model()->size()) - 1) && ui->kanjiGrid->continuousSelection());
 
 }
 
@@ -128,7 +128,7 @@ void KanjiGroupWidget::on_groupWidget_selectionChanged()
 
 }
 
-void KanjiGroupWidget::on_delButton_clicked(bool checked)
+void KanjiGroupWidget::on_delButton_clicked(bool /*checked*/)
 {
     std::vector<int> indexes;
     ui->kanjiGrid->selectedCells(indexes);
@@ -137,7 +137,7 @@ void KanjiGroupWidget::on_delButton_clicked(bool checked)
     ui->kanjiGrid->model()->kanjiGroup()->remove(ranges);
 }
 
-void KanjiGroupWidget::on_upButton_clicked(bool checked)
+void KanjiGroupWidget::on_upButton_clicked(bool /*checked*/)
 {
     std::vector<int> indexes;
     ui->kanjiGrid->selectedCells(indexes);
@@ -146,7 +146,7 @@ void KanjiGroupWidget::on_upButton_clicked(bool checked)
     ui->kanjiGrid->model()->kanjiGroup()->move(ranges, ranges[0]->first - 1);
 }
 
-void KanjiGroupWidget::on_downButton_clicked(bool checked)
+void KanjiGroupWidget::on_downButton_clicked(bool /*checked*/)
 {
     std::vector<int> indexes;
     ui->kanjiGrid->selectedCells(indexes);

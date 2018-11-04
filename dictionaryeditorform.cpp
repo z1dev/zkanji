@@ -40,7 +40,7 @@ bool DictionaryEditorModel::orderChanged() const
     return orderchanged;
 }
 
-int DictionaryEditorModel::rowCount(const QModelIndex &index) const
+int DictionaryEditorModel::rowCount(const QModelIndex &/*index*/) const
 {
     return ZKanji::dictionaryCount();
 }
@@ -101,14 +101,14 @@ Qt::DropActions DictionaryEditorModel::supportedDragActions() const
     return Qt::MoveAction;
 }
 
-Qt::DropActions DictionaryEditorModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions DictionaryEditorModel::supportedDropActions(bool samesource, const QMimeData * /*mime*/) const
 {
     if (samesource)
         return Qt::MoveAction;
     return 0;
 }
 
-bool DictionaryEditorModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool DictionaryEditorModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int /*column*/, const QModelIndex &parent) const
 {
     return !parent.isValid() && row != -1 && action == Qt::MoveAction && data->hasFormat(QStringLiteral("zkanji/dictionaryordering")) && data->data(QStringLiteral("zkanji/dictionaryordering")).size() == sizeof(int);
 }
@@ -143,7 +143,7 @@ void DictionaryEditorModel::handleAdded()
     signalRowsInserted({ { (int)ZKanji::dictionaryCount() - 1, 1 } });
 }
 
-void DictionaryEditorModel::handleRemoved(int index, int order)
+void DictionaryEditorModel::handleRemoved(int /*index*/, int order)
 {
     signalRowsRemoved({ { order, order } });
 }
@@ -154,12 +154,12 @@ void DictionaryEditorModel::handleMoved(int from, int to)
     signalRowsMoved({ { from, from } }, to);
 }
 
-void DictionaryEditorModel::handleRenamed(const QString &oldname, int index, int order)
+void DictionaryEditorModel::handleRenamed(const QString &/*oldname*/, int /*index*/, int order)
 {
     emit dataChanged(base::index(order, 0), base::index(order, columnCount() - 1));
 }
 
-void DictionaryEditorModel::handleFlagChanged(int index, int order)
+void DictionaryEditorModel::handleFlagChanged(int /*index*/, int order)
 {
     emit dataChanged(base::index(order, 0), base::index(order, columnCount() - 1));
 }
@@ -204,17 +204,17 @@ DictionaryEditorForm::~DictionaryEditorForm()
     delete ui;
 }
 
-void DictionaryEditorForm::on_upButton_clicked(bool checked)
+void DictionaryEditorForm::on_upButton_clicked(bool /*checked*/)
 {
     ZKanji::moveDictionaryOrder(ui->dictView->currentRow(), ui->dictView->currentRow() - 1);
 }
 
-void DictionaryEditorForm::on_downButton_clicked(bool checked)
+void DictionaryEditorForm::on_downButton_clicked(bool /*checked*/)
 {
     ZKanji::moveDictionaryOrder(ui->dictView->currentRow(), ui->dictView->currentRow() + 2);
 }
 
-void DictionaryEditorForm::on_createButton_clicked(bool checked)
+void DictionaryEditorForm::on_createButton_clicked(bool /*checked*/)
 {
     bool ok;
     QString str = QInputDialog::getText(this, "zkanji", tr("Enter name for the new dictionary:"), QLineEdit::Normal, QString(), &ok);
@@ -238,12 +238,12 @@ void DictionaryEditorForm::on_createButton_clicked(bool checked)
     ZKanji::addDictionary(dict);
 }
 
-void DictionaryEditorForm::on_editButton_clicked(bool checked)
+void DictionaryEditorForm::on_editButton_clicked(bool /*checked*/)
 {
     editDictionaryText(ZKanji::dictionary(ZKanji::dictionaryPosition(ui->dictView->currentRow())));
 }
 
-void DictionaryEditorForm::on_delButton_clicked(bool checked)
+void DictionaryEditorForm::on_delButton_clicked(bool /*checked*/)
 {
     if (QMessageBox::warning(this, "zkanji", tr("The data stored for the selected dictionary, including words, study statistics and groups will be deleted. The file holding the dictionary's data will be deleted as well. This operation cannot be undone.\n\nDo you want to delete the dictionary?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         return;
@@ -257,7 +257,7 @@ void DictionaryEditorForm::on_delButton_clicked(bool checked)
     ZKanji::deleteDictionary(ZKanji::dictionaryPosition(ui->dictView->currentRow()));
 }
 
-void DictionaryEditorForm::on_dictView_currentRowChanged(int curr, int prev)
+void DictionaryEditorForm::on_dictView_currentRowChanged(int curr, int /*prev*/)
 {
     ui->upButton->setEnabled(curr > 0);
     ui->downButton->setEnabled(curr != -1 && curr != ZKanji::dictionaryCount() - 1);

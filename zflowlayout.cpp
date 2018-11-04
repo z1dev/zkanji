@@ -9,6 +9,8 @@
 
 #include "zflowlayout.h"
 
+#include "checked_cast.h"
+
 
 ZFlowLayout::ZFlowLayout(QWidget *parent) : base(parent), cached(-2, -2)/*, modeSpace(0, 0)*/, hspac(-1), vspac(-1), align(Qt::AlignTop)
 {
@@ -33,14 +35,14 @@ void ZFlowLayout::addItem(QLayoutItem *item)
 
 QLayoutItem* ZFlowLayout::itemAt(int index) const
 {
-    if (index < 0 || index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         return nullptr;
     return const_cast<QLayoutItem*>(list[index]);
 }
 
 QLayoutItem* ZFlowLayout::takeAt(int index)
 {
-    if (index < 0 || index >= list.size())
+    if (index < 0 || index >= tosigned(list.size()))
         return nullptr;
     cached = QSize(-2, -2);
 
@@ -51,7 +53,7 @@ QLayoutItem* ZFlowLayout::takeAt(int index)
 
 int ZFlowLayout::count() const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 Qt::Orientations ZFlowLayout::expandingDirections() const
@@ -415,13 +417,13 @@ void ZFlowLayout::recompute(const QRect &r, bool update)
                     if (item->isEmpty() || sizes[sizespos] <= 0)
                         continue;
 
-                    uint maxw = std::max<uint>(restrictedWidth(item->widget()), item->widget()->sizeHint().width());
+                    int maxw = std::max<int>(tosigned(restrictedWidth(item->widget())), item->widget()->sizeHint().width());
 
                     int extraw = wdiff / expnum;
 
                     if (sizes[sizespos] + extraw >= maxw)
                     {
-                        int tmpw = std::max(0, (int)maxw - sizes[sizespos]);
+                        int tmpw = std::max(0, maxw - sizes[sizespos]);
                         leftover += extraw - tmpw;
                         sizes[sizespos] = -sizes[sizespos] - tmpw;
                     }

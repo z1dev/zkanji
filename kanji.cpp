@@ -19,6 +19,8 @@
 #include "fontsettings.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 namespace ZKanji
@@ -112,8 +114,8 @@ namespace ZKanji
             if (scpos < 1)
                 continue;
 
-            QChar kchar = line.at(0);
-            int lsiz = line.size();
+            //QChar kchar = line.at(0);
+            int lsiz = tosigned(line.size());
 
             // Instead of error checking, count the number of (possibly) valid kanji in the
             // line before and after the semicolon.
@@ -152,19 +154,19 @@ namespace ZKanji
 
     KanjiEntry* addKanji(QChar ch, int kindex)
     {
-        if (kindex != -1 && kanjis.size() > kindex && kanjis[kindex] != nullptr)
+        if (kindex != -1 && tosigned(kanjis.size()) > kindex && kanjis[kindex] != nullptr)
             return nullptr;
 
         KanjiEntry *kanji = new KanjiEntry;
         kanji->ch = ch;
         kanji->index = kindex;
 
-        int siz = kanjis.size();
+        //int siz = kanjis.size();
         if (kindex == -1)
             kanjis.push_back(kanji);
         else
         {
-            if (kindex >= kanjis.size())
+            if (kindex >= tosigned(kanjis.size()))
                 kanjis.resizeAddNull(kindex + 1);
             kanjis[kindex] = kanji;
         }
@@ -189,7 +191,7 @@ namespace ZKanji
                 return it->second;
         }
 
-        for (; kmapchecked != kanjis.size(); ++kmapchecked)
+        for (int ksiz = tosigned(kanjis.size()); kmapchecked != ksiz; ++kmapchecked)
         {
             QChar ch = kanjis[kmapchecked]->ch;
             kanjiindexmap[ch] = kmapchecked;
@@ -206,7 +208,7 @@ namespace ZKanji
     {
         if (kanjis.size() == 0)
             return true;
-        for (int ix = 0, siz = kanjis.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(kanjis.size()); ix != siz; ++ix)
             if (kanjis[ix] == nullptr)
                 return true;
         return false;
@@ -215,11 +217,11 @@ namespace ZKanji
     int kanjiReadingCount(KanjiEntry *k, bool compact)
     {
         if (!compact)
-            return 1 + k->on.size() + k->kun.size();
+            return 1 + tosigned(k->on.size() + k->kun.size());
 
         // Only ON reading and one for the possible non-standard readings.
         if (k->kun.empty())
-            return k->on.size() + 1;
+            return tosigned(k->on.size()) + 1;
 
         // First reading is not matched to any other one so it always
         // counts as 1.
@@ -232,7 +234,7 @@ namespace ZKanji
         if (!p)
             p = qcharchr(w, 0);
 
-        for (int ix = 1; ix != k->kun.size(); ++ix)
+        for (int ix = 1, siz = tosigned(k->kun.size()); ix != siz; ++ix)
         {
             const QChar *kun = k->kun[ix].data();
             const QChar *kp = qcharchr(kun, '.');
@@ -248,17 +250,17 @@ namespace ZKanji
                 cnt++;
             }
         }
-        return 1 + k->on.size() + cnt;
+        return 1 + tosigned(k->on.size()) + cnt;
     }
 
     int kanjiCompactToReal(KanjiEntry *k, int index)
     {
         // Irregular or on reading index is returned unchanged.
-        if (index <= k->on.size())
+        if (index <= tosigned(k->on.size()))
             return index;
 
         // Position of index in compact kun readings.
-        int pos = index - 1 - k->on.size();
+        int pos = index - 1 - tosigned(k->on.size());
 
         // Save the first reading. The reading in w is updated when the
         // new reading found differs before the period character or str end.
@@ -271,7 +273,7 @@ namespace ZKanji
         while (pos)
         {
 #ifdef _DEBUG
-            if (ix >= k->kun.size())
+            if (ix >= tosigned(k->kun.size()))
                 throw "Overindexing in kun reading count";
 #endif
 
@@ -299,7 +301,7 @@ namespace ZKanji
         if (readingindex == 0)
             return k->ch;
 
-        if (readingindex <= k->on.size())
+        if (readingindex <= tosigned(k->on.size()))
             return k->on[readingindex - 1].toQString();
 
         return k->kun[kanjiCompactToReal(k, readingindex) - k->on.size() - 1].toQStringRaw().section('.', 0, 0, QString::SectionSkipEmpty);
@@ -322,7 +324,7 @@ namespace ZKanji
 
         for (QCharString &chr : k->on)
         {
-            int siz = chr.size();
+            int siz = tosigned(chr.size());
             QString str(siz * 2, QChar(' '));
             for (int ix = 0; ix != siz; ++ix)
             {
@@ -336,7 +338,7 @@ namespace ZKanji
 
         for (QCharString &chr : k->kun)
         {
-            int siz = chr.size();
+            int siz = tosigned(chr.size());
             QString str(siz * 2, QChar(' '));
             bool hasoku = false;
             for (int ix = 0, spansiz = 0; ix != siz; ++ix)
@@ -671,12 +673,12 @@ void KanjiRadicalList::addRadical(QChar ch, std::vector<ushort> &&kanji, uchar s
     rad->radical = radical;
     rad->names = std::move(names);
     rad->romajinames.reserve(rad->names.size());
-    for (int ix = 0, siz = rad->names.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(rad->names.size()); ix != siz; ++ix)
         rad->romajinames.add(romanize(rad->names[ix]).constData());
     list.push_back(rad);
 }
 
-int KanjiRadicalList::size() const
+KanjiRadicalList::size_type KanjiRadicalList::size() const
 {
     return list.size();
 }
@@ -711,7 +713,7 @@ int KanjiRadicalList::find(QChar radchar) const
     int pos = std::find_if(list.begin(), list.end(), [radchar](const KanjiRadical *rad) {
         return rad->ch == radchar;
     }) - list.begin();
-    if (pos == list.size())
+    if (pos == tosigned(list.size()))
         return -1;
     return pos;
 }
@@ -728,7 +730,8 @@ void KanjiRadicalList::doGetWord(int index, QStringList &texts) const
 
     const KanjiRadical *rad = list[index];
 
-    texts << rad->romajinames[name].toQString(); //romanize(rad->names[name].data());
+    texts << rad->romajinames[name].toQString();
+            //romanize(rad->names[name].data());
 
 
     //int len = qcharlen(rad->names);
@@ -778,8 +781,9 @@ void KanjiRadicalList::load(QDataStream &stream)
     stream >> cnt;
 
     list.reserve(cnt);
+    int lsiz = 0;
 
-    while (list.size() != cnt)
+    while (lsiz != cnt)
     {
         KanjiRadical *r = new KanjiRadical;
         quint16 u16;
@@ -789,8 +793,8 @@ void KanjiRadicalList::load(QDataStream &stream)
 
         stream >> make_zvec<quint16, quint16>(r->kanji);
         //r->kanji.resize(u16);
-        for (int ix = 0; ix != r->kanji.size(); ++ix)
-            ZKanji::kanjis[r->kanji[ix]]->rads.push_back(list.size());
+        for (int ix = 0, siz = tosigned(r->kanji.size()); ix != siz; ++ix)
+            ZKanji::kanjis[r->kanji[ix]]->rads.push_back(lsiz);
 
         quint8 u8;
         stream >> u8;
@@ -799,10 +803,11 @@ void KanjiRadicalList::load(QDataStream &stream)
         r->radical = u8;
         stream >> r->names;
         r->romajinames.reserve(r->names.size());
-        for (int ix = 0, siz = r->names.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(r->names.size()); ix != siz; ++ix)
             r->romajinames.add(romanize(r->names[ix]).constData());
 
         list.push_back(r);
+        ++lsiz;
     }
 }
 
@@ -810,7 +815,7 @@ void KanjiRadicalList::save(QDataStream &stream) const
 {
     stream << (quint16)list.size();
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         const KanjiRadical *r = list[ix];
         stream << (quint16)r->ch.unicode();

@@ -133,13 +133,12 @@ private:
     // Called on change to update the enabled state of the apply button.
     void allowApply();
 
+    Ui::FilterListForm *ui;
+
     // Width of the editor widget used to calculate new window size when it's shown.
     int editwidth;
-
     // Index of filter currently being edited.
     int filterindex;
-
-    Ui::FilterListForm *ui;
 
     WordFilterConditions *conditions;
 

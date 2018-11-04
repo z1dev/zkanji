@@ -454,7 +454,7 @@ void GlobalUI::raiseAndActivate()
 
 int GlobalUI::formCount() const
 {
-    return mainforms.size();
+    return tosigned(mainforms.size());
 }
 
 ZKanjiForm* GlobalUI::forms(int ix) const
@@ -1218,6 +1218,50 @@ void GlobalUI::importExamples()
     QMessageBox::information(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("The example sentences data has been updated."));
 }
 
+void GlobalUI::importOldUserData()
+{
+    QString fname = QFileDialog::getOpenFileName(!mainforms.empty() ? mainforms[0] : nullptr, tr("Locate old user dictionary"), QString(), QString("%1 (*.zkd)").arg(tr("Old user dictionary")));
+    if (fname.isEmpty())
+        return;
+
+    QFileInfo finf(fname);
+    QString dictname = finf.baseName();
+    QString groupname = fname.left(fname.size() - finf.suffix().size()) + "zkg";
+
+    for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
+    {
+        if (ZKanji::dictionary(ix)->name().toLower() == dictname.toLower())
+        {
+            QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("A dictionary with the same name already exists."));
+            return;
+        }
+    }
+
+    Dictionary *d = ZKanji::addDictionary();
+
+    bool donedict = false;
+    try
+    {
+        d->loadFile(fname, false, true);
+        donedict = true;
+        d->loadUserDataFile(groupname);
+    }
+    catch (...)
+    {
+        if (!donedict)
+            QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", qApp->translate("", "Error loading dictionary data: %1").arg(dictname));
+        else
+            QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", qApp->translate("", "Error loading user data for dictionary: %1").arg(dictname));
+        ZKanji::deleteDictionary(ZKanji::dictionaryCount() - 1);
+        return;
+    }
+
+    gUI->signalDictionaryRenamed(QString(), ZKanji::dictionaryCount() - 1, ZKanji::dictionaryOrder(ZKanji::dictionaryCount() - 1));
+
+    d->setToModified();
+    d->setToUserModified();
+}
+
 void GlobalUI::userExportAction()
 {
     GetDictEvent d;
@@ -1288,16 +1332,16 @@ void GlobalUI::dictExportAction()
 
 void GlobalUI::dictImportAction()
 {
-    GetDictEvent d;
+    GetDictEvent de;
 
-    qApp->sendEvent(qApp->activeWindow(), &d);
+    qApp->sendEvent(qApp->activeWindow(), &de);
 
-    if (d.result() == -1)
+    if (de.result() == -1)
         return;
 
     DictionaryImportForm frm(!mainforms.empty() ? mainforms[0] : nullptr);
 
-    if (!frm.exec(ZKanji::dictionary(d.result())))
+    if (!frm.exec(ZKanji::dictionary(de.result())))
         return;
 
     QString dname = frm.dictionaryName();
@@ -1469,9 +1513,12 @@ void GlobalUI::quit()
     //QCloseEvent ce;
     //qApp->sendEvent(mainforms.at(0), &ce);
     //if (ce.isAccepted())
+
     saveBeforeQuit();
+    qApp->processEvents();
     qApp->quit();
-    return;
+
+    //return;
     //}
     //mainforms.at(0)->close();
 }
@@ -1598,7 +1645,7 @@ void GlobalUI::mainStateChanged(bool minimized)
     }
 }
 
-void GlobalUI::appFocusChanged(QWidget *lost, QWidget *received)
+void GlobalUI::appFocusChanged(QWidget * /*lost*/, QWidget * /*received*/)
 {
     //if (lost != nullptr)
     //    lost = lost->window();
@@ -1642,7 +1689,7 @@ void GlobalUI::appFocusChanged(QWidget *lost, QWidget *received)
 
 void GlobalUI::hiddenWindowDestroyed(QObject *o)
 {
-    for (int ix = 0, siz = appwin.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(appwin.size()); ix != siz; ++ix)
     {
         if (appwin[ix] == o)
         {
@@ -1733,7 +1780,7 @@ void GlobalUI::saveBeforeQuit()
     static bool saved = false;
     if (saved)
     {
-        closeAll();
+        //closeAll();
         return;
     }
     saved = true;
@@ -1742,7 +1789,7 @@ void GlobalUI::saveBeforeQuit()
     lastsave = QDateTime::currentDateTimeUtc();
     ZKanji::saveUserData();
 
-    closeAll();
+    //closeAll();
 }
 
 void GlobalUI::disableAutoSave()
@@ -1844,9 +1891,9 @@ void GlobalUI::_scaleLayout(QLayout *l)
             QSpacerItem *si = la->spacerItem();
             if (si != nullptr)
                 _scaleSpacerItem(si);
-            QLayout *ll = la->layout();
-            if (ll != nullptr)
-                _scaleLayout(ll);
+            QLayout *lal = la->layout();
+            if (lal != nullptr)
+                _scaleLayout(lal);
         }
     }
 

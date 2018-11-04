@@ -42,19 +42,21 @@ signals:
     void layoutToChange();
     void layoutChanged();
 public:
+    typedef size_t  size_type;
+
     KanjiGridModel(QObject *parent = nullptr);
     virtual ~KanjiGridModel();
 
     // Returns the number of kanji represented by the model.
-    virtual int size() const = 0;
+    virtual size_type size() const = 0;
     // Returns whether there are no kanji to be shown.
     bool empty() const;
 
     // The kanji group represented by the model.
     virtual KanjiGroup* kanjiGroup() const;
 
-    // Kanji index at the passed cell position.
-    virtual ushort kanjiAt(int pos) const = 0;
+    // Kanji index at the passed cell position. Return -1 if pos is outside range of cells.
+    virtual int kanjiAt(int pos) const = 0;
 
     // The number of status widgets needed on a status bar for this grid. Excludes the number
     // of kanji widget, as it's always included.
@@ -75,10 +77,10 @@ public:
 
     // Color of the kanji to be drawn at pos position. Return an invalid color to
     // use the default color from the settings.
-    virtual QColor textColorAt(int pos) const { return QColor(); }
+    virtual QColor textColorAt(int /*post*/) const { return QColor(); }
     // Color to be used as background for kanji at pos position. Return an invalid color to
     // use the default color from the settings.
-    virtual QColor backColorAt(int pos) const { return QColor(); }
+    virtual QColor backColorAt(int /*pos*/) const { return QColor(); }
 
     virtual QMimeData* mimeData(const std::vector<int> &indexes) const;
 
@@ -136,13 +138,15 @@ class MainKanjiListModel : public KanjiGridModel
 {
     Q_OBJECT
 public:
+    typedef KanjiGridModel::size_type  size_type;
+
     MainKanjiListModel(QObject *parent = nullptr);
     virtual ~MainKanjiListModel();
 
-    virtual int size() const override;
+    virtual size_type size() const override;
 
     // Returns the index of the kanji in the main kanji list at pos position.
-    virtual ushort kanjiAt(int pos) const override;
+    virtual int kanjiAt(int pos) const override;
 
     virtual int statusCount() const override;
     virtual StatusTypes statusType(int statusindex) const override;
@@ -158,6 +162,8 @@ class KanjiListModel : public KanjiGridModel
 {
     Q_OBJECT
 public:
+    typedef KanjiGridModel::size_type  size_type;
+
     KanjiListModel(QObject *parent = nullptr);
     virtual ~KanjiListModel();
 
@@ -176,10 +182,10 @@ public:
     // will be supported.
     void setAcceptDrop(bool acceptdrop);
 
-    virtual int size() const override;
+    virtual size_type size() const override;
 
     // Returns the index of the kanji in the main kanji list at pos position.
-    virtual ushort kanjiAt(int pos) const override;
+    virtual int kanjiAt(int pos) const override;
 
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int index) const override;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int index) override;
@@ -197,6 +203,8 @@ class KanjiGroupModel : public KanjiGridModel
 {
     Q_OBJECT
 public:
+    typedef KanjiGridModel::size_type  size_type;
+
     KanjiGroupModel(QObject *parent = nullptr);
     virtual ~KanjiGroupModel();
 
@@ -207,10 +215,9 @@ public:
     // if the kanji don't come from a group.
     virtual KanjiGroup* kanjiGroup() const override;
 
-    virtual int size() const override;
+    virtual size_type size() const override;
 
-    // Returns the main kanji index of the kanji at index.
-    virtual ushort kanjiAt(int index) const override;
+    virtual int kanjiAt(int index) const override;
 
     virtual bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int index) const override;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int index) override;
@@ -237,6 +244,8 @@ class KanjiGridSortModel : public KanjiGridModel
 {
     Q_OBJECT
 public:
+    typedef KanjiGridModel::size_type  size_type;
+
     KanjiGridSortModel(KanjiGridModel *basemodel, KanjiGridSortOrder order = KanjiGridSortOrder::NoSort, Dictionary *dict = nullptr, QObject *parent = nullptr);
     KanjiGridSortModel(KanjiGridModel *basemodel, const std::vector<ushort> &filter, KanjiGridSortOrder order = KanjiGridSortOrder::NoSort, Dictionary *dict = nullptr, QObject *parent = nullptr);
     KanjiGridSortModel(KanjiGridModel *basemodel, std::vector<ushort> &&filter, KanjiGridSortOrder order = KanjiGridSortOrder::NoSort, Dictionary *dict = nullptr, QObject *parent = nullptr);
@@ -246,8 +255,8 @@ public:
 
     //KanjiGridModel* baseModel();
 
-    virtual int size() const override;
-    virtual ushort kanjiAt(int pos) const override;
+    virtual size_type size() const override;
+    virtual int kanjiAt(int pos) const override;
 
     virtual int statusCount() const override;
     virtual StatusTypes statusType(int statusindex) const override;

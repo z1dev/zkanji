@@ -83,19 +83,19 @@ void WordStudy::loadLegacy(QDataStream &stream, WordStudyMethod method, int vers
         break;
     }
 
-    qint8 b;
-    stream >> b;
-    settings.usetimer = b != 0;
-    if (b != 0)
-        settings.timer = b;
+    qint8 c;
+    stream >> c;
+    settings.usetimer = c != 0;
+    if (c != 0)
+        settings.timer = c;
 
-    stream >> b;
-    settings.hidekana = b;
+    stream >> c;
+    settings.hidekana = c;
 
     settings.matchkana = false;
 
-    stream >> b;
-    bool inited = b;
+    stream >> c;
+    //bool inited = c;
 
     qint16 w;
     stream >> w;
@@ -148,10 +148,10 @@ void WordStudy::loadLegacy(QDataStream &stream, WordStudyMethod method, int vers
         stream >> b;
         settings.gradual.initnum = b;
 
-        quint32 val;
-        stream >> val;
+        quint32 uval;
+        stream >> uval;
         // Originally: 0 - no shuffle, 1 - test backwards, 2 - shuffle round.
-        settings.gradual.roundshuffle = val == 2;
+        settings.gradual.roundshuffle = uval == 2;
 
         stream >> b;
         settings.shuffle = b;
@@ -190,9 +190,9 @@ void WordStudy::loadLegacy(QDataStream &stream, WordStudyMethod method, int vers
         state.reset(new WordStudySingle);
         state->loadLegacy(stream, version);
 
-        quint32 val;
-        stream >> val;
-        settings.wordlimit = val;
+        quint32 uval;
+        stream >> uval;
+        settings.wordlimit = uval;
         settings.usewordlimit = true;
     }
     else
@@ -201,7 +201,7 @@ void WordStudy::loadLegacy(QDataStream &stream, WordStudyMethod method, int vers
     state.reset();
 }
 
-void WordStudyGradual::loadLegacy(QDataStream &stream, int version)
+void WordStudyGradual::loadLegacy(QDataStream &stream, int /*version*/)
 {
     // Skips all data of old format suspended tests.
 
@@ -229,7 +229,7 @@ void WordStudyGradual::loadLegacy(QDataStream &stream, int version)
     }
 }
 
-void WordStudySingle::loadLegacy(QDataStream &stream, int version)
+void WordStudySingle::loadLegacy(QDataStream &stream, int /*version*/)
 {
     quint32 val;
 

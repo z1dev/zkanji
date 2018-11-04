@@ -368,14 +368,14 @@ void ZToolTip::updatePosition()
     move(p);
 }
 
-void ZToolTip::update(const QPoint &screenpos, QWidget *content, QWidget *displayer, const QRect &disprect, int mshideafter)
+void ZToolTip::update(const QPoint &screenpos, QWidget *content, QWidget * /*displayer*/, const QRect &disprect, int hideafter)
 {
     waittimer.stop();
     fadetimer.stop();
 
     showpos = screenpos;
     ownerrect = disprect;
-    this->mshideafter = mshideafter;
+    mshideafter = hideafter;
     fadestart = -1;
     fadein = false;
 

@@ -13,7 +13,7 @@
 //-------------------------------------------------------------
 
 
-RangeSelection::RangeSelection() : itcache(list.end())
+RangeSelection::RangeSelection() : itcache(list.cend())
 {
     ;
 }
@@ -21,7 +21,7 @@ RangeSelection::RangeSelection() : itcache(list.end())
 void RangeSelection::clear()
 {
     list.clear();
-    itcache = list.end();
+    itcache = list.cend();
 }
 
 bool RangeSelection::empty() const
@@ -46,7 +46,7 @@ int RangeSelection::size(int addfirst, int addlast) const
     // Last item in the previously counted  range.
     int bottom = -1;
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         const Range *r = list[ix];
 
@@ -208,7 +208,7 @@ void RangeSelection::getSelection(std::vector<int> &result, int addfirst, int ad
     // Last item in the previously added range.
     int bottom = -1;
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         const Range *r = list[ix];
 
@@ -292,7 +292,7 @@ void RangeSelection::selectRange(int first, int last, bool sel)
 
             // itcache is not invalidated as it's the same as it, already set to list.end().
             list.push_back(r);
-            itcache = list.end();
+            itcache = list.cend();
             return;
         }
 
@@ -375,7 +375,7 @@ void RangeSelection::selectRange(int first, int last, bool sel)
         it = list.erase(it);
         if (it == list.end())
         {
-            itcache = list.end();
+            itcache = list.cend();
             return;
         }
         r = *it;
@@ -409,7 +409,7 @@ int RangeSelection::selectedItems(int selindex, int addfirst, int addlast)  cons
         return addfirst + selindex;
     }
 
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         const Range *r = list[ix];
 
@@ -438,7 +438,7 @@ int RangeSelection::selectedItems(int selindex, int addfirst, int addlast)  cons
 
 int RangeSelection::rangeCount() const
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 const Range& RangeSelection::ranges(int ix) const
@@ -481,7 +481,7 @@ bool RangeSelection::insert(int index, int cnt)
 bool RangeSelection::insert(const smartvector<Interval> &intervals)
 {
     bool changed = false;
-    for (int ix = intervals.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(intervals.size()) - 1; ix != -1; --ix)
         changed = insert(intervals[ix]->index, intervals[ix]->count) | changed;
     return changed;
 }
@@ -554,7 +554,7 @@ bool RangeSelection::remove(const Range &range)
 bool RangeSelection::remove(const smartvector<Range> &rngs)
 {
     bool changed = false;
-    for (int ix = rngs.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(rngs.size()) - 1; ix != -1; --ix)
         changed = remove(*rngs[ix]) | changed;
     return changed;
 }
@@ -778,37 +778,37 @@ bool RangeSelection::move(const smartvector<Range> &rngs, int newindex)
 
 smartvector<Range>::iterator RangeSelection::search(int index)
 {
-    auto itfrom = list.begin();
-    auto itto = list.end();
+    auto itfrom = list.cbegin();
+    auto itto = list.cend();
 
-    if (itcache != list.end())
+    if (itcache != list.cend())
     {
-        Range *r = *itcache;
+        const Range *r = *itcache;
         if (r->first > index)
             itto = itcache;
         else if (r->last < index)
             itfrom = std::next(itcache);
         else
-            return itcache;
+            return list.begin() + (itcache - list.cbegin());
     }
 
     itcache = std::lower_bound(itfrom, itto, index, [](const Range *r, int val) {
         return r->last < val;
     });
 
-    return itcache;
+    return list.begin() + (itcache - list.cbegin());
 }
 
 auto RangeSelection::search(int index) const -> smartvector<Range>::const_iterator
 {
-    smartvector<Range> &r = *const_cast<smartvector<Range>*>(&list);
+    //smartvector<Range> &r = *const_cast<smartvector<Range>*>(&list);
 
-    auto itfrom = r.begin();
-    auto itto = r.end();
+    auto itfrom = list.cbegin();
+    auto itto = list.cend();
 
-    if (itcache != r.end())
+    if (itcache != list.cend())
     {
-        Range *r = *itcache;
+        const Range *r = *itcache;
         if (r->first > index)
             itto = itcache;
         else if (r->last < index)
@@ -830,7 +830,7 @@ auto RangeSelection::search(int index) const -> smartvector<Range>::const_iterat
 
 void _rangeFromIndexes(const std::vector<int> &indexes, smartvector<Range> &ranges)
 {
-    for (int pos = 0, next = 1, siz = indexes.size(); pos != siz; ++next)
+    for (int pos = 0, next = 1, siz = tosigned(indexes.size()); pos != siz; ++next)
     {
         if (next == siz || indexes[next] - indexes[next - 1] != 1)
         {
@@ -884,7 +884,7 @@ void _fixMoveRanges(smartvector<Range> &list, int pos)
     if (list.empty())
         return;
 
-    for (int ix = list.size() - 1; ix != 0; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != 0; --ix)
     {
         if (list[ix - 1]->last >= list[ix]->first - 1)
         {
@@ -937,7 +937,7 @@ void _moveRanges(const smartvector<Range> &list, int pos, const std::function<vo
     // Moving ranges above pos:
 
     int movepos = ix == 0 ? pos : std::max(list[ix - 1]->last + 1, pos);
-    for (int iy = ix, siz = list.size(); iy != siz; ++iy)
+    for (int iy = ix, siz = tosigned(list.size()); iy != siz; ++iy)
     {
         const Range *r = list[iy];
         func(*r, movepos);
@@ -990,7 +990,7 @@ int _movedPosition(const smartvector<Range> &list, int pos, int itempos)
 
         pos = ix == 0 ? pos : std::max(list[ix - 1]->last + 1, pos);
 
-        for (int siz = list.size(); ix != siz; ++ix)
+        for (int siz = tosigned(list.size()); ix != siz; ++ix)
         {
             const Range *r = list[ix];
             int cnt = r->last - r->first + 1;
@@ -1106,7 +1106,7 @@ void _moveDelta(const smartvector<Range> &list, int pos, std::vector<int> &delta
     // Ranges above pos:
 
     int movepos = ix == 0 ? pos : std::max(list[ix - 1]->last + 1, pos);
-    for (int iy = ix, siz = list.size(); iy != siz; ++iy)
+    for (int iy = ix, siz = tosigned(list.size()); iy != siz; ++iy)
     {
         const Range *r = list[iy];
         delta[iy] = movepos - r->first;

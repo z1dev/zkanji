@@ -86,6 +86,8 @@ class ZStatusBar : public QStatusBar
 signals:
     void assigned() const;
 public:
+    typedef size_t  size_type;
+
     ZStatusBar(QWidget *parent = nullptr);
     ~ZStatusBar();
 
@@ -94,7 +96,7 @@ public:
     void assignTo(QObject *newbuddy);
 
     // Number of widgets added to the status bar.
-    int size() const;
+    size_type size() const;
 
     // Returns true if the size() is 0 and no widgets were added to the status bar.
     bool empty() const;

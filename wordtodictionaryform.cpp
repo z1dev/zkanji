@@ -19,7 +19,7 @@
 //-------------------------------------------------------------
 
 
-WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), dindex(-1), expandsize(-1)
+WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(new Ui::WordToDictionaryForm), proxy(nullptr), dict(nullptr), dest(nullptr), dictindex(-1), expandsize(-1)
 {
     ui->setupUi(this);
 
@@ -132,7 +132,7 @@ void WordToDictionaryForm::on_addButton_clicked()
     close();
 
     // Creates and opens the word editor form to add new definition to the destination word.
-    editWord(d, windex, wdindexes, dest, dindex, parentWidget());
+    editWord(d, windex, wdindexes, dest, dictindex, parentWidget());
 }
 
 void WordToDictionaryForm::on_cancelButton_clicked()
@@ -159,11 +159,11 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
     dest = proxy->dictionaryAtRow(ix);
     if (dest != nullptr)
         connect(dest, &Dictionary::dictionaryReset, this, &WordToDictionaryForm::close);
-    dindex = dest->findKanjiKanaWord(dict->wordEntry(index));
+    dictindex = dest->findKanjiKanaWord(dict->wordEntry(index));
 
     //int h = ui->meaningsWidget->height() + ui->splitter->handleWidth(); // + ui->centralwidget->layout()->spacing();
 
-    if (dindex == -1)
+    if (dictindex == -1)
     {
         if (ui->meaningsWidget->isVisibleTo(this))
         {
@@ -193,7 +193,7 @@ void WordToDictionaryForm::on_dictCBox_currentIndexChanged(int ix)
         // Show existing definitions in the bottom table.
         DictionaryWordListItemModel *model = new DictionaryWordListItemModel(this);
         std::vector<int> result;
-        result.push_back(dindex);
+        result.push_back(dictindex);
         model->setWordList(dest, std::move(result));
         if (ui->meaningsTable->model() != nullptr)
             ui->meaningsTable->model()->deleteLater();
@@ -250,7 +250,7 @@ void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int di
 //    addButton->setEnabled(ui->wordsTable->hasSelection());
 //}
 
-void WordToDictionaryForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void WordToDictionaryForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict || ZKanji::dictionaryCount() == 1)
         close();
@@ -262,7 +262,7 @@ void WordToDictionaryForm::translateTexts()
     addButton->setMinimumWidth(0);
     addButton->setMaximumWidth(QWIDGETSIZE_MAX);
 
-    if (dindex == -1)
+    if (dictindex == -1)
         addButton->setText(tr("Create word"));
     else
         addButton->setText(tr("Add meanings"));

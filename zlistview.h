@@ -506,7 +506,7 @@ private:
     QList<QPersistentModelIndex> perix;
 
     // Sizehint replacement
-    QSize hint;
+    QSize sizhint;
 
     std::vector<ColumnSizingData> tmpcolsize;
 
@@ -521,7 +521,7 @@ private:
     typedef QTableView  base;
 
 protected slots:
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous) { ; }
+    void currentChanged(const QModelIndex &/*current*/, const QModelIndex &/*previous*/) {}
     //    void curSelRowChanged(const QModelIndex &current, const QModelIndex &previous);
 };
 

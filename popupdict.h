@@ -41,7 +41,7 @@ public:
 
     static void popup(int screen, bool fromjapanese);
     static void hidePopup();
-    static PopupDictionary* const getInstance();
+    static PopupDictionary* getInstance();
 
     // The index of the currently used dictionary. Returns the dictionary used in the instance
     // or if no instance is present, the dictionary to be set for the instance.

@@ -17,6 +17,8 @@
 #include "zkanjimain.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 namespace ZKanji
 {
     KanjiElementList *reclist = nullptr;
@@ -264,7 +266,7 @@ Stroke& Stroke::operator=(Stroke &&src)
     return *this;
 }
 
-int Stroke::size() const
+size_t Stroke::size() const
 {
     return list.size();
 }
@@ -304,8 +306,8 @@ void Stroke::add(const QPointF &pt)
 
         if (list.size() > 1 && (list.back().angle - std::prev(list.end(), 2)->angle).abs() > const_PI_2 * 0.8)
         {
-            double d = (list.back().angle - std::prev(list.end(), 2)->angle).abs();
-            double m = const_PI_2 * 0.8;
+            //double d = (list.back().angle - std::prev(list.end(), 2)->angle).abs();
+            //double m = const_PI_2 * 0.8;
             ++list.back().section;
         }
         p.section = list.back().section;
@@ -348,13 +350,13 @@ double Stroke::height() const
 
 int Stroke::segmentCount() const
 {
-    return std::max(0, (int)list.size() - 1);
+    return std::max(0, tosigned(list.size()) - 1);
 }
 
 double Stroke::segmentLength(int index) const
 {
 #ifdef _DEBUG
-    if (index < 0 || list.size() < index + 2)
+    if (index < 0 || tosigned(list.size()) < index + 2)
         throw "Index out of range";
 #endif
 
@@ -364,7 +366,7 @@ double Stroke::segmentLength(int index) const
 Radian Stroke::segmentAngle(int index) const
 {
 #ifdef _DEBUG
-    if (index < 0 || list.size() < index + 2)
+    if (index < 0 || tosigned(list.size()) < index + 2)
         throw "Index out of range";
 #endif
 
@@ -374,7 +376,7 @@ Radian Stroke::segmentAngle(int index) const
 ushort Stroke::segmentSection(int index) const
 {
 #ifdef _DEBUG
-    if (index < 0 || list.size() < index + 2)
+    if (index < 0 || tosigned(list.size()) < index + 2)
         throw "Index out of range";
 #endif
 
@@ -395,7 +397,8 @@ double Stroke::sectionLength(int index) const
 
     // Find first segment with section of index.
     int ix;
-    for (ix = 0; ix != list.size(); ++ix)
+    int siz = tosigned(list.size());
+    for (ix = 0; ix != siz; ++ix)
         if (list[ix].section == index)
             break;
 
@@ -404,7 +407,7 @@ double Stroke::sectionLength(int index) const
     {
         r += list[ix].length;
         ++ix;
-    } while (ix != list.size() && list[ix].section == index);
+    } while (ix != siz && list[ix].section == index);
 
     return r;
 }
@@ -415,7 +418,7 @@ int Stroke::segmentsInSection(int index) const
         return 0;
 
     int r = 0;
-    for (int ix = 0; ix != list.size() - 1; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz - 1; ++ix)
     {
         if (list[ix].section == index)
             ++r;
@@ -726,9 +729,10 @@ void Stroke::splitPoints(QPointF *pt, int cnt) const
     int pos = 1;
     // Point position in stroke.
     int apos = 0;
+    int lsiz = tosigned(list.size());
 
     double l;
-    while (apos != list.size() - 1 && pos != cnt - 1)
+    while (apos != lsiz - 1 && pos != cnt - 1)
     {
         l = list[apos].length;
 
@@ -775,11 +779,11 @@ void StrokeList::add(Stroke &&s, bool mousedrawn)
     ZKanji::elements()->compareToModels(list.back().second, *cmplist.back());
 
     poslist.setSize(list.size());
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         poslist[ix].setSize(list.size() - 1);
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
-        for (int iy = 0; iy != list.size(); ++iy)
+        for (int iy = 0; iy != siz; ++iy)
         {
             if (iy == ix)
                 continue;
@@ -796,12 +800,12 @@ bool StrokeList::empty() const
 
 void StrokeList::resize(int newsize)
 {
-    if (newsize >= list.size())
+    if (newsize < 0 || newsize >= tosigned(list.size()))
         return;
     list.resize(newsize);
 }
 
-int StrokeList::size() const
+StrokeList::size_type StrokeList::size() const
 {
     return list.size();
 }
@@ -831,7 +835,7 @@ double StrokeList::height() const
 
 void StrokeList::reCompare()
 {
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         cmplist[ix]->clear();
         ZKanji::elements()->compareToModels(list[ix].second, *cmplist[ix]);
@@ -895,7 +899,7 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
     // Construct a vector from the points of s. Each value holds a point, its
     // distance from the next point, and their angle to the x axis.
     std::vector<PointRadLen> points;
-    for (int ix = 0; ix != s.size(); ++ix)
+    for (int ix = 0, siz = tosigned(s.size()); ix != siz; ++ix)
     {
         if (ix != 0)
         {
@@ -915,12 +919,12 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
     {
         // The starting point of a segment whose points will be joined. This
         // will be the index of the shortest segment.
-        int m = -1;
+        int m = 0;
         // Length of segment m.
-        double mdist;
+        double mdist = 0;
 
         // Find the shortest segment of the stroke.
-        for (int ix = 0; ix < points.size() - 2; ++ix)
+        for (int ix = 0, siz = tosigned(points.size()); ix != siz - 2; ++ix)
         {
             if (ix == 0 || points[ix].dist < mdist)
             {
@@ -930,7 +934,7 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
         }
 
         // Every segment is larger than the join limit.
-        if (mdist > tiny_dist * 3 || m == points.size() - 2)
+        if (mdist > tiny_dist * 3 || m == tosigned(points.size()) - 2)
             break;
 
         // Position in [0, 1] between points m and m + 1 where the two points
@@ -952,13 +956,13 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
 
 
         // Very unlikely, but there might be points at the same position after the join.
-        if (m + 1 != points.size() && points[m].p == points[m + 1].p)
+        if (m + 1 != tosigned(points.size()) && points[m].p == points[m + 1].p)
             points.erase(points.begin() + (m + 1));
 
         // Recompute the values of point m so they reflect the real radian
         // and distance to the next point.
-        points[m].rad = m + 1 != points.size() ? RecMath::rad(points[m].p, points[m + 1].p) : Radian();
-        points[m].dist = m + 1 != points.size() ? RecMath::len(points[m].p, points[m + 1].p) : 0;
+        points[m].rad = m + 1 != tosigned(points.size()) ? RecMath::rad(points[m].p, points[m + 1].p) : Radian();
+        points[m].dist = m + 1 != tosigned(points.size()) ? RecMath::len(points[m].p, points[m + 1].p) : 0;
 
         if (m)
         {
@@ -969,8 +973,8 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
 
             // Recompute the values of point m - 1 so they reflect the real
             // radian and distance to the next point.
-            points[m - 1].rad = m != points.size() ? RecMath::rad(points[m - 1].p, points[m].p) : Radian();
-            points[m - 1].dist = m != points.size() ? RecMath::len(points[m - 1].p, points[m].p) : 0;
+            points[m - 1].rad = m != tosigned(points.size()) ? RecMath::rad(points[m - 1].p, points[m].p) : Radian();
+            points[m - 1].dist = m != tosigned(points.size()) ? RecMath::len(points[m - 1].p, points[m].p) : 0;
         }
     }
 
@@ -982,7 +986,7 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
     {
         changed = false;
 
-        for (int ix = 0; ix < points.size() - 2; ++ix)
+        for (int ix = 0, siz = tosigned(points.size()); ix < siz - 2; ++ix)
         {
             double max_dist = tiny_dist;
 
@@ -992,6 +996,7 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
             if (RecMath::pointDist(points[ix].p, points[ix + 2].p, points[ix + 1].p) < max_dist / 2.)
             {
                 points.erase(points.begin() + (ix + 1));
+                --siz;
                 points[ix].rad = RecMath::rad(points[ix].p, points[ix + 1].p);
                 points[ix].dist = RecMath::len(points[ix].p, points[ix + 1].p);
                 --ix;
@@ -1018,7 +1023,7 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
 
 
     s.clear();
-    for (int ix = 0; ix != points.size(); ++ix)
+    for (int ix = 0, siz = tosigned(points.size()); ix != siz; ++ix)
         s.add(points[ix].p);
 
     return std::move(s);
@@ -1114,7 +1119,7 @@ Stroke StrokeList::dissect(const Stroke &src)
     // The l vector contains indexes in pp for points to be included in dest.
     // Adding 'steps' number of internal steps between them and filling dest
     // with the result.
-    for (int ix = 0; ix != l.size() - 1; ++ix)
+    for (int ix = 0, siz = tosigned(l.size()); ix != siz - 1; ++ix)
     {
         dummy.clear();
         for (int iy = l[ix]; iy <= l[ix + 1]; ++iy)
@@ -1134,7 +1139,7 @@ Stroke StrokeList::dissect(const Stroke &src)
 
 bool surroundingPattern(KanjiPattern p)
 {
-    return p == KanjiPattern::Ebl || p == KanjiPattern::Eblt || p == KanjiPattern::Elt || p == KanjiPattern::Eltr || 
+    return p == KanjiPattern::Ebl || p == KanjiPattern::Eblt || p == KanjiPattern::Elt || p == KanjiPattern::Eltr ||
         p == KanjiPattern::Etr || p == KanjiPattern::Erbl || p == KanjiPattern::Ew || p == KanjiPattern::Elr;
 }
 
@@ -1179,7 +1184,7 @@ KanjiElementList::KanjiElementList(const QString &filename) : version(0)
     load(filename);
 }
 
-void KanjiElementList::clear(bool full)
+void KanjiElementList::clear(bool /*full*/)
 {
     list.clear();
     models.clear();
@@ -1207,6 +1212,10 @@ void KanjiElementList::load(const QString &filename)
     tmp[8] = 0;
 
     bool good = !strncmp("zksod", tmp, 5);
+
+    if (!good)
+        throw ZException("Invalid stroke order file format.");
+
     version = strtol(tmp + 5, 0, 10);
 
     if (version < 7)
@@ -1216,7 +1225,8 @@ void KanjiElementList::load(const QString &filename)
     stream >> cnt;
 
     list.reserve(cnt);
-    while (list.size() != cnt)
+    int lsiz = 0;
+    while (lsiz++ != cnt)
         list.push_back(new KanjiElement);
 
 
@@ -1241,7 +1251,7 @@ void KanjiElementList::load(const QString &filename)
                 e->unicode = 0;
             else
                 e->unicode = e->owner;
-            e->owner = -1;
+            e->owner = (ushort)-1;
         }
 
         qint32 i;
@@ -1409,7 +1419,7 @@ int KanjiElementList::elementOf(int kindex) const
 {
     if (kindex < 0)
     {
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
             if (list[ix]->unicode == -kindex)
                 return ix;
         return -1;
@@ -1435,21 +1445,21 @@ void KanjiElementList::applyElements()
 
 int KanjiElementList::modelCount() const
 {
-    return models.size() + cmodels.size();
+    return tosigned(models.size() + cmodels.size());
 }
 
 void KanjiElementList::compareToModels(const Stroke &stroke, RecognizerComparisons &result)
 {
     result.setSize(models.size() + cmodels.size());
-    for (int ix = 0; ix != models.size(); ++ix)
+    for (int ix = 0, siz = tosigned(models.size()); ix != siz; ++ix)
     {
         //RecognizerComparison cmp;
         result[ix].index = ix;
         result[ix].distance = models[ix].compare(stroke);
     }
 
-    int s = models.size();
-    for (int ix = 0; ix != cmodels.size(); ++ix)
+    int s = tosigned(models.size());
+    for (int ix = 0, siz = tosigned(cmodels.size()); ix != siz; ++ix)
     {
         //RecognizerComparison cmp;
         result[s + ix].index = s + ix;
@@ -1546,21 +1556,21 @@ void KanjiElementList::computeStrokePositions(BitArray &bits, QRectF orig, QRect
         bits.set(15, true);
 }
 
-void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int> &result, int siz, bool kanji, bool kana, bool other)
+void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int> &result, int strokecnt, bool kanji, bool kana, bool other)
 {
     // Number of items to include in result at most.
     const int cntlimit = 256;
     // Drawn stroke order can be different for each stroke by swplimit position.
     const int swplimit = 1;
 
-    if (siz == -1)
-        siz = strokes.size();
+    if (strokecnt == -1)
+        strokecnt = tosigned(strokes.size());
 
-    int modelsize = models.size();
+    //int modelsize = models.size();
 
     int hasrec = 0;
     int charrec = 0;
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         KanjiElement *e = list[ix];
         if (kanji && !e->recdata.empty() && e->owner != (ushort)-1)
@@ -1571,10 +1581,10 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
 
     int cnt = hasrec + charrec;
 
-    fastarray<RecognizerComparison> value(hasrec + charrec);
-    for (int ix = 0; ix < hasrec + charrec; ++ix)
+    fastarray<RecognizerComparison> value(cnt);
+    for (int ix = 0; ix < cnt; ++ix)
     {
-        value[ix].index = -1;
+        value[ix].index = (ushort)-1;
         value[ix].distance = 2147483647;
     }
 
@@ -1584,23 +1594,23 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
     int used[255];
     try
     {
-        for (int ix = 0; ix < list.size(); ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         {
             KanjiElement *e = list[ix];
 
-            if (e->recdata.empty() || (e->owner != (ushort)-1 && !kanji) || (cntlimit >= 0 && abs(e->variants[0]->strokecnt - siz) > cntlimit || !cntlimit && e->variants[0]->strokecnt < std::max(1, std::min(siz - 3, siz / 2))) || (e->unicode != 0 && ((KANA(e->unicode) && !kana) || (VALIDCODE(e->unicode) && !other) || (!other && !kana) )))
+            if (e->recdata.empty() || (e->owner != (ushort)-1 && !kanji) || ((cntlimit >= 0 && abs(e->variants[0]->strokecnt - strokecnt) > cntlimit) || (!cntlimit && e->variants[0]->strokecnt < std::max(1, std::min(strokecnt - 3, strokecnt / 2)))) || (e->unicode != 0 && ((KANA(e->unicode) && !kana) || (VALIDCODE(e->unicode) && !other) || (!other && !kana) )))
                 continue;
 
             memset(used, -1, sizeof(int) * 255);
-            value[pos].distance = std::max(0, siz - e->variants[0]->strokecnt) * 40000;
+            value[pos].distance = std::max(0, strokecnt - e->variants[0]->strokecnt) * 40000;
             value[pos].index = ix;
-            for (int iy = 0; iy < std::min(e->variants[0]->strokecnt + swplimit, siz) && value[pos].distance < std::max(10000, lowest) * 1.5; ++iy)
+            for (int iy = 0; iy < std::min(e->variants[0]->strokecnt + swplimit, strokecnt) && value[pos].distance < std::max(10000, lowest) * 1.5; ++iy)
             {
                 int distmin = -1;
-                int sindex;
+                int sindex = -1;
                 for (int k = iy - swplimit; k < iy + swplimit + 1; ++k)
                 {
-                    if (k < 0 || k >= e->variants[0]->strokecnt || used[k] >= 0 && (k <= 0 || k != iy || used[k - 1] >= 0))
+                    if (k < 0 || k >= e->variants[0]->strokecnt || (used[k] >= 0 && (k == 0 || k != iy || used[k - 1] >= 0)))
                         continue;
                     double dval;
 
@@ -1631,7 +1641,7 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
 
             int compdist = std::max(3000, value[pos].distance);
 
-            int n = std::min(siz, (int)e->variants[0]->strokecnt);
+            int n = std::min(strokecnt, (int)e->variants[0]->strokecnt);
             double posw;
             for (int iy = 0; iy < n && value[pos].distance < std::max(10000, lowest) * 1.5; ++iy)
             {
@@ -1696,9 +1706,9 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
                     value[pos].distance = std::max(0.0, value[pos].distance - compdist * 0.05);
             }
 
-            if (e->variants[0]->strokecnt > siz)
+            if (e->variants[0]->strokecnt > strokecnt)
             {
-                int d = std::min(4, e->variants[0]->strokecnt - siz);
+                int d = std::min(4, e->variants[0]->strokecnt - strokecnt);
                 value[pos].distance += d * 2500 + std::min((d - 1) * 3333, 10000);
             }
 
@@ -1711,7 +1721,7 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
                 }
                 else
                 {
-                    value[pos].index = -1;
+                    value[pos].index = (ushort)-1;
                     value[pos].distance = 2147483647;
                 }
             }
@@ -1747,7 +1757,7 @@ void KanjiElementList::findCandidates(const StrokeList &strokes, std::vector<int
     }
 }
 
-int KanjiElementList::size() const
+KanjiElementList::size_type KanjiElementList::size() const
 {
     return list.size();
 }
@@ -1780,7 +1790,7 @@ void KanjiElementList::elementParts(int index, bool skipelements, bool usekanji,
 {
     const KanjiElement *e = list[index];
 
-    int resultpos = 0;
+    uint resultpos = 0;
 
     std::set<int> found;
 
@@ -1822,12 +1832,12 @@ void KanjiElementList::elementParents(int index, bool skipelements, bool usekanj
 {
     const KanjiElement *e = list[index];
 
-    int resultpos = 0;
+    uint resultpos = 0;
     std::set<int> found;
 
     while (e)
     {
-        for (int ix = 0; ix != e->parents.size(); ++ix)
+        for (int ix = 0, siz = tosigned(e->parents.size()); ix != siz; ++ix)
         {
             int parent = e->parents[ix];
             if (found.count(parent) == 0)
@@ -1862,7 +1872,7 @@ void KanjiElementList::elementParents(int index, bool skipelements, bool usekanj
 
 void KanjiElementList::drawElement(QPainter &p, int element, int variant, const QRectF &rect, bool animated)
 {
-    int cnt = strokeCount(element, variant);
+    int cnt = tosigned(strokeCount(element, variant));
 
     bool antialiased = p.renderHints().testFlag(QPainter::Antialiasing);
     if (!antialiased)
@@ -1873,7 +1883,7 @@ void KanjiElementList::drawElement(QPainter &p, int element, int variant, const 
         p.setRenderHint(QPainter::Antialiasing, false);
 }
 
-int KanjiElementList::strokeCount(int element, int variant) const
+uchar KanjiElementList::strokeCount(int element, int variant) const
 {
     return list[element]->variants[variant]->strokecnt;
 }
@@ -1939,7 +1949,7 @@ void KanjiElementList::drawStroke(QPainter &painter, int element, int variant, i
 {
     KanjiElement *e = list[element];
     ElementVariant *v = e->variants[variant];
-   
+
     QRectF r = rect;
 
     double strokew = basePenWidth(std::min(rect.width(), rect.height()));
@@ -2074,15 +2084,17 @@ int KanjiElementList::strokePartCount(const ElementStroke *s, const ElementTrans
     parts.clear();
     parts.reserve(s->points.size() - 1);
 
-    for (int ix = 1; ix != s->points.size(); ++ix)
+    for (int ix = 1, siz = tosigned(s->points.size()); ix != siz; ++ix)
     {
         ElementPointT point = tr.transformed(s->points[ix]);
 
-        double len;
+        double len = 0;
         if (point.type == ElementPoint::LineTo)
             len = std::sqrt((point.x - pastpoint.x) * (point.x - pastpoint.x) + (point.y - pastpoint.y) * (point.y - pastpoint.y));
         else if (point.type == ElementPoint::Curve)
             len = bezierLength(QPointF(pastpoint.x, pastpoint.y), QPointF(point.c1x, point.c1y), QPointF(point.c2x, point.c2y), QPointF(point.x, point.y), partlen / 10);
+        else
+            throw "Invalid data.";
 
         int pp = std::ceil(len / partlen);
         partcnt += pp;
@@ -2103,7 +2115,7 @@ int KanjiElementList::strokePartCount(const ElementStroke *s, const ElementTrans
         if (partdiv > 1.2)
             partdiv = (partdiv + partdiv * partdiv) / 2;
 
-        for (int ix = 0; ix != parts.size(); ++ix)
+        for (int ix = 0, siz = tosigned(parts.size()); ix != siz; ++ix)
         {
             int newcnt = std::max<int>(1, std::ceil(parts[ix] * partdiv));
             partcnt += newcnt - parts[ix];
@@ -2222,6 +2234,7 @@ void KanjiElementList::drawStrokePart(QPainter &painter, bool partialline, doubl
 {
     int partspos = 0;
     int ix = 1;
+    int siz = tosigned(s->points.size());
 
     QBrush b;
     int fullcnt = 0;
@@ -2229,11 +2242,11 @@ void KanjiElementList::drawStrokePart(QPainter &painter, bool partialline, doubl
     bool usecolor = startcolor.isValid() && endcolor.isValid();
     if (usecolor)
     {
-        for (int ix = 0, siz = parts.size(); ix != siz; ++ix)
-            fullcnt += parts[ix];
+        for (int iy = 0, sizy = tosigned(parts.size()); iy != sizy; ++iy)
+            fullcnt += parts[iy];
     }
 
-    for (; ix != s->points.size(); ++ix)
+    for (; ix != siz; ++ix)
     {
         if (part >= parts[partspos])
         {
@@ -2269,7 +2282,7 @@ void KanjiElementList::drawStrokePart(QPainter &painter, bool partialline, doubl
         if ((s->tips & (int)StrokeTips::StartThin) == (int)StrokeTips::StartThin)
             startw = std::max(basewidth * 0.7, 0.3);
     }
-    if (ix == s->points.size() - 1)
+    if (ix == siz - 1)
     {
         if ((s->tips & (int)StrokeTips::EndPointed) == (int)StrokeTips::EndPointed)
             endw = std::max(basewidth * 0.3, 0.2);
@@ -2286,11 +2299,11 @@ void KanjiElementList::drawStrokePart(QPainter &painter, bool partialline, doubl
         b = painter.brush();
         if (usecolor)
         {
-            QColor s = startcolor;
-            s.setAlpha(salpha);
-            QColor e = endcolor;
-            e.setAlpha(ealpha);
-            painter.setBrush(paintGradient(pastpoint.x, pastpoint.y, point.x, point.y, basewidth * (pointstart ? 2 : 1), startcnt, partcnt, endcnt, s, e));
+            QColor sc = startcolor;
+            sc.setAlpha(salpha);
+            QColor ec = endcolor;
+            ec.setAlpha(ealpha);
+            painter.setBrush(paintGradient(pastpoint.x, pastpoint.y, point.x, point.y, basewidth * (pointstart ? 2 : 1), startcnt, partcnt, endcnt, sc, ec));
         }
         else
         {
@@ -2357,11 +2370,11 @@ void KanjiElementList::drawStrokePart(QPainter &painter, bool partialline, doubl
         b = painter.brush();
         if (usecolor)
         {
-            QColor s = startcolor;
-            s.setAlpha(salpha);
-            QColor e = endcolor;
-            e.setAlpha(ealpha);
-            painter.setBrush(paintGradient(ptx1, pty1, ptx2, pty2, basewidth * (pointstart ? 2 : 1), startcnt + part, 1, endcnt + partcnt - part - 1, s, e));
+            QColor sc = startcolor;
+            sc.setAlpha(salpha);
+            QColor ec = endcolor;
+            ec.setAlpha(ealpha);
+            painter.setBrush(paintGradient(ptx1, pty1, ptx2, pty2, basewidth * (pointstart ? 2 : 1), startcnt + part, 1, endcnt + partcnt - part - 1, sc, ec));
         }
         else
         {
@@ -2479,7 +2492,8 @@ void KanjiElementList::drawBezier(QPainter &painter, double areasize, const QPoi
     double winc = (endw - startw) / steps;
     double nextw = startw + winc;
 
-    double pastt = 0.0;
+    //double pastt = 0.0;
+
     // Single dot stroke's bezier starts with a small width. Endw is the base width in that case.
     if (startw < -0.1)
         w = endw * dotwsy;
@@ -2497,7 +2511,7 @@ void KanjiElementList::drawBezier(QPainter &painter, double areasize, const QPoi
 
             nextw = endw * (std::pow(1.0 - t, 3) * dotwsy + 3 * t * std::pow(1 - t, 2) * dotwc1y + 3 * std::pow(t, 2) * (1 - t) * dotwc2y + std::pow(t, 3) * dotwey);
 
-            pastt = t;
+            //pastt = t;
         }
         drawLine(painter, QPointF(oldptx, oldpty), QPointF(ptx, pty), w, nextw);
         w = nextw;

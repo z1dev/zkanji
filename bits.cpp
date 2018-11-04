@@ -47,10 +47,10 @@ void BitArray::load(QDataStream &stream)
     if (cnt == 0)
         return;
 
-    stream.readRawData(base::data(), (bitsize + 7) / 8);
+    stream.readRawData(base::data(), (tosigned(bitsize) + 7) / 8);
 }
 
-void BitArray::resize(int size)
+void BitArray::resize(size_type size)
 {
     if (size == bitsize)
         return;
@@ -59,7 +59,7 @@ void BitArray::resize(int size)
     bitsize = size;
 }
 
-void BitArray::setSize(int size)
+void BitArray::setSize(size_type size)
 {
     if (size == bitsize)
         return;
@@ -68,7 +68,7 @@ void BitArray::setSize(int size)
     bitsize = size;
 }
 
-void BitArray::setSize(int size, bool toggle)
+void BitArray::setSize(size_type size, bool toggle)
 {
     if (size == bitsize)
         return;
@@ -78,39 +78,35 @@ void BitArray::setSize(int size, bool toggle)
     bitsize = size;
 }
 
-int BitArray::size() const
+BitArray::size_type BitArray::size() const
 {
     return bitsize;
 }
 
-bool BitArray::toggled(int index) const
+bool BitArray::toggled(size_type index) const
 {
-#ifdef _DEBUG
-    if (index < 0)
-        throw "index out of bounds.";
-#endif
     if (bitsize <= index)
         return false;
-    int cpos = index / 8;
+    size_type cpos = index / 8;
     index -= cpos * 8;
 
     return ((data()[cpos] >> index) & 1) == 1;
 }
 
-void BitArray::set(int index, bool toggle)
+void BitArray::set(size_type index, bool toggle)
 {
 #ifdef _DEBUG
-    if (index < 0 || index >= bitsize)
+    if (index >= bitsize)
         throw "index out of bounds.";
 #endif
-    int cpos = index / 8;
-    index -= cpos * 8;
+    size_type cpos = index / 8;
+    unsigned char shift = tounsigned<unsigned char>(index - cpos * 8);
 
     char &c = data()[cpos];
     if (toggle)
-        c |= (1 << index);
+        c |= (1 << shift);
     else
-        c &= ~(1 << index);
+        c &= ~(1 << shift);
 }
 
 

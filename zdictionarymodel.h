@@ -240,7 +240,7 @@ private:
     std::vector<int> list;
 
     bool ordered;
-    ResultOrder order;
+    ResultOrder resultorder;
 
     typedef DictionaryItemModel base;
 };
@@ -332,7 +332,7 @@ private:
     bool sinflections;
     bool sstudydefs;
 
-    ResultOrder order;
+    ResultOrder resultorder;
 
     typedef DictionaryItemModel base;
 };
@@ -437,9 +437,9 @@ public:
     //virtual QStringList mimeTypes() const override;
 protected slots:
     //virtual void entryAboutToBeRemoved(int windex) override {};
-    virtual void entryRemoved(int windex, int abcdeindex, int aiueoindex) override {};
-    virtual void entryChanged(int windex, bool studydef) override {};
-    virtual void entryAdded(int windex) override {};
+virtual void entryRemoved(int /*windex*/, int /*abcdeindex*/, int /*aiueoindex*/) override {};
+virtual void entryChanged(int /*windex*/, bool /*studydef*/) override {};
+virtual void entryAdded(int /*windex*/) override {};
 private:
     Dictionary *dict;
     WordEntry *entry;

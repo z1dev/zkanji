@@ -122,6 +122,8 @@ signals:
 
     void dictionaryFlagChanged(int index, int orderindex);
 public:
+    typedef size_t  size_type;
+
     static GlobalUI* instance();
     ~GlobalUI();
 
@@ -284,6 +286,7 @@ public slots:
 #endif
     void importBaseDict();
     void importExamples();
+    void importOldUserData();
 
     void userExportAction();
     void userImportAction();

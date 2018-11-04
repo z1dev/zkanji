@@ -43,8 +43,8 @@ public:
 
     // Tooltip text to be shown for the passed column. If this is an empty string, no tooltip
     // will be shown.
-    virtual QString tooltip(int col) const { return QString(); }
-  
+    virtual QString tooltip(int /*col*/) const { return QString(); }
+
 protected:
     // Type of stats this model represents.
     virtual ZStatType type() const = 0;
@@ -63,7 +63,7 @@ public:
     // Pixel width of a bar at column col. This should be enough to draw the text under this
     // bar column. Should return -1 for 0th value when the ZStatView must display all bars
     // with equal width, stretching out to the full width of the view.
-    virtual int barWidth(ZStatView *view, int col) const { return -1; }
+    virtual int barWidth(ZStatView * /*view*/, int /*col*/) const { return -1; }
 
     // The label to draw below a specific bar.
     virtual QString barLabel(int col) const = 0;

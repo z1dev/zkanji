@@ -194,7 +194,7 @@ private:
     WordCommons *common;
 
     // Index of the current sentence from the sentences of the word's commons.
-    ushort current;
+    int current;
 
     // Data of the sentence being displayed.
     ExampleSentenceData sentence;

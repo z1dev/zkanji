@@ -20,6 +20,7 @@
 #include "generalsettings.h"
 #include "formstates.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -38,14 +39,14 @@ WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, con
     // the original order of the other items.
     std::vector<int> order;
     order.reserve(indexes.size());
-    for (int ix = 0; ix != indexes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(indexes.size()); ix != siz; ++ix)
         order.push_back(ix);
     std::sort(order.begin(), order.end(), [&indexes](int a, int b) {
         if (indexes[a] != indexes[b])
             return indexes[a] < indexes[b];
         return a < b;
     });
-    for (int ix = 1, pos = 0; ix != order.size(); ++ix)
+    for (int ix = 1, pos = 0, siz = tosigned(order.size()); ix != siz; ++ix)
     {
         if (indexes[order[ix]] == indexes[order[pos]])
             indexes[order[ix]] = -1;
@@ -59,7 +60,7 @@ WordsToDeckItemModel::WordsToDeckItemModel(Dictionary *dict, WordDeck* deck, con
 
     // Check every word part to unset/disable checkboxes when the kanji form is not generally
     // used, the written form has no kanji or a part has already been added to the deck.
-    for (int ix = 0; ix != indexes.size(); ++ix)
+    for (int ix = 0, siz = tosigned(indexes.size()); ix != siz; ++ix)
     {
         char val = 0;
 
@@ -125,7 +126,7 @@ void WordsToDeckItemModel::setColumnTexts()
 
 bool WordsToDeckItemModel::hasBoxChecked() const
 {
-    for (int ix = 0; ix != checks.size(); ++ix)
+    for (int ix = 0, siz = tosigned(checks.size()); ix != siz; ++ix)
     {
         char val = checks[ix];
         // Returns if any of the lower 3 bits is checked, and the checkbox is not disabled.
@@ -217,7 +218,7 @@ QVariant WordsToDeckItemModel::headerData(int section, Qt::Orientation orientati
     if (role != Qt::CheckStateRole || orientation != Qt::Horizontal)
         return base::headerData(section, orientation, role);
 
-    int siz = checks.size();
+    int siz = tosigned(checks.size());
 
     // Number of checked or disabled checkboxes.
     int cnt = 0;
@@ -250,7 +251,7 @@ bool WordsToDeckItemModel::setHeaderData(int section, Qt::Orientation orientatio
     bool check = (Qt::CheckState)value.toInt() == Qt::Checked;
 
     bool changed = false;
-    for (int ix = 0; ix != checks.size(); ++ix)
+    for (int ix = 0, siz = tosigned(checks.size()); ix != siz; ++ix)
     {
         char val = checks[ix];
         // Check or uncheck enabled boxes.
@@ -269,7 +270,7 @@ bool WordsToDeckItemModel::setHeaderData(int section, Qt::Orientation orientatio
     if (changed)
     {
         emit headerDataChanged(Qt::Horizontal, section, section);
-        emit dataChanged(index(0, section), index(checks.size(), section), { Qt::CheckStateRole/*, Qt::DisplayRole*/ });
+        emit dataChanged(index(0, section), index(tosigned(checks.size()), section), { Qt::CheckStateRole/*, Qt::DisplayRole*/ });
     }
 
     return changed;
@@ -277,13 +278,13 @@ bool WordsToDeckItemModel::setHeaderData(int section, Qt::Orientation orientatio
 
 void WordsToDeckItemModel::entryChanged(int windex, bool studydef)
 {
-    auto list = getWordList();
-    auto it = std::find(list.begin(), list.end(), windex);
-    if (it != list.end())
+    auto wlist = getWordList();
+    auto it = std::find(wlist.begin(), wlist.end(), windex);
+    if (it != wlist.end())
     {
         WordEntry *w = dictionary()->wordEntry(windex);
 
-        bool kanaonly = (w->defs[0].attrib.notes & (int)WordNotes::KanaOnly) != 0;
+        //bool kanaonly = (w->defs[0].attrib.notes & (int)WordNotes::KanaOnly) != 0;
 
         bool haskanji = false;
         int ksiz = w->kanji.size();
@@ -293,7 +294,7 @@ void WordsToDeckItemModel::entryChanged(int windex, bool studydef)
 
         bool changed = false;
 
-        char val = checks[it - list.begin()];
+        char val = checks[it - wlist.begin()];
         if (!haskanji && (val & (1 << 3)) == 0)
         {
             val |= (1 << 3);
@@ -305,7 +306,7 @@ void WordsToDeckItemModel::entryChanged(int windex, bool studydef)
         //    changed = true;
         //}
 
-        QModelIndex ind = index(it - list.begin(), 0);
+        QModelIndex ind = index(it - wlist.begin(), 0);
         if (changed)
             emit dataChanged(ind, ind, { Qt::DisplayRole });
     }
@@ -315,10 +316,10 @@ void WordsToDeckItemModel::entryChanged(int windex, bool studydef)
 
 void WordsToDeckItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
 {
-    auto list = getWordList();
-    auto it = std::find(list.begin(), list.end(), windex);
-    if (it != list.end())
-        checks.erase(checks.begin() + (it - list.begin()));
+    auto wlist = getWordList();
+    auto it = std::find(wlist.begin(), wlist.end(), windex);
+    if (it != wlist.end())
+        checks.erase(checks.begin() + (it - wlist.begin()));
 
     base::entryRemoved(windex, abcdeindex, aiueoindex);
 }
@@ -673,7 +674,7 @@ void WordToDeckForm::exec(WordDeck *studydeck, Dictionary *dictionary, const std
 
     if (!dict->wordDecks()->empty())
     {
-        for (int ix = 0, siz = dict->wordDecks()->size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(dict->wordDecks()->size()); ix != siz; ++ix)
             ui->decksCBox->addItem(dict->wordDecks()->items(ix)->getName());
         ui->decksCBox->setCurrentIndex(dict->wordDecks()->indexOf(deck));
     }
@@ -727,7 +728,7 @@ void WordToDeckForm::showEvent(QShowEvent *e)
         QTimer::singleShot(0, [this]() { QMessageBox::information(window(), "zkanji", tr("Nothing new to study. All word parts are already in the deck.\n\nYou can select another deck if you want to add them."), QMessageBox::Ok); });
 }
 
-void WordToDeckForm::checkStateChanged(const QModelIndex &first, const QModelIndex &last, const QVector<int> roles)
+void WordToDeckForm::checkStateChanged(const QModelIndex &/*first*/, const QModelIndex &/*last*/, const QVector<int> /*roles*/)
 {
     // Check every row in the same column if we clicked inside a selection.
 
@@ -765,7 +766,7 @@ void WordToDeckForm::selChanged()
 {
     std::vector<int> sel;
     ui->wordsTable->selectedRows(sel);
-    for (int ix = 0, siz = sel.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(sel.size()); ix != siz; ++ix)
         sel[ix] = model->indexes(sel[ix]);
     ui->defEditor->setWords(dict, sel);
 }

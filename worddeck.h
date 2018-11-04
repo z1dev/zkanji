@@ -74,6 +74,7 @@ class WordDeckItems //: public TextSearchTreeBase // - ex TItemTree
 {
 public:
     typedef T   item_type;
+    typedef size_t  size_type;
 
     WordDeckItems(WordDeck *owner);
 
@@ -98,7 +99,7 @@ public:
     // Wordmap contains [source word, new word] items.
     void copy(WordDeckItems<T> *src, const std::map<CardId*, CardId*> &cardmap, const std::map<WordDeckWord*, WordDeckWord*> &wordmap);
 
-    int size() const
+    size_type size() const
     {
         return list.size();
     }
@@ -182,6 +183,8 @@ class Dictionary;
 class ReadingTestList
 {
 public:
+    typedef size_t  size_type;
+
     ReadingTestList(WordDeck *owner);
 
     void loadLegacy(QDataStream &stream);
@@ -194,7 +197,7 @@ public:
     // Returns whether there are no more readings that can be tested on the current test day.
     bool empty() const;
     // Returns the number of kanji/reading pair to be tested.
-    int size() const;
+    size_type size() const;
 
     // Called when the dictionary is updated.
     // mainword: [new index, word data] - word data which will be kept in deck and its new
@@ -280,6 +283,8 @@ signals:
     // Emited when decks were moved.
     void decksMoved(const smartvector<Range> &ranges/*int first, int last*/, int pos);
 public:
+    typedef size_t  size_type;
+
     WordDeckList(Dictionary *dict);
     ~WordDeckList();
 
@@ -297,7 +302,7 @@ public:
     void processRemovedWord(int windex);
 
     // Number of long-term study decks in the dictionary.
-    int size() const;
+    size_type size() const;
     // Returns true if size() is 0.
     bool empty() const;
     // Returns the long-term study deck at index.

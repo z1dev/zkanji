@@ -58,7 +58,7 @@ namespace Strings
     QString wordDialectsText(int dials);
     QString wordDialectsTextLong(int types, QString separator = QStringLiteral(", "));
     QString wordInfoText(int info);
-    QString wordInflectionText(std::vector<InfTypes> infl);
+    QString wordInflectionText(const std::vector<InfTypes> &infl);
 
     //Q_DECLARE_TR_FUNCTIONS(Strings);
 };

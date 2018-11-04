@@ -21,6 +21,7 @@
 #include "formstates.h"
 #include "colorsettings.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -163,7 +164,7 @@ void KanaReadingPracticeForm::keyPressEvent(QKeyEvent *e)
 {
     base::keyPressEvent(e);
     bool backspace = e->key() == Qt::Key_Backspace;
-    if (pos == -1 || pos >= list.size() || (e->modifiers() != 0 && e->modifiers() != Qt::ShiftModifier) || (e->text().size() != 1 && !backspace))
+    if (pos == -1 || pos >= tosigned(list.size()) || (e->modifiers() != 0 && e->modifiers() != Qt::ShiftModifier) || (e->text().size() != 1 && !backspace))
         return;
     QChar txt = e->text().isEmpty() ? QChar(0) : e->text().at(0);
     if (!backspace && (txt < QChar('a') || txt > QChar('z')) && (txt < QChar('A') || txt > QChar('Z')))
@@ -246,7 +247,7 @@ void KanaReadingPracticeForm::reset()
 
     while (list.size() != 40)
     {
-        int numpos = rnd(0, nums.size() - 1);
+        int numpos = rnd(0, tosigned(nums.size()) - 1);
         if (!list.empty() && nums[numpos] == list.back())
             continue;
         list.push_back(nums[numpos]);
@@ -265,7 +266,7 @@ void KanaReadingPracticeForm::reset()
 void KanaReadingPracticeForm::next()
 {
     ++pos;
-    if (pos == list.size())
+    if (pos == tosigned(list.size()))
     {
         stopTimer(false);
 
@@ -318,7 +319,7 @@ void KanaReadingPracticeForm::next()
 
 void KanaReadingPracticeForm::setLabelText(int p, QLabel *lb, QLabel *rlb)
 {
-    if (p < 0 || p >= list.size())
+    if (p < 0 || p >= tosigned(list.size()))
     {
         lb->setText("");
         if (rlb != nullptr)

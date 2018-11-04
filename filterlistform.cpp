@@ -19,6 +19,7 @@
 #include "globalui.h"
 #include "formstates.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -41,22 +42,25 @@ FilterListModel::~FilterListModel()
 
 }
 
-int FilterListModel::columnCount(const QModelIndex &parent) const
+int FilterListModel::columnCount(const QModelIndex &/*parent*/) const
 {
     return 3;
 }
 
-int FilterListModel::rowCount(const QModelIndex &parent) const
+int FilterListModel::rowCount(const QModelIndex &/*parent*/) const
 {
-    return ZKanji::wordfilters().size() + 2;
+    return tosigned(ZKanji::wordfilters().size()) + 2;
 }
 
 QVariant FilterListModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid())
+        return QVariant();
+
     int col = index.column();
     int row = index.row();
 
-    int fsiz = ZKanji::wordfilters().size();
+    int fsiz = tosigned(ZKanji::wordfilters().size());
 
     enum RowSource { Filters, InExample, InGroup };
     RowSource src = row < fsiz ? Filters : row == fsiz ? InExample : InGroup;
@@ -67,7 +71,7 @@ QVariant FilterListModel::data(const QModelIndex &index, int role) const
             return QVariant();
         if (src == Filters)
         {
-            if (row < conditions->inclusions.size() && conditions->inclusions[row] == (col == 1 ? Inclusion::Include : Inclusion::Exclude) ? Qt::Checked : Qt::Unchecked)
+            if (row < tosigned(conditions->inclusions.size()) && conditions->inclusions[row] == (col == 1 ? Inclusion::Include : Inclusion::Exclude) ? Qt::Checked : Qt::Unchecked)
                 return Qt::Checked;
             return Qt::Unchecked;
         }
@@ -134,10 +138,13 @@ QVariant FilterListModel::data(const QModelIndex &index, int role) const
 
 bool FilterListModel::setData(const QModelIndex &index, const QVariant &val, int role)
 {
+    if (!index.isValid())
+        return false;
+
     int col = index.column();
     int row = index.row();
 
-    int fsiz = ZKanji::wordfilters().size();
+    int fsiz = tosigned(ZKanji::wordfilters().size());
 
     enum RowSource { Filters, InExample, InGroup };
     RowSource src = row < fsiz ? Filters : row == fsiz ? InExample : InGroup;
@@ -146,7 +153,7 @@ bool FilterListModel::setData(const QModelIndex &index, const QVariant &val, int
     {
         if (src == Filters)
         {
-            while (conditions->inclusions.size() <= row)
+            while (tosigned(conditions->inclusions.size()) <= row)
                 conditions->inclusions.push_back(Inclusion::Ignore);
         }
 
@@ -253,7 +260,7 @@ Qt::DropActions FilterListModel::supportedDropActions(bool samesource, const QMi
 QMimeData* FilterListModel::mimeData(const QModelIndexList &indexes) const
 {
     // The last 2 rows shouldn't be moved. If indexes contains one of those rows, return.
-    if (indexes.isEmpty() || !indexes.front().isValid() || indexes.front().row() >= ZKanji::wordfilters().size())
+    if (indexes.isEmpty() || !indexes.front().isValid() || indexes.front().row() >= tosigned(ZKanji::wordfilters().size()))
         return nullptr;
 
     QMimeData *mime = new QMimeData();
@@ -267,10 +274,11 @@ QMimeData* FilterListModel::mimeData(const QModelIndexList &indexes) const
     return mime;
 }
 
-bool FilterListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool FilterListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int /*column*/, const QModelIndex &parent) const
 {
-    if (parent.isValid() || row == -1 || row > ZKanji::wordfilters().size() || !data->hasFormat("zkanji/wordfilter") || data->data("zkanji/wordfilter").size() != sizeof(int) || action != Qt::MoveAction ||
-        *((int*)data->data("zkanji/wordfilter").data()) >= ZKanji::wordfilters().size())
+    if (parent.isValid() || row == -1 || row > tosigned(ZKanji::wordfilters().size()) || !data->hasFormat("zkanji/wordfilter") ||
+        data->data("zkanji/wordfilter").size() != sizeof(int) || action != Qt::MoveAction ||
+        *((int*)data->data("zkanji/wordfilter").data()) >= tosigned(ZKanji::wordfilters().size()))
         return false;
 
     return true;
@@ -295,7 +303,7 @@ void FilterListModel::filterErased(int index)
 
 void FilterListModel::filterCreated()
 {
-    signalRowsInserted({ { ZKanji::wordfilters().size() - 1, 1 } });
+    signalRowsInserted({ { tosigned(ZKanji::wordfilters().size()) - 1, 1 } });
     //beginInsertRows(QModelIndex(), ZKanji::wordfilters().size() - 1, ZKanji::wordfilters().size() - 1);
     //endInsertRows();
 }
@@ -547,7 +555,7 @@ void FilterListForm::on_downButton_clicked()
     ZKanji::wordfilters().move(curr, curr + 2);
 }
 
-void FilterListForm::on_nameEdit_textEdited(const QString &text)
+void FilterListForm::on_nameEdit_textEdited(const QString &/*text*/)
 {
     filterindex = -1;
     translateTexts();
@@ -559,7 +567,7 @@ void FilterListForm::editInitiated(int row)
 {
     bool toggled = ui->editWidget->isVisibleTo(this);
 
-    if (row >= ZKanji::wordfilters().size() || row < 0)
+    if (row >= tosigned(ZKanji::wordfilters().size()) || row < 0)
         row = -1;
 
     filterindex = row;
@@ -625,10 +633,10 @@ void FilterListForm::currentRowChanged()
         return;
     }
 
-    ui->delButton->setEnabled(curr >= 0 && curr < ZKanji::wordfilters().size());
+    ui->delButton->setEnabled(curr >= 0 && curr < tosigned(ZKanji::wordfilters().size()));
 
-    ui->upButton->setEnabled(curr > 0 && curr < ZKanji::wordfilters().size());
-    ui->downButton->setEnabled(curr != -1 && curr < ZKanji::wordfilters().size() - 1);
+    ui->upButton->setEnabled(curr > 0 && curr < tosigned(ZKanji::wordfilters().size()));
+    ui->downButton->setEnabled(curr != -1 && curr < tosigned(ZKanji::wordfilters().size()) - 1);
 
     if (ui->editWidget->isVisibleTo(this) && curr != nameix)
     {
@@ -653,7 +661,7 @@ void FilterListForm::saveClicked()
         return;
     }
 
-    const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
+    //const WordAttributeFilter &filter = ZKanji::wordfilters().items(filterindex);
 
     ZKanji::wordfilters().rename(filterindex, ui->nameEdit->text().trimmed());
     ZKanji::wordfilters().update(filterindex, ui->attribWidget->checkedTypes(), ui->attribWidget->checkedInfo(), ui->attribWidget->checkedJLPT(), ui->allButton->isChecked() ? FilterMatchType::AllMustMatch : FilterMatchType::AnyCanMatch);
@@ -701,7 +709,7 @@ void FilterListForm::keyPressEvent(QKeyEvent *e)
     //    toggleEditor(false);
     //}
     //else
-        return base::keyPressEvent(e);
+    return base::keyPressEvent(e);
 }
 
 void FilterListForm::closeEvent(QCloseEvent *e)
@@ -712,7 +720,7 @@ void FilterListForm::closeEvent(QCloseEvent *e)
 
     if (filterindex == -1 || !ui->buttons->button(QDialogButtonBox::StandardButton::Save)->isEnabled())
     {
-        FormStates::saveDialogSplitterState("WordFilterList", siz, ui->listWidget->width() , editwidth);
+        FormStates::saveDialogSplitterState("WordFilterList", siz, ui->listWidget->width(), editwidth);
 
         base::closeEvent(e);
         return;

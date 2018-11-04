@@ -38,7 +38,7 @@ void TextNode::loadLegacy(QDataStream &stream, int version)
     stream >> cnt;
 
     nodes.reserve(cnt);
-    for (int ix = 0; ix < cnt; ++ix)
+    for (int ix = 0; ix < tosigned(cnt); ++ix)
     {
         TextNode *n = new TextNode(this);
         nodes.addNode(n, false);

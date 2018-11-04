@@ -12,6 +12,8 @@
 class TreeItem
 {
 public:
+    typedef size_t  size_type;
+
     TreeItem(const TreeItem &other) = delete;
     TreeItem& operator=(const TreeItem &other) = delete;
     TreeItem();
@@ -21,7 +23,7 @@ public:
     ~TreeItem();
 
     bool empty() const;
-    int size() const;
+    size_type size() const;
     int row() const;
     int indexOf(const TreeItem* item) const;
     TreeItem* parent() const;
@@ -29,8 +31,8 @@ public:
     // the item and this are the same, returns false.
     bool hasParent(TreeItem *item) const;
 
-    const TreeItem* items(uint index) const;
-    TreeItem* items(uint index);
+    const TreeItem* items(int index) const;
+    TreeItem* items(int index);
 
     intptr_t userData() const;
     void setUserData(intptr_t data);
@@ -58,7 +60,7 @@ private:
     TreeItem* addChild(intptr_t childdata);
 
     // Used for caching row index.
-    mutable uint oldrow; 
+    mutable int oldrow; 
     // Parent.
     TreeItem *pr;
     // User data.
@@ -81,6 +83,8 @@ class ZAbstractTreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    typedef size_t  size_type;
+
     ZAbstractTreeModel(QObject * parent = nullptr);
 
     // Calls beginResetModel() and endResetModel().
@@ -101,10 +105,10 @@ public:
     // Number of items in the root. This is faster than calling rowCount() because
     // it always requests the count from the derived implementation, while this
     // uses the already built table.
-    int size() const;
+    size_type size() const;
     // Number of items under a given parent item. Passing nullptr in parent will return the
     // same as size(). It's not checked whether the passed parent is part of this tree or not.
-    int getSize(const TreeItem *parent) const;
+    size_type getSize(const TreeItem *parent) const;
 
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, TreeItem *parent);
 

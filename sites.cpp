@@ -14,6 +14,8 @@
 #include "zlistview.h"
 #include "zui.h"
 
+#include "checked_cast.h"
+
 namespace ZKanji
 {
     std::vector<SiteItem> lookup_sites;
@@ -105,7 +107,7 @@ const SiteItem& SitesListModel::items(int index) const
 void SitesListModel::deleteSite(int ix)
 {
 #ifdef _DEBUG
-    if (ix < 0 || ix >= list.size())
+    if (ix < 0 || ix >= tosigned(list.size()))
         return;
 #endif
 
@@ -138,7 +140,7 @@ void SitesListModel::setItemInsertPos(int ix, int pos)
     if (ix < 0)
         throw "out of bounds";
 #endif
-    if (list.size() <= ix)
+    if (tosigned(list.size()) <= ix)
         return;
 
     SiteItem &item = list[ix];
@@ -156,7 +158,7 @@ void SitesListModel::lockItemInsertPos(int ix, bool lock)
     if (ix < 0)
         throw "out of bounds";
 #endif
-    if (list.size() <= ix)
+    if (tosigned(list.size()) <= ix)
         return;
 
     SiteItem &item = list[ix];
@@ -166,7 +168,7 @@ void SitesListModel::lockItemInsertPos(int ix, bool lock)
 bool SitesListModel::itemInsertPosLocked(int ix) const
 {
 #ifdef _DEBUG
-    if (ix < 0 || list.size() <= ix)
+    if (ix < 0 || tosigned(list.size()) <= ix)
         throw "out of bounds";
 #endif
     const SiteItem &item = list[ix];
@@ -184,7 +186,7 @@ int SitesListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
-    return list.size() + 1;
+    return tosigned(list.size()) + 1;
 }
 
 QVariant SitesListModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -215,7 +217,7 @@ QVariant SitesListModel::data(const QModelIndex &index, int role) const
 
     int row = index.row();
     int col = index.column();
-    if (row < list.size())
+    if (row < tosigned(list.size()))
     {
         const SiteItem &item = list[row];
 
@@ -230,7 +232,7 @@ QVariant SitesListModel::data(const QModelIndex &index, int role) const
 
 QMimeData* SitesListModel::mimeData(const QModelIndexList &indexes) const
 {
-    if (indexes.isEmpty() || !indexes.front().isValid() || indexes.front().row() >= list.size() )
+    if (indexes.isEmpty() || !indexes.front().isValid() || indexes.front().row() >= tosigned(list.size()) )
         return nullptr;
 
     QMimeData *mime = new QMimeData();
@@ -249,17 +251,17 @@ Qt::DropActions SitesListModel::supportedDragActions() const
     return Qt::MoveAction;
 }
 
-Qt::DropActions SitesListModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions SitesListModel::supportedDropActions(bool samesource, const QMimeData * /*mime*/) const
 {
     if (!samesource)
         return 0;
     return Qt::MoveAction;
 }
 
-bool SitesListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool SitesListModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int /*column*/, const QModelIndex &parent) const
 {
-    if (parent.isValid() || row == -1 || row > list.size() || !data->hasFormat("zkanji/siterow") || data->data("zkanji/siterow").size() != sizeof(int) || action != Qt::MoveAction ||
-        *((int*)data->data("zkanji/siterow").data()) >= list.size())
+    if (parent.isValid() || row == -1 || row > tosigned(list.size()) || !data->hasFormat("zkanji/siterow") || data->data("zkanji/siterow").size() != sizeof(int) || action != Qt::MoveAction ||
+        *((int*)data->data("zkanji/siterow").data()) >= tosigned(list.size()))
         return false;
 
     return true;
@@ -292,7 +294,7 @@ SiteItem& SitesListModel::expandedItem(int row)
         throw "out of bounds";
 #endif
 
-    if (row < list.size())
+    if (row < tosigned(list.size()))
         return list[row];
 
     list.push_back(SiteItem());
@@ -300,7 +302,7 @@ SiteItem& SitesListModel::expandedItem(int row)
     item.url = "http://";
     item.insertpos = item.url.size();
     item.poslocked = false;
-    signalRowsInserted({ { (int)list.size() - 1, 1 } });
+    signalRowsInserted({ { tosigned(list.size()) - 1, 1 } });
 
     return item;
 }

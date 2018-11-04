@@ -37,7 +37,7 @@ SkipTreeInStream::SkipTreeInStream(int version, bool blacklisting) : version(ver
 
 void SkipTreeInStream::skip(QDataStream &stream) const
 {
-    qint32 nodecnt;
+    qint32 nodecnt = 0;
 
     if (version <= 1)
     {
@@ -212,6 +212,8 @@ template<typename T> void  WordDeckItems<T>::loadLegacy(QDataStream &stream)
         case WordParts::Definition:
             item->questiontype = WordPartBits::Definition;
             break;
+        default:
+            break;
         }
 
         stream >> val;
@@ -239,7 +241,7 @@ template<typename T> void  WordDeckItems<T>::loadLegacy(QDataStream &stream)
 }
 
 template<>
-void WordDeckItems<FreeWordDeckItem>::loadItemLegacy(QDataStream &stream, item_type *item, int index)
+void WordDeckItems<FreeWordDeckItem>::loadItemLegacy(QDataStream &stream, item_type *item, int /*index*/)
 {
     uchar b;
     stream >> b;
@@ -247,7 +249,7 @@ void WordDeckItems<FreeWordDeckItem>::loadItemLegacy(QDataStream &stream, item_t
 }
 
 template<>
-void WordDeckItems<LockedWordDeckItem>::loadItemLegacy(QDataStream &stream, item_type *item, int index)
+void WordDeckItems<LockedWordDeckItem>::loadItemLegacy(QDataStream &/*stream*/, item_type *item, int /*index*/)
 {
     item->cardid = nullptr;
 
@@ -321,9 +323,9 @@ void ReadingTestList::loadLegacy(QDataStream &stream)
         words.insert(owner->studiedItems(val)->data->index);
     }
 
-    for (int ix = 0; ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
-        for (int iy = 0; iy != list[ix]->words.size(); ++iy)
+        for (int iy = 0, sizy = tosigned(list[ix]->words.size()); iy != sizy; ++iy)
             words.insert(list[ix]->words[iy]->windex);
     }
 }
@@ -388,8 +390,8 @@ void WordDeck::loadLegacy(QDataStream &stream)
     StudyDeck *deck = studyDeck();
     if (deck != nullptr)
     {
-        deck->fixResizeCardId(lockitems.size());
-        for (int ix = 0, siz = lockitems.size(); ix != siz; ++ix)
+        deck->fixResizeCardId(tosigned(lockitems.size()));
+        for (int ix = 0, siz = tosigned(lockitems.size()); ix != siz; ++ix)
         {
             LockedWordDeckItem *item = lockitems.items(ix);
             item->cardid = deck->cardId(ix);
@@ -407,7 +409,7 @@ void WordDeck::loadLegacy(QDataStream &stream)
     });
 
     duelist.reserve(lockitems.size());
-    for (int ix = 0; ix != lockitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(lockitems.size()); ix != siz; ++ix)
         duelist.push_back(ix);
 
     std::vector<int> ints;
@@ -423,7 +425,7 @@ void WordDeck::loadLegacy(QDataStream &stream)
 
     std::sort(ints.begin(), ints.end());
 
-    for (int ix = ints.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(ints.size()) - 1; ix != -1; --ix)
         duelist.erase(duelist.begin() + ints[ix]);
 
     sortDueList();
@@ -441,7 +443,7 @@ void WordDeck::loadLegacy(QDataStream &stream)
 //        deck->fixDayStats();
 
     // Remove unused word definitions (Shouldn't do anything after v0.73 groupfile version 17).
-    for (int ix = list.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(list.size()) - 1; ix != -1; --ix)
         if (list[ix]->types == 0)
             list.erase(list.begin() + ix);
 

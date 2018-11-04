@@ -20,6 +20,7 @@
 #include "furigana.h"
 #include "colorsettings.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -39,19 +40,19 @@ void KanjiReadingPracticeListDelegate::paintKanji(QPainter *painter, const QMode
 
     std::vector<int> *rlist = (std::vector<int>*)index.data((int)KanjiReadingRoles::ReadingsList).value<intptr_t>();
     QString str = index.data(Qt::DisplayRole).toString();
-    WordEntry *e = index.data((int)DictRowRoles::WordEntry).value<WordEntry*>();
+    //WordEntry *e = index.data((int)DictRowRoles::WordEntry).value<WordEntry*>();
     QFontMetrics fm = painter->fontMetrics();
 
     QPen p = painter->pen();
 
     int from = 0;
-    for (int ix = 0, siz = rlist->size() + 1; ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(rlist->size()) + 1; ix != siz; ++ix)
     {
-        int next = ix != rlist->size() ? (*rlist)[ix] : str.size();
+        int next = ix != tosigned(rlist->size()) ? (*rlist)[ix] : str.size();
         QString part = str.mid(from, next - from);
         drawTextBaseline(painter, left, basey, false, r, part);
         left += fm.width(part);
-        if (ix != rlist->size())
+        if (ix != tosigned(rlist->size()))
         {
             painter->setPen(Settings::uiColor(Settings::colors.KanjiTestPos));
             drawTextBaseline(painter, left, basey, false, r, str.at(next));
@@ -299,11 +300,11 @@ void KanjiReadingPracticeForm::initNextRound()
         const WordEntry *const w = d->wordEntry(wix);
         std::vector<FuriganaData> furi;
         findFurigana(w->kanji, w->kana, furi);
-        
+
         readings.push_back(std::vector<int>());
         std::vector<int> &rlist = readings.back();
 
-        for (int ix = 0, siz = furi.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(furi.size()); ix != siz; ++ix)
         {
             if (furi[ix].kanji.len == 1 && w->kanji[furi[ix].kanji.pos] == k->ch && findKanjiReading(w->kanji, w->kana, furi[ix].kanji.pos, k, &furi) == r)
                 rlist.push_back(furi[ix].kanji.pos);

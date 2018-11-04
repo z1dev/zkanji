@@ -54,7 +54,7 @@ RadicalForm::RadicalForm(QWidget *parent) : base(parent), ui(new Ui::RadicalForm
     connect(&m, &RadicalFiltersModel::filterMoved, this, &RadicalForm::radsMoved);
     connect(&m, &RadicalFiltersModel::cleared, this, &RadicalForm::radsCleared);
 
-    for (int ix = 0; ix != m.size(); ++ix)
+    for (int ix = 0, siz = tosigned(m.size()); ix != siz; ++ix)
         new QListWidgetItem(m.filterText(m.filters(ix)), ui->radsList);
 
     connect(ui->radsUpButton, &QToolButton::clicked, this, &RadicalForm::radsMoveUp);
@@ -138,9 +138,9 @@ void RadicalForm::setFilter(int index)
     ui->radicalGrid->setActiveFilter(filter);
 }
 
-void RadicalForm::setFromModel(KanjiGridModel *model)
+void RadicalForm::setFromModel(KanjiGridModel *m)
 {
-    ui->radicalGrid->setFromModel(model);
+    ui->radicalGrid->setFromModel(m);
 }
 
 void RadicalForm::setFromList(const std::vector<ushort> &list)
@@ -174,7 +174,7 @@ RadicalForm::Results RadicalForm::result()
 void RadicalForm::radsAdded()
 {
     RadicalFiltersModel &m = radicalFiltersModel();
-    new QListWidgetItem(m.filterText(m.filters(m.size() - 1)), ui->radsList);
+    new QListWidgetItem(m.filterText(m.filters(tosigned(m.size()) - 1)), ui->radsList);
 
     if (ui->radsList->count() == 1)
         ui->radsList->setCurrentRow(0);
@@ -247,7 +247,7 @@ void RadicalForm::radsRowChanged(int row)
     ui->radsRemoveButton->setEnabled(row >= 0 && row < ui->radsList->count());
 }
 
-void RadicalForm::radsDoubleClicked(QListWidgetItem *item)
+void RadicalForm::radsDoubleClicked(QListWidgetItem * /*item*/)
 {
     setFilter(ui->radsList->currentRow());
 }

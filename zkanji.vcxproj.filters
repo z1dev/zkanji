@@ -1677,6 +1677,9 @@
     <ClInclude Include="GeneratedFiles\ui_languageform.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="checked_cast.h">
+      <Filter>Code\General\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

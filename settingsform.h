@@ -18,14 +18,14 @@ namespace Ui {
     class SettingsForm;
 }
 
+enum class FontStyle;
+enum class LineSize;
+
 class fontPreviewWidget : public QFrame
 {
     Q_OBJECT
 public:
     fontPreviewWidget(QWidget *parent = nullptr);
-
-    enum FontStyle { Normal, Bold, Italic, BoldItalic };
-    enum LineSize { Small, Medium, Large, VeryLarge };
 
     // Changes the fonts displayed in the preview.
     void setFonts(const QString &kf, const QString &df, const QString &nf, FontStyle nfs, LineSize siz);

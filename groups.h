@@ -152,6 +152,8 @@ signals:
     void categoriesMoved(GroupCategoryBase *srcparent, const Range &range, GroupCategoryBase *destparent, int destindex);
     void groupsMoved(GroupCategoryBase *srcparent, const Range &range, GroupCategoryBase *destparent, int destindex);
 public:
+    typedef size_t  size_type;
+
     GroupCategoryBase() = delete;
     GroupCategoryBase(const GroupCategoryBase&) = delete;
     GroupCategoryBase& operator= (const GroupCategoryBase&) = delete;
@@ -234,7 +236,7 @@ public:
     int groupCount() const;
 
     // Number of groups in the category.
-    int size() const;
+    size_type size() const;
 
     // Returns the group at index.
     GroupBase* items(int index);
@@ -382,6 +384,8 @@ class WordGroup : public GroupBase
 {
     Q_OBJECT
 public:
+    typedef size_t  size_type;
+
     WordGroup() = delete;
     WordGroup(const WordGroup &orig) = delete;
     WordGroup& operator=(const WordGroup&) = delete;
@@ -411,7 +415,7 @@ public:
 
     void clear();
 
-    int size() const;
+    size_type size() const;
     //bool empty() const;
 
     Dictionary* dictionary();
@@ -607,6 +611,8 @@ class KanjiGroup : public GroupBase
 {
     Q_OBJECT
 public:
+    typedef size_t  size_type;
+
     KanjiGroup() = delete;
     KanjiGroup(const KanjiGroup &orig) = delete;
     KanjiGroup& operator=(const KanjiGroup&) = delete;
@@ -627,11 +633,8 @@ public:
 
     KanjiEntry* items(int index);
     const KanjiEntry* items(int index) const;
-    //KanjiEntry* operator[](int index);
-    //const KanjiEntry* operator[](int index) const;
 
-    int size() const;
-    //bool empty() const;
+    size_type size() const;
 
     Dictionary* dictionary();
     const Dictionary* dictionary() const;

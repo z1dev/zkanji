@@ -13,6 +13,7 @@
 #include "zkanjimain.h"
 #include "romajizer.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -159,7 +160,7 @@ void WordStudy::load(QDataStream &stream)
     qint32 i;
     stream >> i;
     testitems.resize(i);
-    for (int ix = 0; ix != testitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
     {
         TestItem &t = testitems[ix];
         stream >> i;
@@ -194,7 +195,7 @@ void WordStudy::save(QDataStream &stream) const
     stream << make_zvec<qint32, WordStudyItem>(list);
 
     stream << (qint32)testitems.size();
-    for (int ix = 0; ix != testitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
     {
         const TestItem &i = testitems[ix];
         stream << (qint32)i.pos;
@@ -221,14 +222,14 @@ void WordStudy::applyChanges(const std::map<int, int> &changes)
     // Fixing list testitems and the testitems list.
     std::vector<WordStudyItem> tmp = std::move(list);
     list.reserve(tmp.size());
-    for (int ix = 0; ix != tmp.size(); ++ix)
+    for (int ix = 0, siz = tosigned(tmp.size()); ix != siz; ++ix)
     {
         auto it = changes.find(tmp[ix].windex);
         if (it == changes.end() || it->second == -1 || found.count(it->second))
         {
             if (it != changes.end())
             {
-                for (int iy = testitems.size() - 1; iy != -1; --iy)
+                for (int iy = tosigned(testitems.size()) - 1; iy != -1; --iy)
                 {
                     if (testitems[iy].pos > ix)
                         --testitems[iy].pos;
@@ -281,7 +282,7 @@ void WordStudy::processRemovedWord(int windex)
     int indexindex = -1;
     int posindex = -1;
 
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         if (list[ix].windex == windex)
             indexindex = ix;
@@ -293,7 +294,7 @@ void WordStudy::processRemovedWord(int windex)
     {
         list.erase(list.begin() + indexindex);
 
-        for (int ix = 0; ix != testitems.size(); ++ix)
+        for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
         {
             TestItem &item = testitems[ix];
             if (item.pos == indexindex)
@@ -328,22 +329,22 @@ void WordStudy::correctedIndexes(std::vector<WordStudyItem> &clist) const
     const std::vector<int> &glist = owner->getIndexes();
 
     std::vector<WordStudyItem> tmp(glist.size());
-    for (int ix = 0, siz = tmp.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(tmp.size()); ix != siz; ++ix)
         tmp[ix].windex = glist[ix];
 
     std::vector<int> gorder(glist.size(), 0);
-    for (int ix = 0, siz = glist.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(glist.size()); ix != siz; ++ix)
         gorder[ix] = ix;
     std::sort(gorder.begin(), gorder.end(), [&glist](int a, int b) { return glist[a] < glist[b]; });
 
     if (clist.empty())
         clist = list;
     std::vector<int> order(clist.size(), 0);
-    for (int ix = 0, siz = clist.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(clist.size()); ix != siz; ++ix)
         order[ix] = ix;
     std::sort(order.begin(), order.end(), [&clist](int a, int b) { return clist[a].windex < clist[b].windex; });
 
-    for (int gpos = 0, gsiz = glist.size(), pos = 0, siz = clist.size(); pos != siz && gpos != gsiz;)
+    for (int gpos = 0, gsiz = tosigned(glist.size()), pos = 0, siz = tosigned(clist.size()); pos != siz && gpos != gsiz;)
     {
         while (gpos != gsiz && glist[gorder[gpos]] < clist[order[pos]].windex)
             ++gpos;
@@ -376,19 +377,19 @@ void WordStudy::initTest()
 
         // Generate testitems.
         testitems.reserve(list.size());
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         {
             if (!list[ix].excluded && (!onlykanjikana || hiraganize(dictionary()->wordEntry(list[ix].windex)->kanji) != hiraganize(dictionary()->wordEntry(list[ix].windex)->kana)))
                 testitems.push_back(TestItem(ix, (WordStudyQuestion)createRandomTested(ix, settings.tested)));
         }
 
-        if (settings.method == WordStudyMethod::Single && settings.usewordlimit && (settings.single.preferhard || settings.single.prefernew) && testitems.size() > settings.wordlimit)
+        if (settings.method == WordStudyMethod::Single && settings.usewordlimit && (settings.single.preferhard || settings.single.prefernew) && tosigned(testitems.size()) > settings.wordlimit)
         {
             int maxnew = -1;
             int minnew = 0;
             int maxhard = -1;
             int minhard = 0;
-            for (int ix = 0, siz = testitems.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
             {
                 WordStudyItem &item = list[testitems[ix].pos];
                 if (minnew < maxnew)
@@ -413,10 +414,10 @@ void WordStudy::initTest()
             std::vector<std::pair<int, int>> scoring;
 
             scoring.reserve(testitems.size());
-            int rndmax = testitems.size() * 20 * (settings.single.preferhard && settings.single.prefernew ? 2 : 1);
+            int rndmax = tosigned(testitems.size()) * 20 * (settings.single.preferhard && settings.single.prefernew ? 2 : 1);
             double newdiv = maxnew <= minnew ? 0 : (rndmax / 2.0) / double(maxnew - minnew);
             double harddiv = maxhard <= minhard ? 0 : (rndmax / 2.0) / double(maxhard - minhard);
-            for (int ix = 0, siz = testitems.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
             {
                 WordStudyItem &item = list[testitems[ix].pos];
                 int sum = item.correct + item.incorrect;
@@ -431,7 +432,7 @@ void WordStudy::initTest()
             // Scoring holds an ordering of testitems. Anything below settings.wordlimit
             // should be removed from testitems.
 
-            for (int ix = settings.wordlimit, siz = scoring.size(); ix != siz; ++ix)
+            for (int ix = settings.wordlimit, siz = tosigned(scoring.size()); ix != siz; ++ix)
                 testitems[scoring[ix].second].pos = -1;
 
             testitems.resize(std::remove_if(testitems.begin(), testitems.end(), [](const TestItem &item) {
@@ -479,7 +480,7 @@ Dictionary* WordStudy::dictionary() const
 
 int WordStudy::testSize() const
 {
-    return settings.usewordlimit ? std::min<int>(testitems.size(), settings.wordlimit) : testitems.size();
+    return settings.usewordlimit ? std::min<int>(tosigned(testitems.size()), settings.wordlimit) : tosigned(testitems.size());
 }
 
 void WordStudy::setup(const WordStudySettings &newsettings, const std::vector<WordStudyItem> &newlist)
@@ -571,7 +572,7 @@ void WordStudy::randomIndexes(int *arr, int cnt)
     std::vector<int> listcpy;
     listcpy.reserve(list.size());
     int testedpos = testitems[state->index(testSize())].pos;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (testedpos != ix && !list[ix].excluded)
             listcpy.push_back(list[ix].windex);
 
@@ -579,7 +580,7 @@ void WordStudy::randomIndexes(int *arr, int cnt)
     {
         if (currpos == cnt)
             continue;
-        int pos = rnd(0, listcpy.size() - 1);
+        int pos = rnd(0, tosigned(listcpy.size()) - 1);
         arr[cnt] = listcpy[pos];
 
         listcpy.erase(listcpy.begin() + pos);
@@ -788,7 +789,7 @@ int WordStudy::createRandomTested(int lix, int choices)
 #endif
     }
 
-    int r = -1;
+    //int r = -1;
 
     // Pick a random bit.
     hi = rnd(1, hi);
@@ -832,7 +833,7 @@ void WordStudyGradual::load(QDataStream &stream)
 
     stream >> s;
     testitems.resize(s);
-    for (int ix = 0; ix != testitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
     {
         Item &t = testitems[ix];
         stream >> i;
@@ -852,7 +853,7 @@ void WordStudyGradual::save(QDataStream &stream) const
     stream << (qint32)(pos - (unanswered ? 1 : 0));
 
     stream << (qint16)testitems.size();
-    for (int ix = 0; ix != testitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
     {
         const Item &i = testitems[ix];
         stream << (qint32)i.index;
@@ -890,19 +891,19 @@ void WordStudyGradual::init(int indexcnt)
     }
 
     // Nothing to do in the middle of a round.
-    if (pos + 1 < testitems.size())
+    if (pos + 1 < tosigned(testitems.size()))
         return;
 
     pos = -1;
 
     // If any item was incorrectly answered, repeat the same test.
-    for (int ix = 0; ix != testitems.size(); ++ix)
+    for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
     {
         if (!testitems[ix].correct)
         {
             // Repeat round.
 
-            for (; ix != testitems.size(); ++ix)
+            for (; ix != siz; ++ix)
             {
                 testitems[ix].newitem = false;
                 testitems[ix].correct = true;
@@ -934,8 +935,14 @@ void WordStudyGradual::init(int indexcnt)
         // randomly removing some of them.
         for (int ix = std::max(0, lastinc - settings.roundlimit * 2); ix < lastinc; ++ix)
             testitems.emplace_back(ix, false);
-        while (testitems.size() != num)
-            testitems.erase(testitems.begin() + rnd(0, testitems.size() - 1));
+
+        int testsize = tosigned(testitems.size());
+        while (testsize != num)
+        {
+            testitems.erase(testitems.begin() + rnd(0, testsize - 1));
+            --testsize;
+        }
+
         // Add the indexes of the new items.
         for (int ix = lastinc; ix < included; ++ix)
             testitems.emplace_back(ix, true);
@@ -948,15 +955,20 @@ void WordStudyGradual::init(int indexcnt)
     // Randomly selecting items to test from past items.
     for (int ix = std::max(0, included - settings.roundlimit * 2); ix != included; ++ix)
         testitems.emplace_back(ix, false);
-    while (testitems.size() > settings.roundlimit)
-        testitems.erase(testitems.begin() + rnd(0, testitems.size() - 1));
+
+    int testsize = tosigned(testitems.size());
+    while (testsize > settings.roundlimit)
+    {
+        testitems.erase(testitems.begin() + rnd(0, testsize - 1));
+        --testsize;
+    }
     if (settings.roundshuffle)
         std::shuffle(testitems.begin(), testitems.end(), random_engine());
 }
 
-bool WordStudyGradual::initNext(int indexcnt)
+bool WordStudyGradual::initNext(int /*indexcnt*/)
 {
-    if (pos + 1 >= testitems.size())
+    if (pos + 1 >= tosigned(testitems.size()))
         return false;
 
     ++pos;
@@ -964,7 +976,7 @@ bool WordStudyGradual::initNext(int indexcnt)
     return true;
 }
 
-void WordStudyGradual::finish(int indexcnt)
+void WordStudyGradual::finish(int /*indexcnt*/)
 {
     if (unanswered)
         --pos;
@@ -977,7 +989,7 @@ bool WordStudyGradual::itemRemoved(int index, int indexcnt)
         return std::max(settings.initnum + settings.incnum, settings.roundlimit) <= indexcnt;
     --included;
 
-    for (int ix = testitems.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(testitems.size()) - 1; ix != -1; --ix)
     {
         if (testitems[ix].index > index)
             --testitems[ix].index;
@@ -1001,9 +1013,9 @@ bool WordStudyGradual::itemRemoved(int index, int indexcnt)
     return !testitems.empty() && std::max(settings.initnum + settings.incnum, settings.roundlimit) <= indexcnt;
 }
 
-int WordStudyGradual::index(int indexcnt) const
+int WordStudyGradual::index(int /*indexcnt*/) const
 {
-    if (pos >= testitems.size())
+    if (pos >= tosigned(testitems.size()))
         return -1;
     return testitems[pos].index;
 }
@@ -1013,17 +1025,17 @@ int WordStudyGradual::roundPosition() const
     return pos;
 }
 
-int WordStudyGradual::roundSize(int indexcnt) const
+int WordStudyGradual::roundSize(int /*indexcnt*/) const
 {
-    return testitems.size();
+    return tosigned(testitems.size());
 }
 
-int WordStudyGradual::indexAt(int p, int indexcnt) const
+int WordStudyGradual::indexAt(int p, int /*indexcnt*/) const
 {
     return testitems[p].index;
 }
 
-void WordStudyGradual::answer(bool correct, int indexcnt)
+void WordStudyGradual::answer(bool correct, int /*indexcnt*/)
 {
     if (!correct)
         testitems[pos].correct = false;
@@ -1039,12 +1051,12 @@ bool WordStudyGradual::finished(int indexcnt) const
     return round > maxrounds || (round == maxrounds && pos >= (int)testitems.size() - 1);
 }
 
-bool WordStudyGradual::correctAt(int p, int indexcnt) const
+bool WordStudyGradual::correctAt(int p, int /*indexcnt*/) const
 {
     return testitems[p].correct;
 }
 
-void WordStudyGradual::setCorrectAt(int p, bool correct, int indexcnt)
+void WordStudyGradual::setCorrectAt(int p, bool correct, int /*indexcnt*/)
 {
     testitems[p].correct = correct;
 }
@@ -1054,17 +1066,17 @@ int WordStudyGradual::currentRound() const
     return round;
 }
 
-int WordStudyGradual::newCount(int indexcnt) const
+int WordStudyGradual::newCount(int /*indexcnt*/) const
 {
     int cnt = 0;
-    for (int ix = 0, siz = testitems.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(testitems.size()); ix != siz; ++ix)
         cnt += testitems[ix].newitem ? 1 : 0;
     return cnt;
 }
 
-int WordStudyGradual::dueCount(int indexcnt) const
+int WordStudyGradual::dueCount(int /*indexcnt*/) const
 {
-    return testitems.size() - pos;
+    return tosigned(testitems.size()) - pos;
 }
 
 int WordStudyGradual::correctCount() const
@@ -1088,7 +1100,7 @@ bool WordStudyGradual::nextNew() const
     return testitems[pos].newitem;
 }
 
-bool WordStudyGradual::nextFailed(int indexcnt) const
+bool WordStudyGradual::nextFailed(int /*indexcnt*/) const
 {
     return false;
 }
@@ -1130,7 +1142,7 @@ void WordStudySingle::init(int indexcnt)
 {
     if (!unanswered)
         --indexcnt;
-    if (pos != -1 && pos != indexcnt + repeated.size())
+    if (pos != -1 && pos != indexcnt + tosigned(repeated.size()))
         return;
     pos = -1;
     unanswered = false;
@@ -1140,7 +1152,7 @@ void WordStudySingle::init(int indexcnt)
 
 bool WordStudySingle::initNext(int indexcnt)
 {
-    if (pos + 1 >= indexcnt && pos - indexcnt + 1 >= repeated.size())
+    if (pos + 1 >= indexcnt && pos - indexcnt + 1 >= tosigned(repeated.size()))
         return false;
 
     ++pos;
@@ -1148,7 +1160,7 @@ bool WordStudySingle::initNext(int indexcnt)
     return true;
 }
 
-void WordStudySingle::finish(int indexcnt)
+void WordStudySingle::finish(int /*indexcnt*/)
 {
     if (unanswered)
         --pos;
@@ -1164,7 +1176,7 @@ bool WordStudySingle::itemRemoved(int index, int indexcnt)
             --pos;
             correctlist.erase(correctlist.begin() + index);
         }
-        else if (pos - indexcnt < repeated.size())
+        else if (pos - indexcnt < tosigned(repeated.size()))
         {
             for (int ix = 0; ix != pos - indexcnt; ++ix)
                 if (repeated[ix] == index)
@@ -1181,7 +1193,7 @@ bool WordStudySingle::itemRemoved(int index, int indexcnt)
     //        --repeated[ix];
     //}
 
-    return indexcnt >= 10 && pos < repeated.size() + indexcnt;
+    return indexcnt >= 10 && pos < tosigned(repeated.size()) + indexcnt;
 }
 
 int WordStudySingle::index(int indexcnt) const
@@ -1190,7 +1202,7 @@ int WordStudySingle::index(int indexcnt) const
         --indexcnt;
     if (pos < indexcnt)
         return pos;
-    if (pos - indexcnt < repeated.size())
+    if (pos - indexcnt < tosigned(repeated.size()))
         return repeated[pos - indexcnt];
     return -1;
 }
@@ -1209,7 +1221,7 @@ int WordStudySingle::indexAt(int p, int indexcnt) const
 {
     if (p < indexcnt)
         return p;
-    if (p - indexcnt < repeated.size())
+    if (p - indexcnt < tosigned(repeated.size()))
         return repeated[p - indexcnt];
     return -1;
 }
@@ -1245,7 +1257,7 @@ bool WordStudySingle::correctAt(int p, int indexcnt) const
     // position. If the same index exists later, that answer was incorrect.
     p -= indexcnt;
     int i = repeated[p];
-    while (++p != repeated.size())
+    while (++p != tosigned(repeated.size()))
         if (repeated[p] == i)
             return false;
     return true;
@@ -1281,7 +1293,7 @@ int WordStudySingle::dueCount(int indexcnt) const
 {
     if (!unanswered)
         --indexcnt;
-    return indexcnt - pos + repeated.size();
+    return indexcnt - pos + tosigned(repeated.size());
 }
 
 int WordStudySingle::correctCount() const
@@ -1293,7 +1305,7 @@ int WordStudySingle::correctCount() const
 int WordStudySingle::wrongCount() const
 {
     int cnt = 0;
-    return correctlist.size() - std::accumulate(correctlist.begin(), correctlist.end(), cnt);
+    return tosigned(correctlist.size()) - std::accumulate(correctlist.begin(), correctlist.end(), cnt);
 }
 
 bool WordStudySingle::nextNew() const

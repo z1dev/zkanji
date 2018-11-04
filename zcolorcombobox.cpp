@@ -15,6 +15,7 @@
 #include "zcolorcombobox.h"
 #include "colorsettings.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -248,7 +249,7 @@ int ZColorListModel::rowCount(const QModelIndex &parent) const
     if (parent.isValid())
         return 0;
 
-    return basecolors.size() + (defcol.isValid() ? 1 : 0) + (listcustom ? 1 : 0);
+    return tosigned(basecolors.size()) + (defcol.isValid() ? 1 : 0) + (listcustom ? 1 : 0);
 }
 
 static const int ColorRole = Qt::UserRole;
@@ -427,7 +428,7 @@ void ZColorComboBox::setCurrentColor(QColor color)
         return;
     }
 
-    for (int ix = 0, siz = basecolors.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(basecolors.size()); ix != siz; ++ix)
     {
         if (color.rgb() == basecolors[ix].second.rgb())
         {
@@ -460,9 +461,9 @@ QColor ZColorComboBox::currentColor() const
 
 QSize ZColorComboBox::sizeHint() const
 {
-    if (!siz.isValid())
+    if (!sizecache.isValid())
         computeSizeHint();
-    return siz;
+    return sizecache;
 }
 
 QSize ZColorComboBox::minimumSizeHint() const
@@ -540,7 +541,9 @@ void ZColorComboBox::changeEvent(QEvent *e)
 #ifdef Q_OS_MAC
     case QEvent::MacSizeChange:
 #endif
-        siz = QSize();
+        sizecache = QSize();
+        break;
+    default:
         break;
     }
 
@@ -551,7 +554,7 @@ void ZColorComboBox::showEvent(QShowEvent *e)
 {
     if (firstshown && sizeAdjustPolicy() == QComboBox::AdjustToContentsOnFirstShow)
     {
-        siz = QSize();
+        sizecache = QSize();
         updateGeometry();
     }
     firstshown = false;
@@ -563,7 +566,7 @@ void ZColorComboBox::dataChanged()
 {
     if (sizeAdjustPolicy() == QComboBox::AdjustToContents)
     {
-        siz = QSize();
+        sizecache = QSize();
         updateGeometry();
     }
 }
@@ -639,12 +642,12 @@ void ZColorComboBox::computeSizeHint() const
 
     // Taken from Qt source for combo box size hint calculation.
     int h = std::ceil(QFontMetricsF(opt.fontMetrics).height());
-    siz.setHeight(std::max(h, 14) + 2);
+    sizecache.setHeight(std::max(h, 14) + 2);
 
     h -= 2;
 
     if (cnt == 0)
-        siz.setWidth(opt.fontMetrics.width(QLatin1Char('x')) * 7);
+        sizecache.setWidth(opt.fontMetrics.width(QLatin1Char('x')) * 7);
     else
     {
         for (int ix = 0; ix != cnt; ++ix)
@@ -652,14 +655,14 @@ void ZColorComboBox::computeSizeHint() const
             //bool hascolor = m->data(m->index(ix, 0), ColorRole).isValid();
             QString str = m->data(m->index(ix, 0), ColorTextRole).toString();
 
-            siz.setWidth(std::max<int>(siz.width(), opt.fontMetrics.boundingRect(str).width() + /*(hascolor ?*/ h + 6 /*: 0)*/));
+            sizecache.setWidth(std::max<int>(sizecache.width(), opt.fontMetrics.boundingRect(str).width() + /*(hascolor ?*/ h + 6 /*: 0)*/));
         }
     }
 
     if (opt.rect.isValid())
-        opt.rect.setWidth(siz.width());
-    siz = s->sizeFromContents(QStyle::CT_ComboBox, &opt, siz, this);
-    siz = siz.expandedTo(qApp->globalStrut());
+        opt.rect.setWidth(sizecache.width());
+    sizecache = s->sizeFromContents(QStyle::CT_ComboBox, &opt, sizecache, this);
+    sizecache = sizecache.expandedTo(qApp->globalStrut());
 }
 
 

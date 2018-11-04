@@ -217,7 +217,7 @@ void WordGroupWidget::on_groupWidget_selectionChanged()
     studyButton->setEnabled(selgroup != nullptr);
 
     bool haswords = false;
-    for (int ix = 0; !haswords && ix != groups.size(); ++ix)
+    for (int ix = 0, siz = tosigned(groups.size()); !haswords && ix != siz; ++ix)
     {
         GroupBase *g = groups[ix];
         if (g == nullptr || g->isCategory())
@@ -268,7 +268,7 @@ void WordGroupWidget::printButtonClicked()
         std::vector<int> windexes;
 
         QSet<int> found;
-        for (int ix = 0, siz = groups.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(groups.size()); ix != siz; ++ix)
         {
             if (!groups[ix]->isCategory())
             {

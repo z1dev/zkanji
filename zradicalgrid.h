@@ -256,11 +256,13 @@ class RadicalFiltersModel : public QObject
 {
     Q_OBJECT
 public:
+    typedef size_t  size_type;
+
     RadicalFiltersModel(QObject *parent = nullptr);
     virtual ~RadicalFiltersModel();
 
     bool empty() const;
-    int size() const;
+    size_type size() const;
 
     int add(const RadicalFilter &src);
     void clear();

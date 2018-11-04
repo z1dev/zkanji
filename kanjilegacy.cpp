@@ -11,6 +11,8 @@
 #include "kanji.h"
 #include "zkanjimain.h"
 
+#include "checked_cast.h"
+
 
 void KanjiRadicalList::loadLegacy(QDataStream &stream, int version)
 {
@@ -37,8 +39,10 @@ void KanjiRadicalList::loadLegacy(QDataStream &stream, int version)
         std::sort(r->kanji.begin(), r->kanji.end());
         kanji.reset();
 
-        for (int ix = 0; ix != r->kanji.size(); ++ix)
-            ZKanji::kanjis[r->kanji[ix]]->rads.push_back(list.size());
+        assert(list.size() <= std::numeric_limits<ushort>::max());
+
+        for (int ix = 0, siz = tosigned(r->kanji.size()); ix != siz; ++ix)
+            ZKanji::kanjis[r->kanji[ix]]->rads.push_back((ushort)list.size());
 
         stream >> r->strokes;
         stream >> r->radical;
@@ -50,12 +54,12 @@ void KanjiRadicalList::loadLegacy(QDataStream &stream, int version)
         names.get()[u16] = 0;
 
         // Count names.
-        int cnt = 1;
+        int namecnt = 1;
         for (int ix = 1; u16 != 1 && ix != u16 - 1; ++ix)
             if (names.get()[ix] == QChar(' '))
-                ++cnt;
+                ++namecnt;
 
-        r->names.reserve(cnt);
+        r->names.reserve(namecnt);
 
         QCharTokenizer tok(names.get(), u16);
         while (tok.next())

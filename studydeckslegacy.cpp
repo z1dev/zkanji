@@ -13,7 +13,7 @@
 static const quint32 s_1_day = 24 * 60 * 60;
 
 
-void DeckTimeStatList::loadLegacy(QDataStream &stream, int version)
+void DeckTimeStatList::loadLegacy(QDataStream &stream, int /*version*/)
 {
     double d;
     //qint32 val;
@@ -44,7 +44,7 @@ void DeckTimeStatList::loadLegacy(QDataStream &stream, int version)
         stream >> b;
         s.timestats.resize(b);
 
-        for (int j = 0; j != s.timestats.size(); ++j)
+        for (int j = 0, siz = tosigned(s.timestats.size()); j != siz; ++j)
         {
             DeckTimeStatItem &i = s.timestats[j];
 
@@ -53,16 +53,13 @@ void DeckTimeStatList::loadLegacy(QDataStream &stream, int version)
             for (int k = 0; k != i.used; ++k)
             {
                 stream >> d;
-                if (k < 255)
-                    i.time[k] = d * quint32(24) * quint32(60) * quint32(60) * quint32(10);
+                i.time[k] = d * quint32(24) * quint32(60) * quint32(60) * quint32(10);
             }
-            if (i.used > 255)
-                i.used = 255;
         }
     }
 }
 
-void DeckDayStatList::loadLegacy(QDataStream &stream, int version)
+void DeckDayStatList::loadLegacy(QDataStream &stream, int /*version*/)
 {
     qint32 cnt;
     stream >> cnt;
@@ -120,7 +117,7 @@ void StudyDeck::loadLegacy(QDataStream &stream, int version)
 
     double d;
 
-    for (int ix = 0, siz = nextvec.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(nextvec.size()); ix != siz; ++ix)
     {
         StudyCard *item = new StudyCard;
         list.push_back(item);
@@ -233,7 +230,7 @@ void StudyDeck::loadLegacy(QDataStream &stream, int version)
             ZKanji::profile().addMultiplier(item->multiplier);
     }
 
-    for (int ix = 0; ix != nextvec.size(); ++ix)
+    for (int ix = 0, siz = tosigned(nextvec.size()); ix != siz; ++ix)
     {
         if (nextvec[ix] >= 0)
             list[ix]->next = list[nextvec[ix]];

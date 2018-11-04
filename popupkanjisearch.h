@@ -24,7 +24,7 @@ public:
 
     static void popup(int screen);
     static void hidePopup();
-    static PopupKanjiSearch * const getInstance();
+    static PopupKanjiSearch* getInstance();
 protected:
     void doPopup(int screen);
 

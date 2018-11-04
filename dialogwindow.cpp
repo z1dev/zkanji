@@ -17,6 +17,20 @@
 #include "stayontop_x11.h"
 #endif
 
+#ifndef NDEBUG
+#ifndef _DEBUG
+#define NDEBUG
+#define NDEBUG_ADDED_SEPARATELY
+#endif
+#endif
+
+#include <cassert>
+
+#ifdef NDEBUG_ADDED_SEPARATELY
+#undef NDEBUG_ADDED_SEPARATELY
+#undef NDEBUG
+#endif
+
 
 //-------------------------------------------------------------
 
@@ -31,10 +45,8 @@ DialogWindow::DialogWindow(QWidget *parent, bool resizing) : base(parent, parent
 
 DialogWindow::~DialogWindow()
 {
-    // This is for debugging purposes only. If we throw here, it's best for the program to
-    // crash anyway.
-    if (loop && loop->isRunning())
-        throw "Programmer error. Must call base::closeEvent to stop the loop.";
+    // If this fails it's programmer error. Must call base::closeEvent to stop the loop.
+    assert(!loop || !loop->isRunning());
 
     //{
     //    loop->quit();
@@ -253,8 +265,8 @@ void DialogWindow::showEvent(QShowEvent *e)
         if (w != nullptr)
             screen = qApp->desktop()->screenNumber(w);
 
-        if (QWindow *w = windowHandle())
-            w->setScreen(QGuiApplication::screens().at(screen));
+        if (QWindow *h = windowHandle())
+            h->setScreen(QGuiApplication::screens().at(screen));
 
         QRect fg = frameGeometry();
         move(

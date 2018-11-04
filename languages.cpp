@@ -10,6 +10,8 @@
 #include "languages.h"
 #include "zkanjimain.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 // Static initializers:
@@ -53,7 +55,7 @@ Languages::~Languages()
 
 void Languages::initialize()
 {
-    for (int ix = 1, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 1, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         if (!QFile::exists(ZKanji::appFolder() + QString("/lang/zkanji_%1.qm").arg(list[ix].second)))
             list[ix].first = "";
@@ -63,7 +65,7 @@ void Languages::initialize()
 
 int Languages::count()
 {
-    return list.size();
+    return tosigned(list.size());
 }
 
 QString Languages::names(int ix)
@@ -80,7 +82,7 @@ int Languages::idIndex(QString str)
 {
     if (str.isEmpty())
         return 0;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         if (list[ix].second == str)
             return ix;
     return -1;
@@ -88,7 +90,7 @@ int Languages::idIndex(QString str)
 
 bool Languages::setLanguage(int ix)
 {
-    if (ix < 0 || ix >= list.size())
+    if (ix < 0 || ix >= tosigned(list.size()))
         return false;
 
     if (ix == current)

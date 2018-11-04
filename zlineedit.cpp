@@ -11,6 +11,8 @@
 #include "zlineedit.h"
 #include "qcharstring.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -51,7 +53,7 @@ void ZLineEdit::setCursorMoveStyle(Qt::CursorMoveStyle style)
 
 bool ZLineEdit::isRedoAvailable() const
 {
-    return !isReadOnly() && undopos != undostack.size();
+    return !isReadOnly() && undopos != tosigned(undostack.size());
 }
 
 bool ZLineEdit::isUndoAvailable() const
@@ -102,7 +104,7 @@ void ZLineEdit::setText(const QString &str)
     const QValidator *v = validator();
     QString t = str;
 
-    QString oldtext = text();
+    QString savedtext = text();
 
     int cpos;
     bool acceptable = true;
@@ -140,7 +142,7 @@ void ZLineEdit::setText(const QString &str)
     else
         saveClearTextState();
 
-    if (oldtext != text())
+    if (savedtext != text())
         emitEditChange(false);
 }
 
@@ -212,9 +214,9 @@ void ZLineEdit::undo()
 
 void ZLineEdit::redo()
 {
-    restoreAcceptable(undopos == undostack.size());
+    restoreAcceptable(undopos == tosigned(undostack.size()));
 
-    if (undopos == undostack.size())
+    if (undopos == tosigned(undostack.size()))
         return;
 
     ignorechange = true;
@@ -239,7 +241,7 @@ void ZLineEdit::redo()
     ignorechange = false;
 
     ++undopos;
-    if (undopos != undostack.size())
+    if (undopos != tosigned(undostack.size()))
     {
         UndoItem &i2 = undostack[undopos];
         if (item.type == UndoItem::Replace && (i2.type == UndoItem::Input || i2.type == UndoItem::SeparateInput || i2.type == UndoItem::Delete))
@@ -365,7 +367,7 @@ bool ZLineEdit::validInput(bool allowintermediate) const
     return true;
 }
 
-QMenu* ZLineEdit::createContextMenu(QContextMenuEvent *e)
+QMenu* ZLineEdit::createContextMenu(QContextMenuEvent * /*e*/)
 {
     // Create the default context menu for the line edit and replace its undo/redo action
     // slots with our own.
@@ -391,7 +393,7 @@ QMenu* ZLineEdit::createContextMenu(QContextMenuEvent *e)
         {
             disconnect(a, 0, this, 0);
             connect(a, &QAction::triggered, this, &ZLineEdit::redo);
-            a->setEnabled(!isReadOnly() && undopos != undostack.size());
+            a->setEnabled(!isReadOnly() && undopos != tosigned(undostack.size()));
             continue;
         }
         if (atxt == QLineEdit::tr("Cu&t"))
@@ -437,21 +439,15 @@ void ZLineEdit::keyPressEvent(QKeyEvent *e)
         return;
     }
 
-    // Set to true when the key press is handled here and shouldn't be sent
-    // to the base class.
+    // Set to true when the key press is handled here and shouldn't be sent to the base class.
     bool handled = false;
 
-    // Set to true if we changed the text here and the text edited and changed
-    // signals should be sent.
+    // Set to true if we changed the text here and the text edited and changed signals should
+    // be sent.
     bool changed = false;
 
-    // Set to false if the edit control has a validator and the current input
-    // is not fully valid. Only fully valid states are added to the undo
-    // stack.
-    bool valid = true;
-
-    // Try to catch any key combination that will modify the text in the line
-    // edit so it can respond to that in the new undo/redo mechanism.
+    // Try to catch any key combination that will modify the text in the line edit so it can
+    // respond to that in the new undo/redo mechanism.
     if (e == QKeySequence::Undo)
     {
         undo();
@@ -601,13 +597,11 @@ void ZLineEdit::keyPressEvent(QKeyEvent *e)
 
 void ZLineEdit::inputMethodEvent(QInputMethodEvent* event)
 {
-    // The original line edit emits cursorPositionChanged event before the
-    // textChanged event in inputMethod events, resulting in invalid positions
-    // when the old text is not updated yet. This confuses the undo/redo
-    // handling and validating in ZLineEdit.
-    // If there's a change in the text, the control will ignore the signals
-    // and will re-check text and selection only after the input method event
-    // has been handled.
+    // The original line edit emits cursorPositionChanged event before the textChanged event
+    // in inputMethod events, resulting in invalid positions when the old text is not updated
+    // yet. This confuses the undo/redo handling and validating in ZLineEdit. If there's a
+    // change in the text, the control will ignore the signals and will re-check text and
+    // selection only after the input method event has been handled.
 
     bool hascommit = !event->commitString().isEmpty();
 
@@ -751,7 +745,7 @@ void ZLineEdit::addDelUndo(const QString &delstr, int delstart, int delend)
     memcpy(item.data.get(), delstr.constData(), sizeof(QChar) * abs(delstart - delend));
 
     undostack.push_back(std::move(item));
-    undopos = undostack.size();
+    undopos = tosigned(undostack.size());
 }
 
 void ZLineEdit::addReplaceUndo(const QString &delstr, int oldselstart, int oldselend)
@@ -767,7 +761,7 @@ void ZLineEdit::addReplaceUndo(const QString &delstr, int oldselstart, int oldse
     memcpy(item.data.get(), delstr.constData(), sizeof(QChar) * abs(oldselstart - oldselend));
 
     undostack.push_back(std::move(item));
-    undopos = undostack.size();
+    undopos = tosigned(undostack.size());
 }
 
 void ZLineEdit::addInputUndo(const QString &inpstr, int inpstart, int inpend, bool separate)
@@ -799,7 +793,7 @@ void ZLineEdit::addInputUndo(const QString &inpstr, int inpstart, int inpend, bo
     memcpy(item.data.get(), inpstr.constData(), sizeof(QChar) * abs(inpstart - inpend));
 
     undostack.push_back(std::move(item));
-    undopos = undostack.size();
+    undopos = tosigned(undostack.size());
 }
 
 void ZLineEdit::updateLayout()
@@ -865,12 +859,12 @@ void ZLineEdit::_paste(QKeyEvent *e)
     }
 }
 
-bool ZLineEdit::restoreAcceptable(bool emitchange)
+bool ZLineEdit::restoreAcceptable(bool /*emitchange*/)
 {
     bool valid;
 
     QString t;
-    int cpos;
+    int cpos = 0;
 
     if (statedirty)
     {
@@ -1092,7 +1086,7 @@ void ZLineEdit::textChangedSlot(const QString &newtext)
     emitEditChange();
 }
 
-void ZLineEdit::cursorPositionChangedSlot(int oldp, int newp)
+void ZLineEdit::cursorPositionChangedSlot(int /*oldp*/, int newp)
 {
     if (ignorechange)
         return;
@@ -1140,7 +1134,7 @@ void ZLineEdit::selectionChangedSlot()
     savedselend = se;
 }
 
-void ZLineEdit::layoutDirectionChanged(Qt::LayoutDirection direction)
+void ZLineEdit::layoutDirectionChanged(Qt::LayoutDirection /*direction*/)
 {
     layoutdirty = true;
 }

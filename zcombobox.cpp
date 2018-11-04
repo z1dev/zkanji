@@ -101,7 +101,7 @@ void ZComboBox::installEditor()
 //    firstshow = false;
 //}
 
-void ZComboBox::indexChanged(int index)
+void ZComboBox::indexChanged(int /*index*/)
 {
     if (checkchange)
     {

@@ -76,7 +76,7 @@ bool ChoiceLabel::hasHeightForWidth() const
     return false;
 }
 
-int ChoiceLabel::heightForWidth(int h) const
+int ChoiceLabel::heightForWidth(int /*h*/) const
 {
     return -1;
 }
@@ -146,7 +146,7 @@ bool DefinitionLabel::hasHeightForWidth() const
     return false;
 }
 
-int DefinitionLabel::heightForWidth(int h) const
+int DefinitionLabel::heightForWidth(int /*h*/) const
 {
     return -1;
 }
@@ -308,7 +308,7 @@ WordStudyForm::WordStudyForm(QWidget *parent) :
         connect(mapper, (void (QSignalMapper::*)(int))&QSignalMapper::mapped, this, &WordStudyForm::currentLookup);
 
         QMenu *sub = optionmenu->addMenu(tr("Online lookup"));
-        for (int ix = 0, siz = ZKanji::lookup_sites.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::lookup_sites.size()); ix != siz; ++ix)
         {
             a = sub->addAction(ZKanji::lookup_sites[ix].name);
             connect(a, &QAction::triggered, mapper, (void (QSignalMapper::*)())&QSignalMapper::map);
@@ -1049,7 +1049,7 @@ void WordStudyForm::currentToGroup()
 
 void WordStudyForm::currentToStudy()
 {
-    WordEntry *w = dictionary()->wordEntry(windex);
+    //WordEntry *w = dictionary()->wordEntry(windex);
     addWordsToDeck(deck, { windex }, this);
 }
 

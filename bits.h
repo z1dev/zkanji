@@ -13,6 +13,9 @@ class QDataStream;
 class BitArray : public fastarray<char>
 {
 public:
+    typedef size_t size_type;
+
+
     BitArray();
     BitArray(const BitArray &src);
     BitArray(BitArray &&src);
@@ -23,21 +26,21 @@ public:
 
     // Resizes the bits array to fit at least size bits. Values with indexes
     // above the old size will be uninitialized.
-    void resize(int size);
+    void resize(size_type size);
     // Changes the size of the bits array to fit at least size bits. All
     // values in the array can be considered uninitialized after the call.
-    void setSize(int size);
+    void setSize(size_type size);
     // Changes the size of the bits array, setting the bits to the value of
     // toggle.
-    void setSize(int size, bool toggle);
+    void setSize(size_type size, bool toggle);
     // Returns the number of bits that the bits array can hold.
-    int size() const;
+    size_type size() const;
     // Returns whether the bit at index is toggled (has a value of 1).
-    bool toggled(int index) const;
+    bool toggled(size_type index) const;
     // Changes the bit at index to be toggled or not.
-    void set(int index, bool toggle);
+    void set(size_type index, bool toggle);
 private:
-    int bitsize;
+    size_type bitsize;
 
     typedef fastarray<char> base;
 

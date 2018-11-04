@@ -35,6 +35,8 @@ struct KanjiRadical
 class KanjiRadicalList : public TextSearchTreeBase
 {
 public:
+    typedef size_t  size_type;
+
     KanjiRadicalList();
     virtual ~KanjiRadicalList();
 
@@ -47,7 +49,7 @@ public:
 
     void addRadical(QChar ch, std::vector<ushort> &&kanji, uchar strokes, uchar radical, QCharStringList &&names);
 
-    virtual int size() const override;
+    virtual size_type size() const override;
     bool empty();
 
     virtual bool isKana() const override;
@@ -135,7 +137,7 @@ struct KanjiEntry
 
     QCharStringList meanings; // "Meaning" of the kanji.
 
-    // Indexes or parts in partlist that contain this kanji.
+    // Indexes or parts in radklist that contain this kanji.
     std::vector<ushort> radks;
 
     // Indexes of radicals in radlist that contain this kanji.
@@ -174,13 +176,12 @@ namespace ZKanji
     // Returns true if the ZKanji::kanjis list has nullptr items or the list is empty.
     bool isKanjiMissing();
 
-    // Returns the sum of kanji readings in a given kanji. If compact is true,
-    // KUN readings that only differ in okurigana are counted as a single
-    // reading.
+    // Returns the sum of kanji readings in a given kanji. If compact is true, KUN readings
+    // that only differ in okurigana are counted as a single reading.
     int kanjiReadingCount(KanjiEntry *k, bool compact);
-    // Converts index of a reading in a kanji. The compact reading index is
-    // the index in a list of readings, that only include a single KUN
-    // reading from every group of KUN readings that only differ in okurigana.
+    // Converts index of a reading in a kanji. The compact reading index is the index in a
+    // list of readings, that only include a single KUN reading from every group of KUN
+    // readings that only differ in okurigana.
     int kanjiCompactToReal(KanjiEntry *k, int readingindex);
     // Returns the reading of the k kanji at the compact reading index. An index of 0 returns
     // the kanji character itself for irregular readings, then the on and finally the kun

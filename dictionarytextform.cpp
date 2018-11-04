@@ -87,13 +87,13 @@ void DictionaryTextForm::accept()
     close();
 }
 
-void DictionaryTextForm::dictionaryRemoved(int index, int order, void *oldaddress)
+void DictionaryTextForm::dictionaryRemoved(int /*index*/, int /*order*/, void *oldaddress)
 {
     if (oldaddress == dict)
         close();
 }
 
-void DictionaryTextForm::dictionaryRenamed(const QString &oldname, int index, int order)
+void DictionaryTextForm::dictionaryRenamed(const QString &/*oldname*/, int index, int /*order*/)
 {
     if (ZKanji::dictionary(index) == dict)
         setWindowTitle(tr("zkanji - Edit information: %1").arg(dict->name()));

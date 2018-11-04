@@ -30,6 +30,8 @@
 #include "zevents.h"
 #include "languages.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -71,7 +73,7 @@ void DictionaryItemModel::setColumnTexts()
     setColumnText(1, tr("Written"));
     setColumnText(2, tr("Kana"));
     setColumnText(3, tr("Definition"));
-#endif;
+#endif
 }
 
 WordGroup* DictionaryItemModel::wordGroup() const
@@ -95,7 +97,7 @@ void DictionaryItemModel::insertColumn(int index, const DictColumnData &column)
     cols.resize(tmp.size() + 1);
     cols[index] = column;
 
-    for (int ix = 0; ix != tmp.size(); ++ix)
+    for (int ix = 0, siz = tosigned(tmp.size()); ix != siz; ++ix)
         cols[ix + (ix >= index ? 1 : 0)] = tmp[ix];
 }
 
@@ -130,20 +132,20 @@ void DictionaryItemModel::removeColumn(int index)
 {
     auto tmp = std::move(cols);
     cols.resize(tmp.size() - 1);
-    for (int ix = 0; ix != tmp.size() - 1; ++ix)
+    for (int ix = 0, siz = tosigned(tmp.size()); ix != siz - 1; ++ix)
         cols[ix] = tmp[ix + (ix >= index ? 1 : 0)];
 }
 
 void DictionaryItemModel::setColumnText(int index, const QString &str)
 {
-    if (index < 0 || index >= cols.size())
+    if (index < 0 || index >= tosigned(cols.size()))
         throw "Kill the program. Wrong index for column text setter.";
     cols[index].text = str;
 }
 
 int DictionaryItemModel::columnByType(int columntype, int n)
 {
-    for (int ix = 0; ix != cols.size(); ++ix)
+    for (int ix = 0, siz = tosigned(cols.size()); ix != siz; ++ix)
         if (cols[ix].type == columntype)
         {
             if (n == 0)
@@ -163,7 +165,7 @@ int DictionaryItemModel::columnCount(const QModelIndex &parent) const
     if (parent.isValid())
         return 0;
 
-    return cols.size();
+    return tosigned(cols.size());
 }
 
 QVariant DictionaryItemModel::data(const QModelIndex &index, int role) const
@@ -254,7 +256,7 @@ QVariant DictionaryItemModel::headerData(int section, Qt::Orientation orientatio
     if (role == (int)DictColumnRoles::Type)
     {
         QVariant result;
-        if (section >= 0 && section < cols.size())
+        if (section >= 0 && section < tosigned(cols.size()))
             result.setValue(cols[section].type);
         else
             result.setValue(-1);
@@ -264,7 +266,7 @@ QVariant DictionaryItemModel::headerData(int section, Qt::Orientation orientatio
     if (role == Qt::TextAlignmentRole)
     {
         QVariant result;
-        if (section >= 0 && section < cols.size())
+        if (section >= 0 && section < tosigned(cols.size()))
             result.setValue((int)cols[section].align);
         else
             result.setValue((int)Qt::AlignHCenter);
@@ -274,14 +276,14 @@ QVariant DictionaryItemModel::headerData(int section, Qt::Orientation orientatio
 
     if (role == (int)ColumnRoles::AutoSized)
     {
-        if (section >= 0 && section < cols.size())
+        if (section >= 0 && section < tosigned(cols.size()))
             return (int)cols[section].autosize;
         return (int)ColumnAutoSize::NoAuto;
     }
 
     if (role == (int)ColumnRoles::FreeSized)
     {
-        if (section >= 0 && section < cols.size())
+        if (section >= 0 && section < tosigned(cols.size()))
             return cols[section].sizable;
         return false;
     }
@@ -292,12 +294,12 @@ QVariant DictionaryItemModel::headerData(int section, Qt::Orientation orientatio
         // not valid. If a column is auto sized, and the view handles auto sizing, the value
         // is ignored. Negative value means that the width is (-value * row height), while 0
         // means the width defaults to the width of the header text.
-        if (section >= 0 && section < cols.size())
+        if (section >= 0 && section < tosigned(cols.size()))
             return cols[section].width;
         return 30;
     }
 
-    if (section >= 0 && section < cols.size())
+    if (section >= 0 && section < tosigned(cols.size()))
         return cols[section].text;
     return QVariant();
 }
@@ -336,12 +338,12 @@ int DictionaryItemModel::statusCount() const
     return 1;
 }
 
-StatusTypes DictionaryItemModel::statusType(int statusindex) const
+StatusTypes DictionaryItemModel::statusType(int /*statusindex*/) const
 {
     return StatusTypes::SingleValue;
 }
 
-QString DictionaryItemModel::statusText(int statusindex, int labelindex, int rowpos) const
+QString DictionaryItemModel::statusText(int /*statusindex*/, int /*labelindex*/, int rowpos) const
 {
     QString r;
 
@@ -353,7 +355,7 @@ QString DictionaryItemModel::statusText(int statusindex, int labelindex, int row
     // Last meaning that had to be included in the text.
     int last = -1;
 
-    for (int ix = 0, siz = e->defs.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(e->defs.size()); ix != siz; ++ix)
     {
         if (last == -1 || e->defs[last].attrib != e->defs[ix].attrib)
         {
@@ -414,12 +416,12 @@ QString DictionaryItemModel::statusText(int statusindex, int labelindex, int row
     return r;
 }
 
-int DictionaryItemModel::statusSize(int statusindex, int labelindex) const
+int DictionaryItemModel::statusSize(int /*statusindex*/, int /*labelindex*/) const
 {
     return 0;
 }
 
-bool DictionaryItemModel::statusAlignRight(int statusindex) const
+bool DictionaryItemModel::statusAlignRight(int /*statusindex*/) const
 {
     return false;
 }
@@ -467,7 +469,7 @@ void DictionaryItemModel::disconnect()
     connected = false;
 }
 
-void DictionaryItemModel::dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict)
+void DictionaryItemModel::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *dict)
 {
     if (dict == dictionary())
         disconnect();
@@ -498,7 +500,7 @@ DictionaryWordListItemModel::~DictionaryWordListItemModel()
 void DictionaryWordListItemModel::setWordList(Dictionary *d, const std::vector<int> &wordlist, bool useorder)
 {
     if (useorder)
-        order = Settings::dictionary.resultorder;
+        resultorder = Settings::dictionary.resultorder;
     ordered = useorder;
 
     beginResetModel();
@@ -520,7 +522,7 @@ void DictionaryWordListItemModel::setWordList(Dictionary *d, const std::vector<i
 void DictionaryWordListItemModel::setWordList(Dictionary *d, std::vector<int> &&wordlist, bool useorder)
 {
     if (useorder)
-        order = Settings::dictionary.resultorder;
+        resultorder = Settings::dictionary.resultorder;
     ordered = useorder;
 
     beginResetModel();
@@ -561,7 +563,7 @@ int DictionaryWordListItemModel::rowCount(const QModelIndex & parent) const
     if (parent.isValid())
         return 0;
 
-    return list.size();
+    return tosigned(list.size());
 }
 
 Qt::DropActions DictionaryWordListItemModel::supportedDragActions() const
@@ -569,7 +571,7 @@ Qt::DropActions DictionaryWordListItemModel::supportedDragActions() const
     return Qt::CopyAction;
 }
 
-Qt::DropActions DictionaryWordListItemModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions DictionaryWordListItemModel::supportedDropActions(bool /*samesource*/, const QMimeData * /*mime*/) const
 {
     return 0;
 }
@@ -578,7 +580,7 @@ int DictionaryWordListItemModel::wordRow(int windex) const
 {
     if (!ordered)
     {
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
             if (list[ix] == windex)
                 return ix;
         return -1;
@@ -586,14 +588,14 @@ int DictionaryWordListItemModel::wordRow(int windex) const
 
     std::vector<Dictionary::JPResultSortData> sortlist;
     sortlist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         sortlist[ix].w = nullptr;
     std::vector<int> indexlist;
     indexlist.resize(list.size());
     std::iota(indexlist.begin(), indexlist.end(), 0);
 
     Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
-    auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+    auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int /*bx*/) {
         if (sortlist[ax].w == nullptr)
             sortlist[ax] = Dictionary::jpSortDataGen(dict->wordEntry(list[ax]), nullptr);
         return Dictionary::jpSortFunc(sortlist[ax], wdata);
@@ -615,27 +617,27 @@ void DictionaryWordListItemModel::removeAt(int index)
     signalRowsRemoved({ { index, index } });
 }
 
-void DictionaryWordListItemModel::orderChanged(const std::vector<int> &ordering)
+void DictionaryWordListItemModel::orderChanged(const std::vector<int> &/*ordering*/)
 {
     ;
 }
 
-bool DictionaryWordListItemModel::addNewEntry(int windex, int &position)
+bool DictionaryWordListItemModel::addNewEntry(int /*windex*/, int &/*position*/)
 {
     return false;
 }
 
-void DictionaryWordListItemModel::entryAddedPosition(int pos)
+void DictionaryWordListItemModel::entryAddedPosition(int /*pos*/)
 {
     ;
 }
 
 void DictionaryWordListItemModel::settingsChanged()
 {
-    if (!ordered || order == Settings::dictionary.resultorder)
+    if (!ordered || resultorder == Settings::dictionary.resultorder)
         return;
 
-    order = Settings::dictionary.resultorder;
+    resultorder = Settings::dictionary.resultorder;
 
     // Sort the words according to the current settings.
 
@@ -652,7 +654,7 @@ void DictionaryWordListItemModel::settingsChanged()
 
     std::vector<Dictionary::JPResultSortData> sortlist;
     sortlist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         sortlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(list[ix]), nullptr);
     // The new ordering of list.
     std::vector<int> indexlist;
@@ -666,7 +668,7 @@ void DictionaryWordListItemModel::settingsChanged()
     std::vector<int> tmp;
     tmp.swap(list);
     list.resize(indexlist.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         // Applying sort order from indexlist.
         list[ix] = tmp[indexlist[ix]];
@@ -687,7 +689,7 @@ void DictionaryWordListItemModel::settingsChanged()
     for (int ix = 0, siz = pfrom.size(); ix != siz; ++ix)
     {
         Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windexes[ix]), nullptr);
-        auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+        auto it = std::lower_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int /*bx*/) {
             if (sortlist[ax].w == nullptr)
                 sortlist[ax] = Dictionary::jpSortDataGen(dict->wordEntry(list[ax]), nullptr);
             return Dictionary::jpSortFunc(sortlist[ax], wdata);
@@ -705,10 +707,10 @@ void DictionaryWordListItemModel::settingsChanged()
     emit layoutChanged();
 }
 
-void DictionaryWordListItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void DictionaryWordListItemModel::entryRemoved(int windex, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     int wpos = -1;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         if (list[ix] == windex)
             wpos = ix;
@@ -723,10 +725,10 @@ void DictionaryWordListItemModel::entryRemoved(int windex, int abcdeindex, int a
     signalRowsRemoved({ { wpos, wpos } }); //endRemoveRows();
 }
 
-void DictionaryWordListItemModel::entryChanged(int windex, bool studydef)
+void DictionaryWordListItemModel::entryChanged(int windex, bool /*studydef*/)
 {
     int pos = -1;
-    for (int ix = 0, siz = list.size(); ix != siz && pos == -1; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz && pos == -1; ++ix)
         if (list[ix] == windex)
             pos = ix;
 
@@ -745,14 +747,14 @@ void DictionaryWordListItemModel::entryChanged(int windex, bool studydef)
 
     std::vector<Dictionary::JPResultSortData> sortlist;
     sortlist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         sortlist[ix].w = nullptr;
     std::vector<int> indexlist;
     indexlist.resize(list.size());
     std::iota(indexlist.begin(), indexlist.end(), 0);
 
     Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
-    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int /*ax*/, int bx) {
         if (sortlist[bx].w == nullptr)
             sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
         return Dictionary::jpSortFunc(wdata, sortlist[bx]);
@@ -780,8 +782,8 @@ void DictionaryWordListItemModel::entryAdded(int windex)
 
     if (!ordered)
     {
-        if (pos < 0 || pos > list.size())
-            pos = list.size();
+        if (pos < 0 || pos > tosigned(list.size()))
+            pos = tosigned(list.size());
         list.insert(list.begin() + pos, windex);
 
         entryAddedPosition(pos);
@@ -792,7 +794,7 @@ void DictionaryWordListItemModel::entryAdded(int windex)
 
     std::vector<Dictionary::JPResultSortData> sortlist;
     sortlist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         sortlist[ix].w = nullptr;
     // The new ordering of list.
     std::vector<int> indexlist;
@@ -800,7 +802,7 @@ void DictionaryWordListItemModel::entryAdded(int windex)
     std::iota(indexlist.begin(), indexlist.end(), 0);
 
     Dictionary::JPResultSortData wdata = Dictionary::jpSortDataGen(dict->wordEntry(windex), nullptr);
-    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int ax, int bx) {
+    auto it = std::upper_bound(indexlist.begin(), indexlist.end(), -1, [this, &sortlist, &wdata](int /*ax*/, int bx) {
         if (sortlist[bx].w == nullptr)
             sortlist[bx] = Dictionary::jpSortDataGen(dict->wordEntry(list[bx]), nullptr);
         return Dictionary::jpSortFunc(wdata, sortlist[bx]);
@@ -824,7 +826,7 @@ void DictionaryWordListItemModel::sortList()
     // TODO: Make a dictionary function that sorts a list of word indexes with no inflection.
     std::vector<Dictionary::JPResultSortData> sortlist;
     sortlist.resize(list.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         sortlist[ix] = Dictionary::jpSortDataGen(dict->wordEntry(list[ix]), nullptr);
     std::vector<int> indexlist;
     indexlist.resize(list.size());
@@ -837,7 +839,7 @@ void DictionaryWordListItemModel::sortList()
     std::vector<int> tmp;
     tmp.swap(list);
     list.resize(indexlist.size());
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         list[ix] = tmp[indexlist[ix]];
 }
 
@@ -873,32 +875,32 @@ Dictionary* DictionaryDefinitionListItemModel::dictionary() const
     return dict;
 }
 
-int DictionaryDefinitionListItemModel::indexes(int pos) const
+int DictionaryDefinitionListItemModel::indexes(int /*pos*/) const
 {
     return index;
 }
 
 int DictionaryDefinitionListItemModel::rowCount(const QModelIndex &parent) const
 {
-    return parent.isValid() || index == -1 ? 0 : dict->wordEntry(index)->defs.size();
+    return parent.isValid() || index == -1 ? 0 : tosigned(dict->wordEntry(index)->defs.size());
 }
 
-QVariant DictionaryDefinitionListItemModel::data(const QModelIndex &index, int role) const
+QVariant DictionaryDefinitionListItemModel::data(const QModelIndex &ind, int role) const
 {
     if (role == (int)DictRowRoles::DefIndex)
-        return index.row();
+        return ind.row();
 
-    return base::data(index, role);
+    return base::data(ind, role);
 }
 
-QMap<int, QVariant> DictionaryDefinitionListItemModel::itemData(const QModelIndex &index) const
+QMap<int, QVariant> DictionaryDefinitionListItemModel::itemData(const QModelIndex &ind) const
 {
-    QMap<int, QVariant> result = base::itemData(index);
-    result.insert((int)DictRowRoles::DefIndex, QVariant(index.row()));
+    QMap<int, QVariant> result = base::itemData(ind);
+    result.insert((int)DictRowRoles::DefIndex, QVariant(ind.row()));
     return result;
 }
 
-void DictionaryDefinitionListItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void DictionaryDefinitionListItemModel::entryRemoved(int windex, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     if (windex != index)
         return;
@@ -917,7 +919,7 @@ void DictionaryDefinitionListItemModel::entryChanged(int windex, bool studydef)
     endResetModel();
 }
 
-void DictionaryDefinitionListItemModel::entryAdded(int windex)
+void DictionaryDefinitionListItemModel::entryAdded(int /*windex*/)
 {
 }
 
@@ -968,7 +970,7 @@ void DictionarySearchResultItemModel::search(SearchMode mode, Dictionary *dict, 
 
     ssearchstr = searchstr;
 
-    order = Settings::dictionary.resultorder;
+    resultorder = Settings::dictionary.resultorder;
 
     list.reset(new WordResultList(dict));
 
@@ -997,11 +999,11 @@ int DictionarySearchResultItemModel::indexes(int pos) const
     return list->getIndexes()[pos];
 }
 
-int DictionarySearchResultItemModel::rowCount(const QModelIndex &parent) const
+int DictionarySearchResultItemModel::rowCount(const QModelIndex &/*parent*/) const
 {
     if (!list)
         return 0;
-    return list->size();
+    return tosigned(list->size());
 }
 
 QVariant DictionarySearchResultItemModel::data(const QModelIndex &index, int role) const
@@ -1009,7 +1011,7 @@ QVariant DictionarySearchResultItemModel::data(const QModelIndex &index, int rol
     if (role == (int)DictRowRoles::Inflection)
     {
         auto &inflist = list->getInflections();
-        if (inflist.size() <= index.row())
+        if (tosigned(inflist.size()) <= index.row())
             return 0;
         return QVariant::fromValue((intptr_t)inflist[index.row()]);
     }
@@ -1031,17 +1033,17 @@ Qt::DropActions DictionarySearchResultItemModel::supportedDragActions() const
     return Qt::CopyAction;
 }
 
-Qt::DropActions DictionarySearchResultItemModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions DictionarySearchResultItemModel::supportedDropActions(bool /*samesource*/, const QMimeData * /*mime*/) const
 {
     return 0;
 }
 
 void DictionarySearchResultItemModel::settingsChanged()
 {
-    if (order == Settings::dictionary.resultorder || sdict == nullptr)
+    if (resultorder == Settings::dictionary.resultorder || sdict == nullptr)
         return;
 
-    order = Settings::dictionary.resultorder;
+    resultorder = Settings::dictionary.resultorder;
 
     // Sort the words according to the current settings.
 
@@ -1063,8 +1065,8 @@ void DictionarySearchResultItemModel::settingsChanged()
 
     // New index list for permanent indexes.
     QModelIndexList pto;
-    pto.reserve(prows.size());
-    for (int ix = 0, siz = prows.size(); ix != siz; ++ix)
+    pto.reserve(tosigned(prows.size()));
+    for (int ix = 0, siz = tosigned(prows.size()); ix != siz; ++ix)
         pto.push_back(index(prows[ix], pfrom.at(ix).column()));
 
     changePersistentIndexList(pfrom, pto);
@@ -1072,11 +1074,11 @@ void DictionarySearchResultItemModel::settingsChanged()
     emit layoutChanged();
 }
 
-void DictionarySearchResultItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void DictionarySearchResultItemModel::entryRemoved(int windex, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     auto &ind = list->getIndexes();
     int wpos = -1;
-    for (int ix = 0; ix != list->size(); ++ix)
+    for (int ix = 0, siz = tosigned(list->size()); ix != siz; ++ix)
         if (ind[ix] == windex)
             wpos = ix;
         else if (ind[ix] > windex)
@@ -1102,12 +1104,14 @@ void DictionarySearchResultItemModel::entryChanged(int windex, bool studydef)
     {
         auto &ind = list->getIndexes();
         int wpos = -1;
-        for (int ix = 0; ix != list->size(); ++ix)
+        for (int ix = 0, siz = tosigned(list->size()); ix != siz; ++ix)
+        {
             if (ind[ix] == windex)
             {
                 wpos = ix;
                 break;
             }
+        }
 
         if (wpos != -1)
         {
@@ -1153,21 +1157,21 @@ void DictionarySearchResultItemModel::filterMoved(int index, int to)
         return;
 
     std::vector<Inclusion> &inc = scond->inclusions;
-    if (index >= inc.size() && to >= inc.size())
+    if (index >= tosigned(inc.size()) && to >= tosigned(inc.size()))
         return;
 
     if (to > index)
         --to;
 
-    Inclusion moved = index >= inc.size() ? Inclusion::Ignore : inc[index];
-    if (index < inc.size())
+    Inclusion moved = index >= tosigned(inc.size()) ? Inclusion::Ignore : inc[index];
+    if (index < tosigned(inc.size()))
         inc.erase(inc.begin() + index);
 
-    if (to >= inc.size())
+    if (to >= tosigned(inc.size()))
     {
         if (moved == Inclusion::Ignore)
             return;
-        while (inc.size() <= to)
+        while (tosigned(inc.size()) <= to)
             inc.push_back(Inclusion::Ignore);
         inc[to] = moved;
         return;
@@ -1243,8 +1247,8 @@ void DictionaryBrowseItemModel::setFilterConditions(WordFilterConditions *fcond)
         // If the passed filter is only different in the ignored items, save it and return.
         if (cond->examples == fcond->examples && cond->groups == fcond->groups)
         {
-            int fsiz = fcond->inclusions.size();
-            int csiz = cond->inclusions.size();
+            int fsiz = tosigned(fcond->inclusions.size());
+            int csiz = tosigned(cond->inclusions.size());
             
             bool different = false;
 
@@ -1290,7 +1294,7 @@ void DictionaryBrowseItemModel::setFilterConditions(WordFilterConditions *fcond)
     list.clear();
     const std::vector<int> &wordlist = dict->wordOrdering(order);
 
-    for (int ix = 0; ix != wordlist.size(); ++ix)
+    for (int ix = 0, siz = tosigned(wordlist.size()); ix != siz; ++ix)
     {
         int wix = wordlist[ix];
         if (ZKanji::wordfilters().match(dict->wordEntry(wix), cond.get()))
@@ -1331,7 +1335,7 @@ int DictionaryBrowseItemModel::browseRow(QString searchstr) const
     auto it = std::lower_bound(wordlist->begin(), wordlist->end(), searchstr.constData(), orderfunc);
 
     if (it == wordlist->end())
-        return wordlist->size() - 1;
+        return tosigned(wordlist->size()) - 1;
     return it - wordlist->begin();
 }
 
@@ -1357,7 +1361,7 @@ int DictionaryBrowseItemModel::browseRow(int windex) const
             // Error in the normal browse function. To make this still work, we have to go over
             // every word listed by the model and find windex with brute force.
 
-            for (int ix = 0; ix != list.size(); ++ix)
+            for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
                 if (list[ix] == windex)
                 {
                     r = ix;
@@ -1380,7 +1384,7 @@ int DictionaryBrowseItemModel::browseRow(int windex) const
 
     auto orderfunc = dict->browseOrderCompareIndexFunc(order);
 
-    for (int ix = r, siz = wordlist->size(); ix != siz; ++ix)
+    for (int ix = r, siz = tosigned(wordlist->size()); ix != siz; ++ix)
     {
         if (wordlist->operator[](ix) == windex)
         {
@@ -1410,12 +1414,12 @@ int DictionaryBrowseItemModel::indexes(int pos) const
     return list[pos];
 }
 
-int DictionaryBrowseItemModel::rowCount(const QModelIndex &parent) const
+int DictionaryBrowseItemModel::rowCount(const QModelIndex &/*parent*/) const
 {
     if (!cond)
         return dict->entryCount();
 
-    return list.size();
+    return tosigned(list.size());
 }
 
 Qt::DropActions DictionaryBrowseItemModel::supportedDragActions() const
@@ -1423,7 +1427,7 @@ Qt::DropActions DictionaryBrowseItemModel::supportedDragActions() const
     return Qt::CopyAction;
 }
 
-Qt::DropActions DictionaryBrowseItemModel::supportedDropActions(bool samesource, const QMimeData *mime) const
+Qt::DropActions DictionaryBrowseItemModel::supportedDropActions(bool /*samesource*/, const QMimeData * /*mime*/) const
 {
     return 0;
 }
@@ -1460,7 +1464,7 @@ void DictionaryBrowseItemModel::entryRemoved(int windex, int abcdeindex, int aiu
     int wpos = -1;
     if (cond)
     {
-        for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
             if (list[ix] > windex)
                 --list[ix];
             else if (list[ix] == windex)
@@ -1551,12 +1555,13 @@ void DictionaryBrowseItemModel::entryAdded(int windex)
 
         auto orderixfunc = dict->browseOrderCompareIndexFunc(order);
 
+        int lsiz = tosigned(list.size());
         while (true)
         {
-            while (inspos != list.size() && orderixfunc(list[inspos], wordlist[dictpos], nullptr, nullptr))
+            while (inspos != lsiz && orderixfunc(list[inspos], wordlist[dictpos], nullptr, nullptr))
                 ++inspos;
 
-            if (inspos == list.size() || wordlist[dictpos] == windex)
+            if (inspos == lsiz || wordlist[dictpos] == windex)
                 break;
 
             while (wordlist[dictpos] != windex && orderixfunc(wordlist[dictpos], list[inspos], nullptr, nullptr))
@@ -1587,22 +1592,22 @@ Dictionary* DictionaryEntryItemModel::dictionary() const
     return dict;
 }
 
-int DictionaryEntryItemModel::indexes(int pos) const
+int DictionaryEntryItemModel::indexes(int /*pos*/) const
 {
     return -1;
 }
 
 WordEntry* DictionaryEntryItemModel::items(int pos) const
 {
-    if (pos <= entry->defs.size())
+    if (pos <= tosigned(entry->defs.size()))
         return entry;
 
     return nullptr;
 }
 
-int DictionaryEntryItemModel::rowCount(const QModelIndex &parent) const
+int DictionaryEntryItemModel::rowCount(const QModelIndex &/*parent*/) const
 {
-    return entry == nullptr ? 0 : entry->defs.size() + 1;
+    return entry == nullptr ? 0 : tosigned(entry->defs.size()) + 1;
 }
 
 Qt::DropActions DictionaryEntryItemModel::supportedDragActions() const
@@ -1627,16 +1632,16 @@ void DictionaryEntryItemModel::entryChanged()
 void DictionaryEntryItemModel::changeDefinition(int ix, QString defstr, const WordDefAttrib &defattrib)
 {
 #ifdef _DEBUG
-    if (ix > entry->defs.size())
+    if (ix > tosigned(entry->defs.size()))
         throw "Can't edit definition outside range.";
 #endif
     
-    if (ix == entry->defs.size())
+    if (ix == tosigned(entry->defs.size()))
     {
         //beginInsertRows(QModelIndex(), entry->defs.size() + 1, entry->defs.size() + 1);
         entry->defs.resize(entry->defs.size() + 1);
         //endInsertRows();
-        signalRowsInserted({ { entry->defs.size(), 1 } });
+        signalRowsInserted({ { tosigned(entry->defs.size()), 1 } });
     }
 
     entry->defs[ix].def.copy(defstr.constData());
@@ -1647,7 +1652,7 @@ void DictionaryEntryItemModel::changeDefinition(int ix, QString defstr, const Wo
 void DictionaryEntryItemModel::deleteDefinition(int ix)
 {
 #ifdef _DEBUG
-    if (ix >= entry->defs.size())
+    if (ix >= tosigned(entry->defs.size()))
         throw "Can't delete definition outside range.";
 #endif
 
@@ -1660,7 +1665,7 @@ void DictionaryEntryItemModel::deleteDefinition(int ix)
 void DictionaryEntryItemModel::cloneDefinition(int ix)
 {
     //beginInsertRows(QModelIndex(), entry->defs.size(), entry->defs.size());
-    int row = entry->defs.size();
+    int row = tosigned(entry->defs.size());
     entry->defs.resize(row + 1);
     entry->defs[row] = entry->defs[ix];
     //endInsertRows();
@@ -1694,9 +1699,9 @@ QMap<int, QVariant> DictionaryEntryItemModel::itemData(const QModelIndex &index)
 //    return samesource && e->mimeData()->hasFormat("zkanji/editdef") && e->mimeData()->data(QStringLiteral("zkanji/editdef")).size() == sizeof(int);
 //}
 
-bool DictionaryEntryItemModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool DictionaryEntryItemModel::canDropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int row, int column, const QModelIndex &/*parent*/) const
 {
-    return row != -1 && column != -1 && entry != nullptr && row <= entry->defs.size() &&
+    return row != -1 && column != -1 && entry != nullptr && row <= tosigned(entry->defs.size()) &&
             data->hasFormat(QStringLiteral("zkanji/editdef")) &&
             data->data(QStringLiteral("zkanji/editdef")).size() == sizeof(int);
 }
@@ -1836,7 +1841,7 @@ int DictionaryGroupItemModel::rowCount(const QModelIndex & parent) const
     if (parent.isValid() || group == nullptr)
         return 0;
 
-    return group->size();
+    return tosigned(group->size());
 }
 
 Qt::DropActions DictionaryGroupItemModel::supportedDragActions() const
@@ -1872,7 +1877,7 @@ Qt::DropActions DictionaryGroupItemModel::supportedDropActions(bool samesource, 
 //
 //}
 
-bool DictionaryGroupItemModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
+bool DictionaryGroupItemModel::canDropMimeData(const QMimeData *data, Qt::DropAction /*action*/, int row, int column, const QModelIndex &/*parent*/) const
 {
     return group != nullptr && row != -1 && column != -1 && data->hasFormat("zkanji/words");
 }
@@ -1935,7 +1940,7 @@ bool DictionaryGroupItemModel::dropMimeData(const QMimeData *data, Qt::DropActio
 //        }
 //}
 
-void DictionaryGroupItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void DictionaryGroupItemModel::entryRemoved(int /*windex*/, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     // The group also singals about items removal. Removed entry is handled there.
 
@@ -1945,14 +1950,14 @@ void DictionaryGroupItemModel::entryRemoved(int windex, int abcdeindex, int aiue
     ;
 }
 
-void DictionaryGroupItemModel::entryChanged(int windex, bool studydef)
+void DictionaryGroupItemModel::entryChanged(int windex, bool /*studydef*/)
 {
     // A word in the group's dictionary has changed, but the word might not be part of the
     // group. Only emit dataChanged() if applicable here.
 
     int row = -1;
     auto &list = group->getIndexes();
-    for (int ix = 0; row == -1 && ix != list.size(); ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); row == -1 && ix != siz; ++ix)
     {
         if (list[ix] == windex)
             row = ix;
@@ -1964,7 +1969,7 @@ void DictionaryGroupItemModel::entryChanged(int windex, bool studydef)
     emit dataChanged(index(row, 0), index(row, columnCount() - 1));
 }
 
-void DictionaryGroupItemModel::entryAdded(int windex)
+void DictionaryGroupItemModel::entryAdded(int /*windex*/)
 {
     ;
 }
@@ -2686,11 +2691,11 @@ void KanjiWordsItemModel::fillList()
     {
         KanjiEntry *k = ZKanji::kanjis[kix];
         int siz = dict->kanjiWordCount(kix);
-        for (int ix = 0; ix != siz /*dat->words.size()*-/; ++ix)
+        for (int ix = 0; ix != siz /-*dat->words.size()*-/; ++ix)
         {
             int wix = dict->kanjiWordAt(kix, ix); //dat->words[ix];
             WordEntry *e = dict->wordEntry(wix);
-            if ((rix == -1 || matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || dict->isKanjiExample(kix, wix) /*std::find(dat->ex.begin(), dat->ex.end(), wix) != dat->ex.end()*-/ ))
+            if ((rix == -1 || matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || dict->isKanjiExample(kix, wix) /-*std::find(dat->ex.begin(), dat->ex.end(), wix) != dat->ex.end()*-/ ))
                 list.push_back(wix);
         }
     }
@@ -2800,12 +2805,12 @@ void KanjiWordsItemModel::kanjiExampleRemoved(int kindex, int windex)
     removeAt(row);
 }
 
-void KanjiWordsItemModel::orderChanged(const std::vector<int> &ordering)
+void KanjiWordsItemModel::orderChanged(const std::vector<int> &/*ordering*/)
 {
     ;
 }
 
-bool KanjiWordsItemModel::addNewEntry(int windex, int &position)
+bool KanjiWordsItemModel::addNewEntry(int windex, int &/*position*/)
 {
     KanjiEntry *k = ZKanji::kanjis[kix];
     WordEntry *e = dictionary()->wordEntry(windex);
@@ -2813,17 +2818,17 @@ bool KanjiWordsItemModel::addNewEntry(int windex, int &position)
     return (e->kanji.find(ZKanji::kanjis[kix]->ch) != -1 && (rix == -1 || !matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || dictionary()->isKanjiExample(kix, windex)));
 }
 
-void KanjiWordsItemModel::entryAddedPosition(int pos)
+void KanjiWordsItemModel::entryAddedPosition(int /*pos*/)
 {
     ;
 }
 
 void KanjiWordsItemModel::fillList(Dictionary *d)
 {
-    std::vector<int> list;
+    std::vector<int> result;
 
     if (rix == -1 && !onlyex)
-        d->getKanjiWords(kix, list);
+        d->getKanjiWords(kix, result);
     else
     {
         KanjiEntry *k = ZKanji::kanjis[kix];
@@ -2833,7 +2838,7 @@ void KanjiWordsItemModel::fillList(Dictionary *d)
             int wix = d->kanjiWordAt(kix, ix);
             WordEntry *e = d->wordEntry(wix);
             if ((rix == -1 || matchKanjiReading(e->kanji, e->kana, k, rix)) && (!onlyex || d->isKanjiExample(kix, wix)))
-                list.push_back(wix);
+                result.push_back(wix);
         }
     }
 
@@ -2843,7 +2848,7 @@ void KanjiWordsItemModel::fillList(Dictionary *d)
         disconnect(dictionary(), &Dictionary::kanjiExampleRemoved, this, &KanjiWordsItemModel::kanjiExampleRemoved);
     }
 
-    setWordList(d, list, true);
+    setWordList(d, result, true);
 
     if (dictionary() != nullptr)
     {

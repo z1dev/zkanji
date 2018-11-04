@@ -277,7 +277,7 @@ void KanjiToolTipWidget::paintEvent(QPaintEvent *e)
     std::vector<int> refs = { Settings::kanji.mainref1, Settings::kanji.mainref2, Settings::kanji.mainref3, Settings::kanji.mainref4 };
     refs.resize(std::remove(refs.begin(), refs.end(), 0) - refs.begin());
 
-    for (int ix = 0, siz = refs.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(refs.size()); ix != siz; ++ix)
     {
         int ref = refs[ix];
 
@@ -296,7 +296,7 @@ void KanjiToolTipWidget::paintEvent(QPaintEvent *e)
         p.setFont(fb);
         str = ZKanji::kanjiReferenceTitle(ref) + ":";
         drawTextBaseline(&p, rowx, rowy, false, QRect(), str);
-        int w = fbm.width(str);
+        w = fbm.width(str);
         //rowx += w + hpad + penw + hpad;
 
         p.setFont(f);

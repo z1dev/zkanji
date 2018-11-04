@@ -178,7 +178,7 @@ void fixDefTypes(const QChar *kanjiform, fastarray<WordDefinition> &defs)
     }
 }
 
-void OriginalWordsList::loadLegacy(QDataStream &stream, int version)
+void OriginalWordsList::loadLegacy(QDataStream &stream, int /*version*/)
 {
     clear();
 
@@ -189,17 +189,19 @@ void OriginalWordsList::loadLegacy(QDataStream &stream, int version)
     quint8 f;
 
     stream >> c;
-    //fread(&c, sizeof(int), 1, f);
 
     list.reserve(c);
-    //Capacity = c;
 
-    while (list.size() != c)
+    int cnt = 0;
+
+    while (cnt != c)
     {
         OriginalWord *w = new OriginalWord;
         w->freq = 0;
         w->inf = 0;
+
         list.push_back(w);
+        ++cnt;
 
         stream >> ch;
         //fread(&c, sizeof(int), 1, f);
@@ -243,11 +245,11 @@ void OriginalWordsList::updateItemLegacy(int index, int windex, ushort wfreq)
 {
     OriginalWord *o = list[index];
     o->index = windex;
-    if (windex != -1 && wfreq != -1)
+    if (windex != -1 && wfreq != (ushort)-1)
         o->freq = wfreq;
 }
 
-void WordCommonsTree::loadLegacy(QDataStream &stream, int version)
+void WordCommonsTree::loadLegacy(QDataStream &stream, int /*version*/)
 {
     quint32 cnt;
 
@@ -435,12 +437,11 @@ void Dictionary::loadBaseLegacy(QDataStream &stream, int version)
             continue;
 
         stream >> cc;
-        //fread(&cc, sizeof(ushort), 1, f);
 
         ZKanji::radklist[ix].first = ZKanji::tmppartsymbols[ix];
         ZKanji::radklist[ix].second.setSize(cc);
 
-        for (int j = 0; j != ZKanji::radklist[ix].second.size(); ++j)
+        for (int j = 0, sizj = tosigned(ZKanji::radklist[ix].second.size()); j != sizj; ++j)
         {
             stream >> cc;
             ZKanji::radklist[ix].second[j] = cc;
@@ -609,9 +610,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
         stream.skipRawData(cnt * sizeof(qint32));
     }
 
-    //bool incode;
-
-    for (auto ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         QCharString &k = words[ix]->kanji;
         std::set<ushort> codes;
@@ -700,7 +699,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
             {
                 stream2 >> ch;
                 stream2 >> datcnt;
-                for (int j = 0; j != datcnt; ++j)
+                for (int j = 0, sizj = tosigned(datcnt); j != sizj; ++j)
                 {
                     stream2 >> wix;
                     kanadata[ch].push_back(wix);
@@ -713,7 +712,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
     if (!basedict || !kanadata_exists)
     {
 #endif
-        for (auto ix = 0; ix != words.size(); ++ix)
+        for (auto ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
         {
             QCharString &r = words[ix]->romaji;
             int rlen = r.size();
@@ -748,7 +747,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
             {
                 stream2 << (qint16)it.first;
                 stream2 << (quint32)it.second.size();
-                for (int j = 0; j != it.second.size(); ++j)
+                for (int j = 0, sizj = tosigned(it.second.size()); j != sizj; ++j)
                     stream2 << (qint32)it.second[j];
             }
         }
@@ -766,9 +765,9 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
     // Can't trust alphabetic ordering of old version, which might have
     // ordered the words differently.
 
-    stream.skipRawData(sizeof(qint32) * 2 * words.size());
+    stream.skipRawData(tosigned(sizeof(qint32) * 2 * words.size()));
 
-    for (int ix = 0; ix != words.size(); ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         abcde[ix] = ix;
         aiueo[ix] = ix;
@@ -836,11 +835,11 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
         if (!skiporiginals)
         {
             ZKanji::originals.loadLegacy(stream, version);
-            for (int ix = 0; ix != ZKanji::originals.size(); ++ix)
+            for (int ix = 0; ix != tosigned(ZKanji::originals.size()); ++ix)
             {
                 //const OriginalWord *o = ZKanji::originals.items(ix);
                 int oindex = findKanjiKanaWord(ZKanji::originals.items(ix)->kanji, ZKanji::originals.items(ix)->kana);
-                ushort ofreq = -1;
+                ushort ofreq = (ushort)-1;
                 if (oindex != -1)
                     ofreq = words[oindex]->freq;
                 ZKanji::originals.updateItemLegacy(ix, oindex, ofreq);
@@ -890,7 +889,7 @@ void Dictionary::loadUserDataLegacy(QDataStream &stream, int version)
         if (cnt >= 6355)
             break;
 
-        int d = 0;
+        //int d = 0;
         stream >> w;
         for (w += cnt; cnt < w; ++cnt)
         {

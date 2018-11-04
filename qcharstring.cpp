@@ -9,10 +9,12 @@
 #include "qcharstring.h"
 #include "zkanjimain.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
-uint ushortlen(const ushort *str)
+size_t ushortlen(const ushort *str)
 {
     const ushort *pos = str;
     while (*pos != 0)
@@ -20,7 +22,7 @@ uint ushortlen(const ushort *str)
     return pos - str;
 }
 
-uint qcharlen(const QChar *str)
+size_t qcharlen(const QChar *str)
 {
     const QChar *pos = str;
     while (*pos != 0)
@@ -50,13 +52,13 @@ int qcharncmp(const QChar *s1, const QChar *s2, int len)
     return s1->unicode() - s2->unicode();
 }
 
-uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen)
-{
-    uint pos = 0;
-    while (pos != maxlen && s1[pos] != 0 && s2[pos] != 0 && s1[pos] == s2[pos])
-        ++pos;
-    return pos;
-}
+//uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen)
+//{
+//    int pos = 0;
+//    while (pos != maxlen && s1[pos] != 0 && s2[pos] != 0 && s1[pos] == s2[pos])
+//        ++pos;
+//    return pos;
+//}
 
 //void qcharccpy(QChar* &dest, const QChar *src)
 //{
@@ -76,7 +78,7 @@ uint qcharmlen(const QChar *s1, const QChar *s2, int maxlen)
 
 void qcharcpy(QChar *dest, const QChar *src)
 {
-    int len = qcharlen(src);
+    int len = tosigned(qcharlen(src));
     qcharncpy(dest, src, len + 1);
 }
 
@@ -89,8 +91,8 @@ void qcharncpy(QChar *dest, const QChar *src, int len)
 
 const QChar* qcharstr(const QChar *hay, const QChar *needle, int haylength, int needlelength)
 {
-    int hlen = haylength == -1 ? qcharlen(hay) : haylength;
-    int nlen = needlelength == -1 ? qcharlen(needle) : needlelength;
+    int hlen = haylength == -1 ? tosigned(qcharlen(hay)) : haylength;
+    int nlen = needlelength == -1 ? tosigned(qcharlen(needle)) : needlelength;
     if (nlen > hlen)
         return nullptr;
 
@@ -156,12 +158,12 @@ int wordcompare(const QChar *kanjia, const QChar *kanaa, const QChar *kanjib, co
 //-------------------------------------------------------------
 
 
-QCharStringConstIterator operator+(int n, const QCharStringConstIterator &b)
+QCharStringConstIterator operator+(QCharStringConstIterator::difference_type n, const QCharStringConstIterator &b)
 {
     return b + n;
 }
 
-QCharStringIterator operator+(int n, const QCharStringIterator &b)
+QCharStringIterator operator+(QCharStringIterator::difference_type n, const QCharStringIterator &b)
 {
     return b + n;
 }
@@ -172,7 +174,7 @@ QCharStringIterator operator+(int n, const QCharStringIterator &b)
 
 QCharStringConstIterator::QCharStringConstIterator() : owner(nullptr), pos(nullptr) {}
 QCharStringConstIterator::QCharStringConstIterator(const QCharStringIterator &b) : owner(b.owner), pos(b.pos) {}
-QCharStringConstIterator& QCharStringConstIterator::operator=(const QCharStringIterator &b) { owner = b.owner; pos = b.pos; return *this;  }
+QCharStringConstIterator& QCharStringConstIterator::operator=(const QCharStringIterator &b) { owner = b.owner; pos = b.pos; return *this; }
 
 QCharStringConstIterator& QCharStringConstIterator::operator++()
 {
@@ -217,45 +219,45 @@ QCharStringConstIterator QCharStringConstIterator::operator--(int)
     return copy;
 }
 
-QCharStringConstIterator QCharStringConstIterator::operator+(int n) const
+QCharStringConstIterator QCharStringConstIterator::operator+(difference_type n) const
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() + n > owner->size())
+    if (pos == nullptr || pos - owner->data() + n < 0 || pos - owner->data() + n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return QCharStringConstIterator(owner, pos + n);
 }
 
-QCharStringConstIterator QCharStringConstIterator::operator-(int n) const
+QCharStringConstIterator QCharStringConstIterator::operator-(difference_type n) const
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() - n < 0)
+    if (pos == nullptr || pos - owner->data() - n < 0 || pos - owner->data() - n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return QCharStringConstIterator(owner, pos - n);
 }
 
-QCharStringConstIterator& QCharStringConstIterator::operator+=(int n)
+QCharStringConstIterator& QCharStringConstIterator::operator+=(difference_type n)
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() + n > owner->size())
+    if (pos == nullptr || pos - owner->data() + n < 0 || pos - owner->data() + n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     pos += n;
     return *this;
 }
 
-QCharStringConstIterator& QCharStringConstIterator::operator-=(int n)
+QCharStringConstIterator& QCharStringConstIterator::operator-=(difference_type n)
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() - n < 0)
+    if (pos == nullptr || pos - owner->data() - n < 0 || pos - owner->data() - n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     pos -= n;
     return *this;
 }
 
-int QCharStringConstIterator::operator-(const QCharStringConstIterator &b) const
+QCharStringConstIterator::difference_type QCharStringConstIterator::operator-(const QCharStringConstIterator &b) const
 {
 #ifdef _DEBUG
     if (owner == nullptr || owner != b.owner /*|| pos < b.pos*/)
@@ -320,10 +322,10 @@ bool QCharStringConstIterator::operator>=(const QCharStringConstIterator &b) con
 }
 
 
-const QChar* QCharStringConstIterator::operator[](int n) const
+const QChar* QCharStringConstIterator::operator[](difference_type n) const
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() + n > owner->size())
+    if (pos == nullptr || pos - owner->data() + n < 0 || pos - owner->data() + n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return pos + n;
@@ -351,7 +353,7 @@ QCharStringConstIterator::QCharStringConstIterator(const QCharString *owner, QCh
 
 
 //-------------------------------------------------------------
-    
+
 
 QCharStringIterator::QCharStringIterator() : base() {}
 QCharStringIterator::QCharStringIterator(const QCharStringConstIterator &b) : base(b) {}
@@ -388,32 +390,32 @@ QCharStringIterator QCharStringIterator::operator--(int)
     return copy;
 }
 
-QCharStringIterator QCharStringIterator::operator+(int n) const
+QCharStringIterator QCharStringIterator::operator+(difference_type n) const
 {
     return QCharStringIterator(base::operator+(n));
 }
 
-QCharStringIterator QCharStringIterator::operator-(int n) const
+QCharStringIterator QCharStringIterator::operator-(difference_type n) const
 {
     return QCharStringIterator(base::operator-(n));
 }
 
-QCharStringIterator& QCharStringIterator::operator+=(int n)
+QCharStringIterator& QCharStringIterator::operator+=(difference_type n)
 {
     base::operator+=(n);
     return *this;
 }
 
-QCharStringIterator& QCharStringIterator::operator-=(int n)
+QCharStringIterator& QCharStringIterator::operator-=(difference_type n)
 {
     base::operator-=(n);
     return *this;
 }
 
-QChar* QCharStringIterator::operator[](int n)
+QChar* QCharStringIterator::operator[](difference_type n)
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() + n > owner->size())
+    if (pos == nullptr || pos - owner->data() + n < 0 || pos - owner->data() + n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return pos + n;
@@ -437,10 +439,10 @@ QChar* QCharStringIterator::operator->()
     return pos;
 }
 
-const QChar* QCharStringIterator::operator[](int n) const
+const QChar* QCharStringIterator::operator[](difference_type n) const
 {
 #ifdef _DEBUG
-    if (pos == nullptr || pos - owner->data() + n > owner->size())
+    if (pos == nullptr || pos - owner->data() + n < 0 || pos - owner->data() + n > tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return pos + n;
@@ -503,7 +505,7 @@ QCharString::QCharString(const QCharString &src) : arr(nullptr)
 #endif
 {
 #ifndef _DEBUG
-    int siz = src.size();
+    size_type siz = src.size();
 #endif
 
     if (siz == 0)
@@ -523,7 +525,7 @@ QCharString& QCharString::operator=(const QCharString &src)
 #ifdef _DEBUG
     siz = src.size();
 #else
-    int siz = src.size();
+    size_type siz = src.size();
 #endif
 
     if (siz == 0)
@@ -619,7 +621,7 @@ QCharString::const_reverse_iterator QCharString::crend() const
 void QCharString::copy(const QChar *str, int length)
 {
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
     delete[] arr;
 
     arr = new QChar[length + 1];
@@ -630,41 +632,37 @@ void QCharString::copy(const QChar *str, int length)
 #endif
 }
 
-void QCharString::setSize(int length)
+void QCharString::setSize(size_type length)
 {
 #ifdef _DEBUG
-    if (length < 0)
-        throw "Negative size.";
     siz = length;
 #endif
     delete[] arr;
-    if (length == 0)
+    if (length <= 0)
     {
         arr = nullptr;
         return;
     }
     arr = new QChar[length + 1];
     arr[length] = QChar(0);
-    for (int ix = 0; ix != length; ++ix)
+    for (size_type ix = 0; ix != length; ++ix)
         arr[ix] = QChar(' ');
 }
 
-void QCharString::resize(int length)
+void QCharString::resize(size_type length)
 {
 #ifdef _DEBUG
-    if (length < 0)
-        throw "Negative size.";
     siz = length;
 #endif
 
-    if (length == 0)
+    if (length <= 0)
     {
         delete[] arr;
         arr = nullptr;
         return;
     }
 
-    int oldsize = size();
+    size_type oldsize = size();
 
     if (oldsize == length)
         return;
@@ -678,15 +676,15 @@ void QCharString::resize(int length)
     delete[] tmp;
 
     if (oldsize < length)
-        for (int ix = oldsize; ix != length; ++ix)
+        for (size_type ix = oldsize; ix != length; ++ix)
             arr[ix] = QChar(' ');
 }
 
-uint QCharString::size() const
+QCharString::size_type QCharString::size() const
 {
     // When debugging, siz holds the length of the string, but it is only used for error
     // checking. It cannot be returned here as sometimes the size is changed AFTER siz is set.
-    return arr == nullptr ? 0 : qcharlen(arr);
+    return arr == nullptr ? 0 : tosignedness<size_type>(qcharlen(arr));
 }
 
 bool QCharString::empty() const
@@ -724,24 +722,24 @@ const QChar* QCharString::data() const
     return arr;
 }
 
-const QChar* QCharString::rightData(uint n) const
+const QChar* QCharString::rightData(size_type n) const
 {
-    return arr + std::max<int>(0, size() - n);
+    return arr + std::max(0, tosigned(size() - n));
 }
 
-QChar& QCharString::operator[](uint n)
+QChar& QCharString::operator[](size_type n)
 {
 #ifdef _DEBUG
-    if (n >= siz)
+    if (n >= siz || n < 0)
         throw "invalid call";
 #endif
     return arr[n];
 }
 
-const QChar& QCharString::operator[](uint n) const
+const QChar& QCharString::operator[](size_type n) const
 {
 #ifdef _DEBUG
-    if (n >= siz)
+    if (n >= siz || n < 0)
         throw "invalid call";
 #endif
     return arr[n];
@@ -761,14 +759,7 @@ bool QCharString::operator!=(const QCharString &other) const
     return arr != other.arr && qcharcmp(arr, other.arr) != 0;
 }
 
-//QString QCharString::toQString(int len) const
-//{
-//    if (arr == nullptr)
-//        return QString();
-//    return QString(arr, (len == -1) ? size() : len);
-//}
-
-QString QCharString::toQString(int pos, int len) const
+QString QCharString::toQString(size_type pos, int len) const
 {
     if (arr == nullptr)
         return QString();
@@ -789,19 +780,12 @@ QString QCharString::toUpper() const
     return QString::fromRawData(arr, size()).toUpper();
 }
 
-QString QCharString::toQStringRaw(/*int len*/) const
+QString QCharString::toQStringRaw() const
 {
     if (arr == nullptr)
         return QString();
     return QString::fromRawData(arr, /*(len == -1) ?*/ size() /*: len*/);
 }
-
-//QString QCharString::toQStringRaw(int pos, int len) const
-//{
-//    if (arr == nullptr)
-//        return QString();
-//    return QString::fromRawData(arr + pos, (len == -1) ? (size() - pos) : len);
-//}
 
 QByteArray QCharString::toUtf8(int len) const
 {
@@ -816,7 +800,7 @@ int QCharString::find(const QChar *str, int length) const
         return -1;
 
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     const QChar *pos = qcharstr(arr, str, -1, length);
     if (pos == nullptr)
@@ -854,8 +838,8 @@ bool operator>(const QCharString &a, const QCharString &b)
 template <typename STR>
 bool operator==(const STR &a, const QCharString &b)
 {
-    int len = b.size();
-    if (a.size() != len)
+    QCharString::size_type len = b.size();
+    if (a.size() != tosignedness<decltype(a.size())>(len))
         return false;
     return qcharncmp(a.constData(), b.arr, len) == 0;
 }
@@ -863,8 +847,8 @@ bool operator==(const STR &a, const QCharString &b)
 template <typename STR>
 bool operator==(const QCharString &a, const STR &b)
 {
-    int len = a.size();
-    if (b.size() != len)
+    QCharString::size_type len = a.size();
+    if (b.size() != tosignedness<decltype(b.size())>(len))
         return false;
     return qcharncmp(b.constData(), a.arr, len) == 0;
 }
@@ -872,8 +856,8 @@ bool operator==(const QCharString &a, const STR &b)
 template <typename STR>
 bool operator!=(const STR &a, const QCharString &b)
 {
-    int len = b.size();
-    if (a.size() != len)
+    QCharString::size_type len = b.size();
+    if (a.size() != tosignedness<decltype(a.size())>(len))
         return true;
     return qcharncmp(a.constData(), b.arr, len) != 0;
 }
@@ -881,8 +865,8 @@ bool operator!=(const STR &a, const QCharString &b)
 template <typename STR>
 bool operator!=(const QCharString &a, const STR &b)
 {
-    int len = a.size();
-    if (b.size() != len)
+    QCharString::size_type len = a.size();
+    if (b.size() != tosignedness<decltype(b.size())>(len))
         return true;
     return qcharncmp(b.constData(), a.arr, len) != 0;
 }
@@ -983,12 +967,12 @@ namespace std
 //-------------------------------------------------------------
 
 
-QCharStringListConstIterator operator+(int n, const QCharStringListConstIterator &b)
+QCharStringListConstIterator operator+(QCharStringListConstIterator::difference_type n, const QCharStringListConstIterator &b)
 {
     return b + n;
 }
 
-QCharStringListIterator operator+(int n, const QCharStringListIterator &b)
+QCharStringListIterator operator+(QCharStringListIterator::difference_type n, const QCharStringListIterator &b)
 {
     return b + n;
 }
@@ -1005,11 +989,11 @@ QCharStringListConstIterator& QCharStringListConstIterator::operator=(const QCha
 QCharStringListConstIterator& QCharStringListConstIterator::operator++()
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     ++pos;
-    if (pos == owner->size())
+    if (pos == tosigned(owner->size()))
         pos = -1;
     return *this;
 }
@@ -1017,12 +1001,12 @@ QCharStringListConstIterator& QCharStringListConstIterator::operator++()
 QCharStringListConstIterator QCharStringListConstIterator::operator++(int)
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     QCharStringListConstIterator copy(*this);
     ++pos;
-    if (pos == owner->size())
+    if (pos == tosigned(owner->size()))
         pos = -1;
     return copy;
 }
@@ -1031,7 +1015,7 @@ QCharStringListConstIterator QCharStringListConstIterator::operator++(int)
 QCharStringListConstIterator& QCharStringListConstIterator::operator--()
 {
 #ifdef _DEBUG
-    if (pos == 0 || owner == nullptr || pos >= owner->size() || owner->size() == 0)
+    if (pos == 0 || owner == nullptr || pos >= tosigned(owner->size()) || owner->size() == 0)
         throw "Check your access.";
 #endif
     if (pos == -1)
@@ -1043,7 +1027,7 @@ QCharStringListConstIterator& QCharStringListConstIterator::operator--()
 QCharStringListConstIterator QCharStringListConstIterator::operator--(int)
 {
 #ifdef _DEBUG
-    if (pos == 0 || owner == nullptr || pos >= owner->size() || owner->size() == 0)
+    if (pos == 0 || owner == nullptr || pos >= tosigned(owner->size()) || owner->size() == 0)
         throw "Check your access.";
 #endif
     QCharStringListConstIterator copy(*this);
@@ -1053,63 +1037,63 @@ QCharStringListConstIterator QCharStringListConstIterator::operator--(int)
     return copy;
 }
 
-QCharStringListConstIterator QCharStringListConstIterator::operator+(int n) const
+QCharStringListConstIterator QCharStringListConstIterator::operator+(difference_type n) const
 {
     int val = pos == -1 ? owner->size() : pos;
 #ifdef _DEBUG
-    if ((pos == -1 && n > 0) || owner == nullptr || val + n > owner->size() || val + n < 0)
+    if ((pos == -1 && n > 0) || owner == nullptr || val + n > tosigned(owner->size()) || val + n < 0)
         throw "Check your access.";
 #endif
-    return QCharStringListConstIterator(owner, val + n == owner->size() ? -1 : val + n);
+    return QCharStringListConstIterator(owner, val + n == tosigned(owner->size()) ? -1 : val + n);
 }
 
-QCharStringListConstIterator QCharStringListConstIterator::operator-(int n) const
+QCharStringListConstIterator QCharStringListConstIterator::operator-(difference_type n) const
 {
     int val = pos == -1 ? owner->size() : pos;
 #ifdef _DEBUG
-    if ((pos == -1 && n < 0) || owner == nullptr || val - n > owner->size() || val - n < 0)
+    if ((pos == -1 && n < 0) || owner == nullptr || val - n > tosigned(owner->size()) || val - n < 0)
         throw "Check your access.";
 #endif
-    return QCharStringListConstIterator(owner, val - n == owner->size() ? -1 : val - n);
+    return QCharStringListConstIterator(owner, val - n == tosigned(owner->size()) ? -1 : val - n);
 }
 
-QCharStringListConstIterator& QCharStringListConstIterator::operator+=(int n)
+QCharStringListConstIterator& QCharStringListConstIterator::operator+=(difference_type n)
 {
     int val = pos == -1 ? owner->size() : pos;
 #ifdef _DEBUG
-    if ((pos == -1 && n > 0) || owner == nullptr || val + n > owner->size() || val + n < 0)
+    if ((pos == -1 && n > 0) || owner == nullptr || val + n > tosigned(owner->size()) || val + n < 0)
         throw "Check your access.";
 #endif
-    pos = val + n == owner->size() ? -1 : val + n;
+    pos = val + n == tosigned(owner->size()) ? -1 : val + n;
     return *this;
 }
 
-QCharStringListConstIterator& QCharStringListConstIterator::operator-=(int n)
+QCharStringListConstIterator& QCharStringListConstIterator::operator-=(difference_type n)
 {
     int val = pos == -1 ? owner->size() : pos;
 #ifdef _DEBUG
-    if ((pos == -1 && n < 0) || owner == nullptr || val - n > owner->size() || val - n < 0)
+    if ((pos == -1 && n < 0) || owner == nullptr || val - n > tosigned(owner->size()) || val - n < 0)
         throw "Check your access.";
 #endif
-    pos = val - n == owner->size() ? -1 : val - n;
+    pos = val - n == tosigned(owner->size()) ? -1 : val - n;
     return *this;
 }
 
-int QCharStringListConstIterator::operator-(const QCharStringListConstIterator &b) const
+ QCharStringListConstIterator::difference_type QCharStringListConstIterator::operator-(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
-    int val = pos == -1 ? owner->size() : pos;
-    int bval = b.pos == -1 ? b.owner->size() : b.pos;
+    int val = pos == -1 ? tosigned(owner->size()) : pos;
+    int bval = b.pos == -1 ? tosigned(b.owner->size()) : b.pos;
     return val - bval;
 }
 
 bool QCharStringListConstIterator::operator==(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
 
@@ -1119,7 +1103,7 @@ bool QCharStringListConstIterator::operator==(const QCharStringListConstIterator
 bool QCharStringListConstIterator::operator!=(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
     return pos != b.pos;
@@ -1128,7 +1112,7 @@ bool QCharStringListConstIterator::operator!=(const QCharStringListConstIterator
 bool QCharStringListConstIterator::operator<(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
     return pos != b.pos && (b.pos == -1 || (pos != -1 && pos < b.pos));
@@ -1137,7 +1121,7 @@ bool QCharStringListConstIterator::operator<(const QCharStringListConstIterator 
 bool QCharStringListConstIterator::operator>(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
     return pos != b.pos && (pos == -1 || (b.pos != -1 && pos > b.pos));
@@ -1146,7 +1130,7 @@ bool QCharStringListConstIterator::operator>(const QCharStringListConstIterator 
 bool QCharStringListConstIterator::operator<=(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
     return pos == b.pos || b.pos == -1 || (pos != -1 && pos < b.pos);
@@ -1155,7 +1139,7 @@ bool QCharStringListConstIterator::operator<=(const QCharStringListConstIterator
 bool QCharStringListConstIterator::operator>=(const QCharStringListConstIterator &b) const
 {
 #ifdef _DEBUG
-    if (owner == nullptr || owner != b.owner || pos >= owner->size() || b.pos >= b.owner->size())
+    if (owner == nullptr || owner != b.owner || pos >= tosigned(owner->size()) || b.pos >= tosigned(b.owner->size()))
         throw "Check your access.";
 #endif
     return pos == b.pos || pos == -1 || (b.pos != -1 && pos > b.pos);
@@ -1165,7 +1149,7 @@ bool QCharStringListConstIterator::operator>=(const QCharStringListConstIterator
 const QCharString& QCharStringListConstIterator::operator*() const
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return owner->items(pos);
@@ -1174,7 +1158,7 @@ const QCharString& QCharStringListConstIterator::operator*() const
 const QCharString* QCharStringListConstIterator::operator->() const
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return &owner->items(pos);
@@ -1220,23 +1204,23 @@ QCharStringListIterator QCharStringListIterator::operator--(int)
     return copy;
 }
 
-QCharStringListIterator QCharStringListIterator::operator+(int n) const
+QCharStringListIterator QCharStringListIterator::operator+(difference_type n) const
 {
     return QCharStringListIterator(base::operator+(n));
 }
 
-QCharStringListIterator QCharStringListIterator::operator-(int n) const
+QCharStringListIterator QCharStringListIterator::operator-(difference_type n) const
 {
     return QCharStringListIterator(base::operator-(n));
 }
 
-QCharStringListIterator& QCharStringListIterator::operator+=(int n)
+QCharStringListIterator& QCharStringListIterator::operator+=(difference_type n)
 {
     base::operator+=(n);
     return *this;
 }
 
-QCharStringListIterator& QCharStringListIterator::operator-=(int n)
+QCharStringListIterator& QCharStringListIterator::operator-=(difference_type n)
 {
     base::operator-=(n);
     return *this;
@@ -1245,7 +1229,7 @@ QCharStringListIterator& QCharStringListIterator::operator-=(int n)
 QCharString& QCharStringListIterator::operator*()
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return const_cast<QCharStringList*>(owner)->items(pos);
@@ -1254,7 +1238,7 @@ QCharString& QCharStringListIterator::operator*()
 QCharString* QCharStringListIterator::operator->()
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return &const_cast<QCharStringList*>(owner)->items(pos);
@@ -1263,7 +1247,7 @@ QCharString* QCharStringListIterator::operator->()
 const QCharString&  QCharStringListIterator::operator*() const
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return owner->items(pos);
@@ -1272,7 +1256,7 @@ const QCharString&  QCharStringListIterator::operator*() const
 const QCharString* QCharStringListIterator::operator->() const
 {
 #ifdef _DEBUG
-    if (pos == -1 || owner == nullptr || pos >= owner->size())
+    if (pos == -1 || owner == nullptr || pos >= tosigned(owner->size()))
         throw "Check your access.";
 #endif
     return &owner->items(pos);
@@ -1308,7 +1292,7 @@ QCharStringList::QCharStringList(const QCharStringList &src) : reserved(src.rese
         return;
 
     arr = new QCharString[reserved];
-    for (int ix = 0; ix != used; ++ix)
+    for (size_type ix = 0; ix != used; ++ix)
         arr[ix] = src.arr[ix];
 }
 
@@ -1327,7 +1311,7 @@ QCharStringList& QCharStringList::operator=(const QCharStringList &src)
         arr = new QCharString[reserved];
     }
 
-    for (int ix = 0; ix != used; ++ix)
+    for (size_type ix = 0; ix != used; ++ix)
         arr[ix] = src.arr[ix];
 
     return *this;
@@ -1338,16 +1322,16 @@ QCharStringList::~QCharStringList()
     delete[] arr;
 }
 
-int QCharStringList::maxSize()
+QCharStringList::size_type QCharStringList::maxSize()
 {
-    return std::numeric_limits<int>::max() / 2;
+    return std::numeric_limits<size_type>::max() - 1;
 }
 
 bool QCharStringList::operator==(const QCharStringList &b) const
 {
     if (used != b.used)
         return false;
-    for (int ix = 0; ix != used; ++ix)
+    for (size_type ix = 0; ix != used; ++ix)
         if (arr[ix] != b.arr[ix])
             return false;
     return true;
@@ -1378,28 +1362,28 @@ QCharStringList::const_iterator QCharStringList::begin() const
 QCharStringList::reverse_iterator QCharStringList::rbegin()
 {
     //if (arr == nullptr)
-        return std::reverse_iterator<iterator>(iterator(this, -1));
+    return std::reverse_iterator<iterator>(iterator(this, -1));
     //return std::reverse_iterator<iterator>(iterator(this, size()));
 }
 
 QCharStringList::const_reverse_iterator QCharStringList::rbegin() const
 {
     //if (arr == nullptr)
-        return std::reverse_iterator<const_iterator>(const_iterator(this, -1));
+    return std::reverse_iterator<const_iterator>(const_iterator(this, -1));
     //return std::reverse_iterator<const_iterator>(const_iterator(this, arr + size()));
 }
 
 QCharStringList::iterator QCharStringList::end()
 {
     //if (arr == nullptr)
-        return iterator(this, -1);
+    return iterator(this, -1);
     //return iterator(this, arr + size());
 }
 
 QCharStringList::const_iterator QCharStringList::end() const
 {
     //if (arr == nullptr)
-        return const_iterator(this, -1);
+    return const_iterator(this, -1);
     //return const_iterator(this, arr + size());
 }
 
@@ -1437,14 +1421,14 @@ QCharStringList::const_reverse_iterator QCharStringList::crend() const
     return rend();
 }
 
-void QCharStringList::reserve(uint n)
+void QCharStringList::reserve(size_type n)
 {
     if (reserved >= n)
         return;
 
     QCharString *tmp = arr;
     arr = new QCharString[n];
-    for (int ix = 0; ix < used; ++ix)
+    for (size_type ix = 0; ix < used; ++ix)
         arr[ix] = std::move(tmp[ix]);
 
     delete[] tmp;
@@ -1454,7 +1438,7 @@ void QCharStringList::reserve(uint n)
 void QCharStringList::add(const QChar *str, int length)
 {
     if (length == -1)
-        length = qcharlen(str);
+        length = tosigned(qcharlen(str));
 
     if (used == reserved)
         grow();
@@ -1481,13 +1465,13 @@ void QCharStringList::add(const QCharStringList &src, bool dup)
     if (dup)
         reserve(used + src.used);
 
-    int iy;
-    for (int ix = 0; ix != src.used; ++ix)
+    size_type iy;
+    for (size_type ix = 0; ix != src.used; ++ix)
     {
         // Check for duplicates and skip if found.
         if (!dup)
         {
-            for ( iy = 0; iy != used; ++iy)
+            for (iy = 0; iy != used; ++iy)
             {
                 if (qcharcmp(src.items(ix).data(), items(iy).data()) == 0)
                     break;
@@ -1502,10 +1486,10 @@ void QCharStringList::add(const QCharStringList &src, bool dup)
 
 bool QCharStringList::contains(const QChar *str, bool exact)
 {
-    int strsiz = qcharlen(str);
-    for (int ix = 0; ix != used; ++ix)
+    size_type strsiz = tosignedness<size_type>(qcharlen(str));
+    for (size_type ix = 0; ix != used; ++ix)
     {
-        int siz = arr[ix].size();
+        size_type siz = arr[ix].size();
         if (exact && siz != strsiz)
             continue;
         if (qcharncmp(str, arr[ix].data(), strsiz) == 0)
@@ -1526,11 +1510,11 @@ void QCharStringList::copy(const QStringList &src)
 
     reserve(src.size());
     used = src.size();
-    for (int ix = 0; ix != used; ++ix)
+    for (size_type ix = 0; ix != used; ++ix)
         arr[ix].copy(src.at(ix).constData());
 }
 
-int QCharStringList::size() const
+QCharStringList::size_type QCharStringList::size() const
 {
     return used;
 }
@@ -1548,30 +1532,26 @@ void QCharStringList::clear()
     reserved = 0;
 }
 
-QCharString& QCharStringList::items(int ix)
+QCharString& QCharStringList::items(size_type ix)
 {
-#ifdef _DEBUG
-    if (ix < 0 || ix >= used)
-        throw "Index out of bounds."; // Throws are generally bad. Get rid of this if possible.
-#endif
+    assert(ix >= 0 && ix < used);
+
     return arr[ix];
 }
 
-QCharString& QCharStringList::operator[](int ix)
+QCharString& QCharStringList::operator[](size_type ix)
 {
     return items(ix);
 }
 
-const QCharString& QCharStringList::items(int ix) const
+const QCharString& QCharStringList::items(size_type ix) const
 {
-#ifdef _DEBUG
-    if (ix < 0 || ix >= used)
-        throw "Index out of bounds."; // Throws are generally bad. Get rid of this if possible.
-#endif
+    assert(ix >= 0 && ix < used);
+
     return arr[ix];
 }
 
-const QCharString& QCharStringList::operator[](int ix) const
+const QCharString& QCharStringList::operator[](size_type ix) const
 {
     return items(ix);
 }
@@ -1583,24 +1563,24 @@ QString QCharStringList::join(const QString &sep) const
     if (used == 1)
         return arr[0].toQStringRaw();
 
-    std::vector<int> sizes;
+    std::vector<size_type> sizes;
     sizes.reserve(used);
 
     int seplen = sep.size();
     int slen = seplen * (used - 1);
-    for (int ix = 0; ix != used; ++ix)
+    for (int ix = 0, siz = tosigned(used); ix != siz; ++ix)
     {
-        int siz = arr[ix].size();
-        slen += siz;
-        sizes.push_back(siz);
+        int asiz = arr[ix].size();
+        slen += asiz;
+        sizes.push_back(asiz);
     }
 
-    int* sizesdata = sizes.data();
+    size_type* sizesdata = sizes.data();
     QCharString str;
     str.setSize(slen);
     QChar *data = str.data();
     const QChar *sepdata = sep.constData();
-    for (int ix = 0; ix != used; ++ix)
+    for (size_type ix = 0; ix != used; ++ix)
     {
         memcpy(data, arr[ix].data(), sizeof(QChar) * sizesdata[ix]);
         data += sizesdata[ix];
@@ -1616,7 +1596,7 @@ QString QCharStringList::join(const QString &sep) const
 
 void QCharStringList::grow()
 {
-    int growsize = 16;
+    size_type growsize = 16;
 
     if (reserved > 1024)
         growsize = 128;
@@ -1627,7 +1607,7 @@ void QCharStringList::grow()
 
     QCharString *tmp = arr;
     arr = new QCharString[reserved + growsize];
-    for (int ix = 0; ix < used; ++ix)
+    for (size_type ix = 0; ix < used; ++ix)
         arr[ix] = std::move(tmp[ix]);
 
     delete[] tmp;
@@ -1649,7 +1629,7 @@ QDataStream& operator>>(QDataStream &stream, QCharStringList &list)
 
     list.reserve(cnt);
 
-    for (int ix = 0; ix != cnt; ++ix)
+    for (qint32 ix = 0; ix != cnt; ++ix)
     {
         QCharString str;
         stream >> make_zstr(str, ZStrFormat::Int);
@@ -1663,7 +1643,7 @@ QDataStream& operator<<(QDataStream &stream, const QCharStringList &list)
 {
     qint32 cnt = list.size();
     stream << cnt;
-    for (int ix = 0; ix != cnt; ++ix)
+    for (qint32 ix = 0; ix != cnt; ++ix)
         stream << make_zstr(list[ix], ZStrFormat::Int);
 
     return stream;

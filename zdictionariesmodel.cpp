@@ -48,12 +48,12 @@ QVariant DictionariesModel::data(const QModelIndex &index, int role) const
     return ZKanji::dictionaryMenuFlag(/*QSize(Settings::scaled(18), Settings::scaled(18)),*/ ZKanji::dictionary(row)->name()/*, Flags::Flag*/);  //QIcon(":/flaggen.svg");
 }
 
-QModelIndex DictionariesModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex DictionariesModel::index(int row, int column, const QModelIndex &/*parent*/) const
 {
     return createIndex(row, column, nullptr);
 }
 
-QModelIndex DictionariesModel::parent(const QModelIndex &index) const
+QModelIndex DictionariesModel::parent(const QModelIndex &/*index*/) const
 {
     return QModelIndex();
 }
@@ -71,12 +71,12 @@ void DictionariesModel::dictionaryAdded()
     endInsertRows();
 }
 
-void DictionariesModel::dictionaryToBeRemoved(int index, int order)
+void DictionariesModel::dictionaryToBeRemoved(int /*index*/, int order)
 {
     beginRemoveRows(QModelIndex(), order, order);
 }
 
-void DictionariesModel::dictionaryRemoved(int index, int order)
+void DictionariesModel::dictionaryRemoved(int /*index*/, int /*order*/)
 {
     endRemoveRows();
 }
@@ -87,12 +87,12 @@ void DictionariesModel::dictionaryMoved(int from, int to)
     endMoveRows();
 }
 
-void DictionariesModel::dictionaryRenamed(const QString &oldname, int index, int order)
+void DictionariesModel::dictionaryRenamed(const QString &/*oldname*/, int /*index*/, int order)
 {
     emit dataChanged(createIndex(order, 0), createIndex(order, columnCount() - 1));
 }
 
-void DictionariesModel::dictionaryFlagChanged(int index, int order)
+void DictionariesModel::dictionaryFlagChanged(int /*index*/, int order)
 {
     emit dataChanged(createIndex(order, 0), createIndex(order, columnCount() - 1));
 }

@@ -142,7 +142,7 @@ void Sentences::load(const QString &filename)
 
         int pos = 0;
         blockpos.resize(getInt(data, pos) + 1);
-        for (int ix = 0; ix != blockpos.size() - 1; ++ix)
+        for (int ix = 0, siz = tosigned(blockpos.size()) - 1; ix != siz; ++ix)
             blockpos[ix] = getInt(data, pos);
         blockpos[blockpos.size() - 1] = stpos;
 
@@ -182,7 +182,7 @@ void Sentences::load(const QString &filename)
         pos = 0;
 
         ids.resize(data.size() / (sizeof(int) * 2));
-        for (int ix = 0, siz = ids.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ids.size()); ix != siz; ++ix)
             ids[ix] = std::make_pair(getInt(data, pos), getInt(data, pos));
 
         quint32 ui;
@@ -300,13 +300,13 @@ void Sentences::loadBlock(ushort index, ExampleBlock &block)
 
             int defcnt = getShort(data, pos);
             wdat.forms.resize(defcnt);
-            for (int ix = 0; ix != defcnt; ++ix)
+            for (int iy = 0; iy != defcnt; ++iy)
             {
-                wdat.forms[ix].kanji = getByteArrayString(data, pos);
-                wdat.forms[ix].kana = getByteArrayString(data, pos);
+                wdat.forms[iy].kanji = getByteArrayString(data, pos);
+                wdat.forms[iy].kana = getByteArrayString(data, pos);
 
                 // kanji and kana 0 terminators and sizes.
-                block.size += 2 + 2 + wdat.forms[ix].kanji.size() * 2 + wdat.forms[ix].kana.size() * 2;
+                block.size += 2 + 2 + wdat.forms[iy].kanji.size() * 2 + wdat.forms[iy].kana.size() * 2;
             }
         }
     }
@@ -321,7 +321,9 @@ quint16 Sentences::getShort(const QByteArray &arr, int &pos)
     pos += 2;
 
     quint16 r = quint16(quint16((uchar)arr.at(pos - 2)) | (quint16((uchar)arr.at(pos - 1)) << 8));
-    if (QSysInfo::ByteOrder == QSysInfo::BigEndian)
+
+    bool bigendian = (QSysInfo::ByteOrder == QSysInfo::BigEndian);
+    if (bigendian)
         r = qbswap(r);
     return r;
 }
@@ -333,7 +335,9 @@ qint32 Sentences::getInt(const QByteArray &arr, int &pos)
     pos += 4;
 
     qint32 r = qint32(quint32((uchar)arr.at(pos - 4)) | (quint32((uchar)arr.at(pos - 3)) << 8) | (quint32((uchar)arr.at(pos - 2)) << 16) | (quint32((uchar)arr.at(pos - 1)) << 24));
-    if (QSysInfo::ByteOrder == QSysInfo::BigEndian)
+
+    bool bigendian = (QSysInfo::ByteOrder == QSysInfo::BigEndian);
+    if (bigendian)
         r = qbswap(r);
     return r;
 }

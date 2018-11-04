@@ -25,6 +25,8 @@ signals:
     // Emitted by the derived class when the items listed are replaced.
     void changed();
 public:
+    typedef size_t  size_type;
+
     KanjiScrollerModel(QObject *parent = nullptr);
     virtual ~KanjiScrollerModel();
 
@@ -40,7 +42,7 @@ public:
     virtual QColor bgColor(int index) const;
     virtual QColor textColor(int index) const;
 
-    int size() const;
+    size_type size() const;
 private:
     std::vector<int> list;
 

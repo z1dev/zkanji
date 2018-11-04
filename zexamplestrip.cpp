@@ -19,6 +19,8 @@
 #include "colorsettings.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -161,7 +163,7 @@ bool ZExamplePopup::event(QEvent *e)
     return base::event(e);
 }
 
-void ZExamplePopup::paintEvent(QPaintEvent *e)
+void ZExamplePopup::paintEvent(QPaintEvent * /*e*/)
 {
     QPainter painter(this);
 
@@ -247,7 +249,7 @@ void ZExamplePopup::paintEvent(QPaintEvent *e)
     }
 }
 
-void ZExamplePopup::enterEvent(QEvent *e)
+void ZExamplePopup::enterEvent(QEvent * /*e*/)
 {
     waittimer.stop();
 }
@@ -332,7 +334,7 @@ void ZExamplePopup::mouseDoubleClickEvent(QMouseEvent *e)
 
 
 ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), display(ExampleDisplay::Both), index(-1), dirty(false),
-        block(0), line(0), wordpos(-1), common(nullptr), current(-1), hovered(-1), interactible(true), jpwidth(-1), trwidth(-1)
+        block(0), line(0), wordpos((uchar)-1), common(nullptr), current(-1), hovered(-1), interactible(true), jpwidth(-1), trwidth(-1)
 {
     //setBackgroundRole(QPalette::Base);
     setAutoFillBackground(false);
@@ -600,7 +602,7 @@ bool ZExampleStrip::event(QEvent *e)
         if (popup.get() == pe->what())
         {
             popup.release();
-            if (hovered != -1 && hovered < wordrect.size())
+            if (hovered != -1 && hovered < tosigned(wordrect.size()))
                 updateWordRect(hovered);
             hovered = -1;
             updateDots();
@@ -693,7 +695,7 @@ void ZExampleStrip::mousePressEvent(QMouseEvent *e)
 
     if (!e->isAccepted() && interactible)
     {
-        if (hovered != -1 && hovered != wordrect.size())
+        if (hovered != -1 && hovered != tosigned(wordrect.size()))
             selectForm(0, hovered);
     }
     e->accept();
@@ -719,13 +721,13 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
     if (e->isAccepted())
     {
         const QRect r = contentsRect();
-        int hpos = interactible && r.contains(e->pos()) ? wordrect.size() : -1;
+        int hpos = interactible && r.contains(e->pos()) ? tosigned(wordrect.size()) : -1;
 
         // Mouse cursor was in a word rectangle, but it's now over the scroll bar. Update the
         // hovered rectangle and the dotted strip below the words.
         if (index != -1 && hovered != hpos)
         {
-            if (hovered != -1 && hovered != wordrect.size())
+            if (hovered != -1 && hovered != tosigned(wordrect.size()))
                 updateWordRect(hovered);
             hovered = hpos;
             popup.reset();
@@ -743,25 +745,25 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
     int hpos = -1;
 
     int gap2 = Settings::scaled(2);
-    if (hovered != -1 && hovered != wordrect.size() && wordrect[hovered].adjusted(-gap2, -gap2, gap2, gap2).contains(e->pos()))
+    if (hovered != -1 && hovered != tosigned(wordrect.size()) && wordrect[hovered].adjusted(-gap2, -gap2, gap2, gap2).contains(e->pos()))
         hpos = hovered;
-    for (int ix = 0; ix != wordrect.size() && hpos == -1; ++ix)
+    for (int ix = 0, siz = tosigned(wordrect.size()); ix != siz && hpos == -1; ++ix)
     {
         if (!wordrect[ix].isEmpty() && wordrect[ix].adjusted(-gap2, -gap2, gap2, gap2).contains(e->pos()))
             hpos = ix;
     }
 
     if (hpos == -1)
-        hpos = wordrect.size();
+        hpos = tosigned(wordrect.size());
 
     if (hpos != hovered)
     {
         if (hovered == -1 || hpos == -1)
             updateDots();
 
-        if (hovered != -1 && hovered != wordrect.size())
+        if (hovered != -1 && hovered != tosigned(wordrect.size()))
             updateWordRect(hovered);
-        if (hpos != -1 && hpos != wordrect.size())
+        if (hpos != -1 && hpos != tosigned(wordrect.size()))
         {
             hovered = hpos;
             updateWordRect(hovered);
@@ -797,7 +799,7 @@ void ZExampleStrip::leaveEvent(QEvent *e)
     if (hovered != -1)
     {
         updateDots();
-        if (hovered < wordrect.size())
+        if (hovered < tosigned(wordrect.size()))
             updateWordRect(hovered);
         if (popup)
         {
@@ -846,8 +848,8 @@ int ZExampleStrip::scrollMax() const
         QFontMetrics jfm(jf);
         QFontMetrics tfm(tf);
 
-        int jh = jfm.height();
-        int th = tfm.height();
+        //int jh = jfm.height();
+        //int th = tfm.height();
         if (display == ExampleDisplay::Both || display == ExampleDisplay::Japanese)
             jpwidth = jfm.boundingRect(sentence.japanese.toQStringRaw()).width();
         if (display == ExampleDisplay::Both || display == ExampleDisplay::Translated)
@@ -874,7 +876,7 @@ int ZExampleStrip::scrollStep() const
 
 void ZExampleStrip::scrolled(int oldpos, int &newpos)
 {
-    for (int ix = 0; ix != wordrect.size(); ++ix)
+    for (int ix = 0, siz = tosigned(wordrect.size()); ix != siz; ++ix)
         wordrect[ix].translate(oldpos - newpos, 0);
     if (popup != nullptr && popup->isVisible())
     {
@@ -886,7 +888,7 @@ void ZExampleStrip::scrolled(int oldpos, int &newpos)
     update();
 }
 
-void ZExampleStrip::dictionaryRemoved(int index, int orderindex, Dictionary *d)
+void ZExampleStrip::dictionaryRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (dict != d)
         return;
@@ -987,7 +989,7 @@ void ZExampleStrip::fillWordRects()
     int jh = fm.height() - fm.descent() + Settings::scaled(3);
     int th = tfm.height();
 
-    int y;
+    int y = 0;
     if (display == ExampleDisplay::Both)
         y = std::max(r.top() + gap / 2, r.top() + (r.height() - jh - th - gap / 2) / 2);
     else if (display == ExampleDisplay::Japanese)
@@ -1120,7 +1122,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
 
     // Last part of the sentence without a word rectangle.
     int gappos = sentence.words[pos - 1].pos + sentence.words[pos - 1].len;
-    if (gappos < sentence.japanese.size())
+    if (gappos < tosigned(sentence.japanese.size()))
     {
         int gaplen = sentence.japanese.size() - gappos;
         QString str = sentence.japanese.toQString(gappos, gaplen);
@@ -1128,7 +1130,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
     }
 
     // Hovered word is painted last with its selection rectangle.
-    if (hovered != -1 && hovered != wordrect.size())
+    if (hovered != -1 && hovered != tosigned(wordrect.size()))
     {
         QRectF r = wordrect[hovered];
         r.adjust(-1.5, -1.5, 1.5, 1.5);
@@ -1150,7 +1152,7 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
         pen.setDashPattern({ 1, 1 });
         p->setPen(pen);
 
-        for (int ix = 0; ix != wordrect.size(); ++ix)
+        for (int ix = 0, siz = tosigned(wordrect.size()); ix != siz; ++ix)
         {
             if (ix == hovered || wordrect[ix].isEmpty())
                 continue;
@@ -1163,21 +1165,21 @@ void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
     p->setPen(Settings::textColor(this, ColorSettings::Text));
 }
 
-void ZExampleStrip::updateWordRect(int index)
+void ZExampleStrip::updateWordRect(int ind)
 {
     int gap = Settings::scaled(3);
-    update(wordrect[index].adjusted(-gap, -gap, gap, gap));
+    update(wordrect[ind].adjusted(-gap, -gap, gap, gap));
 }
 
 void ZExampleStrip::updateDots()
 {
     int left = 0;
-    int right = wordrect.size() - Settings::scaled(1);
-    while (left < wordrect.size() && wordrect[left].isEmpty())
+    int right = tosigned(wordrect.size()) - Settings::scaled(1);
+    while (left < tosigned(wordrect.size()) && wordrect[left].isEmpty())
         ++left;
     while (right > left && wordrect[right].isEmpty())
         --right;
-    if (left == wordrect.size())
+    if (left == tosigned(wordrect.size()))
         return;
 
     update(wordrect[left].left() - 1, wordrect[left].bottom() + 1, wordrect[right].right() - wordrect[left].left() + Settings::scaled(2), Settings::scaled(2));
@@ -1202,17 +1204,17 @@ void ZExampleStrip::selectForm(int form, int wpos)
 
     if (wpos == -1)
     {
-        if (hovered == -1 || hovered == wordrect.size())
+        if (hovered == -1 || hovered == tosigned(wordrect.size()))
             return;
         wpos = hovered;
     }
 
     if (wpos != wordpos)
     {
-        if (wordpos != -1)
+        if (wordpos != (uchar)-1)
             updateWordRect(wordpos);
         wordpos = wpos;
-        if (wordpos != -1)
+        if (wordpos != (uchar)-1)
             updateWordRect(wordpos);
     }
 

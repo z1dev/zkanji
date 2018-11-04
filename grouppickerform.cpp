@@ -29,7 +29,7 @@ GroupBase* GroupPickerForm::select(GroupWidget::Modes mode, const QString &instr
     FormStates::restoreDialogSize("GroupPicker", f, true);
 
     GroupBase *result = nullptr;
-    connect(f, &GroupPickerForm::groupSelected, [&result](Dictionary *dict, GroupBase *group) {
+    connect(f, &GroupPickerForm::groupSelected, [&result](Dictionary * /*dict*/, GroupBase *group) {
         result = group;
     });
 

@@ -140,7 +140,7 @@ private:
 
     ScrollerType type;
 
-    ScrollerOrientation ori;
+    ScrollerOrientation orientation;
 
     // The left mouse button was pressed above the scroll bar or button.
     bool dragging;

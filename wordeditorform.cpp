@@ -22,6 +22,8 @@
 #include "globalui.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -34,7 +36,7 @@ extern const double defRowSize;
 
 void DictionaryListEditDelegate::paintDefinition(QPainter *painter, QColor textcolor, QRect r, int y, WordEntry *e, std::vector<InfTypes> *inf, int defix, bool selected) const
 {
-    if (defix != e->defs.size())
+    if (defix != tosigned(e->defs.size()))
     {
         base::paintDefinition(painter, textcolor, r, y, e, inf, defix, selected);
         return;
@@ -351,8 +353,8 @@ void WordEditorForm::exec(Dictionary *d, int windex, int defindex)
 
     checkInput();
 
-    ui->cloneButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
-    ui->delButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
+    ui->cloneButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
+    ui->delButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
 
     FormStates::restoreDialogSplitterState("WordEditor", this, ui->splitter);
 
@@ -377,8 +379,8 @@ void WordEditorForm::exec(Dictionary *srcd, int srcwindex, const std::vector<int
     WordEntry *srcw = srcd->wordEntry(srcwindex);
 
 #ifdef _DEBUG
-    for (int ix = 0; ix != srcdindexes.size(); ++ix)
-        if (srcdindexes[ix] < 0 || srcdindexes[ix] >= srcw->defs.size())
+    for (int ix = 0, siz = tosigned(srcdindexes.size()); ix != siz; ++ix)
+        if (srcdindexes[ix] < 0 || srcdindexes[ix] >= tosigned(srcw->defs.size()))
             throw "Invalid index in srcdindexes list. Should be a valid definition index in srcw.";
 #endif
 
@@ -410,9 +412,9 @@ void WordEditorForm::exec(Dictionary *srcd, int srcwindex, const std::vector<int
     std::sort(indordered.begin(), indordered.end());
     indordered.resize(std::unique(indordered.begin(), indordered.end()) - indordered.begin());
 
-    int pos = entry->defs.size();
+    int pos = tosigned(entry->defs.size());
     entry->defs.resize(pos + indordered.size());
-    for (int ix = 0; ix != indordered.size(); ++ix)
+    for (int ix = 0, siz = tosigned(indordered.size()); ix != siz; ++ix)
         entry->defs[ix + pos] = srcw->defs[indordered[ix]];
 
     // Adding an extra empty definition at the end of the entry to allow inserting new definitions.
@@ -432,8 +434,8 @@ void WordEditorForm::exec(Dictionary *srcd, int srcwindex, const std::vector<int
 
     checkInput();
 
-    ui->cloneButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
-    ui->delButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
+    ui->cloneButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
+    ui->delButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
 
     FormStates::restoreDialogSplitterState("WordEditor", this, ui->splitter);
 
@@ -526,7 +528,7 @@ void WordEditorForm::checkInput()
     bool convok = false;
     int freqval = 0;
     bool valid = !ui->kanjiEdit->text().isEmpty() && !ui->kanaEdit->text().isEmpty() && !ui->freqEdit->text().isEmpty() && (freqval = ui->freqEdit->text().toInt(&convok)) >= 0 && convok && freqval <= 10000 && entry->defs.size() != 0;
-    for (int ix = 0; valid && ix != entry->defs.size(); ++ix)
+    for (int ix = 0, siz = tosigned(entry->defs.size()); valid && ix != siz; ++ix)
     {
         if (entry->defs[ix].def.empty())
             valid = false;
@@ -610,14 +612,14 @@ void WordEditorForm::attribDefChanged()
 
     checkInput();
 
-    ui->cloneButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
-    ui->delButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
+    ui->cloneButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
+    ui->delButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
 }
 
-void WordEditorForm::defCurrentChanged(int row, int prev)
+void WordEditorForm::defCurrentChanged(int row, int /*prev*/)
 {
     ignoreedits = true;
-    if (row == -1 || row >= entry->defs.size())
+    if (row == -1 || row >= tosigned(entry->defs.size()))
     {
         ui->defTextEdit->setPlainText(QString());
         ui->attribWidget->clearChecked();
@@ -643,7 +645,7 @@ void WordEditorForm::delDefClicked()
         return;
 
     int ix = ui->defTable->currentRow();
-    if (ix >= entry->defs.size())
+    if (ix >= tosigned(entry->defs.size()))
         return;
 
     model->deleteDefinition(ix);
@@ -652,8 +654,8 @@ void WordEditorForm::delDefClicked()
 
     checkInput();
 
-    ui->cloneButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
-    ui->delButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
+    ui->cloneButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
+    ui->delButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
 }
 
 void WordEditorForm::cloneDefClicked()
@@ -662,12 +664,12 @@ void WordEditorForm::cloneDefClicked()
         return;
 
     int ix = ui->defTable->currentRow();
-    if (ix >= entry->defs.size())
+    if (ix >= tosigned(entry->defs.size()))
         return;
 
     model->cloneDefinition(ix);
 
-    ui->defTable->setCurrentRow(entry->defs.size() - 1);
+    ui->defTable->setCurrentRow(tosigned(entry->defs.size()) - 1);
 
     checkInput();
 }
@@ -702,8 +704,8 @@ void WordEditorForm::resetClicked()
 
     checkInput();
 
-    ui->cloneButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
-    ui->delButton->setEnabled(ui->defTable->currentRow() < entry->defs.size());
+    ui->cloneButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
+    ui->delButton->setEnabled(ui->defTable->currentRow() < tosigned(entry->defs.size()));
 }
 
 void WordEditorForm::applyClicked()
@@ -711,7 +713,7 @@ void WordEditorForm::applyClicked()
     bool convok = false;
     int freqval = 0;
     bool valid = !ui->kanjiEdit->text().isEmpty() && !ui->kanaEdit->text().isEmpty() && !ui->freqEdit->text().isEmpty() && (freqval = ui->freqEdit->text().toInt(&convok)) >= 0 && convok && freqval <= 10000 && entry->defs.size() != 0;
-    for (int ix = 0; valid && ix != entry->defs.size(); ++ix)
+    for (int ix = 0, siz = tosigned(entry->defs.size()); valid && ix != siz; ++ix)
     {
         if (entry->defs[ix].def.empty())
             valid = false;
@@ -735,7 +737,6 @@ void WordEditorForm::applyClicked()
         return;
     }
 
-    WordEntry *e = nullptr;
     if (index == -1)
     {
         index = dict->addWordCopy(entry.get(), true);
@@ -775,21 +776,21 @@ void WordEditorForm::okClicked()
         close();
 }
 
-void WordEditorForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void WordEditorForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict)
         close();
 }
 
-void WordEditorForm::dictionaryRenamed(const QString &oldname, int index, int orderindex)
+void WordEditorForm::dictionaryRenamed(const QString &/*oldname*/, int dindex, int /*orderindex*/)
 {
-    if (dict == ZKanji::dictionary(index))
+    if (dict == ZKanji::dictionary(dindex))
         ui->dictLabel->setText(dict->name());
 }
 
-void WordEditorForm::dictionaryFlagChanged(int index, int order)
+void WordEditorForm::dictionaryFlagChanged(int dindex, int /*order*/)
 {
-    if (dict == ZKanji::dictionary(index))
+    if (dict == ZKanji::dictionary(dindex))
         ui->dictImgLabel->setPixmap(ZKanji::dictionaryFlag(QSize(Settings::scaled(18), Settings::scaled(18)), dict->name(), Flags::Flag));
 }
 

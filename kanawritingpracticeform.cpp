@@ -21,6 +21,8 @@
 #include "colorsettings.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -182,7 +184,7 @@ void KanaWritingPracticeForm::candidatesChanged(const std::vector<int> &l)
 
 void KanaWritingPracticeForm::candidateClicked(int index)
 {
-    if (pos < 0 || pos >= list.size())
+    if (pos < 0 || pos >= tosigned(list.size()))
         return;
 
     QChar ch = ZKanji::elements()->itemUnicode(-candidates->items(index) - 1);
@@ -239,7 +241,7 @@ void KanaWritingPracticeForm::on_nextButton_clicked()
 
 void KanaWritingPracticeForm::on_revealButton_clicked()
 {
-    if (pos < 0 || pos >= list.size())
+    if (pos < 0 || pos >= tosigned(list.size()))
         return;
 
     if (ui->stack->currentIndex() == 0)
@@ -333,7 +335,7 @@ void KanaWritingPracticeForm::reset()
 
     while (list.size() != 40)
     {
-        int numpos = rnd(0, nums.size() - 1);
+        int numpos = rnd(0, tosigned(nums.size()) - 1);
         if (!list.empty() && nums[numpos] == list.back())
             continue;
         list.push_back(nums[numpos]);
@@ -373,7 +375,7 @@ void KanaWritingPracticeForm::next()
 
     ui->kanjiView->setKanjiIndex(0);
 
-    if (pos == list.size())
+    if (pos == tosigned(list.size()))
     {
         stopTimer(false);
 

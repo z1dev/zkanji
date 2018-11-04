@@ -9,11 +9,11 @@
 
 #include <QString>
 
+enum class FontStyle { Normal, Bold, Italic, BoldItalic };
+enum class LineSize { Small, Medium, Large, VeryLarge };
+
 struct FontSettings
 {
-    enum FontStyle { Normal, Bold, Italic, BoldItalic };
-    enum LineSize { Small, Medium, Large, VeryLarge };
-
     // Kanji in a kanji grid.
     QString kanji;
     // Point size of the kanji font shown in kanji grids.
@@ -27,7 +27,7 @@ struct FontSettings
     // Small info text font displayed in the dictionary.
     QString info;
     // Style of small info text font displayed in the dictionary.
-    FontStyle infostyle = Normal;
+    FontStyle infostyle = FontStyle::Normal;
 
     // Written and kana parts of word in the dictionary.
     QString printkana;
@@ -36,12 +36,12 @@ struct FontSettings
     // Printed small info text font name.
     QString printinfo;
     // Printed small info text font stgyle.
-    FontStyle printinfostyle = Italic;
+    FontStyle printinfostyle = FontStyle::Italic;
 
     // Line size of dictionary entries in the main windows.
-    LineSize mainsize = Medium;
+    LineSize mainsize = LineSize::Medium;
     // Line size of dictionary entries in the popup dictionary.
-    LineSize popsize = Medium;
+    LineSize popsize = LineSize::Medium;
 };
 
 namespace Settings

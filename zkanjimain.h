@@ -21,6 +21,8 @@
 #include "qcharstring.h"
 #include "smartvector.h"
 
+#include "checked_cast.h"
+
 
 namespace Temporary
 {
@@ -249,6 +251,14 @@ private:
 enum class ZStrFormat { Int = 0, Byte = 1, Word = 2, AddNull = 0x1000, ByteAddNull = Byte | AddNull, WordAddNull = Word | AddNull };
 
 template<typename T>
+struct ZStr;
+template<typename T>
+QDataStream& operator>>(QDataStream &stream, ZStr<T> str);
+template<typename T>
+QDataStream& operator<<(QDataStream &stream, const ZStr<T> &str);
+
+
+template<typename T>
 struct ZStr
 {
     T &val;
@@ -256,7 +266,7 @@ struct ZStr
     ZStrFormat format;
 
     ZStr(T &val, ZStrFormat lsiz = ZStrFormat::Int) : val(val), length(-1), format(lsiz)
-    { 
+    {
         length = val.size();
 
         switch (format)
@@ -274,6 +284,9 @@ struct ZStr
         case ZStrFormat::WordAddNull:
             if (length > std::numeric_limits<quint16>::max())
                 length = std::numeric_limits<quint16>::max();
+            break;
+        default:
+            break;
         }
     }
 
@@ -314,6 +327,8 @@ struct ZStr
         case ZStrFormat::Word:
         case ZStrFormat::WordAddNull:
             return std::numeric_limits<quint16>::max();
+        default:
+            break;
         }
         return 0;
     }
@@ -326,8 +341,8 @@ private:
     int readLength(QDataStream &stream);
     void writeLength(QDataStream &stream, int len) const;
 
-    friend QDataStream& operator>>(QDataStream &stream, ZStr<T> str);
-    friend QDataStream& operator<<(QDataStream &stream, const ZStr<T> &str);
+    friend QDataStream& operator>> <>(QDataStream &stream, ZStr str);
+    friend QDataStream& operator<< <>(QDataStream &stream, const ZStr &str);
 };
 
 template<typename T> ZStr<T> make_zstr(T &val, ZStrFormat lsiz = ZStrFormat::Int)
@@ -350,7 +365,7 @@ int ZStr<T>::readLength(QDataStream &stream)
         quint8 len8;
     } ln;
 
-    int len;
+    int len = 0;
 
     switch (format)
     {
@@ -367,6 +382,8 @@ int ZStr<T>::readLength(QDataStream &stream)
     case ZStrFormat::WordAddNull:
         stream >> ln.len16;
         len = ln.len16;
+        break;
+    default:
         break;
     }
 
@@ -399,8 +416,20 @@ void ZStr<T>::writeLength(QDataStream &stream, int len) const
         ln.len16 = len;
         stream << ln.len16;
         break;
+    default:
+        break;
     }
 }
+
+
+template<typename T>
+struct ZDateTimeStr;
+
+template<typename T>
+QDataStream& operator>>(QDataStream&, ZDateTimeStr<T>);
+template<typename T>
+QDataStream& operator<<(QDataStream&, const ZDateTimeStr<T>&);
+
 
 template<typename T>
 struct ZDateTimeStr
@@ -411,8 +440,8 @@ public:
     ZDateTimeStr(T &dt) : dt(dt) { ; }
     ZDateTimeStr(ZDateTimeStr &&other) : dt(other.dt) { ; }
 
-    friend QDataStream& operator>>(QDataStream&, ZDateTimeStr<T>);
-    friend QDataStream& operator<<(QDataStream&, const ZDateTimeStr<T>&);
+    friend QDataStream& operator >> <>(QDataStream&, ZDateTimeStr);
+    friend QDataStream& operator<< <>(QDataStream&, const ZDateTimeStr&);
 };
 
 #define Z_DATETIME_SIZE sizeof(quint64)
@@ -422,6 +451,14 @@ ZDateTimeStr<T> make_zdate(T &v)
 {
     return ZDateTimeStr<T>(v);
 }
+
+template<typename S, typename T, typename V>
+struct ZVec;
+
+template<typename S, typename T, typename V>
+QDataStream& operator>>(QDataStream &stream, ZVec<S, T, V> v);
+template<typename S, typename T, typename V>
+QDataStream& operator<<(QDataStream &stream, const ZVec<S, T, V> &v);
 
 // Structure for writing vectors to file. Writes the size of the V vector as
 // type S. Each member of the vector is cast to T before reading and writing.
@@ -438,10 +475,8 @@ struct ZVec
 private:
     V& vec;
 public:
-    template<typename TS, typename TT, typename TV>
-    friend QDataStream& operator>>(QDataStream &stream, ZVec<TS, TT, TV> v);
-    template<typename TS, typename TT, typename TV>
-    friend QDataStream& operator<<(QDataStream &stream, const ZVec<TS, TT, TV> &v);
+    friend QDataStream& operator>> <>(QDataStream &stream, ZVec v);
+    friend QDataStream& operator<< <>(QDataStream &stream, const ZVec &v);
 };
 
 template<typename S, typename T, typename V>
@@ -670,7 +705,7 @@ template<typename T>
 int removeIndexFromList(int index, std::vector<T> &vec)
 {
     int indexindex = -1;
-    for (int ix = 0; ix != vec.size(); ++ix)
+    for (int ix = 0, siz = tosigned(vec.size()); ix != siz; ++ix)
     {
         if (vec[ix] == index)
             indexindex = ix;
@@ -686,7 +721,7 @@ int removeIndexFromList(int index, std::vector<T> &vec)
 
     if (indexindex > 0)
         vec.insert(vec.end(), tmp.begin(), tmp.begin() + indexindex);
-    if (indexindex < tmp.size() - 1)
+    if (indexindex < tosigned(tmp.size()) - 1)
         vec.insert(vec.end(), tmp.begin() + indexindex + 1, tmp.end());
 
     return indexindex;
@@ -741,6 +776,31 @@ namespace ZKanji
     void showKanjiInfo(/*QWidget *owner,*/ Dictionary *d, int index);
 
 }
+
+
+//-------------------------------------------------------------
+
+
+template<> QDataStream& operator>>(QDataStream& stream, ZStr<QString> str);
+template<> QDataStream& operator>>(QDataStream& stream, ZStr<QChar*> str);
+template<> QDataStream& operator>>(QDataStream& stream, ZStr<QCharString> str);
+template<> QDataStream& operator<<(QDataStream& stream, const ZStr<const QString> &str);
+template<> QDataStream& operator<<(QDataStream& stream, const ZStr<const QChar*> &str);
+template<> QDataStream& operator<<(QDataStream& stream, const ZStr<const QCharString> &str);
+template<> QDataStream& operator<<(QDataStream& stream, const ZStr<QString> &str);
+template<> QDataStream& operator<<(QDataStream& stream, const ZStr<QChar*> &str);
+template<> QDataStream& operator<<(QDataStream& stream, const ZStr<QCharString> &str);
+
+template<> QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDateTime> &date);
+template<> QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<QDateTime> &date);
+template<> QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDateTime> date);
+template<> QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDate> &date);
+template<> QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<QDate> &date);
+template<> QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDate> date);
+
+
+//-------------------------------------------------------------
+
 
 
 #endif

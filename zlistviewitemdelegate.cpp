@@ -117,7 +117,7 @@ void ZListViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     painter->restore();
 }
 
-QSize ZListViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize ZListViewItemDelegate::sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
     //int flag = index.data((int)CellRoles::Flags).toInt();
     //if ((flag & (int)CellFlags::Image) == (int)CellFlags::Image)
@@ -144,7 +144,7 @@ QSize ZListViewItemDelegate::sizeHint(const QStyleOptionViewItem &option, const 
     return siz;
 }
 
-bool ZListViewItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+bool ZListViewItemDelegate::editorEvent(QEvent * /*event*/, QAbstractItemModel * /*model*/, const QStyleOptionViewItem &/*option*/, const QModelIndex &/*index*/)
 {
     return false;
 }

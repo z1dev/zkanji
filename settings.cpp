@@ -41,6 +41,8 @@
 #include "groups.h"
 #include "words.h"
 
+#include "checked_cast.h"
+
 namespace Settings
 {
     // Default colors for the light user interface.
@@ -167,14 +169,14 @@ namespace Settings
         ini.setValue("fonts/kana", fonts.kana);
         ini.setValue("fonts/main", fonts.main);
         ini.setValue("fonts/notes", fonts.info);
-        ini.setValue("fonts/notesstyle", fonts.infostyle == FontSettings::Bold ? "Bold" : fonts.infostyle == FontSettings::Italic ? "Italic" : fonts.infostyle == FontSettings::BoldItalic ? "BoldItalic" : "Normal");
+        ini.setValue("fonts/notesstyle", fonts.infostyle == FontStyle::Bold ? "Bold" : fonts.infostyle == FontStyle::Italic ? "Italic" : fonts.infostyle == FontStyle::BoldItalic ? "BoldItalic" : "Normal");
         //ini.setValue("fonts/extra", fonts.extra);
-        //ini.setValue("fonts/extrastyle", fonts.extrastyle == FontSettings::Bold ? "Bold" : fonts.extrastyle == FontSettings::Italic ? "Italic" : fonts.extrastyle == FontSettings::BoldItalic ? "BoldItalic" : "Normal");
+        //ini.setValue("fonts/extrastyle", fonts.extrastyle == FontStyle::Bold ? "Bold" : fonts.extrastyle == FontStyle::Italic ? "Italic" : fonts.extrastyle == FontStyle::BoldItalic ? "BoldItalic" : "Normal");
 
         ini.setValue("fonts/printkana", fonts.printkana);
         ini.setValue("fonts/printdefinition", fonts.printdefinition);
         ini.setValue("fonts/printinfo", fonts.printinfo);
-        ini.setValue("fonts/printinfostyle", fonts.printinfostyle == FontSettings::Bold ? "Bold" : fonts.printinfostyle == FontSettings::Italic ? "Italic" : fonts.printinfostyle == FontSettings::BoldItalic ? "BoldItalic" : "Normal");
+        ini.setValue("fonts/printinfostyle", fonts.printinfostyle == FontStyle::Bold ? "Bold" : fonts.printinfostyle == FontStyle::Italic ? "Italic" : fonts.printinfostyle == FontStyle::BoldItalic ? "BoldItalic" : "Normal");
 
         ini.setValue("fonts/mainsize", (int)fonts.mainsize);
         ini.setValue("fonts/popsize", (int)fonts.popsize);
@@ -325,7 +327,7 @@ namespace Settings
         ini.setValue("kanji/hidetooltip", kanji.hidetooltip);
         ini.setValue("kanji/tooltipdelay", kanji.tooltipdelay);
 
-        for (int ix = 0, siz = kanji.showref.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(kanji.showref.size()); ix != siz; ++ix)
         {
             ini.setValue("kanji/showref" + QString::number(ix), kanji.showref[ix]);
             ini.setValue("kanji/reforder" + QString::number(ix), kanji.reforder[ix]);
@@ -372,11 +374,11 @@ namespace Settings
 
         // Dictionary order
 
-        QStringList str;
+        QStringList strs;
         for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
-            str << ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name();
+            strs << ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name();
 
-        ini.setValue("dictionaryorder", str.join(QChar('/')));
+        ini.setValue("dictionaryorder", strs.join(QChar('/')));
     }
 
     void saveStatesFile()
@@ -513,7 +515,7 @@ namespace Settings
         gUI->mainForm()->saveXMLSettings(writer);
         writer.writeEndElement(); /* MainWindow */
 
-        for (int ix = 1, siz = gUI->formCount(); ix != siz; ++ix)
+        for (int ix = 1, siz = tosigned(gUI->formCount()); ix != siz; ++ix)
         {
             writer.writeStartElement("Window");
             gUI->forms(ix)->saveXMLSettings(writer);
@@ -772,14 +774,14 @@ namespace Settings
     {
         QSettings ini(ZKanji::userFolder() + "/zkanji.ini", QSettings::IniFormat);
 
-        QString tmp;
+        QString str;
         bool ok;
         int val;
 
         // General settings
 
-        tmp = ini.value("dateformat", "daymonthyear").toString().toLower();
-        general.dateformat = tmp == "yearmonthday" ? GeneralSettings::YearMonthDay : tmp == "monthdayyear" ? GeneralSettings::MonthDayYear : GeneralSettings::DayMonthYear;
+        str = ini.value("dateformat", "daymonthyear").toString().toLower();
+        general.dateformat = str == "yearmonthday" ? GeneralSettings::YearMonthDay : str == "monthdayyear" ? GeneralSettings::MonthDayYear : GeneralSettings::DayMonthYear;
 
         //val = ini.value("settingspage", 0).toInt(&ok);
         //if (val >= 0 && val <= 999)
@@ -788,15 +790,15 @@ namespace Settings
         general.savewinpos = ini.value("savewinpos", true).toBool();
         //general.savetoolstates = ini.value("savetoolstates", true).toBool();
 
-        tmp = ini.value("startstate", "savestate").toString().toLower();
-        general.startstate = tmp == "forget" ? GeneralSettings::ForgetState : tmp == "minimize" ? GeneralSettings::AlwaysMinimize : tmp == "maximize" ? GeneralSettings::AlwaysMaximize : GeneralSettings::SaveState;
+        str = ini.value("startstate", "savestate").toString().toLower();
+        general.startstate = str == "forget" ? GeneralSettings::ForgetState : str == "minimize" ? GeneralSettings::AlwaysMinimize : str == "maximize" ? GeneralSettings::AlwaysMaximize : GeneralSettings::SaveState;
 
-        tmp = ini.value("startplacement", "mainonactive").toString().toLower();
+        str = ini.value("startplacement", "mainonactive").toString().toLower();
 
-        tmp = ini.value("minimizebehavior", "default").toString();
-        if (tmp == "closetotray")
+        str = ini.value("minimizebehavior", "default").toString();
+        if (str == "closetotray")
             general.minimizebehavior = GeneralSettings::TrayOnClose;
-        else if (tmp == "minimizetotray")
+        else if (str == "minimizetotray")
             general.minimizebehavior = GeneralSettings::TrayOnMinimize;
         else
             general.minimizebehavior = GeneralSettings::DefaultMinimize;
@@ -811,24 +813,24 @@ namespace Settings
         fonts.kana = ini.value("fonts/kana", QString()).toString();
         fonts.main = ini.value("fonts/main", qApp->font().family()).toString();
         fonts.info = ini.value("fonts/notes", qApp->font().family()).toString();
-        tmp = ini.value("fonts/notesstyle", "normal").toString().toLower();
-        fonts.infostyle = (tmp == "bold") ? FontSettings::Bold : (tmp == "italic") ? FontSettings::Italic : (tmp == "bolditalic") ? FontSettings::BoldItalic : FontSettings::Normal;
+        str = ini.value("fonts/notesstyle", "normal").toString().toLower();
+        fonts.infostyle = (str == "bold") ? FontStyle::Bold : (str == "italic") ? FontStyle::Italic : (str == "bolditalic") ? FontStyle::BoldItalic : FontStyle::Normal;
         //fonts.extra = ini.value("fonts/extra", qApp->font().family()).toString();
-        //tmp = ini.value("fonts/extrastyle", "Bold").toString();
-        //fonts.extrastyle = (tmp == "Bold") ? FontSettings::Bold : (tmp == "Italic") ? FontSettings::Italic : (tmp == "BoldItalic") ? FontSettings::BoldItalic : FontSettings::Normal;
+        //str = ini.value("fonts/extrastyle", "Bold").toString();
+        //fonts.extrastyle = (str == "Bold") ? FontStyle::Bold : (str == "Italic") ? FontStyle::Italic : (str == "BoldItalic") ? FontStyle::BoldItalic : FontStyle::Normal;
 
         fonts.printkana = ini.value("fonts/printkana", QString()).toString();
         fonts.printdefinition = ini.value("fonts/printdefinition", qApp->font().family()).toString();
         fonts.printinfo = ini.value("fonts/printinfo", qApp->font().family()).toString();
-        tmp = ini.value("fonts/printinfostyle", "italic").toString().toLower();
-        fonts.printinfostyle = (tmp == "bold") ? FontSettings::Bold : (tmp == "normal") ? FontSettings::Normal : (tmp == "bolditalic") ? FontSettings::BoldItalic : FontSettings::Italic;
+        str = ini.value("fonts/printinfostyle", "italic").toString().toLower();
+        fonts.printinfostyle = (str == "bold") ? FontStyle::Bold : (str == "normal") ? FontStyle::Normal : (str == "bolditalic") ? FontStyle::BoldItalic : FontStyle::Italic;
 
         val = ini.value("fonts/mainsize", 1).toInt(&ok);
         if (ok && val >= 0 && val <= 3)
-            fonts.mainsize = (FontSettings::LineSize)val;
+            fonts.mainsize = (LineSize)val;
         val = ini.value("fonts/popsize", 1).toInt(&ok);
         if (ok && val >= 0 && val <= 3)
-            fonts.popsize = (FontSettings::LineSize)val;
+            fonts.popsize = (LineSize)val;
 
         // Group settings
 
@@ -971,11 +973,11 @@ namespace Settings
         if (ok && val >= 0 && val <= 2)
             dictionary.inflection = (DictionarySettings::InflectionShow)val;
 
-        tmp = ini.value("dict/resultorder", "relevance").toString().toLower();
-        dictionary.resultorder = tmp == "frequency" ? ResultOrder::Frequency : tmp == "jlptfrom1" ? ResultOrder::JLPTfrom1 : tmp == "jlptfrom5" ? ResultOrder::JLPTfrom5 : ResultOrder::Relevance;
+        str = ini.value("dict/resultorder", "relevance").toString().toLower();
+        dictionary.resultorder = str == "frequency" ? ResultOrder::Frequency : str == "jlptfrom1" ? ResultOrder::JLPTfrom1 : str == "jlptfrom5" ? ResultOrder::JLPTfrom5 : ResultOrder::Relevance;
 
-        tmp = ini.value("dict/browseorder", "abcde").toString().toLower();
-        dictionary.browseorder = tmp == "aiueo" ? BrowseOrder::AIUEO: BrowseOrder::ABCDE;
+        str = ini.value("dict/browseorder", "abcde").toString().toLower();
+        dictionary.browseorder = str == "aiueo" ? BrowseOrder::AIUEO: BrowseOrder::ABCDE;
 
         dictionary.showingroup = ini.value("dict/showgroup", false).toBool();
         dictionary.showjlpt = ini.value("dict/showjlpt", true).toBool();
@@ -993,12 +995,12 @@ namespace Settings
         // Shortcut settings
 
         shortcuts.fromenable = ini.value("shortcuts/from", false).toBool();
-        tmp = ini.value("shortcuts/frommod", "altcontrol").toString().toLower();
-        shortcuts.frommodifier = tmp == "alt" ? ShortcutSettings::Alt : tmp == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
+        str = ini.value("shortcuts/frommod", "altcontrol").toString().toLower();
+        shortcuts.frommodifier = str == "alt" ? ShortcutSettings::Alt : str == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
         shortcuts.fromshift = ini.value("shortcuts/fromshift", false).toBool();
-        tmp = ini.value("shortcuts/fromkey", "J").toString().toUpper();
-        if (tmp.size() == 1)
-            shortcuts.fromkey = tmp.at(0);
+        str = ini.value("shortcuts/fromkey", "J").toString().toUpper();
+        if (str.size() == 1)
+            shortcuts.fromkey = str.at(0);
         if (shortcuts.fromkey.unicode() == 0 || shortcuts.fromkey < 'A' || shortcuts.fromkey > 'Z')
         {
             shortcuts.fromenable = false;
@@ -1006,12 +1008,12 @@ namespace Settings
         }
 
         shortcuts.toenable = ini.value("shortcuts/to", false).toBool();
-        tmp = ini.value("shortcuts/tomod", "altcontrol").toString().toLower();
-        shortcuts.tomodifier = tmp == "alt" ? ShortcutSettings::Alt : tmp == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
+        str = ini.value("shortcuts/tomod", "altcontrol").toString().toLower();
+        shortcuts.tomodifier = str == "alt" ? ShortcutSettings::Alt : str == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
         shortcuts.toshift = ini.value("shortcuts/toshift", false).toBool();
-        tmp = ini.value("shortcuts/tokey", "E").toString().toUpper();
-        if (tmp.size() == 1)
-            shortcuts.tokey = tmp.at(0);
+        str = ini.value("shortcuts/tokey", "E").toString().toUpper();
+        if (str.size() == 1)
+            shortcuts.tokey = str.at(0);
         if (shortcuts.tokey < 'A' || shortcuts.tokey > 'Z' || (shortcuts.fromenable && shortcuts.tokey == shortcuts.fromkey))
         {
             shortcuts.toenable = false;
@@ -1019,12 +1021,12 @@ namespace Settings
         }
 
         shortcuts.kanjienable = ini.value("shortcuts/kanji", false).toBool();
-        tmp = ini.value("shortcuts/kanjimod", "altcontrol").toString().toLower();
-        shortcuts.kanjimodifier = tmp == "alt" ? ShortcutSettings::Alt : tmp == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
+        str = ini.value("shortcuts/kanjimod", "altcontrol").toString().toLower();
+        shortcuts.kanjimodifier = str == "alt" ? ShortcutSettings::Alt : str == "control" ? ShortcutSettings::Control : ShortcutSettings::AltControl;
         shortcuts.kanjishift = ini.value("shortcuts/kanjishift", false).toBool();
-        tmp = ini.value("shortcuts/kanjikey", "K").toString().toUpper();
-        if (tmp.size() == 1)
-            shortcuts.kanjikey = tmp.at(0);
+        str = ini.value("shortcuts/kanjikey", "K").toString().toUpper();
+        if (str.size() == 1)
+            shortcuts.kanjikey = str.at(0);
         if (shortcuts.kanjikey < 'A' || shortcuts.kanjikey > 'Z' || (shortcuts.fromenable && shortcuts.kanjikey == shortcuts.fromkey) || (shortcuts.toenable && shortcuts.kanjikey == shortcuts.tokey))
         {
             shortcuts.kanjienable = false;
@@ -1052,10 +1054,10 @@ namespace Settings
         kanji.listparts = ini.value("kanji/parts", false).toBool();
 
 
-        tmp = ini.value("kanji/showpos", "nearcursor").toString().toLower();
-        if (tmp == "default")
+        str = ini.value("kanji/showpos", "nearcursor").toString().toLower();
+        if (str == "default")
             kanji.showpos = KanjiSettings::SystemDefault;
-        else if (tmp == "last")
+        else if (str == "last")
             kanji.showpos = KanjiSettings::RestoreLast;
         else
             kanji.showpos = KanjiSettings::NearCursor;
@@ -1363,6 +1365,8 @@ namespace Settings
             case QXmlStreamReader::CustomError:
                 errorstr = reader.errorString();
                 break;
+            default:
+                break;
             }
 
             if (QMessageBox::warning(nullptr, "zkanji", qApp->translate("gUI", "There was an error in states.xml at line %1, position %2, of the type %3. The program can load normally with some settings lost.").arg(reader.lineNumber()).arg(reader.columnNumber()).arg(errorstr), QMessageBox::Ok, QMessageBox::Cancel) == QMessageBox::Cancel)
@@ -1381,7 +1385,7 @@ namespace Settings
         return Settings::fonts.kanji;
     }
 
-    QFont kanjiFont(bool scaled)
+    QFont kanjiFont(bool /*scaled*/)
     {
         QFont f = { fonts.kanji, Settings::scaled(fonts.kanjifontsize / _scaleratio) };
         if (Settings::fonts.nokanjialias)
@@ -1410,7 +1414,7 @@ namespace Settings
 
     QFont notesFont(bool scaled)
     {
-        return QFont{ Settings::fonts.info, scaled ? Settings::scaled(7) : 7, Settings::fonts.infostyle == FontSettings::Bold || Settings::fonts.infostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::fonts.infostyle == FontSettings::Italic || Settings::fonts.infostyle == FontSettings::BoldItalic };
+        return QFont{ Settings::fonts.info, scaled ? Settings::scaled(7) : 7, Settings::fonts.infostyle == FontStyle::Bold || Settings::fonts.infostyle == FontStyle::BoldItalic ? QFont::Bold : -1, Settings::fonts.infostyle == FontStyle::Italic || Settings::fonts.infostyle == FontStyle::BoldItalic };
     }
 
     QFont extraFont(bool scaled)
@@ -1430,7 +1434,7 @@ namespace Settings
 
     QFont printInfoFont()
     {
-        return QFont{ !Settings::print.dictfonts ? Settings::fonts.printinfo : Settings::fonts.info, 120, Settings::print.dictfonts ? false : Settings::fonts.printinfostyle == FontSettings::Bold || Settings::fonts.printinfostyle == FontSettings::BoldItalic ? QFont::Bold : -1, Settings::print.dictfonts ? true : Settings::fonts.printinfostyle == FontSettings::Italic || Settings::fonts.printinfostyle == FontSettings::BoldItalic };
+        return QFont{ !Settings::print.dictfonts ? Settings::fonts.printinfo : Settings::fonts.info, 120, Settings::print.dictfonts ? false : Settings::fonts.printinfostyle == FontStyle::Bold || Settings::fonts.printinfostyle == FontStyle::BoldItalic ? QFont::Bold : -1, Settings::print.dictfonts ? true : Settings::fonts.printinfostyle == FontStyle::Italic || Settings::fonts.printinfostyle == FontStyle::BoldItalic };
     }
 
     QColor textColor(const QPalette &pal, bool active, ColorSettings::SystemColorTypes type)

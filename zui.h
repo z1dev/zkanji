@@ -69,13 +69,13 @@ bool wordFiltersEmpty();
 //QString kanaFontName();
 //// Returns the name of the font used for word definitions in the dictionary.
 //QString meaningFontName();
-//FontSettings::FontStyle meaningFontStyle();
+//FontStyle meaningFontStyle();
 //// Returns the name of the font used for information text in the dictionary.
 //QString smallFontName();
-//FontSettings::FontStyle smallFontStyle();
+//FontStyle smallFontStyle();
 //// Returns the name of the font used for information text in the dictionary.
 //QString extrasFontName();
-//FontSettings::FontStyle extrasFontStyle();
+//FontStyle extrasFontStyle();
 
 //// Returns the name of the font used for words (both written form and kana
 //// readings) when printing.

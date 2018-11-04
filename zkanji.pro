@@ -145,7 +145,7 @@ SOURCES += \
     zdictionarycombobox.cpp \
     zstatusbar.cpp \
     languages.cpp \
-    languageform.cpp \
+    languageform.cpp
 
 HEADERS += \
     Qxt/qxtglobal.h \
@@ -277,6 +277,7 @@ HEADERS += \
     languages.h \
     languagesettings.h \
     languageform.h \
+	checked_cast.h
 
 FORMS += \
     collectwordsform.ui \

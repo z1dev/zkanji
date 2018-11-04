@@ -43,7 +43,7 @@ int WordStudyItemModel::indexes(int pos) const
     return study->testedIndex(pos);
 }
 
-int WordStudyItemModel::rowCount(const QModelIndex &parent) const
+int WordStudyItemModel::rowCount(const QModelIndex &/*parent*/) const
 {
     return study->testedCount();
 }
@@ -102,21 +102,21 @@ Qt::ItemFlags WordStudyItemModel::flags(const QModelIndex &index) const
 //    ;
 //}
 
-void WordStudyItemModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void WordStudyItemModel::entryRemoved(int /*windex*/, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     // The model is not used in windows that are shown while the dictionary can be
     // manipulated.
     ;
 }
 
-void WordStudyItemModel::entryChanged(int windex, bool studydef)
+void WordStudyItemModel::entryChanged(int /*windex*/, bool /*studydef*/)
 {
     // The model is not used in windows that are shown while the dictionary can be
     // manipulated.
     ;
 }
 
-void WordStudyItemModel::entryAdded(int windex)
+void WordStudyItemModel::entryAdded(int /*windex*/)
 {
     // The model is not used in windows that are shown while the dictionary can be
     // manipulated.

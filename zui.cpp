@@ -165,7 +165,7 @@ JapaneseValidator& kanaValidator()
 
 void saveXMLRadicalFilters(QXmlStreamWriter &writer)
 {
-    for (int ix = 0, siz = radicalfiltersmodel.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tounsigned(radicalfiltersmodel.size()); ix != siz; ++ix)
     {
         const RadicalFilter &f = radicalfiltersmodel.filters(ix);
         writer.writeStartElement("Filter");
@@ -176,7 +176,7 @@ void saveXMLRadicalFilters(QXmlStreamWriter &writer)
         if (f.groups.empty())
             writer.writeCharacters(QString());
 
-        for (int iy = 0, siz2 = f.groups.size(); iy != siz2; ++iy)
+        for (int iy = 0, siz2 = tounsigned(f.groups.size()); iy != siz2; ++iy)
         {
             writer.writeEmptyElement("Group");
 
@@ -185,7 +185,7 @@ void saveXMLRadicalFilters(QXmlStreamWriter &writer)
             if (!vec.empty())
             {
                 rads = QString::number(vec[0]);
-                for (int l = 1, siz = vec.size(); l != siz; ++l)
+                for (int l = 1, lsiz = tosigned(vec.size()); l != lsiz; ++l)
                     rads = rads % "," % QString::number(vec[l]);
             }
             writer.writeAttribute("rads", rads);
@@ -239,7 +239,7 @@ void loadXMLRadicalFilters(QXmlStreamReader &reader)
                     if ((!grp.empty() && grp.back() >= val) ||
                         (filter.mode == RadicalFilterModes::Parts && (val < 0 || val > 252)) ||
                         (filter.mode == RadicalFilterModes::Radicals && (val < 1 || val > 214)) ||
-                        (filter.mode == RadicalFilterModes::NamedRadicals && val >= ZKanji::radlist.size()))
+                        (filter.mode == RadicalFilterModes::NamedRadicals && val >= tosigned(ZKanji::radlist.size())))
                         ok = false;
                     else
                         grp.push_back(val);
@@ -292,7 +292,7 @@ bool wordFiltersEmpty()
 //    //return QStringLiteral("Arial");
 //}
 //
-//FontSettings::FontStyle meaningFontStyle()
+//FontStyle meaningFontStyle()
 //{
 //    return Settings::fonts.defstyle;
 //}
@@ -303,7 +303,7 @@ bool wordFiltersEmpty()
 //    //return QStringLiteral("Franklin Gothic Medium");
 //}
 //
-//FontSettings::FontStyle smallFontStyle()
+//FontStyle smallFontStyle()
 //{
 //    return Settings::fonts.infostyle;
 //}
@@ -314,7 +314,7 @@ bool wordFiltersEmpty()
 //    //return QStringLiteral("Franklin Gothic Medium");
 //}
 //
-//FontSettings::FontStyle extrasFontStyle()
+//FontStyle extrasFontStyle()
 //{
 //    return Settings::fonts.extrastyle;
 //}
@@ -477,7 +477,7 @@ namespace
             QObject *child = childs.at(ix);
             if (child->isWidgetType())
             {
-                for (int ix = 1, childlevel = updateWindowGeometryHelper((QWidget*)child, level) + 1; ix != childlevel; ++ix)
+                for (int iy = 1, childlevel = updateWindowGeometryHelper((QWidget*)child, level) + 1; iy != childlevel; ++iy)
                     ;
             }
         }
@@ -634,7 +634,7 @@ void installRecognizer(QToolButton *btn, ZKanaLineEdit *edit, RecognizerPosition
     RecognizerForm::install(btn, edit, pos);
 }
 
-void uninstallRecognizer(QToolButton *btn, ZKanaLineEdit *edit)
+void uninstallRecognizer(QToolButton *btn, ZKanaLineEdit * /*edit*/)
 {
     RecognizerForm::uninstall(btn);
 }
@@ -646,7 +646,7 @@ void installRecognizer(QToolButton *btn, ZKanaComboBox *edit, RecognizerPosition
     RecognizerForm::install(btn, (ZKanaLineEdit*)edit->lineEdit(), pos);
 }
 
-void uninstallRecognizer(QToolButton *btn, ZKanaComboBox *edit)
+void uninstallRecognizer(QToolButton *btn, ZKanaComboBox * /*edit*/)
 {
     RecognizerForm::uninstall(btn);
 }
@@ -690,7 +690,7 @@ int showAndReturn(QWidget *parent, QString title, QString text, QString details,
         {
             // Qt randomly shuffles the buttons depending on the OS, so we have to match the
             // exact button clicked with the buttons passed to this function.
-            for (int iy = 0; iy != buttons.size() && ix == -1; ++iy)
+            for (int iy = 0, sizy = tosigned(buttons.size()); iy != sizy && ix == -1; ++iy)
                 if (btn->text() == buttons[iy].text && msg.buttonRole(btn) == buttons[iy].role)
                     ix = iy;
             break;
@@ -1295,7 +1295,7 @@ QRect checkBoxHitRect(const QWidget *widget, int leftpadding, QRect rect, QStyle
     return QRect(r2.left() + leftpadding + r.left(), r2.top() + r2.height() / 2 + r.top() - 1, r.width(), r.height());
 }
 
-void drawCheckBox(QPainter *painter, const QWidget *widget, int leftpadding, QRect rect, QStyleOptionButton *opt)
+void drawCheckBox(QPainter *painter, const QWidget *widget, int /*leftpadding*/, QRect rect, QStyleOptionButton *opt)
 {
     //QSize siz = owner()->style()->sizeFromContents(QStyle::CT_CheckBox, &opbtn, QSize(), owner()); //checkBoxRectHelper(&opbtn);
     //QRect r = owner()->visualRect(index);
@@ -1480,7 +1480,7 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
             if (kanacnt != 0)
             {
                 cpos = 1;
-                clen = strlen(kanainput[cindex]);
+                clen = tounsigned(strlen(kanainput[cindex]));
 
                 if (clen == cpos)
                     continue;
@@ -1507,7 +1507,7 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
 
         for (; cindex != kanacnt; ++cindex)
         {
-            clen = strlen(kanainput[cindex]);
+            clen = tounsigned(strlen(kanainput[cindex]));
             if (clen > pos - inputpos)
                 continue;
 
@@ -1678,7 +1678,7 @@ void IntRangeValidator::fixup(QString &input) const
         input = lastgood;
 }
 
-IntRangeValidator::State IntRangeValidator::validate(QString &input, int &pos) const
+IntRangeValidator::State IntRangeValidator::validate(QString &input, int &/*pos*/) const
 {
     if (input.isEmpty())
     {
@@ -1691,13 +1691,13 @@ IntRangeValidator::State IntRangeValidator::validate(QString &input, int &pos) c
     if (p != -1 && input.lastIndexOf('-') != p)
         return Invalid;
 
-    bool ok;
-    int val;
+    bool ok = false;
+    quint32 val = 0;
 
     if (p == -1)
     {
-        val = locale().toInt(input, &ok);
-        if (!ok || val > hi || val < 0)
+        val = locale().toUInt(input, &ok);
+        if (!ok || val > hi /*|| val < 0*/)
             return Invalid;
 
         if (val >= lo)
@@ -1705,12 +1705,12 @@ IntRangeValidator::State IntRangeValidator::validate(QString &input, int &pos) c
         return (val < lo) ? Intermediate : Acceptable;
     }
 
-    int val2;
+    quint32 val2;
 
     if (p > 0)
     {
-        val = locale().toInt(input.left(p), &ok);
-        if (!ok || val > hi || val < 0)
+        val = locale().toUInt(input.left(p), &ok);
+        if (!ok || val > hi /*|| val < 0*/)
             return Invalid;
     }
     else if (input.size() == 1)
@@ -1718,11 +1718,11 @@ IntRangeValidator::State IntRangeValidator::validate(QString &input, int &pos) c
 
     if (p < input.size() - 1)
     {
-        val2 = locale().toInt(input.mid(p + 1), &ok);
+        val2 = locale().toUInt(input.mid(p + 1), &ok);
         if (p == 0)
             val = val2;
 
-        if (!ok || val2 > hi || val2 < 0)
+        if (!ok || val2 > hi /*|| val2 < 0*/)
             return Invalid;
     }
     else

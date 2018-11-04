@@ -276,6 +276,8 @@ QDataStream& operator>>(QDataStream &stream, DeckDayStat &s);
 class DeckDayStatList  // -ex TDayStatList
 {
 public:
+    typedef size_t  size_type;
+
     DeckDayStatList();
 
     void loadLegacy(QDataStream &stream, int version);
@@ -292,7 +294,7 @@ public:
     DeckDayStat& back();
     const DeckDayStat& back() const;
 
-    int size() const;
+    size_type size() const;
     const DeckDayStat& items(int index) const;
     DeckDayStat& items(int index);
 
@@ -630,6 +632,8 @@ private:
 class StudyDeckList
 {
 public:
+    typedef size_t  size_type;
+
     StudyDeckList();
     ~StudyDeckList();
 
@@ -655,7 +659,7 @@ public:
     void removeDeck(StudyDeckId id);
 
     // Number of decks in the list.
-    int size() const;
+    size_type size() const;
 
     // Returns the index-th deck.
     StudyDeck* decks(int index);

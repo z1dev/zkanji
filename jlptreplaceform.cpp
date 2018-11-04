@@ -14,6 +14,8 @@
 #include "globalui.h"
 
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -58,7 +60,7 @@ void JLPTReplaceForm::exec(QString filepath, Dictionary *dict, const std::vector
     ui->dict->setDictionary(dict);
 
     ZKanji::wordfilters().add(tr("JLPT"), WordDefAttrib(), 0, 31, FilterMatchType::AnyCanMatch);
-    ui->dict->turnOnWordFilter(ZKanji::wordfilters().size() - 1, Inclusion::Exclude);
+    ui->dict->turnOnWordFilter(tosigned(ZKanji::wordfilters().size()) - 1, Inclusion::Exclude);
 
     pos = 0;
     updateButtons();
@@ -113,7 +115,7 @@ void JLPTReplaceForm::undo()
 
 void JLPTReplaceForm::closeEvent(QCloseEvent *e)
 {
-    if (pos != list.size())
+    if (pos != tosigned(list.size()))
     {
         if (QMessageBox::warning(this, "zkanji", tr("Words without a replacement will be missing their JLPT data. Do you wish to skip them and continue the dictionary import?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
         {
@@ -134,7 +136,7 @@ void JLPTReplaceForm::closeEvent(QCloseEvent *e)
 
 void JLPTReplaceForm::updateButtons()
 {
-    if (pos != list.size())
+    if (pos != tosigned(list.size()))
     {
         ui->wordEdit->setText(QString("%1(%2) N %3").arg(std::get<0>(list[pos])).arg(std::get<1>(list[pos])).arg(std::get<2>(list[pos])));
         if (ui->dict->searchMode() == SearchMode::Definition)
@@ -156,10 +158,10 @@ void JLPTReplaceForm::updateButtons()
     //ui->wordsLabel->setText(QString::number(list.size() - pos));
 
     ui->undoButton->setEnabled(pos > 0);
-    ui->skipButton->setEnabled(pos != list.size());
-    ui->useButton->setEnabled(pos != list.size());
+    ui->skipButton->setEnabled(pos != tosigned(list.size()));
+    ui->useButton->setEnabled(pos != tosigned(list.size()));
 
-    ui->abortButton->setText(pos != list.size() ? tr("Abort") : tr("Finish"));
+    ui->abortButton->setText(pos != tosigned(list.size()) ? tr("Abort") : tr("Finish"));
 }
 
 void JLPTReplaceForm::saveJLPTData()
@@ -221,7 +223,7 @@ void JLPTReplaceForm::saveJLPTData()
             "#     N level\n#\n";
 
     auto &commons = ZKanji::commons.getItems();
-    for (int ix = 0, siz = commons.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(commons.size()); ix != siz; ++ix)
     {
         if (commons[ix]->jlptn == 0)
             continue;
@@ -229,7 +231,7 @@ void JLPTReplaceForm::saveJLPTData()
     }
 
     // The skipped words are saved here
-    for (int ix = 0, siz = commonslist.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(commonslist.size()); ix != siz; ++ix)
     {
         if (commonslist[ix] != -1)
             continue;

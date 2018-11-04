@@ -86,7 +86,7 @@ QMenu* ZKanaLineEdit::createContextMenu(QContextMenuEvent *e)
     {
         menu->insertSeparator(menu->actions().at(0));
         QMenu *sub = menu->insertMenu(menu->actions().at(0), new QMenu(tr("Online lookup"), menu))->menu();
-        for (int ix = 0, siz = ZKanji::lookup_sites.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(ZKanji::lookup_sites.size()); ix != siz; ++ix)
         {
             QAction *a = sub->addAction(ZKanji::lookup_sites[ix].name);
             connect(a, &QAction::triggered, [str, ix]() {

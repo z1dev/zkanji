@@ -10,6 +10,8 @@
 #include "zkanjimain.h"
 #include "romajizer.h"
 
+#include "checked_cast.h"
+
 #define KANAVOWEL(c) (c == 'a' || c == 'i' || c == 'u' || c == 'e' || c == 'o')
 #define KANACONSONANT(x) (x == 'k' || x == 'g' || x == 's' || x == 'z' || x == 't' || \
                           x == 'd' || x == 'm' || x == 'h' || x == 'b' || x == 'p' || \
@@ -365,9 +367,8 @@ QString toKatakana(const QCharString &str, int len)
 QString toKatakana(const QChar *str, int len)
 {
     QString r;
-    uint slen = len == -1 ? qcharlen(str) : len;
     ushort c;
-    for (int ix = 0; ix != slen; ++ix)
+    for (int ix = 0, slen = len == -1 ? tosigned(qcharlen(str)) : len; ix != slen; ++ix)
     {
         c = str[ix].unicode();
         if (HIRAGANA(c))
@@ -399,7 +400,7 @@ QString romanize(const QChar *str, int len)
 
     int i;
 
-    uint clen = len == -1 ? qcharlen(str) : len;
+    uint clen = len == -1 ? tounsigned(qcharlen(str)) : tounsigned(len);
     char *conv = new char[clen * 3 + 1];
     memset(conv, 0, clen * 3 + 1);
 
@@ -422,7 +423,7 @@ QString romanize(const QChar *str, int len)
 
         if (!KANA(str[ix].unicode())) // Skip unknown chars
         {
-            if (str[ix].unicode() >= 'A' && str[ix].unicode() <= 'Z' || str[ix].unicode() >= 'a' && str[ix].unicode() <= 'z')
+            if ((str[ix].unicode() >= 'A' && str[ix].unicode() <= 'Z') || (str[ix].unicode() >= 'a' && str[ix].unicode() <= 'z'))
             {
                 conv[convlen] = (char)str[ix].unicode(); // Leave romaji there, maybe we will need it.
                 convlen++;
@@ -481,7 +482,7 @@ QString hiraganize(const QChar *str, int len)
 {
     QString s;
     if (len == -1)
-        len = qcharlen(str);
+        len = tosigned(qcharlen(str));
 
     for (int i = 0; i < len; i++)
     {
@@ -491,7 +492,7 @@ QString hiraganize(const QChar *str, int len)
             {
                 ushort d = s[s.size() - 1].unicode() - 0x3041;
                 if (vowelcolumn[d] >= 0)
-                    s += QChar(kanavowel[vowelcolumn[d]]);
+                    s += QChar(kanavowel[(unsigned char)vowelcolumn[d]]);
             }
             continue;
         }
@@ -507,11 +508,11 @@ QString hiraganize(const QChar *str, int len)
 
 namespace
 {
-    const char* vowelsyllables[] = {
-        "a", "i", "u", "e", "o"
-    };
+    //const char* vowelsyllables[] = {
+    //    "a", "i", "u", "e", "o"
+    //};
 
-    const int vowelsyllableslen = 5;
+    //const int vowelsyllableslen = 5;
 
     const ushort vowelunicodes[] = {
         0x3042, 0x3044, 0x3046, 0x3048, 0x304A
@@ -624,7 +625,7 @@ namespace
 bool kanavowelize(ushort &ch, int &chlen, const QChar *str, int len)
 {
     if (len == -1)
-        len = qcharlen(str);
+        len = tosigned(qcharlen(str));
 
     chlen = 0;
 
@@ -1003,7 +1004,7 @@ namespace
 QString toKana(const char *str, int len, bool uppertokata)
 {
     if (len == -1)
-        len = strlen(str);
+        len = tosigned(strlen(str));
 
     return _toKana<char>(str, len, uppertokata);
 }
@@ -1011,7 +1012,7 @@ QString toKana(const char *str, int len, bool uppertokata)
 QString toKana(const QChar *str, int len, bool uppertokata)
 {
     if (len == -1)
-        len = qcharlen(str);
+        len = tosigned(qcharlen(str));
 
     return _toKana<QChar>(str, len, uppertokata);
 }
@@ -1021,7 +1022,7 @@ QChar hiraganaCh(const QChar *c, int ix)
     if (DASH(c[ix].unicode()))
     {
         if (ix > 0 && HIRAGANA(hiraganaCh(c, ix - 1)) && vowelcolumn[hiraganaCh(c, ix - 1).unicode() - 0x3041] >= 0)
-            return kanavowel[vowelcolumn[hiraganaCh(c, ix - 1).unicode() - 0x3041]];
+            return kanavowel[(unsigned char)vowelcolumn[hiraganaCh(c, ix - 1).unicode() - 0x3041]];
         return c[ix];
     }
 

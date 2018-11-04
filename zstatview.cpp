@@ -15,6 +15,8 @@
 #include "colorsettings.h"
 #include "zui.h"
 
+#include "checked_cast.h"
+
 //-------------------------------------------------------------
 
 
@@ -82,7 +84,7 @@ void ZStatView::setTickSpacing(int val)
 
 void ZStatView::scrollTo(int column)
 {
-    if (column >= colpos.size())
+    if (column >= tosigned(colpos.size()))
     {
         horizontalScrollBar()->setValue(horizontalScrollBar()->maximum());
         return;
@@ -124,7 +126,7 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
 
     if (m != nullptr && m->type() == ZStatType::Bar)
     {
-        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
+        ZAbstractBarStatModel *sm = dynamic_cast<ZAbstractBarStatModel*>(m);
 
         int col = columnAt(e->pos().x());
         if (col == -1)
@@ -133,7 +135,7 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
             return;
         }
 
-        QString str = bm->tooltip(col);
+        QString str = sm->tooltip(col);
         if (str.isEmpty())
         {
             ZToolTip::hideNow();
@@ -161,22 +163,28 @@ void ZStatView::mouseMoveEvent(QMouseEvent *e)
             col = am->count();
         else if (ldatepos >= from)
         {
-            int l = 0;
-            int r = am->count();
+            int lpos = 0;
+            int rpos = am->count();
             int mid;
             qint64 middatepos;
             //qint64 mindatepos = from;
-            qint64 maxdatepos = to;
-            while (l < r)
+            //qint64 maxdatepos = to;
+            while (lpos < rpos)
             {
-                mid = (l + r) / 2;
+                mid = (lpos + rpos) / 2;
                 middatepos = am->valueDate(mid);
                 if (middatepos <= ldatepos)
-                    l = mid + 1/*, mindatepos = am->valueDate(mid + 1)*/;
+                {
+                    lpos = mid + 1;
+                    //mindatepos = am->valueDate(mid + 1)
+                }
                 else
-                    r = mid, maxdatepos = am->valueDate(mid);
+                {
+                    rpos = mid;
+                    //maxdatepos = am->valueDate(mid);
+                }
             }
-            col = l - 1;
+            col = lpos - 1;
         }
 
         QString str = am->tooltip(col);
@@ -211,12 +219,12 @@ bool ZStatView::viewportEvent(QEvent *e)
     return r;
 }
 
-void ZStatView::scrollContentsBy(int dx, int dy)
+void ZStatView::scrollContentsBy(int /*dx*/, int /*dy*/)
 {
     viewport()->update();
 }
 
-void ZStatView::paintEvent(QPaintEvent *event)
+void ZStatView::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter p(viewport());
     QFontMetrics fm = fontMetrics();
@@ -231,7 +239,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
     int maxval = m == nullptr ? 0 : m->maxValue();
 
     // Draw vertical axis ticks.
-    for (int ix = 0, siz = ticks.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(ticks.size()); ix != siz; ++ix)
     {
         int num = ticks[ix].first;
         int pos = ticks[ix].second;
@@ -273,7 +281,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
 
     if (m != nullptr && m->type() == ZStatType::Bar)
     {
-        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
+        ZAbstractBarStatModel *sm = dynamic_cast<ZAbstractBarStatModel*>(m);
 
         // Draw bars and horizontal axis.
         int left = !stretched ? horizontalScrollBar()->value() : 0;
@@ -281,7 +289,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
         int pos = !stretched ? std::upper_bound(colpos.begin(), colpos.end(), left) - colpos.begin() : 0;
         int prev = (pos == 0 ? 0 : colpos[pos - 1]);
 
-        while ((!stretched && pos < colpos.size() && prev - left < r.width()) || (stretched && pos < bm->count()))
+        while ((!stretched && pos < tosigned(colpos.size()) && prev - left < r.width()) || (stretched && pos < sm->count()))
         {
             ZRect r2;
             if (!stretched)
@@ -291,7 +299,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
             }
             else
             {
-                int next = (r.width() - prev) / (bm->count() - pos);
+                int next = (r.width() - prev) / (sm->count() - pos);
                 r2 = ZRect(r.left() + prev, r.top(), next, r.height());
                 prev += next;
             }
@@ -307,7 +315,7 @@ void ZStatView::paintEvent(QPaintEvent *event)
             p.setClipRect(QRect(QPoint(std::max(r2.left(), r.left()), r2.top()), QPoint(std::min(r2.right(), r.right()), r2.bottom())), Qt::ReplaceClip);
 
             p.setPen(Settings::textColor(this, ColorSettings::Text));
-            p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, bm->barLabel(pos));
+            p.drawText(r2, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, sm->barLabel(pos));
 
             ++pos;
         }
@@ -568,16 +576,16 @@ void ZStatView::onModelChanged()
     stretched = true;
     if (m != nullptr)
     {
-        ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
-        if (bm != nullptr)
+        ZAbstractBarStatModel *sm = dynamic_cast<ZAbstractBarStatModel*>(m);
+        if (sm != nullptr)
         {
-            if (bm->count() != 0 && bm->barWidth(this, 0) >= 0)
+            if (sm->count() != 0 && sm->barWidth(this, 0) >= 0)
             {
                 stretched = false;
                 int p = 0;
-                for (int ix = 0, siz = bm->count(); ix != siz; ++ix)
+                for (int ix = 0, siz = sm->count(); ix != siz; ++ix)
                 {
-                    p += bm->barWidth(this, ix);
+                    p += sm->barWidth(this, ix);
                     colpos.push_back(p);
                 }
             }
@@ -596,8 +604,8 @@ void ZStatView::onModelChanged()
 
 void ZStatView::paintBar(QPainter &p, int col, ZRect r)
 {
-    ZAbstractBarStatModel *bm = dynamic_cast<ZAbstractBarStatModel*>(m);
-    if (bm == nullptr)
+    ZAbstractBarStatModel *sm = dynamic_cast<ZAbstractBarStatModel*>(m);
+    if (sm == nullptr)
         return;
 
     QFontMetrics fm = fontMetrics();
@@ -606,13 +614,13 @@ void ZStatView::paintBar(QPainter &p, int col, ZRect r)
     if (maxval == 0)
         return;
 
-    int cnt = bm->valueCount();
+    int cnt = sm->valueCount();
     int sum = 0;
 
     fastarray<int> stats(cnt);
     for (int ix = 0; ix != cnt; ++ix)
     {
-        int v = bm->value(col, ix);
+        int v = sm->value(col, ix);
         stats[ix] = v;
         sum += v;
     }

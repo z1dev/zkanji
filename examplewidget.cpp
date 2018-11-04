@@ -224,7 +224,7 @@ void ExampleWidget::stripChanged()
     unlock();
 }
 
-void ExampleWidget::on_jptrButton_clicked(bool checked)
+void ExampleWidget::on_jptrButton_clicked(bool /*checked*/)
 {
     //QToolButton *btn = (QToolButton*)sender();
     //if (!btn->isChecked())

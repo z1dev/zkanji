@@ -139,7 +139,7 @@ void DictionaryExportForm::on_dictCBox_currentIndexChanged(int ix)
     modelDataChanged();
 }
 
-void DictionaryExportForm::on_groupBox_toggled(bool on)
+void DictionaryExportForm::on_groupBox_toggled(bool /*on*/)
 {
     modelDataChanged();
 }

@@ -744,7 +744,7 @@ public:
         }
         catch (...)
         {
-            QEvent::Type t = e->type();
+            //QEvent::Type t = e->type();
             return true;
         }
     }
@@ -817,7 +817,7 @@ int main(int argc, char **argv)
             singleappguard->detach();
             exit(0);
         }
-        if (!singleappguard->create(7 + strlen(ZKANJI_PROGRAM_VERSION)) || !singleappguard->lock())
+        if (!singleappguard->create(7 + tosigned(strlen(ZKANJI_PROGRAM_VERSION))) || !singleappguard->lock())
         {
             // Some error occurred that prevents creating this shared memory.
             exit(0);

@@ -27,6 +27,7 @@
 
 #include "formstates.h"
 
+#include "checked_cast.h"
 
 //-------------------------------------------------------------
 
@@ -60,10 +61,9 @@ void PrintTextBlock::setMaxWidth(int width)
         int setpos = 0;
 
         bool addspace = false;
-        for (int ix = 0; ix != tokens.size(); ++ix)
+        for (int ix = 0, siz = tosigned(tokens.size()); ix != siz; ++ix)
         {
-
-            if (setpos < setlist.size() - 1 && setlist[setpos + 1].tokenpos == ix)
+            if (setpos < tosigned(setlist.size()) - 1 && setlist[setpos + 1].tokenpos == ix)
             {
                 ++setpos;
                 addspace = true;
@@ -128,14 +128,13 @@ void PrintTextBlock::setFuriWord(WordEntry *e, QFont &f, QFontMetrics &fm, QFont
         std::vector<FuriganaData> fdat;
         findFurigana(word->kanji, word->kana, fdat);
 
-        int kanjisiz = word->kanji.size();
-        int kanasiz = word->kana.size();
+        //int kanjisiz = word->kanji.size();
+        //int kanasiz = word->kana.size();
 
 
         h = furih + lh;
         w = 0;
 
-        uint siz = e->kanji.size();
         int strw;
         int linew = 0;
 
@@ -143,14 +142,14 @@ void PrintTextBlock::setFuriWord(WordEntry *e, QFont &f, QFontMetrics &fm, QFont
 
         int datpos = 0;
 
-        for (int pos = 0; pos != siz; ++pos)
+        for (int pos = 0, siz = tosigned(e->kanji.size()); pos != siz; ++pos)
         {
             strw = 0;
 
             bool datfit = false;
 
             // See if one block of the data fits.
-            if (datpos != fdat.size() && fdat[datpos].kanji.pos == pos)
+            if (datpos != tosigned(fdat.size()) && fdat[datpos].kanji.pos == pos)
             {
                 strw = fm.width(word->kanji.toQString(fdat[datpos].kanji.pos, fdat[datpos].kanji.len));
                 datfit = true;
@@ -202,7 +201,7 @@ void PrintTextBlock::addFuriWord(WordEntry *e, QFont &f, QFontMetrics &fm, QFont
     setlist.push_back({ f, fm, (int)tokens.size() });
     tokens.push_back({ e->kanji.toQString(), QString() });
 
-    addString(tokens.size() - 1, fm, true);
+    addString(tosigned(tokens.size()) - 1, fm, true);
 }
 
 void PrintTextBlock::addText(QCharTokenizer &tok, QFont &f, QFontMetrics &fm)
@@ -220,7 +219,7 @@ void PrintTextBlock::addText(QCharTokenizer &tok, QFont &f, QFontMetrics &fm)
         QString dstr = QString(tok.delimiters(), tok.delimSize());
 
         tokens.push_back({ str, dstr });
-        addString(tokens.size() - 1, fm, first);
+        addString(tosigned(tokens.size()) - 1, fm, first);
         first = false;
     }
 
@@ -241,7 +240,7 @@ void PrintTextBlock::addText(const QString &str, QFont &f, QFontMetrics &fm)
 
     setlist.push_back({ f, fm, (int)tokens.size() });
     tokens.push_back({ str, QString() });
-    addString(tokens.size() - 1, fm, true);
+    addString(tosigned(tokens.size()) - 1, fm, true);
 }
 
 void PrintTextBlock::addString(int tokenpos, QFontMetrics &fm, bool addspace)
@@ -274,7 +273,7 @@ void PrintTextBlock::addString(int tokenpos, QFontMetrics &fm, bool addspace)
         {
             // The word doesn't fit the line if the delimiter is included.
 
-            lines.push_back({ (int)list.size(), 0 });
+            lines.push_back({ tosigned(list.size()), 0 });
 
             left = 0;
             dw = 0;
@@ -344,11 +343,11 @@ void PrintTextBlock::addString(int tokenpos, QFontMetrics &fm, bool addspace)
                 space = 0;
                 strw = chw;
 
-                lines.push_back({ (int)list.size(), 0 });
+                lines.push_back({ tosigned(list.size()), 0 });
             }
         }
     }
-    
+
 }
 
 bool PrintTextBlock::empty() const
@@ -377,7 +376,7 @@ int PrintTextBlock::height() const
 
     if (frontword && (list.size() <= 1 || list[1].tokenpos != 0))
         return h + furih;
-    return h + lines.size() * furih;
+    return h + tosigned(lines.size()) * furih;
 }
 
 void PrintTextBlock::setHeight(int newh)
@@ -408,15 +407,15 @@ void PrintTextBlock::paint(QPainter &p, int x, int y, bool rightalign)
 
         int nextfpos = -1;
 
-        for (int ix = 0; ix != list.size(); ++ix)
+        for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
         {
-            if (linepos < lines.size() - 1 && lines[linepos + 1].itempos == ix)
+            if (linepos < tosigned(lines.size()) - 1 && lines[linepos + 1].itempos == ix)
             {
                 if (addfurispace)
                     furiextra += furih;
                 ++linepos;
             }
-            if (setpos < setlist.size() - 1 && setlist[setpos + 1].tokenpos == list[ix].tokenpos)
+            if (setpos < tosigned(setlist.size()) - 1 && setlist[setpos + 1].tokenpos == list[ix].tokenpos)
             {
                 ++setpos;
                 p.setFont(setlist[setpos].f);
@@ -429,28 +428,28 @@ void PrintTextBlock::paint(QPainter &p, int x, int y, bool rightalign)
 
             p.drawText(x + list[ix].x + padding, y + list[ix].y + furiextra, list[ix].pos == -1 && list[ix].len == -1 ? str : str.mid(list[ix].pos, list[ix].len));
 
-            if (word != nullptr && ((frontword && list[ix].tokenpos == 0) || (!frontword && list[ix].tokenpos == tokens.size() - 1)))
+            if (word != nullptr && ((frontword && list[ix].tokenpos == 0) || (!frontword && list[ix].tokenpos == tosigned(tokens.size()) - 1)))
             {
                 // Draw furigana above kanji.
 
                 if (fdat.empty())
                     findFurigana(word->kanji, word->kana, fdat);
 
-                int left = 0;
+                int leftpos = 0;
                 int strpos = list[ix].pos == -1 ? 0 : list[ix].pos;
 
                 int datpos = 0;
                 // Find the data pos in furigana data of the painted text part.
-                for (int siz = fdat.size(); datpos != siz; ++datpos)
+                for (int datsiz = tosigned(fdat.size()); datpos != datsiz; ++datpos)
                     if (fdat[datpos].kanji.pos + fdat[datpos].kanji.len > list[ix].pos)
                         break;
 
-                while (datpos < fdat.size() && (list[ix].pos == -1 || fdat[datpos].kanji.pos < list[ix].pos + list[ix].len))
+                while (datpos < tosigned(fdat.size()) && (list[ix].pos == -1 || (int)fdat[datpos].kanji.pos < list[ix].pos + list[ix].len))
                 {
                     // Skip part that doesn't contain kanji.
                     if (fdat[datpos].kanji.pos > strpos)
                     {
-                        left += setlist[setpos].fm.width(str.mid(strpos, fdat[datpos].kanji.pos - strpos));
+                        leftpos += setlist[setpos].fm.width(str.mid(strpos, fdat[datpos].kanji.pos - strpos));
                         strpos = fdat[datpos].kanji.pos;
                     }
 
@@ -458,8 +457,8 @@ void PrintTextBlock::paint(QPainter &p, int x, int y, bool rightalign)
                     if (list[ix].pos == -1 || (fdat[datpos].kanji.pos >= list[ix].pos && fdat[datpos].kanji.pos + fdat[datpos].kanji.len <= list[ix].pos + list[ix].len))
                     {
                         int strw = setlist[setpos].fm.width(str.mid(fdat[datpos].kanji.pos, fdat[datpos].kanji.len));
-                        paintFurigana(p, x + list[ix].x + padding + left, y + list[ix].y + furiextra - (furih + lh - desc), strw, fdat[datpos].kana.pos, fdat[datpos].kana.len);
-                        left += strw;
+                        paintFurigana(p, x + list[ix].x + padding + leftpos, y + list[ix].y + furiextra - (furih + lh - desc), strw, fdat[datpos].kana.pos, fdat[datpos].kana.len);
+                        leftpos += strw;
                         strpos += fdat[datpos].kanji.len;
                         ++datpos;
                         continue;
@@ -478,12 +477,12 @@ void PrintTextBlock::paint(QPainter &p, int x, int y, bool rightalign)
                     nextfpos = fpos + flen;
 
                     if (flen > 0)
-                        paintFurigana(p, x + left + padding, y, strw, fdat[datpos].kana.pos + fpos, flen);
+                        paintFurigana(p, x + leftpos + padding, y, strw, fdat[datpos].kana.pos + fpos, flen);
 
                     strpos = std::min(fdat[datpos].kanji.pos + fdat[datpos].kanji.len, list[ix].pos + list[ix].len);
                     if (strpos == fdat[datpos].kanji.pos + fdat[datpos].kanji.len)
                         ++datpos;
-                    left += strw;
+                    leftpos += strw;
                 }
 
             }
@@ -498,17 +497,17 @@ void PrintTextBlock::paintKanjiFuri(QPainter &p, int x, int y, bool rightalign)
     std::vector<FuriganaData> fdat;
     findFurigana(word->kanji, word->kana, fdat);
 
-    uint kanjisiz = word->kanji.size();
-    uint kanasiz = word->kana.size();
+    int kanjisiz = tosigned(word->kanji.size());
+    //uint kanasiz = word->kana.size();
 
     // Position in fdat.
-    int datpos = 0;
+    uint datpos = 0;
 
     // Position in lines.
     uint linepos = 0;
 
     // Position to print the next character relative to x.
-    int left = 0;
+    int leftpos = 0;
 
     // Position in the kana/furigana when breaking up word parts.
     int fpos = 0;
@@ -520,7 +519,7 @@ void PrintTextBlock::paintKanjiFuri(QPainter &p, int x, int y, bool rightalign)
     QFont &f = setlist[0].f;
     QFontMetrics &fm = setlist[0].fm;
 
-    for (uint pos = 0; pos != kanjisiz; ++pos)
+    for (int pos = 0; pos != kanjisiz; ++pos)
     {
         p.setFont(f);
 
@@ -528,37 +527,37 @@ void PrintTextBlock::paintKanjiFuri(QPainter &p, int x, int y, bool rightalign)
         if (linepos != lines.size() - 1 && lines[linepos + 1].itempos == pos)
         {
             y += lh + furih;
-            left = 0;
+            leftpos = 0;
             ++linepos;
             if (rightalign)
                 padding = maxwidth - lines[linepos].width;
         }
 
-        if (datpos == fdat.size() || fdat[datpos].kanji.pos > pos)
+        if (datpos == fdat.size() || (int)fdat[datpos].kanji.pos > pos)
         {
             // No furigana data for this (presumably kana) character. Print it separately as a
             // single character.
-            p.drawText(x + left + padding, y + furih + lh - desc, word->kanji[pos]);
-            left += fm.width(word->kanji[pos]);
+            p.drawText(x + leftpos + padding, y + furih + lh - desc, word->kanji[pos]);
+            leftpos += fm.width(word->kanji[pos]);
             continue;
         }
 
-        if (fdat[datpos].kanji.pos == pos && (linepos == lines.size() - 1 || lines[linepos + 1].itempos >= pos + fdat[datpos].kanji.len))
+        if ((int)fdat[datpos].kanji.pos == pos && (linepos == lines.size() - 1 || lines[linepos + 1].itempos >= pos + fdat[datpos].kanji.len))
         {
             // If the whole data part fits, print it unchanged with furigana.
 
             QString str = word->kanji.toQString(fdat[datpos].kanji.pos, fdat[datpos].kanji.len);
-            p.drawText(x + left + padding, y + furih + lh - desc, str);
+            p.drawText(x + leftpos + padding, y + furih + lh - desc, str);
             int strw = fm.width(str);
-            paintFurigana(p, x + left + padding, y, strw, fdat[datpos].kana.pos, fdat[datpos].kana.len);
+            paintFurigana(p, x + leftpos + padding, y, strw, fdat[datpos].kana.pos, fdat[datpos].kana.len);
 
             pos += fdat[datpos].kanji.len - 1;
-            left += strw;
+            leftpos += strw;
             ++datpos;
             continue;
         }
 
-        if (fdat[datpos].kanji.pos == pos)
+        if ((int)fdat[datpos].kanji.pos == pos)
             fpos = 0;
 
         // Length of the rest of the furigana part not painted yet.
@@ -570,21 +569,21 @@ void PrintTextBlock::paintKanjiFuri(QPainter &p, int x, int y, bool rightalign)
         QString str = word->kanji.toQString(pos, klen);
         int strw = fm.width(str);
 
-        p.drawText(x + left + padding, y + furih + lh - desc, str);
+        p.drawText(x + leftpos + padding, y + furih + lh - desc, str);
 
         // Change furigana part length to the number of characters that should be painted
         // above the current kanji.
         double kdiv = double(klen) / (fdat[datpos].kanji.len - (pos - fdat[datpos].kanji.pos));
         flen *= kdiv;
 
-        paintFurigana(p, x + left + padding, y, strw, fpos, flen);
+        paintFurigana(p, x + leftpos + padding, y, strw, fpos, flen);
         fpos += flen;
 
-        left += strw;
+        leftpos += strw;
         pos += klen - 1;
 
         // End of the current data part.
-        if (fdat[datpos].kanji.pos + fdat[datpos].kanji.len - 1 == pos)
+        if (int(fdat[datpos].kanji.pos + fdat[datpos].kanji.len - 1) == tosigned(pos))
             ++datpos;
     }
 }
@@ -915,10 +914,10 @@ void PrintPreviewForm::pageScrolled()
 //    }
 //}
 
-void PrintPreviewForm::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void PrintPreviewForm::entryRemoved(int windex, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     int wpos = -1;
-    for (int ix = 0, siz = list.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
         if (list[ix] > windex)
             --list[ix];
@@ -933,7 +932,7 @@ void PrintPreviewForm::entryRemoved(int windex, int abcdeindex, int aiueoindex)
     }
 }
 
-void PrintPreviewForm::entryChanged(int windex, bool studydef)
+void PrintPreviewForm::entryChanged(int windex, bool /*studydef*/)
 {
     if (std::find(list.begin(), list.end(), windex) != list.end())
         preview->updatePreview();
@@ -1062,7 +1061,8 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
     // of the width.
     int kmaxwidth = Settings::print.doublepage ? (colwidth - colspacing / 2) : std::ceil((colwidth - colspacing / 2) * 0.35);
 
-    while (wordpos != list.size())
+    int lsiz = tosigned(list.size());
+    while (wordpos != lsiz)
     {
         e = dict->wordEntry(list[wordpos]);
 
@@ -1163,11 +1163,11 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
 
                 if (Settings::print.showtype)
                 {
-                    QString str;
-                    for (int ix = 0; ix != e->defs.size(); ++ix)
+                    str = QString();
+                    for (int ix = 0, siz = tosigned(e->defs.size()); ix != siz; ++ix)
                     {
-                        str = Strings::wordTypesText(e->defs[ix].attrib.types);
-                        if (ix != e->defs.size() - 1)
+                        str += Strings::wordTypesText(e->defs[ix].attrib.types);
+                        if (ix != tosigned(e->defs.size()) - 1)
                             str += "; ";
                     }
                     QCharTokenizer pttok(str.constData(), str.size(), qcharisspace);
@@ -1183,14 +1183,14 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
             {
                 // No user definition. Use the word from the dictionary.
                 // Print each definition separately.
-                for (int ix = 0; ix != e->defs.size(); ++ix)
+                for (int ix = 0, siz = tosigned(e->defs.size()); ix != siz; ++ix)
                 {
                     if (e->defs.size() != 1)
                         block->addText(QStringLiteral("%1.").arg(ix + 1), df, dfm);
 
                     if (Settings::print.showtype)
                     {
-                        QString str = Strings::wordTypesText(e->defs[ix].attrib.types);
+                        str = Strings::wordTypesText(e->defs[ix].attrib.types);
 
                         QCharTokenizer pttok(str.constData(), str.size(), qcharisspace);
                         block->addText(pttok, tf, tfm);
@@ -1304,7 +1304,7 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
             top += linespacing + blockh;
             ++wordpos;
 
-            if (Settings::print.doublepage && !secondpage && wordpos == list.size())
+            if (Settings::print.doublepage && !secondpage && wordpos == lsiz)
             {
                 wordpos = pagepos;
                 secondpage = true;
@@ -1326,7 +1326,7 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
             ++pagecnt;
 
             // Second page.
-            for (int ix = 0; ix != blocks.size(); ++ix, ++wordpos)
+            for (int ix = 0, siz = tosigned(blocks.size()); ix != siz; ++ix, ++wordpos)
             {
                 PrintTextBlock *bl = blocks[ix];
                 int blockh = bl->height();
@@ -1357,7 +1357,7 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
             secondpage = false;
             pagepos = wordpos;
 
-            if (wordpos != list.size())
+            if (wordpos != lsiz)
             {
                 if (Settings::print.pagenum)
                 {
@@ -1382,7 +1382,7 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
     ui->pageLabel->setText(QStringLiteral("/ %1").arg(pagecnt));
 }
 
-void PrintPreviewForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void PrintPreviewForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict)
         close();

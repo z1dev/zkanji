@@ -117,7 +117,7 @@ private:
     void computeSizeHint() const;
 
     // Cached size to be returned by sizeHint() and minimumSizeHint().
-    mutable QSize siz;
+    mutable QSize sizecache;
     bool firstshown;
 
     // Saved previously selected index to be restored if user cancels the custom color

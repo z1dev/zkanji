@@ -63,7 +63,7 @@ private:
     // Destination dictionary.
     Dictionary *dest;
     // Word index in the destination dictionary.
-    int dindex;
+    int dictindex;
 
     // Height of the bottom words table when shown.
     int expandsize;

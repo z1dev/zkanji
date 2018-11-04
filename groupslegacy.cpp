@@ -57,7 +57,7 @@ void WordGroup::loadLegacy(QDataStream &stream, bool isstudy, int version)
 
         if (!duplicate)
         {
-            indextmp.push_back(list.size());
+            indextmp.push_back(tosigned(list.size()));
             list.push_back(index);
             wg.push_front(this);
             dictionary()->wordEntry(index)->dat |= (1 << (int)WordRuntimeData::InGroup);
@@ -163,7 +163,7 @@ void Groups::loadWordsLegacy(QDataStream &stream, int version)
         qint32 windex;
         stream >> windex;
 
-        for (int j = 0; j != dict->wordEntry(windex)->defs.size(); ++j)
+        for (int j = 0; j != tosigned(dict->wordEntry(windex)->defs.size()); ++j)
             stream.skipRawData(sizeof(qint16) + sizeof(char) + sizeof(double));
     }
 
@@ -171,7 +171,7 @@ void Groups::loadWordsLegacy(QDataStream &stream, int version)
     wordgroups.loadLegacy(stream, true, version);
 }
 
-void Groups::loadKanjiLegacy(QDataStream &stream, int version)
+void Groups::loadKanjiLegacy(QDataStream &stream, int /*version*/)
 {
     kanjigroups.loadLegacy(stream);
 }

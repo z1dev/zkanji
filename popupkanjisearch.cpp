@@ -164,7 +164,7 @@ void PopupKanjiSearch::hidePopup()
         instance->hide();
 }
 
-PopupKanjiSearch * const PopupKanjiSearch::getInstance()
+PopupKanjiSearch* PopupKanjiSearch::getInstance()
 {
     return instance;
 }
@@ -289,7 +289,7 @@ void PopupKanjiSearch::appStateChange(Qt::ApplicationState state)
         close();
 }
 
-void PopupKanjiSearch::on_pinButton_clicked(bool checked)
+void PopupKanjiSearch::on_pinButton_clicked(bool /*checked*/)
 {
     if (!Settings::popup.kanjiautohide)
         close();

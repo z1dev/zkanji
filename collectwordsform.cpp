@@ -23,6 +23,8 @@
 #include "zdictionarylistview.h"
 #include "generalsettings.h"
 
+#include "checked_cast.h"
+
 
 //-------------------------------------------------------------
 
@@ -145,7 +147,7 @@ void CollectedWordListModel::setWordList(Dictionary *d, std::vector<int> &&wordl
 {
     checks.resize(wordlist.size());
     memset(checks.data(), true, checks.size());
-    checkedcnt = checks.size();
+    checkedcnt = tosigned(checks.size());
     base::setWordList(d, std::move(wordlist), true);
 }
 
@@ -158,7 +160,7 @@ void CollectedWordListModel::getCheckedWords(std::vector<int> &result) const
 {
     result.resize(checkedcnt);
     int pos = 0;
-    for (int ix = 0, siz = checks.size(); ix != siz && pos != checkedcnt; ++ix)
+    for (int ix = 0, siz = tosigned(checks.size()); ix != siz && pos != checkedcnt; ++ix)
         if (checks[ix] != 0)
             result[pos++] = indexes(ix);
 }
@@ -260,22 +262,22 @@ void CollectedWordListModel::orderChanged(const std::vector<int> &ordering)
     std::vector<char> tmp;
     tmp.swap(checks);
     checks.resize(tmp.size());
-    for (int ix = 0, siz = tmp.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(tmp.size()); ix != siz; ++ix)
         checks[ix] = tmp[ordering[ix]];
 }
 
-bool CollectedWordListModel::addNewEntry(int windex, int &position)
+bool CollectedWordListModel::addNewEntry(int /*windex*/, int &/*position*/)
 {
     return false;
 }
 
-void CollectedWordListModel::entryAddedPosition(int pos)
+void CollectedWordListModel::entryAddedPosition(int /*pos*/)
 {
     // addNewEntry() returns false so we never get here.
     ;
 }
 
-void CollectedWordListModel::entryRemoved(int windex, int abcdeindex, int aiueoindex)
+void CollectedWordListModel::entryRemoved(int windex, int /*abcdeindex*/, int /*aiueoindex*/)
 {
     int wpos = -1;
     for (int ix = 0, siz = rowCount(); wpos == -1 && ix != siz; ++ix)
@@ -360,7 +362,7 @@ void CollectWordsForm::exec(Dictionary *d, const std::vector<ushort> &kanjis)
     std::set<ushort> found;
     std::vector<ushort> accepted;
     accepted.reserve(kanjis.size());
-    for (int ix = 0, siz = kanjis.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(kanjis.size()); ix != siz; ++ix)
     {
         ushort val = kanjis[ix];
         if (found.count(val) != 0)
@@ -480,7 +482,7 @@ void CollectWordsForm::closeEvent(QCloseEvent *e)
 
 void CollectWordsForm::kanjiInserted(const smartvector<Interval> &intervals)
 {
-    for (int ix = intervals.size() - 1; ix != -1; --ix)
+    for (int ix = tosigned(intervals.size()) - 1; ix != -1; --ix)
     {
         readings.insert(readings.begin() + intervals[ix]->index, intervals[ix]->count, 0xffff);
         placement.insert(placement.begin() + intervals[ix]->index, intervals[ix]->count, Anywhere);
@@ -561,7 +563,7 @@ void CollectWordsForm::on_generateButton_clicked()
     bool checkkanji = false;
     bool needfuri = false;
 
-    for (int ix = 0, siz = kanji.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(kanji.size()); ix != siz; ++ix)
     {
 
         ushort kindex = kanji[ix];
@@ -577,12 +579,12 @@ void CollectWordsForm::on_generateButton_clicked()
             needfuri = true;
     }
 
-    for (int ix = 0, siz = words.size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
     {
         int windex = words[ix];
         const WordEntry *e = dict->wordEntry(windex);
         //WordCommons *cm;
-        if (e->freq < minfreq || (maxklen > 0 && e->kana.size() > maxklen) /*|| 
+        if (tosigned(e->freq) < minfreq || (maxklen > 0 && tosigned(e->kana.size()) > maxklen) /*||
             ((minjlpt != 6 || maxjlpt != -1) && ((cm = ZKanji::commons.findWord(e->kanji.data(), e->kana.data(), e->romaji.data())) == nullptr || cm->jlptn < maxjlpt || cm->jlptn > minjlpt))*/)
             words[ix] = -1;
         else if (limit || maxkanji != -1 || checkkanji)
@@ -671,13 +673,13 @@ void CollectWordsForm::on_generateButton_clicked()
 
 void CollectWordsForm::on_addButton_clicked()
 {
-    WordGroup *dest = dynamic_cast<WordGroup*>(GroupPickerForm::select(GroupWidget::Modes::Words, tr("Select a word group for the checked words."), dict, false, false, this));
-    if (dest == nullptr)
+    WordGroup *grpdest = dynamic_cast<WordGroup*>(GroupPickerForm::select(GroupWidget::Modes::Words, tr("Select a word group for the checked words."), dict, false, false, this));
+    if (grpdest == nullptr)
         return;
 
     std::vector<int> windexes;
     wmodel->getCheckedWords(windexes);
-    dest->add(windexes);
+    grpdest->add(windexes);
 }
 
 void CollectWordsForm::wordChecked()
@@ -722,7 +724,7 @@ void CollectWordsForm::dictionaryReset()
     ui->addButton->setEnabled(false);
 }
 
-void CollectWordsForm::dictionaryToBeRemoved(int index, int orderindex, Dictionary *d)
+void CollectWordsForm::dictionaryToBeRemoved(int /*index*/, int orderindex, Dictionary *d)
 {
     if (d == dict)
         ui->dictCBox->setCurrentIndex(orderindex == 0 ? 1 : 0);

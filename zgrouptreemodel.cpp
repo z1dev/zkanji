@@ -76,7 +76,7 @@ void GroupTreeModel::init()
             else
             {
                 // At the end of the child categories, check the group names for match.
-                int siz = pos->size();
+                int siz = tosigned(pos->size());
                 for (int iy = 0; iy != siz; ++iy)
                 {
                     GroupBase *g = pos->items(iy);
@@ -115,7 +115,7 @@ int GroupTreeModel::rowCount(const TreeItem *parent) const
 {
     // Size when group model is filtered depends on the filterlist only.
     if (filtered)
-        return parent == nullptr ? filterlist.size() : 0;
+        return parent == nullptr ? tosigned(filterlist.size()) : 0;
 
     // parent has empty userData when it's a message item only for expanding empty categories,
     // or an empty item for editing the name of a new group or category.
@@ -136,7 +136,7 @@ int GroupTreeModel::rowCount(const TreeItem *parent) const
 
     // Empty categories return a message item. Categories with an item to be added return an
     // item to allow editing its name.
-    return std::max(placeholder ? 1 : 0, dat->categoryCount() + (!onlycateg ? dat->size() : 0) + (addmode != NoAdd && editparent == parent ? 1 : 0));
+    return std::max(placeholder ? 1 : 0, tosigned(dat->categoryCount()) + (!onlycateg ? tosigned(dat->size()) : 0) + (addmode != NoAdd && editparent == parent ? 1 : 0));
 }
 
 QVariant GroupTreeModel::data(const TreeItem *item, int role) const
@@ -258,11 +258,11 @@ intptr_t GroupTreeModel::treeRowData(int row, const TreeItem *parent) const
     else
         cat = (GroupCategoryBase*)parent->userData();
 
-    if (row < cat->categoryCount())
+    if (row < tosigned(cat->categoryCount()))
         return (intptr_t)cat->categories(row);
 
-    int groupcnt = (onlycateg ? 0 : cat->size());
-    bool editrow = editparent == parent && ((addmode == CategoryAdd && row == cat->categoryCount()) || (addmode == GroupAdd && row == cat->categoryCount() + groupcnt));
+    int groupcnt = (onlycateg ? 0 : tosigned(cat->size()));
+    bool editrow = editparent == parent && ((addmode == CategoryAdd && row == tosigned(cat->categoryCount())) || (addmode == GroupAdd && row == tosigned(cat->categoryCount()) + groupcnt));
     if (editrow || cat->categoryCount() + groupcnt == 0)
         return 0;
 
@@ -329,7 +329,7 @@ QStringList GroupTreeModel::mimeTypes() const
     return types;
 }
 
-bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, TreeItem *parent)
+bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int /*column*/, TreeItem *parent)
 {
     if (data->hasFormat("zkanji/groups"))
     {
@@ -365,7 +365,7 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
             return false;
 
         // A category is being dropped onto itself or into its child.
-        for (int ix = 0, siz = cats.size(); ix != siz; ++ix)
+        for (int ix = 0, siz = tosigned(cats.size()); ix != siz; ++ix)
         {
             // Check if dropping a parent into a child category.
             GroupBase *pos = dest;
@@ -380,10 +380,10 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         GroupCategoryBase *src = !groups.empty() ? groups.front()->parentCategory() : cats.front()->parentCategory();
         if (dest != src)
         {
-            for (int ix = 0, siz = cats.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(cats.size()); ix != siz; ++ix)
                 if (dest->categoryNameTaken(cats[ix]->name()))
                     return false;
-            for (int ix = 0, siz = groups.size(); ix != siz; ++ix)
+            for (int ix = 0, siz = tosigned(groups.size()); ix != siz; ++ix)
                 if (dest->groupNameTaken(groups[ix]->name()))
                     return false;
         }
@@ -400,7 +400,7 @@ bool GroupTreeModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
         {
             int pos = row;
             if (pos == -1)
-                pos = dest->size();
+                pos = tosigned(dest->size());
             else
                 pos = row - dest->categoryCount();
             root->moveGroups(groups, dest, pos);
@@ -559,7 +559,7 @@ TreeItem* GroupTreeModel::startAddGroup(TreeItem *parent)
     else
         pcat = (GroupCategoryBase*)parent->userData();
 
-    beginInsertRows(parent, pcat->categoryCount() + pcat->size(), pcat->categoryCount() + pcat->size());
+    beginInsertRows(parent, pcat->categoryCount() + tosigned(pcat->size()), pcat->categoryCount() + tosigned(pcat->size()));
     editparent = parent;
     addmode = GroupAdd;
     endInsertRows();
@@ -571,7 +571,7 @@ TreeItem* GroupTreeModel::startAddGroup(TreeItem *parent)
         endRemoveRows();
     }
 
-    return getItem(parent, pcat->categoryCount() + pcat->size());
+    return getItem(parent, pcat->categoryCount() + tosigned(pcat->size()));
 }
 
 TreeItem* GroupTreeModel::findTreeItem(const GroupBase *which)
@@ -598,7 +598,7 @@ TreeItem* GroupTreeModel::findTreeItem(const GroupBase *which)
         which = stack.top();
         stack.pop();
 
-        int siz = getSize(top);
+        int siz = tosigned(getSize(top));
 #ifdef _DEBUG
         bool found = false;
 #endif
@@ -850,7 +850,7 @@ void GroupTreeModel::groupAdded(GroupCategoryBase *parent, int index)
     }
 }
 
-void GroupTreeModel::categoryAboutToBeDeleted(GroupCategoryBase *parent, int index, GroupCategoryBase *cat)
+void GroupTreeModel::categoryAboutToBeDeleted(GroupCategoryBase *parent, int index, GroupCategoryBase * /*cat*/)
 {
     if (filtered || ignoresignals)
         return;
@@ -859,7 +859,7 @@ void GroupTreeModel::categoryAboutToBeDeleted(GroupCategoryBase *parent, int ind
     beginRemoveRows(parentitem, index, index);
 }
 
-void GroupTreeModel::categoryDeleted(GroupCategoryBase *parent, int index, void *oldptr)
+void GroupTreeModel::categoryDeleted(GroupCategoryBase *parent, int /*index*/, void * /*oldptr*/)
 {
     if (filtered || ignoresignals)
         return;
@@ -990,7 +990,7 @@ void GroupTreeModel::categoriesMoved(GroupCategoryBase *srcparent, const Range &
     // Remove the "add new..." message item if it was present in destparent. The sum of the
     // item sizes is now (r.last - r.first + 1) after an item was moved.
     int cnt = (r.last - r.first + 1);
-    if (placeholder && destparent != srcparent && destparent->categoryCount() + (onlycateg ? 0 : destparent->size()) == cnt)
+    if (placeholder && destparent != srcparent && tosigned(destparent->categoryCount() + (onlycateg ? 0 : destparent->size())) == cnt)
     {
         beginRemoveRows(dest, cnt, cnt);
         endRemoveRows();
@@ -1015,7 +1015,7 @@ void GroupTreeModel::groupsMoved(GroupCategoryBase *srcparent, const Range &r, G
     // Remove the "add new..." message item if it was present in destparent. The sum of the
     // item sizes is now (r.last - r.first + 1) after an item was moved.
     int cnt = (r.last - r.first + 1);
-    if (placeholder && destparent != srcparent && destparent->categoryCount() + (onlycateg ? 0 : destparent->size()) == cnt)
+    if (placeholder && destparent != srcparent && tosigned(destparent->categoryCount() + (onlycateg ? 0 : destparent->size())) == cnt)
     {
         beginRemoveRows(dest, cnt, cnt);
         endRemoveRows();
@@ -1053,7 +1053,7 @@ void GroupTreeModel::groupRenamed(GroupCategoryBase *parent, int index)
                 return;
 
             // Find the insert position of this group in the list.
-            auto it = std::upper_bound(filterlist.begin(), filterlist.end(), grp, [](const GroupBase *a, const GroupBase *b) {
+            it = std::upper_bound(filterlist.begin(), filterlist.end(), grp, [](const GroupBase *a, const GroupBase *b) {
                 QString astr = a->name().toLower();
                 QString bstr = b->name().toLower();
                 if (astr == bstr)
@@ -1171,7 +1171,7 @@ QVariant CheckedGroupTreeModel::data(const TreeItem *item, int role) const
         GroupCategoryBase *cat = (GroupCategoryBase*)grp;
         bool hascheck = false;
         bool hasuncheck = false;
-        for (int ix = 0, siz = cat->size(); ix != siz && (!hascheck || !hasuncheck); ++ix)
+        for (int ix = 0, siz = tosigned(cat->size()); ix != siz && (!hascheck || !hasuncheck); ++ix)
         {
             if (checked.contains(cat->items(ix)))
                 hascheck = true;
@@ -1233,7 +1233,7 @@ bool CheckedGroupTreeModel::setData(TreeItem *item, const QVariant &value, int r
 
         for (TreeItem *i : list)
         {
-            GroupBase *grp = (GroupBase*)i->userData();
+            grp = (GroupBase*)i->userData();
             if (grp == nullptr || (!checkcateg && grp->isCategory()))
                 continue;
 
@@ -1268,13 +1268,13 @@ Qt::ItemFlags CheckedGroupTreeModel::flags(const TreeItem *item) const
     return base::flags(item) | (item->userData() != 0 ? Qt::ItemIsUserCheckable : Qt::NoItemFlags);
 }
 
-void CheckedGroupTreeModel::categoryAboutToBeDeleted(GroupCategoryBase *parent, int index, GroupCategoryBase *cat)
+void CheckedGroupTreeModel::categoryAboutToBeDeleted(GroupCategoryBase * /*parent*/, int /*index*/, GroupCategoryBase *cat)
 {
     if (checkcateg)
         checked.remove(cat);
 }
 
-void CheckedGroupTreeModel::groupAboutToBeDeleted(GroupCategoryBase *parent, int index, GroupBase *grp)
+void CheckedGroupTreeModel::groupAboutToBeDeleted(GroupCategoryBase * /*parent*/, int /*index*/, GroupBase *grp)
 {
     checked.remove(grp);
 }
@@ -1284,7 +1284,7 @@ void CheckedGroupTreeModel::collectCategoryChildren(TreeItem *parent, QSet<TreeI
     if (parent->empty())
         return;
     
-    for (int ix = 0, siz = parent->size(); ix != siz; ++ix)
+    for (int ix = 0, siz = tosigned(parent->size()); ix != siz; ++ix)
     {
         TreeItem *item = parent->items(ix);
         dest.insert(item);

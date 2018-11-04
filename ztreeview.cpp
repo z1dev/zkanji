@@ -195,7 +195,6 @@ QItemSelectionModel::SelectionFlags ZTreeView::selectionCommand(const QModelInde
             // Prevent changing the current selection when clicking on a checkbox.
             // The model must handle selecting multiple when checking inside a selection.
 
-            QStyledItemDelegate *del = dynamic_cast<QStyledItemDelegate*>(itemDelegate());
             QMouseEvent *me = (QMouseEvent*)e;
 
             QStyleOptionViewItem opt;
@@ -619,9 +618,9 @@ QRect GroupTreeView::_indicatorRect(TreeItem *item, bool after) const
     {
         // Find the last visible item.
 
-        while (isExpanded(item->items(item->size() - 1)))
-            item = item->items(item->size() - 1);
-        QRect r2 = visualRect(item->items(item->size() - 1));
+        while (isExpanded(item->items(tosigned(item->size()) - 1)))
+            item = item->items(tosigned(item->size()) - 1);
+        QRect r2 = visualRect(item->items(tosigned(item->size()) - 1));
 
         r.setTop(r2.bottom());
         r.setBottom(r2.bottom() + 1);
@@ -953,7 +952,7 @@ void GroupTreeView::dragMoveEvent(QDragMoveEvent *e)
                 {
                     // Mouse is over the empty space after the last item. The dragged item should
                     // be placed as the new last item.
-                    dragdest = model()->items(model()->rootCategory()->categoryCount() + model()->rootCategory()->size() - 1);
+                    dragdest = model()->items(model()->rootCategory()->categoryCount() + tosigned(model()->rootCategory()->size()) - 1);
                     dragpos = DragPos::After;
                 }
             }

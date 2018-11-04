@@ -94,7 +94,8 @@ namespace ZKanji
 
     std::vector<uchar> validkanji;
     std::vector<uchar> validcode;
-    uchar validcodelowerhalf = -1;
+    // -1 is debug value that's never used.
+    uchar validcodelowerhalf = (uchar)-1;
     const int validcodecount = (0x30ff - 0x3000) + (0xffee - 0xff01) + 2; // (0x30ff - 0x3000) + (0xffe0 - 0xff00); - This was the original count
 }
 
@@ -275,7 +276,7 @@ void ZException::copyMsg(const char * const &m)
 QCharTokenizer::QCharTokenizer(const QChar *c, int len, std::function<QCharKind(QChar)> delimfunc) : pos(c), len(len), tokenlen(0), delimpos(nullptr), delimfunc(delimfunc)
 {
     if (len == -1)
-        this->len = qcharlen(c);
+        this->len = tosigned(qcharlen(c));
 }
 
 bool QCharTokenizer::next()
@@ -349,6 +350,7 @@ int QCharTokenizer::delimSize()
 //-------------------------------------------------------------
 
 
+template<>
 QDataStream& operator>>(QDataStream& stream, ZStr<QString> str)
 {
     int len = str.readLength(stream);
@@ -365,6 +367,7 @@ QDataStream& operator>>(QDataStream& stream, ZStr<QString> str)
     return stream;
 }
 
+template<>
 QDataStream& operator>>(QDataStream& stream, ZStr<QChar*> str)
 {
     int len = str.readLength(stream);
@@ -390,6 +393,7 @@ QDataStream& operator>>(QDataStream& stream, ZStr<QChar*> str)
     return stream;
 }
 
+template<>
 QDataStream& operator>>(QDataStream& stream, ZStr<QCharString> str)
 {
     int len = str.readLength(stream);
@@ -407,6 +411,7 @@ QDataStream& operator>>(QDataStream& stream, ZStr<QCharString> str)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream& stream, const ZStr<const QString> &str)
 {
     QByteArray data;
@@ -419,7 +424,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<const QString> &str)
         if (len < str.length)
         {
             std::vector<char> vec(str.length - len, ' ');
-            data.append(vec.data(), vec.size());
+            data.append(vec.data(), tosigned(vec.size()));
         }
     }
 
@@ -429,16 +434,14 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<const QString> &str)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream& stream, const ZStr<const QChar*> &str)
 {
     QByteArray data;
     if (str.length == -1)
-        data = QString::fromRawData(str.val, qcharlen(str.val)).toUtf8();
+        data = QString::fromRawData(str.val, tosigned(qcharlen(str.val))).toUtf8();
     else
-    {
-        int len = str.length;
         data = QString::fromRawData(str.val, str.length).toUtf8();
-    }
 
     str.writeLength(stream, data.size());
     stream.writeRawData(data.data(), data.size());
@@ -446,6 +449,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<const QChar*> &str)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream& stream, const ZStr<const QCharString> &str)
 {
     QByteArray data;
@@ -458,7 +462,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<const QCharString> &str)
         if (len < str.length)
         {
             std::vector<char> vec(str.length - len, ' ');
-            data.append(vec.data(), vec.size());
+            data.append(vec.data(), tosigned(vec.size()));
         }
     }
 
@@ -468,6 +472,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<const QCharString> &str)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream& stream, const ZStr<QString> &str)
 {
     QByteArray data;
@@ -480,7 +485,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QString> &str)
         if (len < str.length)
         {
             std::vector<char> vec(str.length - len, ' ');
-            data.append(vec.data(), vec.size());
+            data.append(vec.data(), tosigned(vec.size()));
         }
     }
 
@@ -490,16 +495,14 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QString> &str)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream& stream, const ZStr<QChar*> &str)
 {
     QByteArray data;
     if (str.length == -1)
-        data = QString::fromRawData(str.val, qcharlen(str.val)).toUtf8();
+        data = QString::fromRawData(str.val, tosigned(qcharlen(str.val))).toUtf8();
     else
-    {
-        int len = str.length;
         data = QString::fromRawData(str.val, str.length).toUtf8();
-    }
 
     str.writeLength(stream, data.size());
     stream.writeRawData(data.data(), data.size());
@@ -507,6 +510,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QChar*> &str)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream& stream, const ZStr<QCharString> &str)
 {
     QByteArray data;
@@ -519,7 +523,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QCharString> &str)
         if (len < str.length)
         {
             std::vector<char> vec(str.length - len, ' ');
-            data.append(vec.data(), vec.size());
+            data.append(vec.data(), tosigned(vec.size()));
         }
     }
 
@@ -533,6 +537,7 @@ QDataStream& operator<<(QDataStream& stream, const ZStr<QCharString> &str)
 //-------------------------------------------------------------
 
 
+template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDateTime> &date)
 {
     if (date.dt.isValid())
@@ -559,11 +564,13 @@ QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDateTime>
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<QDateTime> &date)
 {
     return stream << ZDateTimeStr<const QDateTime>(date.dt);
 }
 
+template<>
 QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDateTime> date)
 {
     quint64 u64;
@@ -595,6 +602,7 @@ QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDateTime> date)
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDate> &date)
 {
     if (date.dt.isValid())
@@ -619,11 +627,13 @@ QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<const QDate> &da
     return stream;
 }
 
+template<>
 QDataStream& operator<<(QDataStream &stream, const ZDateTimeStr<QDate> &date)
 {
     return stream << ZDateTimeStr<const QDate>(date.dt);
 }
 
+template<>
 QDataStream& operator>>(QDataStream &stream, ZDateTimeStr<QDate> date)
 {
     //char datestr[10];
@@ -933,7 +943,7 @@ namespace ZKanji
             validkanji.resize(0x9faf - 0x4e00 + 1, 0);
         //memset(validkanji, 0, (0x9faf - 0x4e00 + 1) * sizeof(bool));
         uchar *vkdata = &validkanji[0];
-        for (int ix = 0, siz = kanjis.size(); ix != siz;  ++ix)
+        for (int ix = 0, siz = tosigned(kanjis.size()); ix != siz;  ++ix)
             vkdata[kanjis[ix]->ch.unicode() - 0x4e00] = true;
     }
 
@@ -951,7 +961,9 @@ namespace ZKanji
         uchar *vcdata = &validcode[0];
 
         //memset(validcode, 0, validcodecount * sizeof(bool));
-        validcodelowerhalf = -1;
+
+        // -1 is debug value that's never used.
+        validcodelowerhalf = (uchar)-1;
 
         ushort ranges[] = { 0x3000, 0x3029,   0x3030, 0x3037,   0x303B, 0x303E,   0x3041, 0x3049,   
                             0x304A, 0x3096,   0x309F, 0x30FF,   0xFF01, 0xFF9F,   0xFFE0, 0xFFE6, 
