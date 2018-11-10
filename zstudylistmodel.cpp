@@ -17,6 +17,7 @@
 #include "dialogs.h"
 #include "generalsettings.h"
 #include "zstatusbar.h"
+#include "zstrings.h"
 
 //-------------------------------------------------------------
 
@@ -656,7 +657,7 @@ QVariant StudyListModel::data(const QModelIndex &index, int role) const
         case (int)DeckColumnTypes::AddedDate:
             return formatDate(item->added);
         case (int)DeckColumnTypes::Priority:
-            return QString::number(item->priority);
+            return Strings::priorities(9 - item->priority);
         case (int)DeckColumnTypes::StudiedPart:
             return shortHintString(item) + QStringLiteral(" ") + QChar(0x2192) + QStringLiteral(" ") + shortQuestionString(item);
         case (int)DictColumnTypes::Kanji:

@@ -13,9 +13,9 @@
 
 //-------------------------------------------------------------
 
+#if 0
 namespace
 {
-#if 0
     // QMessageBox translations that should be not used directly.
 
     const char *ignore[] = {
@@ -36,11 +36,24 @@ namespace
         QT_TRANSLATE_NOOP("QColorDialog", "&Add to Custom Colors"),
         QT_TRANSLATE_NOOP("QColorDialog", "&Pick Screen Color"),
     };
-#endif
 }
+#endif
 
 namespace Strings
 {
+    // Returns priority text like "High" fitting the dif difficulty value between 0 (lowest) to 8 (highest).
+    QString priorities(int level)
+    {
+        static const char *texts[9] = {
+            QT_TRANSLATE_NOOP("WordStudyListForm", "Lowest"), QT_TRANSLATE_NOOP("WordStudyListForm", "Very low"), QT_TRANSLATE_NOOP("WordStudyListForm", "Low"),
+            QT_TRANSLATE_NOOP("WordStudyListForm", "Lower"), QT_TRANSLATE_NOOP("WordStudyListForm", "Normal"), QT_TRANSLATE_NOOP("WordStudyListForm", "Higher"),
+            QT_TRANSLATE_NOOP("WordStudyListForm", "High"), QT_TRANSLATE_NOOP("WordStudyListForm", "Very high"), QT_TRANSLATE_NOOP("WordStudyListForm", "Highest")
+        };
+
+        return zLang->translate("WordStudyListForm", texts[level]);
+    }
+
+
     QString capitalize(const QString &str)
     {
         return str[0].toUpper() % str.mid(1);

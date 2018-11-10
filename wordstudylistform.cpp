@@ -32,6 +32,7 @@
 #include "colorsettings.h"
 #include "generalsettings.h"
 #include "ztooltip.h"
+#include "zstrings.h"
 
 #include "checked_cast.h"
 
@@ -1117,10 +1118,9 @@ void WordStudyListForm::showContextMenu(QMenu *menu, QAction *insertpos, Diction
             changePriority(rowlist, val);
         });
 
-        QString strpriority[9] = { tr("Highest"), tr("Very high"), tr("High"), tr("Higher"), tr("Normal"), tr("Lower"), tr("Low"), tr("Very low"), tr("Lowest") };
         for (int ix = 0; ix != 9; ++ix)
         {
-            actions[ix] = m->addAction(strpriority[ix]);
+            actions[ix] = m->addAction(QString("&%1 - %2").arg(9 - ix).arg(Strings::priorities(ix)));
             actions[ix]->setShortcut(QKeySequence(tr("Ctrl+%1").arg(9 - ix)));
             connect(actions[ix], &QAction::triggered, map, (void (QSignalMapper::*)())&QSignalMapper::map);
             map->setMapping(actions[ix], 9 - ix);

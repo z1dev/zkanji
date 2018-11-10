@@ -13,6 +13,7 @@ enum class InfTypes;
 
 namespace Strings
 {
+    QString priorities(int level);
     QString capitalize(const QString &str);
 
     QString wordType(uchar type);
