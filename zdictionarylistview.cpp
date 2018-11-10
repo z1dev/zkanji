@@ -57,15 +57,9 @@ ZDictionaryListView::ZDictionaryListView(QWidget *parent) : base(parent), popup(
 
     setMouseTracking(true);
 
-    //popup = new QMenu(this);
-
     //savedselmode = base::selectionMode();
     //if (savedselmode == QAbstractItemView::ExtendedSelection)
     //    base::setSelectionMode(QAbstractItemView::SingleSelection);
-
-    //auto olddlg = itemDelegate();
-    //setItemDelegate(new DictionaryListDelegate(this));
-    //delete olddlg;
 }
 
 ZDictionaryListView::~ZDictionaryListView()
@@ -574,7 +568,7 @@ bool ZDictionaryListView::cancelActions()
 {
     bool r = base::cancelActions();
 
-    if (selecting)
+    if (selecting && popup == nullptr)
     {
         // Cancel selection.
         QRect rect = visualRect(selcell);
@@ -1558,6 +1552,9 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
     emit contextMenuCreated(popup, popup->actions().at(popup->actions().size() > insertpos ? insertpos : 0), dict, coltype, selstr, windexes, kindexes);
 
     popup->exec(pos);
+    popup = nullptr;
+
+    cancelActions();
 }
 
 //void ZDictionaryListView::dragEnterEvent(QDragEnterEvent *e)
