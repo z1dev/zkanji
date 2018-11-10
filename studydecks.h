@@ -48,7 +48,9 @@
 struct StudyCardStat // - ex TRepStat
 {
     QDate day;
+
     //uchar score; - score was scrapped since 2015
+
     uchar level;
     float multiplier;
     // Number of tenth seconds spent on this card on the test day between its display and the
@@ -609,7 +611,8 @@ private:
     // Study deck id is randomly generated between 0 and intmax.
     StudyDeckId id;
 
-    // Date and time when the last test was started.
+    // Date and time when the last test was started for the day. It's not updated when testing
+    // again on the same day.
     QDateTime testdate;
 
     // List of all cards in the deck.

@@ -66,7 +66,8 @@ public:
     // unloaded at any time, so a direct pointer can't be returned here.
     ExampleSentenceData getSentence(ushort block, uchar line);
 
-    const std::vector<std::pair<int, int>> &getList() const;
+    // Returns the list of example sentence ids.
+    const std::vector<std::pair<int, int>> &getIdList() const;
 
     bool isLoaded() const;
 private:

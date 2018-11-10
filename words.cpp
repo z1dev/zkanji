@@ -2732,7 +2732,7 @@ void WordExamplesTree::reset()
 
 void WordExamplesTree::rebuild()
 {
-    const auto &ids = ZKanji::sentences.getList();
+    const auto &ids = ZKanji::sentences.getIdList();
     if (ids.empty())
     {
         reset();
@@ -2779,7 +2779,7 @@ void WordExamplesTree::linkExample(const QChar *kanji, const QChar *kana, int ex
     if (wix == -1 && !set)
         return;
 
-    const auto &ids = ZKanji::sentences.getList();
+    const auto &ids = ZKanji::sentences.getIdList();
 
     if (wix == -1)
     {

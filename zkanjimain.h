@@ -440,7 +440,7 @@ public:
     ZDateTimeStr(T &dt) : dt(dt) { ; }
     ZDateTimeStr(ZDateTimeStr &&other) : dt(other.dt) { ; }
 
-    friend QDataStream& operator >> <>(QDataStream&, ZDateTimeStr);
+    friend QDataStream& operator>> <>(QDataStream&, ZDateTimeStr);
     friend QDataStream& operator<< <>(QDataStream&, const ZDateTimeStr&);
 };
 

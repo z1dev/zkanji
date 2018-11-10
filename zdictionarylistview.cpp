@@ -1487,11 +1487,11 @@ void ZDictionaryListView::showPopup(const QPoint &pos, QModelIndex index, QStrin
         akcopy = csub->addAction(tr("Copy kanji"));
         akapp = csub->addAction(tr("Append kanji"));
 
-        connect(akcopy, &QAction::triggered, [this, &kstring]() {
-           gUI->clipCopy(kstring);
+        connect(akcopy, &QAction::triggered, [this, &kstring, kindex]() {
+           gUI->clipCopy(kstring.isEmpty() ? ZKanji::kanjis[kindex]->ch : kstring);
         });
-        connect(akapp, &QAction::triggered, [this, &kstring]() {
-            gUI->clipAppend(kstring);
+        connect(akapp, &QAction::triggered, [this, &kstring, kindex]() {
+            gUI->clipAppend(kstring.isEmpty() ? ZKanji::kanjis[kindex]->ch : kstring);
         });
     }
 

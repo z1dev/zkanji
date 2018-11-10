@@ -250,7 +250,7 @@ ExampleSentenceData Sentences::getSentence(ushort block, uchar line)
     return *blocks.front().lines[line];
 }
 
-const std::vector<std::pair<int, int>>& Sentences::getList() const
+const std::vector<std::pair<int, int>>& Sentences::getIdList() const
 {
     return ids;
 }
