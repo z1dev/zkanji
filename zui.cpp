@@ -1391,7 +1391,8 @@ JapaneseValidator::State JapaneseValidator::validate(QString &input, int &pos) c
     for (int ix = input.size() - 1; ix != -1; --ix)
     {
         ushort ch = input.at(ix).unicode();
-        if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '-' || ch == '/' || (ch == '\'' && ix != 0 && input.at(ix - 1).toLower().unicode() == 'n')) && !validChar(input.at(ix).unicode()))
+        if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '-' || ch == '/' ||
+            (ch == '\'' && ix != 0 && input.at(ix - 1).toLower().unicode() == 'n')) && !validChar(input.at(ix).unicode()))
         {
             input.remove(ix, 1);
             if (pos > ix)

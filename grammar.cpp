@@ -17,7 +17,7 @@ InflectionForm::InflectionForm() : infsize(0), type(WordTypes::Count)
     ;
 }
 
-InflectionForm::InflectionForm(const QString &form, int infsize, WordTypes type, std::vector<InfTypes> inf) : form(form), infsize(infsize), type(type), inf(inf)
+InflectionForm::InflectionForm(const QString &form, int infsize, WordTypes type, const std::vector<InfTypes> &inf) : form(form), infsize(infsize), type(type), inf(inf)
 {
     ;
 }
@@ -30,10 +30,11 @@ const InfTypes adjinft[] { InfTypes::Ku, InfTypes::Nai, InfTypes::Ta, InfTypes::
 
 // When the deinflected adjective ends with the following strings it's invalid, because these forms don't inflect normally.
 // Ii is an exception, it's only invalid when the whole result is that word.
-const char *invalidadjromaji[] { "koii", "uii", "teii", "waii", "chiii", "doii", "maii", "moii", "noii", "gaii", "niii", /* Must come last */ "ii" };
+const char *invalidadjromaji[] { "koii", "uii", "teii", /*"waii", */"chiii", "doii", "maii", "moii", "noii", "gaii", "niii", /* Must come last */ "ii" };
 QCharStringList invalidadj;
 
-const char *adjyoiromaji[] { "koyoi", "uyoi", "teyoi", "wayoi", "chiyoi", "doyoi", "mayoi", "moyoi", "noyoi", "gayoi", "niyoi", /* Must come last */ "yoi" };
+
+const char *adjyoiromaji[] { "koyoi", "uyoi", "teyoi", /*"wayoi", */"chiyoi", "doyoi", "mayoi", "moyoi", "noyoi", "gayoi", "niyoi", /* Must come last */ "yoi" };
 QCharStringList adjyoi;
 
 // Forms reached after removing the -sou inflection from nasasou or yosasou, which need special handling
@@ -270,7 +271,7 @@ const char *buinfromaji[]
     "banai", "baserareru", "bareru", "baseru",
     "bi", "bitai", "bitagaru", "bisou",
     "n'de", "n'da", "n'dara", "n'dari",
-    "beba", "beru", "be", "‚Úu",
+    "beba", "beru", "be", "‚bou",
     "n'deru", "n'deiru", "banakuya", "banakya",
     "n'jau", "banaide", "bazu", "banu",
     "basareru", "n'jimau", "n'denasai", "n'deoku",
@@ -800,6 +801,7 @@ void deinflectedForms(QString str, QString hstr, int infsize, std::vector<InfTyp
 void deinflectAdjective(QString str, QString hstr, smartvector<InflectionForm> &results)
 {
     static const ushort iikana[] { 0x3044, 0x3044, 0 };
+    static const ushort waiikana[] { 0x308f, 0x3044, 0x3044, 0 };
 
     std::vector<InfTypes> inflist;
 
@@ -824,6 +826,8 @@ void deinflectAdjective(QString str, QString hstr, smartvector<InflectionForm> &
             infsize = std::max(0, infsize - adjlen) + 1;
 
             // Special handling for i-adjectives ending with a form of ii. Only yoi can inflect.
+            // In case it's *waii (like kawaii) it's another exception as it can't be inflected with sou.
+
             bool isvalid = true;
             for (int iy = 0, sizy = tosigned(invalidadj.size()); iy != sizy; ++iy)
             {
@@ -833,6 +837,10 @@ void deinflectAdjective(QString str, QString hstr, smartvector<InflectionForm> &
                     break;
                 }
             }
+
+            if (isvalid && hstr.rightRef(3) == QString::fromUtf16(waiikana) && adjinft[ix] == InfTypes::Sou)
+                isvalid = false;
+
             if (!isvalid)
                 break;
 

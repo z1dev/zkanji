@@ -49,7 +49,7 @@ struct InflectionForm
     std::vector<InfTypes> inf;
 
     InflectionForm();
-    InflectionForm(const QString &form, int infsize, WordTypes type, std::vector<InfTypes> inf);
+    InflectionForm(const QString &form, int infsize, WordTypes type, const std::vector<InfTypes> &inf);
 };
 
 // Returns deinflected forms of possible words with the word type they should be,

@@ -7,7 +7,7 @@
 #ifndef GRAMMAR_ENUMS_H
 #define GRAMMAR_ENUMS_H
 
-#include <QChar>
+//#include <QChar>
 
 // Possible recognized inflection types.
 enum class InfTypes

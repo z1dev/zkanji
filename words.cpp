@@ -52,6 +52,7 @@ static char ZKANJI_DICTIONARY_FILE_VERSION[] = "001";
 
 static char ZKANJI_GROUP_FILE_VERSION[] = "003";
 
+// Separator character between variants of the same word definition.
 const QChar GLOSS_SEP_CHAR = QChar(0x0082);
 
 
@@ -3286,15 +3287,6 @@ void Dictionary::load(QDataStream &stream)
             KanjiDictData *kd = kanjidata[ix + kfirst];
 
             dstream >> make_zvec<qint32, qint32>(kd->words);
-
-            //dstream >> u32;
-            //kd->words.resize(u32);
-            //for (int iy = 0; iy != kd->words.size(); ++iy)
-            //{
-            //    dstream >> u32;
-            //    kd->words[iy] = u32;
-            //}
-            //dstream >> kd->meanings;
         }
         dstream >> kfirst;
     }
@@ -3876,9 +3868,8 @@ Error Dictionary::save(const QString &filename)
 
         errorcode = 5;
 
-        // Writing kanji data. Words using kanji and user defined kanji meanings. Kanji data is
-        // written in blocks. Each block starts with the index of the first kanji in the block
-        // and the number of kanji in the block.
+        // Writing words using kanji. The data is written in blocks. Each block starts with
+        // the index of the first kanji in the block and the number of kanji in the block.
         int kfirst = -1;
         int kend = -1;
         KanjiDictData *kd = nullptr;
@@ -3889,7 +3880,7 @@ Error Dictionary::save(const QString &filename)
                 kd = kanjidata[ix];
 
                 // Until a kanji is found with data to save, we skip everything.
-                if (kd->words.empty() /*&& kd->meanings.empty()*/)
+                if (kd->words.empty())
                 {
                     if (kfirst == -1)
                         continue;
@@ -3917,11 +3908,6 @@ Error Dictionary::save(const QString &filename)
             {
                 kd = kanjidata[ix];
                 dstream << make_zvec<qint32, qint32>(kd->words);
-                //dstream << (quint32)kd->words.size();
-                //for (int iy = 0; iy != kd->words.size(); ++iy)
-                //    dstream << (quint32)kd->words[iy];
-
-                //dstream << kd->meanings;
             }
             kfirst = -1;
             kend = -1;
@@ -3929,8 +3915,8 @@ Error Dictionary::save(const QString &filename)
 
         errorcode = 6;
 
-        // To mark the end of the kanadata blocks, the number of kanji is written.
-        // No block can start at that index.
+        // To mark the end of the kanadata blocks, the number of kanji is written. No block
+        // can start at that index.
         dstream << (quint16)ZKanji::kanjis.size();
 
         errorcode = 7;
@@ -4029,6 +4015,8 @@ Error Dictionary::saveUserData(const QString &filename)
 
         errorcode = 3;
 
+        // Writing the original words list, consisting of words modified in the base
+        // dictionary.
         if (this == ZKanji::dictionary(0))
         {
             stream << (quint8)1;
@@ -4039,7 +4027,6 @@ Error Dictionary::saveUserData(const QString &filename)
                 stream << (qint32)ZKanji::originals.items(ix)->index;
 
                 WordEntry *w = words[ZKanji::originals.items(ix)->index];
-                //stream << *words[ZKanji::originals.items(ix)->index];
 
                 stream << make_zstr(w->kanji, ZStrFormat::Byte);
                 stream << make_zstr(w->kana, ZStrFormat::Byte);
