@@ -79,8 +79,8 @@ private:
     void normalize();
 };
 
-// Result of subtracting one Radian value from another. Holds the radian of
-// the shortest arc between the two radians. This value can be negative.
+// Result of subtracting one Radian value from another. Holds the radian of the shortest arc
+// between the two radians. This value can be negative.
 class RadianDistance
 {
 public:
@@ -243,9 +243,8 @@ struct RecognizerComparison
     // Model's index.
     ushort index;
 
-    // A stroke's distance from the model. The larger the value the greater
-    // the distance. The actual value is only useful when comparing it with
-    // other distances.
+    // A stroke's distance from the model. The larger the value the greater the distance. The
+    // actual value is only useful when comparing it with other distances.
     int distance;
 };
 typedef fastarray<RecognizerComparison> RecognizerComparisons;
@@ -285,9 +284,8 @@ public:
     // Height of bounding rectangle of all strokes.
     double height() const;
 
-    // Redo comparison of strokes added to the list with the recognizer's
-    // model strokes.
-    void reCompare();
+    // Redo comparison of strokes added to the list with the recognizer's model strokes.
+    //void reCompare();
 
     //Stroke& items(int index);
     //const Stroke& items(int index) const;
@@ -524,9 +522,8 @@ struct KanjiEntry;
 
 enum class StrokeDirection { Unset, Left, Up, Right, Down, UpLeft, UpRight, DownLeft, DownRight  };
 
-// Main class for handwriting recognition. Contains model strokes (to match
-// with user drawn strokes), kanji elements (reusable group of strokes), and
-// kanji data made up of elements.
+// Main class for handwriting recognition. Contains model strokes (to match with user drawn
+// strokes), kanji elements (reusable group of strokes), and kanji data made up of elements.
 class KanjiElementList
 {
 public:
@@ -550,8 +547,7 @@ public:
     // Number of stroke models stored.
     int modelCount() const;
 
-    // Compares the passed stroke with the model strokes, and stores the
-    // result in result.
+    // Compares the passed stroke with the model strokes, and stores the result in result.
     void compareToModels(const Stroke &stroke, RecognizerComparisons &result);
 
     // Generates stroke position data for the handwriting recognition.
@@ -574,8 +570,8 @@ public:
     // element, -1 is returned.
     int itemKanjiIndex(int index) const;
 
-    // The character owner of the item at index. If no unicode character or
-    // kanji is set for an element, the returned value is null.
+    // The character owner of the item at index. If no unicode character or kanji is set for
+    // an element, the returned value is null.
     QChar itemUnicode(int index) const;
 
     // Fills result with parts indexes of the element at index. The result list is not
@@ -679,73 +675,67 @@ private:
     // startw and endw.
     void drawLine(QPainter &painter, const QPointF &start, const QPointF &end, double startw, double endw) const;
 
-    // Approximates the length of a cubic bezier. The maxerror is NOT the
-    // error between the approximated length and real length. The bezier is
-    // divided until each part can be approximated close enough. The maxerror
-    // is the acceptable difference between the length of a straight line of
-    // start->end, and start->c1->c2->end.
+    // Approximates the length of a cubic bezier. The maxerror is NOT the error between the
+    // approximated length and real length. The bezier is divided until each part can be
+    // approximated close enough. The maxerror is the acceptable difference between the length
+    // of a straight line of start->end, and start->c1->c2->end.
     double bezierLength(const QPointF &start, const QPointF &c1, const QPointF &c2, const QPointF &end, double maxerror) const;
 
-    // Returns all generated mid points (sc1, sc2, ec1, ec2) and the actual
-    // point on the bezier (m) at the given location between [0 - 1]. If the
-    // bezier needs to be divided at m, the two new beziers are made up from
-    // start->sc1->sc2->m and m->ec1->ec2->end.
+    // Returns all generated mid points (sc1, sc2, ec1, ec2) and the actual point on the
+    // bezier (m) at the given location between [0 - 1]. If the bezier needs to be divided at
+    // m, the two new beziers are made up from start->sc1->sc2->m and m->ec1->ec2->end.
     // Note: this is not the fastest way when drawing.
     void _bezierPoints(const QPointF &start, const QPointF &c1, const QPointF &c2, const QPointF &end, double at, QPointF &sc1, QPointF &sc2, QPointF &m, QPointF &ec1, QPointF &ec2) const;
 
-    // Draws a quadratic bezier curve with painter between the starting and
-    // ending points throught the 2 control points. The width of the pen
-    // is gradually changed between startw and endw.
-    // Set areasize to the width/height of the square where the variant's
-    // stroke is to be drawn. This will help determine the number of steps
-    // needed to cut up a bezier curve to make it look smooth.
+    // Draws a quadratic bezier curve with painter between the starting and ending points
+    // throught the 2 control points. The width of the pen is gradually changed between startw
+    // and endw. Set areasize to the width/height of the square where the variant's stroke is
+    // to be drawn. This will help determine the number of steps needed to cut up a bezier
+    // curve to make it look smooth.
     void drawBezier(QPainter &painter, double areasize, const QPointF &start, const QPointF &control1, const QPointF &control2, const QPointF &end, double startw, double endw) const;
 
-    // Loads the data to a list of strokes that are used as model strokes
-    // for kanji. When matching handwritten kanji to stored kanji, the drawn
-    // strokes are matched with strokes stored in models, and the indexes of
-    // model strokes are matched with the recognizer kanji data.
+    // Loads the data to a list of strokes that are used as model strokes for kanji. When
+    // matching handwritten kanji to stored kanji, the drawn strokes are matched with strokes
+    // stored in models, and the indexes of model strokes are matched with the recognizer
+    // kanji data.
     void loadModels(QDataStream &stream, std::vector<Stroke> &dest);
 
-    // Loads recognizer element repositories. Each repository is a named list
-    // of element and variant indexes. The repos are only used in the editor
-    // for easier kanji element and variant lookup.
+    // Loads recognizer element repositories. Each repository is a named list of element and
+    // variant indexes. The repos are only used in the editor for easier kanji element and
+    // variant lookup.
     void loadRepos(QDataStream &stream);
 
-    // The element's every variant can have a user defined name. The names are
-    // shown in the handwriting recognizer window's candidate list for example
-    // to name characters that are not kanji.
+    // The element's every variant can have a user defined name. The names are shown in the
+    // handwriting recognizer window's candidate list for example to name characters that are
+    // not kanji.
     void loadVariantNames(QDataStream &stream);
 
-    // Difference in position betwee two position bit arrays. Used in
-    // handwriting recognition.
+    // Difference in position betwee two position bit arrays. Used in handwriting recognition.
     int posDiff(const BitArray &p1, const BitArray &p2);
 
     // File version after loading.
     int version;
 
-    // List of all kanji elements made up of other elements. Many of them are
-    // actual characters.
+    // List of all kanji elements made up of other elements. Many of them are actual
+    // characters.
     smartvector<KanjiElement> list;
 
-    // Model strokes which make up a kanji. When recognizing handwritten
-    // characters, the user drawn strokes are matched with the strokes in this
-    // list.
+    // Model strokes which make up a kanji. When recognizing handwritten characters, the user
+    // drawn strokes are matched with the strokes in this list.
     std::vector<Stroke> models;
 
-    // Model strokes which make up non-kanji. When recognizing handwritten
-    // characters, the user drawn strokes are matched with the strokes in this
-    // list.
+    // Model strokes which make up non-kanji. When recognizing handwritten characters, the
+    // user drawn strokes are matched with the strokes in this list.
     std::vector<Stroke> cmodels;
 
-    // A repository of kanji elements. Used in the original zkanji stroke
-    // editor. Kept here in case it'll be implemented later.
+    // A repository of kanji elements. Used in the original zkanji stroke editor. Kept here in
+    // case it'll be implemented later.
     smartvector<ElementRepo> repos;
 
-    // An element's every variant can have a user defined name. The names are
-    // shown in the handwriting recognizer window's candidate list for example
-    // to name characters that are not kanji. The map contains the unicode
-    // for the element's character and the name given to it.
+    // An element's every variant can have a user defined name. The names are shown in the
+    // handwriting recognizer window's candidate list for example to name characters that are
+    // not kanji. The map contains the unicode for the element's character and the name given
+    // to it.
     std::map<int, QCharString> varnames;
 
     // [kanji index, element index] loaded when loading the KanjiElementList. Only used during

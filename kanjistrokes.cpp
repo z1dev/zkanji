@@ -440,10 +440,9 @@ Radian Stroke::angle() const
 
 int Stroke::compare(const Stroke &other) const
 {
-    // Computes the distance between this and the other stroke.
-    // The comparison is done in two steps. In the first step we look for
-    // the possibility of an accidentally drawn hook that should be skipped
-    // in the main comparison. The second step is the main comparison.
+    // Computes the distance between this and the other stroke. The comparison is done in two
+    // steps. In the first step we look for the possibility of an accidentally drawn hook that
+    // should be skipped in the main comparison. The second step is the main comparison.
 
     int n = other.segmentCount();
     int m = segmentCount();
@@ -833,14 +832,14 @@ double StrokeList::height() const
     return dim.height();
 }
 
-void StrokeList::reCompare()
-{
-    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
-    {
-        cmplist[ix]->clear();
-        ZKanji::elements()->compareToModels(list[ix].second, *cmplist[ix]);
-    }
-}
+//void StrokeList::reCompare()
+//{
+//    for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
+//    {
+//        cmplist[ix]->clear();
+//        ZKanji::elements()->compareToModels(list[ix].second, *cmplist[ix]);
+//    }
+//}
 
 //Stroke& StrokeList::items(int index)
 //{
@@ -879,9 +878,8 @@ struct PointRadLen
     QPointF p;
     Radian rad;
     double dist;
-    bool marked;
 
-    PointRadLen(const QPointF &p) : p(p), dist(0), marked(false) { ; }
+    PointRadLen(const QPointF &p) : p(p), dist(0) { ; }
 };
 
 Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
@@ -891,13 +889,13 @@ Stroke&& StrokeList::simplify(Stroke &&s, bool mousedrawn)
         throw "No points in stroke";
 #endif
 
-    // Distance in a drawing surface with sides of 1, which is considered
-    // insignificant. If the mouse is used for drawing the stroke, this
-    // distance must be is larger due to hand shake.
+    // Distance in a drawing surface with sides of 1, which is considered insignificant. If
+    // the mouse is used for drawing the stroke, this distance must be larger due to hand
+    // shake.
     const double tiny_dist = mousedrawn ? 0.00725 : 0.00522;
 
-    // Construct a vector from the points of s. Each value holds a point, its
-    // distance from the next point, and their angle to the x axis.
+    // Construct a vector from the points of s. Each value holds a point, its distance from
+    // the next point, and their angle to the x axis.
     std::vector<PointRadLen> points;
     for (int ix = 0, siz = tosigned(s.size()); ix != siz; ++ix)
     {
@@ -1451,19 +1449,19 @@ int KanjiElementList::modelCount() const
 void KanjiElementList::compareToModels(const Stroke &stroke, RecognizerComparisons &result)
 {
     result.setSize(models.size() + cmodels.size());
-    for (int ix = 0, siz = tosigned(models.size()); ix != siz; ++ix)
+    int ssiz = tosigned(models.size());
+    for (int ix = 0; ix != ssiz; ++ix)
     {
         //RecognizerComparison cmp;
         result[ix].index = ix;
         result[ix].distance = models[ix].compare(stroke);
     }
 
-    int s = tosigned(models.size());
     for (int ix = 0, siz = tosigned(cmodels.size()); ix != siz; ++ix)
     {
         //RecognizerComparison cmp;
-        result[s + ix].index = s + ix;
-        result[s + ix].distance = cmodels[ix].compare(stroke);
+        result[ssiz + ix].index = ssiz + ix;
+        result[ssiz + ix].distance = cmodels[ix].compare(stroke);
     }
 }
 
