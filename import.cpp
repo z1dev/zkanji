@@ -1554,7 +1554,7 @@ bool DictImport::importKanjidic()
                     // SnH index in the form nxnn.n with at most 8 characters.
                     memcpy(k->snh, parts.at(pos).toLatin1().constData() + 1, sizeof(char) * parts.at(pos).size() - 1);
                     if (parts.at(pos).size() < 9)
-                        k->snh[parts.at(pos).size() - 2] = 0;
+                        k->snh[parts.at(pos).size() - 1] = 0;
                 }
                 else if (parts.at(pos).size() >= 5 && parts.at(pos).size() <= 6 && parts.at(pos).at(0) == 'D' && parts.at(pos).at(1) == 'B')
                 {

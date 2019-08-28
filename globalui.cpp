@@ -1778,18 +1778,14 @@ void GlobalUI::showAbout()
 void GlobalUI::saveBeforeQuit()
 {
     static bool saved = false;
-    if (saved)
-    {
-        //closeAll();
+    if (saved || mainforms.empty())
         return;
-    }
+
     saved = true;
 
     saveSettings();
     lastsave = QDateTime::currentDateTimeUtc();
     ZKanji::saveUserData();
-
-    //closeAll();
 }
 
 void GlobalUI::disableAutoSave()
