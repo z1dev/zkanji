@@ -977,7 +977,7 @@ namespace Settings
         dictionary.resultorder = str == "frequency" ? ResultOrder::Frequency : str == "jlptfrom1" ? ResultOrder::JLPTfrom1 : str == "jlptfrom5" ? ResultOrder::JLPTfrom5 : ResultOrder::Relevance;
 
         str = ini.value("dict/browseorder", "abcde").toString().toLower();
-        dictionary.browseorder = str == "aiueo" ? BrowseOrder::AIUEO: BrowseOrder::ABCDE;
+        dictionary.browseorder = str == "aiueo" ? BrowseOrder::AIUEO : BrowseOrder::ABCDE;
 
         dictionary.showingroup = ini.value("dict/showgroup", false).toBool();
         dictionary.showjlpt = ini.value("dict/showjlpt", true).toBool();
@@ -1061,7 +1061,7 @@ namespace Settings
             kanji.showpos = KanjiSettings::RestoreLast;
         else
             kanji.showpos = KanjiSettings::NearCursor;
-        
+
         kanji.tooltip = ini.value("kanji/tooltip", true).toBool();
         kanji.hidetooltip = ini.value("kanji/hidetooltip", true).toBool();
         val = ini.value("kanji/tooltipdelay", 5).toInt(&ok);
@@ -1165,6 +1165,11 @@ namespace Settings
         if (ok && val >= 1 && val <= 100)
             data.backupskip = val;
         data.location = ini.value("data/location", QString()).toString();
+    }
+
+    void loadDictionaryOrder()
+    {
+        QSettings ini(ZKanji::userFolder() + "/zkanji.ini", QSettings::IniFormat);
 
         // Dictionary order
 
@@ -1195,7 +1200,7 @@ namespace Settings
     void loadSettingsFromFile()
     {
         loadIniFile();
-        
+
         QFontDatabase db;
         QStringList allJpFonts = db.families(QFontDatabase::Japanese);
         hasSimSun = db.families(QFontDatabase::Any).indexOf("SimSun") != -1;
@@ -1219,6 +1224,12 @@ namespace Settings
         if (fonts.printkana.isEmpty())
             fonts.printkana = defjp;
 
+    }
+
+    void loadStatesFromFile()
+    {
+        loadDictionaryOrder();
+        
         QString fname = ZKanji::userFolder() + "/states.xml";
         QFile f(fname);
         if (!f.open(QIODevice::ReadOnly))

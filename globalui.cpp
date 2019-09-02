@@ -1534,7 +1534,7 @@ void GlobalUI::loadScalingSetting()
     Settings::loadScaleSettingFromFile();
 }
 
-void GlobalUI::saveSettings()
+void GlobalUI::saveSettingsAndStates()
 {
     Settings::saveSettingsToFile();
 }
@@ -1542,8 +1542,12 @@ void GlobalUI::saveSettings()
 void GlobalUI::loadSettings()
 {
     checkColorTheme();
-
     Settings::loadSettingsFromFile();
+}
+
+void GlobalUI::loadStates()
+{
+    Settings::loadStatesFromFile();
 }
 
 void GlobalUI::checkColorTheme()
@@ -1857,7 +1861,7 @@ void GlobalUI::saveBeforeQuit()
 
     saved = true;
 
-    saveSettings();
+    saveSettingsAndStates();
     lastsave = QDateTime::currentDateTimeUtc();
     ZKanji::saveUserData();
 }

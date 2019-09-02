@@ -200,7 +200,7 @@ namespace
         ini.setValue("language", Settings::language);
     }
 
-    // Finds the folder to save user data and returns whether such location was found.
+    // Finds the folder to save user data and returns whether such location was found and had existing user data.
     bool initUserDirectory()
     {
         bool portable = false;
@@ -280,15 +280,9 @@ namespace
                     exit(0);
 
                 if (result == 0)
-                {
-                    appdata = true;
                     ZKanji::setUserFolder(appdatadir);
-                }
                 else
-                {
-                    portable = true;
                     ZKanji::setUserFolder(ZKanji::appFolder());
-                }
             }
         }
 
@@ -476,7 +470,9 @@ namespace
             if (wdate != d->lastWriteDate())
             {
                 if (d->pre2015() && showAndReturn("zkanji", qApp->translate("", "Because your data was made for a different version of zkanji, it must be updated."),
-                    qApp->translate("", "Press \"%1\" to update your groups and study data to use the new program version. This program does not support the outdated dictionary. If you wish to continue using it, press \"%2\" and install the last version of the program you were previously using.\nNote: suspended tests can be updated too, but their suspended status will be lost.").arg(qApp->translate("", "Continue")).arg(qApp->translate("", "Quit")),
+                    qApp->translate("", "Press \"%1\" to update your groups and study data to match the dictionary of this program version.\n"
+                        "If you wish to continue using the old dictionary, press \"%2\" and install the last version of the program you were previously using.\n\n"
+                        "Note: suspended tests can be updated too, but their suspended status will be lost.").arg(qApp->translate("", "Continue")).arg(qApp->translate("", "Quit")),
                     {
                         { qApp->translate("", "Continue"), QMessageBox::AcceptRole },
                         { qApp->translate("", "Quit"), QMessageBox::RejectRole }
@@ -880,6 +876,8 @@ int main(int argc, char **argv)
 
         bool dirfound = initUserDirectory();
 
+        gUI->loadSettings();
+
         loadRecognizerData();
 
         handleArguments(args);
@@ -975,7 +973,7 @@ int main(int argc, char **argv)
 
 #endif
 
-        gUI->loadSettings();
+        gUI->loadStates();
 
         gUI->createWindow(true);
         gUI->applySettings();

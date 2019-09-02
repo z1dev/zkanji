@@ -302,8 +302,11 @@ public slots:
     // Called at the start of the program to load the scaling value from the ini file. All
     // other values are loaded in loadSettings().
     void loadScalingSetting();
-    void saveSettings();
+    void saveSettingsAndStates();
+    // Load program settings.
     void loadSettings();
+    // Load dictionary ordering and window states after the data files were initialized.
+    void loadStates();
 
     // Determines whether we are currently working with a light or dark color palette, and
     // updates the lighttheme value in ColorSettings.

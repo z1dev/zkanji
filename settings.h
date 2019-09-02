@@ -17,6 +17,7 @@ namespace Settings
 
     void saveSettingsToFile();
     void loadSettingsFromFile();
+    void loadStatesFromFile();
 }
 
 #endif // SETTINGS_H
