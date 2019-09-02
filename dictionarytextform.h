@@ -27,6 +27,7 @@ public slots:
     void dictionaryRemoved(int index, int order, void *oldaddress);
     void dictionaryRenamed(const QString &oldname, int index, int order);
     void dictionaryReset();
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 
     void on_browseButton_clicked();
     void on_removeButton_clicked();

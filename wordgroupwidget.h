@@ -19,6 +19,7 @@ class WordGroup;
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class ZStatusBar;
+class Dictionary;
 class WordGroupWidget : public QWidget
 {
     Q_OBJECT
@@ -33,7 +34,7 @@ public:
 
     //void makeModeSpace(const QSize &size);
 
-    void setDictionary(int index);
+    void setDictionary(Dictionary *d);
 protected:
     virtual bool event(QEvent *e) override;
 private slots:

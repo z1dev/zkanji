@@ -869,8 +869,11 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
     if (index == -1 || (index == 0 && itemsinited) || (index == 1 && statsinited))
         return;
 
-    if (!itemsinited && !statsinited)
+    if (!itemsinited && !statsinited) {
         restoreFormState(FormStates::wordstudylist);
+        connect(gUI, &GlobalUI::dictionaryRemoved, this, &WordStudyListForm::dictionaryRemoved);
+        connect(gUI, &GlobalUI::dictionaryReplaced, this, &WordStudyListForm::dictionaryReplaced);
+    }
 
     if (index == 0)
     {
@@ -887,8 +890,7 @@ void WordStudyListForm::on_tabWidget_currentChanged(int index)
         ui->dictWidget->setSortIndicator(s.column, s.order);
         ui->dictWidget->sortByIndicator();
 
-        connect(dict, &Dictionary::dictionaryReset, this, &WordStudyListForm::dictReset);
-        connect(gUI, &GlobalUI::dictionaryRemoved, this, &WordStudyListForm::dictRemoved);
+        connect(dict, &Dictionary::dictionaryReset, this, &WordStudyListForm::dictionaryReset);
 
         restoreItemsState(FormStates::wordstudylist.items);
     }
@@ -1301,7 +1303,7 @@ void WordStudyListForm::on_testsButton_clicked()
     showStat(DeckStatPages::Tests);
 }
 
-void WordStudyListForm::dictReset()
+void WordStudyListForm::dictionaryReset()
 {
     if (!itemsinited)
         return;
@@ -1313,7 +1315,13 @@ void WordStudyListForm::dictReset()
     ui->dictWidget->sortByIndicator();
 }
 
-void WordStudyListForm::dictRemoved(int /*index*/, int /*orderindex*/, void *oldaddress)
+void WordStudyListForm::dictionaryReplaced(Dictionary *olddict, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (dict == olddict)
+        close();
+}
+
+void WordStudyListForm::dictionaryRemoved(int /*index*/, int /*orderindex*/, void *oldaddress)
 {
     if (dict == oldaddress)
         close();

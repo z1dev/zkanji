@@ -35,6 +35,7 @@ WordToDictionaryForm::WordToDictionaryForm(QWidget *parent) : base(parent), ui(n
     ui->meaningsTable->assignStatusBar(ui->meaningsStatus);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToDictionaryForm::dictionaryToBeRemoved);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &WordToDictionaryForm::dictionaryReplaced);
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &WordToDictionaryForm::on_addButton_clicked);
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToDictionaryForm::on_cancelButton_clicked);
 }
@@ -253,6 +254,12 @@ void WordToDictionaryForm::on_meaningsTable_wordDoubleClicked(int windex, int di
 void WordToDictionaryForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
     if (d == dict || ZKanji::dictionaryCount() == 1)
+        close();
+}
+
+void WordToDictionaryForm::dictionaryReplaced(Dictionary *old, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (dict == old || dest == old)
         close();
 }
 

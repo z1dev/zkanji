@@ -80,10 +80,10 @@ void KanjiGroupWidget::assignStatusBar(ZStatusBar *bar)
 //    ui->groupWidget->makeModeSpace(size);
 //}
 
-void KanjiGroupWidget::setDictionary(int index)
+void KanjiGroupWidget::setDictionary(Dictionary *d)
 {
-    ui->kanjiGrid->setDictionary(ZKanji::dictionary(index));
-    ui->groupWidget->setDictionary(ZKanji::dictionary(index));
+    ui->kanjiGrid->setDictionary(d);
+    ui->groupWidget->setDictionary(d);
 }
 
 bool KanjiGroupWidget::event(QEvent *e)

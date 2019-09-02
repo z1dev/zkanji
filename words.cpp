@@ -155,6 +155,13 @@ namespace ZKanji
         return dictionaries.back();
     }
 
+    Dictionary* replaceDictionary(int index, Dictionary *replacement)
+    {
+        replacement->setName(dictionaries[index]->name());
+        std::swap(replacement, dictionaries[index]);
+        return replacement;
+    }
+
     //void replaceDictionary(int index, Dictionary *dict)
     //{
     //    if (index < 0 || index >= dictionaries.size())
@@ -921,25 +928,15 @@ bool OriginalWordsList::skip(QDataStream &stream)
 
         stream >> b;
         stream.skipRawData(b);
-        //stream >> make_zstr(w->kanji, ZStrFormat::ByteAddNull);
         stream >> b;
         stream.skipRawData(b);
-        //stream >> make_zstr(w->kana, ZStrFormat::ByteAddNull);
 
         stream >> b;
-        //stream >> w->defcnt;
-
-        //w->defs = new WordDefinition[w->defcnt];
 
         for (uchar ix = 0; ix != b; ++ix)
         {
             stream >> w;
             stream.skipRawData(w + sizeof(qint32) + sizeof(qint32) + sizeof(qint8) + sizeof(qint16));
-            //stream >> make_zstr(w->defs[ix].def, ZStrFormat::WordAddNull);
-            //stream >> w->defs[ix].types;
-            //stream >> w->defs[ix].notes;
-            //stream >> w->defs[ix].fields;
-            //stream.skipRawData(sizeof(qint16));
         }
     }
 
@@ -3120,7 +3117,7 @@ void Dictionary::loadBase(QDataStream &stream)
     ZKanji::radlist.load(stream);
 }
 
-void Dictionary::loadFile(const QString &filename, bool basedict, bool skiporiginals)
+void Dictionary::loadFile(const QString &filename, bool maindict, bool skiporiginals)
 {
     QFile f(filename);
 
@@ -3151,7 +3148,7 @@ void Dictionary::loadFile(const QString &filename, bool basedict, bool skiporigi
         throw ZException("Invalid or corrupted dictionary file version.");
 
     if (oldver)
-        loadLegacy(stream, version, basedict, skiporiginals);
+        loadLegacy(stream, version, maindict, skiporiginals);
     else
         load(stream);
 
@@ -3366,7 +3363,7 @@ void Dictionary::load(QDataStream &stream)
 #endif
 }
 
-void Dictionary::loadUserDataFile(const QString &filename)
+void Dictionary::loadUserDataFile(const QString &filename, bool emitreset)
 {
     QFile f(filename);
 
@@ -3429,7 +3426,8 @@ void Dictionary::loadUserDataFile(const QString &filename)
         }
     }
 
-    emit dictionaryReset();
+    if (emitreset)
+        emit dictionaryReset();
 }
 
 void Dictionary::loadUserData(QDataStream &stream, int version)
@@ -3449,7 +3447,7 @@ void Dictionary::loadUserData(QDataStream &stream, int version)
     t.start();
 #endif
 
-    // The value written was 1 for the base dictionary and 0 for other dictionaries.
+    // The value written was 1 for the main dictionary and 0 for other dictionaries.
     stream >> b;
     if (b == 1)
     {
@@ -4764,21 +4762,6 @@ void Dictionary::setToUserModified()
     emit userDataModified(true);
 }
 
-//void Dictionary::applyChangesInOriginals()
-//{
-//    std::map<int, int> m(mapOriginalWords());
-//
-//    for (int ix = 0; ix != ZKanji::originals.size(); ++ix)
-//    {
-//        OriginalWord *o = ZKanji::originals.items(ix);
-//        int newindex = m[o->index];
-//        if (newindex == -1)
-//            ZKanji::originals.remove(ix--);
-//        else
-//            o->index = newindex;
-//    }
-//}
-
 WordGroups& Dictionary::wordGroups()
 {
     return groups->wordGroups();
@@ -4813,33 +4796,6 @@ const WordEntry* Dictionary::wordEntry(int ix) const
 {
     return words[ix];
 }
-
-//int Dictionary::createEntry(const QString &kanji, const QString &kana, ushort freq, uint inf/*, QString defstr, const WordDefAttrib &attrib*/)
-//{
-//
-//    int ix = findKanjiKanaWord(kanji.constData(), kana.constData());
-//    if (ix != -1)
-//        return -1;
-//
-//    WordEntry *e = new WordEntry;
-//    e->kanji.copy(kanji.constData());
-//    e->kana.copy(kana.constData());
-//    e->romaji.copy(romanize(e->kana).constData());
-//    e->freq = freq;
-//    e->inf = inf;
-//    //e->defs.resize(1);
-//    //WordDefinition &def = e->defs[1];
-//    //def.def.copy(defstr.constData());
-//    //def.attrib = attrib;
-//
-//    words.push_back(e);
-//    addWordData();
-//
-//    if (this == ZKanji::dictionary(0))
-//        ZKanji::originals.createAdded(words.size() - 1, e->kanji.data(), e->kana.data());
-//
-//    return words.size() - 1;
-//}
 
 void Dictionary::removeEntry(int windex)
 {
@@ -4888,74 +4844,6 @@ bool Dictionary::isModifiedEntry(int windex) const
         return false;
     return o->change == OriginalWord::Modified;
 }
-
-//void Dictionary::changeWordAttrib(int windex, int wfreq, int winf)
-//{
-//    WordEntry *e = words[windex];
-//    if (this == ZKanji::dictionary(0) && ZKanji::originals.find(windex) == nullptr)
-//        ZKanji::originals.createModified(windex, e);
-//
-//    e->freq = wfreq;
-//    e->inf = winf;
-//
-//    emit entryChanged(windex);
-//}
-
-//void Dictionary::addWordDefinition(int windex, QString defstr, const WordDefAttrib &attrib)
-//{
-//    WordEntry *e = words[windex];
-//    if (this == ZKanji::dictionary(0) && ZKanji::originals.find(windex) == nullptr)
-//        ZKanji::originals.createModified(windex, e);
-//
-//    dtree.removeLine(windex, false);
-//
-//    e->defs.resize(e->defs.size() + 1);
-//    WordDefinition &def = e->defs[e->defs.size() - 1];
-//    def.def.copy(defstr.constData());
-//    def.attrib = attrib;
-//
-//    dtree.expandWith(windex);
-//
-//    emit entryChanged(windex);
-//}
-
-//void Dictionary::changeWordDefinition(int windex, int dindex, QString defstr, const WordDefAttrib &attrib)
-//{
-//    WordEntry *e = words[windex];
-//    if (this == ZKanji::dictionary(0) && ZKanji::originals.find(windex) == nullptr)
-//        ZKanji::originals.createModified(windex, e);
-//
-//    dtree.removeLine(windex, false);
-//
-//    WordDefinition &def = e->defs[dindex];
-//    def.def.copy(defstr.constData());
-//    def.attrib = attrib;
-//
-//    dtree.expandWith(windex);
-//
-//    emit entryChanged(windex, dindex);
-//}
-
-//void Dictionary::removeWordDefinition(int windex, int dindex)
-//{
-//    WordEntry *e = words[windex];
-//
-//#ifdef _DEBUG
-//    if (e->defs.size() == 1)
-//        throw "Call removeEntry() when removing the last definition of an entry.";
-//#endif
-//
-//    if (this == ZKanji::dictionary(0) && ZKanji::originals.find(windex) == nullptr)
-//        ZKanji::originals.createModified(windex, e);
-//
-//    dtree.removeLine(windex, false);
-//
-//    e->defs.erase(dindex);
-//
-//    dtree.expandWith(windex);
-//
-//    emit entryDefinitionRemoved(windex, dindex);
-//}
 
 const std::vector<int>& Dictionary::wordOrdering(BrowseOrder order) const
 {
@@ -6281,23 +6169,6 @@ std::map<int, int> Dictionary::mapWords(Dictionary *src, const std::vector<int> 
 
     return tmp;
 }
-
-//std::map<int, int> Dictionary::mapOriginalWords()
-//{
-//    std::map<int, int> tmp;
-//    //tmp.reserve(ZKanji::originals.size());
-//
-//    Dictionary *d = ZKanji::dictionary(0);
-//
-//    for (int ix = 0; ix != ZKanji::originals.size(); ++ix)
-//    {
-//        const OriginalWord *ori = ZKanji::originals.items(ix);
-//        int pos = findKanjiKanaWord(ori->kanji, ori->kana);
-//        tmp.insert(std::make_pair(ori->index, pos));
-//    }
-//
-//    return tmp;
-//}
 
 void Dictionary::diff(Dictionary *other, std::vector<std::pair<int, int>> &result)
 {

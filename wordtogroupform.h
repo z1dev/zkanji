@@ -38,6 +38,7 @@ private slots:
 
     void dictionaryAdded();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 private:
     void translateTexts();
 

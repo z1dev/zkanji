@@ -951,6 +951,16 @@ void GlobalUI::signalDictionaryRenamed(const QString &oldname, int index, int or
     emit dictionaryRenamed(oldname, index, orderindex);
 }
 
+void GlobalUI::signalDictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index)
+{
+    //// Signalling dictionary actions can only occure after the program has started. The flag
+    //// images are not filled until that.
+    //if (flagimg.empty())
+    //    return;
+
+    emit dictionaryReplaced(olddict, newdict, index);
+}
+
 void GlobalUI::signalDictionaryFlagChange(int index)
 {
     emit dictionaryFlagChanged(index, ZKanji::dictionaryOrder(index));
@@ -1228,38 +1238,102 @@ void GlobalUI::importOldUserData()
     QString dictname = finf.baseName();
     QString groupname = fname.left(fname.size() - finf.suffix().size()) + "zkg";
 
+    int dictix = -1;
     for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
     {
         if (ZKanji::dictionary(ix)->name().toLower() == dictname.toLower())
         {
-            QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", tr("A dictionary with the same name already exists."));
-            return;
+            int r = showAndReturn("zkanji",
+                ix == 0 ?
+                tr("Warning: Importing user data for the main dictionary will reset all user changes to the dictionary and replace existing groups.") :
+                tr("Warning: A dictionary with the same name already exists. The dictionary itself and all existing groups will be replaced."),
+                tr("Choose \"%1\" to import the old data.").arg(qApp->translate("", "Continue")),
+                {
+                    { qApp->translate("", "Continue"), QMessageBox::AcceptRole },
+                    { qApp->translate("", "Quit"), QMessageBox::RejectRole }
+                });
+            if (r == 1)
+                return;
+            dictix = ix;
+            break;
         }
     }
 
-    Dictionary *d = ZKanji::addDictionary();
+    Dictionary *d = nullptr; 
+
+    // Safe copy of dictionary to be updated, if it exists.
+    std::unique_ptr<Dictionary> copy;
+    // Safe copy of word originals if loading data for the main dictionary.
+    OriginalWordsList oricopy;
 
     bool donedict = false;
     try
     {
-        d->loadFile(fname, false, true);
+        d = dictix == -1 ? ZKanji::addDictionary() : new Dictionary();
+
+        if (dictix != -1)
+        {
+            // Create a safe copy to be restored in the event of an error or when cancelling.
+            copy.reset(ZKanji::replaceDictionary(dictix, d));
+            if (dictix == 0)
+                oricopy.swap(ZKanji::originals);
+        }
+
+        d->loadFile(fname, dictix == 0, dictix != 0);
         donedict = true;
-        d->loadUserDataFile(groupname);
+        d->loadUserDataFile(groupname, dictix != 0);
+
+        if (dictix == 0)
+        {
+            ImportReplaceForm irf(d);
+            if (irf.exec())
+            {
+                ZKanji::originals.swap(irf.originals());
+                d->swapDictionaries(irf.dictionary(), irf.changes());
+                signalDictionaryReplaced(copy.get(), d, dictix);
+            }
+            else
+            {
+                // Restore safe copy.
+                d = ZKanji::replaceDictionary(dictix, copy.get());
+                copy.release();
+                copy.reset(d);
+                if (dictix == 0)
+                    oricopy.swap(ZKanji::originals);
+            }
+        }
+        else if (dictix != -1)
+            signalDictionaryReplaced(copy.get(), d, dictix);
+
     }
     catch (...)
     {
+        if (dictix != -1)
+        {
+            // Restore safe copy.
+            d = ZKanji::replaceDictionary(dictix, copy.get());
+            copy.release();
+            copy.reset(d);
+            if (dictix == 0)
+                oricopy.swap(ZKanji::originals);
+        }
+
         if (!donedict)
             QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", qApp->translate("", "Error loading dictionary data: %1").arg(dictname));
         else
             QMessageBox::warning(!mainforms.empty() ? mainforms[0] : nullptr, "zkanji", qApp->translate("", "Error loading user data for dictionary: %1").arg(dictname));
-        ZKanji::deleteDictionary(ZKanji::dictionaryCount() - 1);
+
+        if (dictix == -1)
+            ZKanji::deleteDictionary(ZKanji::dictionaryCount() - 1);
+
         return;
     }
 
-    gUI->signalDictionaryRenamed(QString(), ZKanji::dictionaryCount() - 1, ZKanji::dictionaryOrder(ZKanji::dictionaryCount() - 1));
-
     d->setToModified();
     d->setToUserModified();
+
+    if (dictix == -1)
+        gUI->signalDictionaryRenamed(QString(), ZKanji::dictionaryCount() - 1, ZKanji::dictionaryOrder(ZKanji::dictionaryCount() - 1));
 }
 
 void GlobalUI::userExportAction()
@@ -1306,7 +1380,7 @@ void GlobalUI::userImportAction()
     diform.hide();
 
     if (!result)
-        f.dictionary()->loadUserDataFile(ZKanji::userFolder() + "/data" + f.dictionary()->name() + ".zkuser");
+        f.dictionary()->loadUserDataFile(ZKanji::userFolder() + "/data" + f.dictionary()->name() + ".zkuser", true);
 
     saveguard.release();
     hideguard.release();

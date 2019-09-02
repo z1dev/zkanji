@@ -210,8 +210,9 @@ protected slots:
     void on_levelsButton_clicked();
     void on_testsButton_clicked();
 
-    void dictReset();
-    void dictRemoved(int index, int orderindex, void *oldaddress);
+    void dictionaryReset();
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
+    void dictionaryRemoved(int index, int orderindex, void *oldaddress);
 private:
     void translateTexts();
 

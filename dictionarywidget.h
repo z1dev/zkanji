@@ -325,6 +325,7 @@ private slots:
     void dictionaryReset();
     void dictionaryRemoved(int index, int order, void *oldaddress);
     void dictionaryFlagChanged(int index, int order);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 
     void on_jpBeforeButton_clicked(bool checked);
     void on_jpAfterButton_clicked(bool checked);

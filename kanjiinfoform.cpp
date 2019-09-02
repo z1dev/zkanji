@@ -146,6 +146,8 @@ KanjiInfoForm::KanjiInfoForm(QWidget *parent) : base(parent), ui(new Ui::KanjiIn
     addCloseButton(ui->captionLayout);
 
     connect(gUI, &GlobalUI::settingsChanged, this, &KanjiInfoForm::settingsChanged);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &KanjiInfoForm::dictionaryReplaced);
+
     connect(ui->similarScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
     connect(ui->partsScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
     connect(ui->partofScroller, &ZItemScroller::itemClicked, this, &KanjiInfoForm::scrollerClicked);
@@ -1206,15 +1208,21 @@ void KanjiInfoForm::settingsChanged()
 
 void KanjiInfoForm::dictionaryReset()
 {
-    Dictionary *d = dict;
-    int kindex = ui->kanjiView->kanjiIndex();
-    setKanji(d, kindex);
+    //Dictionary *d = dict;
+    //int kindex = ui->kanjiView->kanjiIndex();
+    setKanji(dict, ui->kanjiView->kanjiIndex());
 }
 
 void KanjiInfoForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
-    if (d == dict)
+    if (dict == d)
         close();
+}
+
+void KanjiInfoForm::dictionaryReplaced(Dictionary *olddict, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (olddict == dict)
+        setKanji(dict, ui->kanjiView->kanjiIndex());
 }
 
 void KanjiInfoForm::wordSelChanged()

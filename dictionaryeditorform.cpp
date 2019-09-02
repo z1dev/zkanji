@@ -193,6 +193,8 @@ DictionaryEditorForm::DictionaryEditorForm(QWidget *parent) : base(parent), ui(n
     ui->dictView->setCurrentRow(0);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Close), &QPushButton::clicked, this, &DictionaryEditorForm::close);
+    //connect(gUI, &GlobalUI::dictionaryReset, this, &DictionaryEditorForm::);
+
     translateTexts();
 
     FormStates::restoreDialogSize("DictionaryEditor", this, true);

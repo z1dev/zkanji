@@ -48,6 +48,7 @@ private slots:
     //void wordSelChanged(/*const QItemSelection &selected, const QItemSelection &deselected*/);
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+    void dictionaryReplaced(Dictionary *old, Dictionary *newdict, int index);
 private:
     void translateTexts();
 

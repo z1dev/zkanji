@@ -134,6 +134,7 @@ private slots:
     void dictionaryMoved(int from, int to);
     void dictionaryRenamed(const QString &oldname, int index, int order);
     void dictionaryFlagChanged(int index, int order);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 private:
     // Change texts of the mode menu to match the currently selected language.
     void setTranslationTexts();

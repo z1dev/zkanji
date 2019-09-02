@@ -718,6 +718,7 @@ PrintPreviewForm::PrintPreviewForm(QWidget *parent) : base(parent), ui(new Ui::P
     connect(preview->findChild<QAbstractScrollArea*>()->verticalScrollBar(), &QScrollBar::valueChanged, this, &PrintPreviewForm::pageScrolled);
     connect(gUI, &GlobalUI::settingsChanged, preview, &QPrintPreviewWidget::updatePreview);
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &PrintPreviewForm::dictionaryToBeRemoved);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &PrintPreviewForm::dictionaryReplaced);
 
     FormStates::restoreDialogMaximizedAndSize("PrintPreview", this, true);
 }
@@ -1384,7 +1385,13 @@ void PrintPreviewForm::paintPages(QPrinter *pr)
 
 void PrintPreviewForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
-    if (d == dict)
+    if (dict == d)
+        close();
+}
+
+void PrintPreviewForm::dictionaryReplaced(Dictionary *olddict, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (dict == olddict)
         close();
 }
 

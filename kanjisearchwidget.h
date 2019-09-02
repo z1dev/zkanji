@@ -118,6 +118,7 @@ class ZFlowLayout;
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class ZStatusBar;
+class Dictionary;
 
 enum class CommandCategories;
 class KanjiSearchWidget : public QWidget
@@ -138,7 +139,7 @@ public:
     void assignStatusBar(ZStatusBar *bar);
 
     // Clears the kanji search settings.
-    void setDictionary(int index);
+    void setDictionary(Dictionary *d);
 
     // Returns a command category when the widget is visible, it's on a ZKanjiWidget, and that
     // widget it either active, or is the sole widget on the form in the given category. The

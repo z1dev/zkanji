@@ -176,7 +176,7 @@ private:
     ExampleDisplay display;
 
     // Index of the word in dict. No sentences are displayed if index is -1.
-    int index;
+    int wordindex;
 
     // True when a new item has been set but its data has not been loaded yet.
     bool dirty;

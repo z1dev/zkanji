@@ -36,6 +36,7 @@ WordToGroupForm::WordToGroupForm(QWidget *parent) : base(parent), ui(new Ui::Wor
     connect(ui->groupWidget, &GroupWidget::selectionChanged, this, &WordToGroupForm::selChanged);
     connect(gUI, &GlobalUI::dictionaryAdded, this, &WordToGroupForm::dictionaryAdded);
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &WordToGroupForm::dictionaryToBeRemoved);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &WordToGroupForm::dictionaryReplaced);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &WordToGroupForm::close);
     QPushButton *acceptButton = ui->buttonBox->button(QDialogButtonBox::Ok);
@@ -178,10 +179,16 @@ void WordToGroupForm::dictionaryAdded()
 
 void WordToGroupForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
-    if (d == dict)
+    if (dict == d)
         close();
     if (ZKanji::dictionaryCount() < 3)
         ui->switchButton->setVisible(false);
+}
+
+void WordToGroupForm::dictionaryReplaced(Dictionary *olddict, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (dict == olddict)
+        close();
 }
 
 void WordToGroupForm::translateTexts()

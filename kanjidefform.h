@@ -32,6 +32,7 @@ public slots:
     void ok();
 
     void dictionaryRemoved(int index, int orderindex, void *oldaddress);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 protected:
     virtual bool event(QEvent *e) override;
 private:

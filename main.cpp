@@ -450,7 +450,7 @@ namespace
         try
         {
             if (userdir && QFileInfo::exists(ZKanji::loadFolder() % "/data/English." % exuser))
-                d->loadUserDataFile(ZKanji::loadFolder() % "/data/English." % exuser);
+                d->loadUserDataFile(ZKanji::loadFolder() % "/data/English." % exuser, true);
         }
         catch (const ZException &e)
         {
@@ -550,7 +550,7 @@ namespace
             {
                 d->loadFile(ZKanji::loadFolder() + "/data/" % dictname % "." % exdict, false, true);
                 donedict = true;
-                d->loadUserDataFile(ZKanji::loadFolder() + "/data/" % dictname % "." % exuser);
+                d->loadUserDataFile(ZKanji::loadFolder() + "/data/" % dictname % "." % exuser, true);
             }
             catch (const ZException &e)
             {

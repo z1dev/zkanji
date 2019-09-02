@@ -118,6 +118,7 @@ protected slots:
 
     void dictionaryReset();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+    void dictionaryReplaced(Dictionary *old, Dictionary *newdict, int index);
 private:
     enum KanjiPlacement { Anywhere, Front, Middle, End, FrontEnd, FrontMiddle, MiddleEnd };
 

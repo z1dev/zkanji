@@ -17,6 +17,7 @@ class GroupBase;
 class QXmlStreamWriter;
 class QXmlStreamReader;
 class ZStatusBar;
+class Dictionary;
 class KanjiGroupWidget : public QWidget
 {
     Q_OBJECT
@@ -33,7 +34,7 @@ public:
     //void makeModeSpace(const QSize &size);
 
     // Called when the user data has been loaded and the form is ready to display it.
-    void setDictionary(int index);
+    void setDictionary(Dictionary *d);
 protected:
     virtual bool event(QEvent *e) override;
 private:

@@ -18,6 +18,8 @@ namespace Ui {
 
 
 class WordDeckList;
+class Dictionary;
+
 class DeckListModel : public ZAbstractTableModel
 {
     Q_OBJECT
@@ -104,6 +106,8 @@ public slots:
     void on_deckTable_rowSelectionChanged();
     void on_dictCBox_currentIndexChanged(int index);
     void editorClosed();
+
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 protected:
     //virtual void showEvent(QShowEvent *event) override;
     virtual bool event(QEvent *e) override;

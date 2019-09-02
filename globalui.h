@@ -119,6 +119,10 @@ signals:
     void dictionaryRemoved(int index, int orderindex, void *oldaddress);
     void dictionaryMoved(int from, int to);
     void dictionaryRenamed(const QString &oldname, int index, int orderindex);
+    // Emitted when a dictionary was replaced during update. Saved dictionary pointers or
+    // other data coming from olddict will be invalidated after this call, and the newdict has
+    // already been inserted in the dictionary list.
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 
     void dictionaryFlagChanged(int index, int orderindex);
 public:
@@ -275,6 +279,7 @@ public:
     void signalDictionaryRemoved(int index, int orderindex, void *oldaddress);
     void signalDictionaryMoved(int from, int to);
     void signalDictionaryRenamed(const QString &oldname, int index, int orderindex);
+    void signalDictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 
     void signalDictionaryFlagChange(int index);
 protected:

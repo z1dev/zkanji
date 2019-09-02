@@ -127,6 +127,7 @@ private slots:
 
     void dictionaryReset();
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 
     void wordSelChanged();
 private:

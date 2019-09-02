@@ -932,10 +932,8 @@ void KanjiSearchWidget::assignStatusBar(ZStatusBar *bar)
 //    ((ZFlowLayout*)ui->optionsWidget->layout())->makeModeSpace(size);
 //}
 
-void KanjiSearchWidget::setDictionary(int index)
+void KanjiSearchWidget::setDictionary(Dictionary *d)
 {
-    Dictionary *d = ZKanji::dictionary(index);
-
     if (ui->kanjiGrid->dictionary() == d)
         return;
     ui->kanjiGrid->setDictionary(d);

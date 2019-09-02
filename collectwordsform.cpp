@@ -347,6 +347,7 @@ CollectWordsForm::CollectWordsForm(QWidget *parent) : base(parent), ui(new Ui::C
     connect(ui->posCBox, &QComboBox::currentTextChanged, this, &CollectWordsForm::positionBoxChanged);
 
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &CollectWordsForm::dictionaryToBeRemoved);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &CollectWordsForm::dictionaryReplaced);
 
     ui->kanjiGrid->assignStatusBar(ui->kanjiStatus);
 }
@@ -382,10 +383,9 @@ void CollectWordsForm::exec(Dictionary *d, const std::vector<ushort> &kanjis)
     dict = nullptr;
     ui->dictCBox->setCurrentIndex(ZKanji::dictionaryOrder(ZKanji::dictionaryIndex(d)));
     if (dict != d)
-    {
         connect(dict, &Dictionary::dictionaryReset, this, &CollectWordsForm::dictionaryReset);
         dict = d;
-    }
+
 
     kmodel = new KanjiListModel(this);
     kmodel->setList(accepted);
@@ -690,7 +690,7 @@ void CollectWordsForm::wordChecked()
 void CollectWordsForm::on_dictCBox_currentIndexChanged(int index)
 {
     Dictionary *d = ZKanji::dictionary(ZKanji::dictionaryPosition(index));
-    if (d == dict)
+    if (dict == d)
         return;
 
     if (dict != nullptr)
@@ -726,8 +726,14 @@ void CollectWordsForm::dictionaryReset()
 
 void CollectWordsForm::dictionaryToBeRemoved(int /*index*/, int orderindex, Dictionary *d)
 {
-    if (d == dict)
+    if (dict == d)
         ui->dictCBox->setCurrentIndex(orderindex == 0 ? 1 : 0);
+}
+
+void CollectWordsForm::dictionaryReplaced(Dictionary *old, Dictionary * /*newdict*/, int /*index*/)
+{
+    if (dict == old)
+        close();
 }
 
 

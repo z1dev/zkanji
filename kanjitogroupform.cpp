@@ -29,6 +29,7 @@ KanjiToGroupForm::KanjiToGroupForm(QWidget *parent) : base(parent), ui(new Ui::K
     ui->groupWidget->setMultiSelect(true);
     connect(ui->groupWidget, &GroupWidget::selectionChanged, this, &KanjiToGroupForm::selChanged);
     connect(gUI, &GlobalUI::dictionaryToBeRemoved, this, &KanjiToGroupForm::dictionaryToBeRemoved);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &KanjiToGroupForm::dictionaryReplaced);
 
     connect(ui->buttonBox->button(QDialogButtonBox::Cancel), &QPushButton::clicked, this, &KanjiToGroupForm::close);
     acceptButton = ui->buttonBox->addButton(QString(), QDialogButtonBox::AcceptRole);
@@ -131,7 +132,13 @@ void KanjiToGroupForm::on_dictCBox_currentIndexChanged(int index)
 
 void KanjiToGroupForm::dictionaryToBeRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
 {
-    if (d == dict)
+    if (dict == d)
+        close();
+}
+
+void KanjiToGroupForm::dictionaryReplaced(Dictionary *olddict, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (dict == olddict)
         close();
 }
 

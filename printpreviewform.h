@@ -190,6 +190,7 @@ protected slots:
     void paintPages(QPrinter *p);
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 private:
     // Saves the current printer settings in Settings::print. Returns true if anything was
     // changed.

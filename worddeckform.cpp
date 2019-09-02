@@ -351,6 +351,8 @@ WordDeckForm::WordDeckForm(QWidget *parent) : base(parent), ui(new Ui::WordDeckF
     connect(ui->deckTable, &ZListView::currentRowChanged, this, &WordDeckForm::currentDeckChanged);
     connect(ui->deckTable, &ZListView::rowDoubleClicked, this, &WordDeckForm::deckDoubleClicked);
 
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &WordDeckForm::dictionaryReplaced);
+
     fillDeckList();
 
     QHeaderView *h = ui->deckTable->horizontalHeader();
@@ -435,6 +437,14 @@ void WordDeckForm::editorClosed()
         return;
 
     qApp->postEvent(this, new EditorClosedEvent);
+}
+
+void WordDeckForm::dictionaryReplaced(Dictionary *olddict, Dictionary * /*newdict*/, int index)
+{
+    if (decks->dictionary() == olddict)
+    {
+        setDictionary(index);
+    }
 }
 
 bool WordDeckForm::event(QEvent *e)

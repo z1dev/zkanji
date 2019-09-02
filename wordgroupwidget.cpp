@@ -154,10 +154,10 @@ void WordGroupWidget::assignStatusBar(ZStatusBar *bar)
 //    ui->groupWidget->makeModeSpace(size);
 //}
 
-void WordGroupWidget::setDictionary(int index)
+void WordGroupWidget::setDictionary(Dictionary *d)
 {
-    ui->dictWidget->setDictionary(index);
-    ui->groupWidget->setDictionary(ZKanji::dictionary(index));
+    ui->dictWidget->setDictionary(d);
+    ui->groupWidget->setDictionary(d);
 }
 
 bool WordGroupWidget::event(QEvent *e)

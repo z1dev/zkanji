@@ -223,6 +223,9 @@ class OriginalWordsList
 public:
     typedef size_t  size_type;
 
+    // Skips the legacy data of the originals list in the passed stream.
+    static bool skip(QDataStream &stream);
+
     ~OriginalWordsList();
 
     void swap(OriginalWordsList &other);
@@ -238,9 +241,6 @@ public:
     // Used when loading the legacy data, to update the word index and frequency of saved
     // items. When wfreq or windex is negative, frequency is not updated.
     void updateItemLegacy(int index, int windex, ushort wfreq);
-
-    // Skips the legacy data of the originals list in the passed stream.
-    bool skip(QDataStream &stream);
 
     // Number of original words in the list.
     size_type size() const;
@@ -702,8 +702,7 @@ signals:
     void dictionaryModified(bool mod);
     void userDataModified(bool mod);
 
-    // Emited after an update or when the dictionary changed so much, any model using it
-    // should be reset.
+    // Emited when the dictionary changed so much, any model using it should be reset.
     void dictionaryReset();
 
     // Emited before removing an entry.
@@ -751,11 +750,11 @@ public:
     // Loads the base dictionary data which mainly consists of data for kanji.
     void loadBaseFile(const QString &filename);
     // Loads the main dictionary data which can change for user dictionaries.
-    // Set basedict to true for the English base dictionary.
+    // Set maindict to true for the English base dictionary.
     // Set skiporiginals to true for user dictionaries.
     // Both basedict and skiporiginals are only used for the old data formats.
-    void loadFile(const QString &filename, bool basedict, bool skiporiginals);
-    void loadUserDataFile(const QString &filename);
+    void loadFile(const QString &filename, bool maindict, bool skiporiginals);
+    void loadUserDataFile(const QString &filename, bool emitreset);
 
     void loadBaseLegacy(QDataStream &stream, int version);
     void loadBase(QDataStream &stream);
@@ -1269,6 +1268,8 @@ namespace ZKanji
     void addDictionary(Dictionary *dict);
     // Adds a new dictionary.
     Dictionary* addDictionary();
+    // Replaces the existing dictionary at index with `replacement`, returning the original.
+    Dictionary* replaceDictionary(int index, Dictionary *replacement);
     // Deletes the dictionary at index, and places dict in its place in the dictionaries list.
     // Using an invalid index, replacing a dictionary with itself or placing a dictionary at
     // a different location is an error.

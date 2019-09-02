@@ -40,6 +40,7 @@ KanjiDefinitionForm::KanjiDefinitionForm(QWidget *parent) : base(parent), ui(new
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, &KanjiDefinitionForm::ok);
 
     connect(gUI, &GlobalUI::dictionaryRemoved, this, &KanjiDefinitionForm::dictionaryRemoved);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &KanjiDefinitionForm::dictionaryReplaced);
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(false);
     ui->acceptButton->setDefault(true);
@@ -118,6 +119,12 @@ void KanjiDefinitionForm::ok()
 void KanjiDefinitionForm::dictionaryRemoved(int /*index*/, int /*orderindex*/, void *oldaddress)
 {
     if (dict == oldaddress)
+        close();
+}
+
+void KanjiDefinitionForm::dictionaryReplaced(Dictionary *olddict, Dictionary* /*newdict*/, int /*index*/)
+{
+    if (dict == olddict)
         close();
 }
 

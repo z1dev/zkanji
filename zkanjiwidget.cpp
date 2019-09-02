@@ -115,6 +115,7 @@ ZKanjiWidget::ZKanjiWidget(QWidget *parent) : base(parent), ui(new Ui::ZKanjiWid
     connect(gUI, &GlobalUI::dictionaryMoved, this, &ZKanjiWidget::dictionaryMoved);
     connect(gUI, &GlobalUI::dictionaryRenamed, this, &ZKanjiWidget::dictionaryRenamed);
     connect(gUI, &GlobalUI::dictionaryFlagChanged, this, &ZKanjiWidget::dictionaryFlagChanged);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &ZKanjiWidget::dictionaryReplaced);
 
     for (int ix = 0, siz = ZKanji::dictionaryCount(); ix != siz; ++ix)
         connect(dictmenu.addAction(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
@@ -273,11 +274,13 @@ void ZKanjiWidget::setDictionary(int index)
 
     dictindex = index;
 
+    Dictionary *d = ZKanji::dictionary(index);
+
     //ui->dictBox->setCurrentIndex(index);
-    ui->dictionary->setDictionary(index);
-    ui->wordGroups->setDictionary(index);
-    ui->kanjiGroups->setDictionary(index);
-    ui->kanjiSearch->setDictionary(index);
+    ui->dictionary->setDictionary(d);
+    ui->wordGroups->setDictionary(d);
+    ui->kanjiGroups->setDictionary(d);
+    ui->kanjiSearch->setDictionary(d);
 
     QPixmap pix;
 
@@ -285,7 +288,7 @@ void ZKanjiWidget::setDictionary(int index)
     int _iconH = _iconW;
     QSize s = QSize(_iconW, _iconH);
 
-    ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, ZKanji::dictionary(dictindex)->name(), Flags::Flag))));
+    ui->dictButton->setIcon(QIcon(triangleImage(ZKanji::dictionaryFlag(s, d->name(), Flags::Flag))));
 
     if (dynamic_cast<ZKanjiForm*>(window()) == nullptr)
         return;
@@ -676,6 +679,15 @@ void ZKanjiWidget::dictionaryFlagChanged(int index, int order)
         dictmenu.actions().at(order)->setIcon(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(index)->name()));
         //        connect(dictmenu.addAction(ZKanji::dictionaryMenuFlag(ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), ZKanji::dictionary(ZKanji::dictionaryPosition(ix))->name()), &QAction::triggered, this, &ZKanjiWidget::setDictByAction);
 
+    }
+}
+
+void ZKanjiWidget::dictionaryReplaced(Dictionary* /*olddict*/, Dictionary* /*newdict*/, int index)
+{
+    if (dictindex == index)
+    {
+        dictindex = -1;
+        setDictionary(index);
     }
 }
 

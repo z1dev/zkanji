@@ -40,6 +40,7 @@ private slots:
     void on_dictCBox_currentIndexChanged(int index);
 
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 private:
     void translateTexts();
 

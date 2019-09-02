@@ -65,6 +65,7 @@ void DictionaryTextForm::exec(Dictionary *d)
     ui->infoText->setPlainText(dict->infoText());
 
     connect(d, &Dictionary::dictionaryReset, this, &DictionaryTextForm::dictionaryReset);
+    connect(gUI, &GlobalUI::dictionaryReplaced, this, &DictionaryTextForm::dictionaryReplaced);
 
     ui->removeButton->setEnabled(ZKanji::dictionaryHasCustomFlag(dict->name()));
     show();
@@ -102,6 +103,12 @@ void DictionaryTextForm::dictionaryRenamed(const QString &/*oldname*/, int index
 void DictionaryTextForm::dictionaryReset()
 {
     ui->infoText->setPlainText(dict->infoText());
+}
+
+void DictionaryTextForm::dictionaryReplaced(Dictionary *olddict, Dictionary * /*newdict*/, int /*index*/)
+{
+    if (dict == olddict)
+        close();
 }
 
 void DictionaryTextForm::on_browseButton_clicked()

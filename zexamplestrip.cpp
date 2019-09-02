@@ -333,7 +333,7 @@ void ZExamplePopup::mouseDoubleClickEvent(QMouseEvent *e)
 //-------------------------------------------------------------
 
 
-ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), display(ExampleDisplay::Both), index(-1), dirty(false),
+ZExampleStrip::ZExampleStrip(QWidget *parent) : base(parent), dict(nullptr), display(ExampleDisplay::Both), wordindex(-1), dirty(false),
         block(0), line(0), wordpos((uchar)-1), common(nullptr), current(-1), hovered(-1), interactible(true), jpwidth(-1), trwidth(-1)
 {
     //setBackgroundRole(QPalette::Base);
@@ -368,7 +368,7 @@ void ZExampleStrip::reset()
 
 void ZExampleStrip::setItem(Dictionary *d, int windex, int wpos, int wordform)
 {
-    if (windex == -1 && index == -1)
+    if (windex == -1 && wordindex == -1)
     {
         if (dict != nullptr)
             disconnect(dict, 0, this, 0);
@@ -382,16 +382,16 @@ void ZExampleStrip::setItem(Dictionary *d, int windex, int wpos, int wordform)
     if (d == nullptr)
         windex = -1;
 
-    if (d != nullptr && windex != -1 && wpos != -1 && wordform != -1 && index != -1 && sentence.words.size() > wpos && sentence.words[wpos].forms.size() > wordform)
+    if (d != nullptr && windex != -1 && wpos != -1 && wordform != -1 && wordindex != -1 && sentence.words.size() > wpos && sentence.words[wpos].forms.size() > wordform)
     {
         const ExampleWordsData::Form &form = sentence.words[wpos].forms[wordform];
         if (w->kanji == form.kanji && w->kana == form.kana)
             keepsentence = true;
     }
 
-    if (!keepsentence && index != -1 && windex != -1)
+    if (!keepsentence && wordindex != -1 && windex != -1)
     {
-        WordEntry *eold = dict->wordEntry(index);
+        WordEntry *eold = dict->wordEntry(wordindex);
         if (eold->kanji != w->kanji || eold->kana != w->kana)
             dirty = true;
     }
@@ -409,7 +409,7 @@ void ZExampleStrip::setItem(Dictionary *d, int windex, int wpos, int wordform)
     }
 
     dict = d;
-    index = windex;
+    wordindex = windex;
 
     if (dict != nullptr)
     {
@@ -464,7 +464,7 @@ void ZExampleStrip::setDisplayed(ExampleDisplay newdisp)
 
     contentsReset();
 
-    if (!dirty && isVisible() && index != -1)
+    if (!dirty && isVisible() && wordindex != -1)
     {
         wordrect.clear();
         popup.reset();
@@ -478,14 +478,14 @@ void ZExampleStrip::setDisplayed(ExampleDisplay newdisp)
 
 int ZExampleStrip::sentenceCount() const
 {
-    if (index == -1)
+    if (wordindex == -1)
         return 0;
     return common->examples.size();
 }
 
 int ZExampleStrip::currentSentence() const
 {
-    if (index == -1)
+    if (wordindex == -1)
         return 0;
     return current;
 }
@@ -508,7 +508,7 @@ void ZExampleStrip::setCurrentSentence(int which)
 
 void ZExampleStrip::showPreviousLinkedSentence()
 {
-    if (index == -1 || common == nullptr || current == 0)
+    if (wordindex == -1 || common == nullptr || current == 0)
         return;
 
     if (!ZKanji::wordexamples.hasExample(common->kanji.data(), common->kana.data()))
@@ -532,7 +532,7 @@ void ZExampleStrip::showPreviousLinkedSentence()
 
 void ZExampleStrip::showNextLinkedSentence()
 {
-    if (index == -1 || common == nullptr)
+    if (wordindex == -1 || common == nullptr)
         return;
 
     int cnt = sentenceCount();
@@ -561,7 +561,7 @@ void ZExampleStrip::showNextLinkedSentence()
 
 const WordCommonsExample* ZExampleStrip::currentExample() const
 {
-    if (index == -1 || common == nullptr)
+    if (wordindex == -1 || common == nullptr)
         return nullptr;
     return &common->examples[current];
 }
@@ -589,7 +589,7 @@ Dictionary* ZExampleStrip::dictionary() const
 
 int ZExampleStrip::wordIndex() const
 {
-    return index;
+    return wordindex;
 }
 
 bool ZExampleStrip::event(QEvent *e)
@@ -630,7 +630,7 @@ void ZExampleStrip::paintEvent(QPaintEvent *e)
 
     painter.fillRect(r, Settings::textColor(this, ColorSettings::Bg));
 
-    if (index == -1)
+    if (wordindex == -1)
         return;
 
     int gap = Settings::scaled(4);
@@ -725,7 +725,7 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
 
         // Mouse cursor was in a word rectangle, but it's now over the scroll bar. Update the
         // hovered rectangle and the dotted strip below the words.
-        if (index != -1 && hovered != hpos)
+        if (wordindex != -1 && hovered != hpos)
         {
             if (hovered != -1 && hovered != tosigned(wordrect.size()))
                 updateWordRect(hovered);
@@ -739,7 +739,7 @@ void ZExampleStrip::mouseMoveEvent(QMouseEvent *e)
     }
     e->accept();
 
-    if (index == -1 || !interactible)
+    if (wordindex == -1 || !interactible)
         return;
 
     int hpos = -1;
@@ -823,7 +823,7 @@ int ZExampleStrip::scrollMin() const
 
 int ZExampleStrip::scrollMax() const
 {
-    if (index == -1)
+    if (wordindex == -1)
         return 0;
 
     int gap = Settings::scaled(4);
@@ -888,7 +888,7 @@ void ZExampleStrip::scrolled(int oldpos, int &newpos)
     update();
 }
 
-void ZExampleStrip::dictionaryRemoved(int /*index*/, int /*orderindex*/, Dictionary *d)
+void ZExampleStrip::dictionaryRemoved(int /*wordindex*/, int /*orderindex*/, Dictionary *d)
 {
     if (dict != d)
         return;
@@ -897,7 +897,7 @@ void ZExampleStrip::dictionaryRemoved(int /*index*/, int /*orderindex*/, Diction
 
 void ZExampleStrip::dictionaryChanged()
 {
-    if (dict == nullptr || index == -1 || !isVisible())
+    if (dict == nullptr || wordindex == -1 || !isVisible())
         return;
 
     QMouseEvent e = QMouseEvent(QEvent::MouseMove, mapFromGlobal(QCursor::pos()), Qt::NoButton, Qt::NoButton, Qt::KeyboardModifiers());
@@ -927,12 +927,12 @@ void ZExampleStrip::updateSentence()
     sentence.translated.clear();
     sentence.words.clear();
 
-    if (index != -1)
+    if (wordindex != -1)
     {
-        WordEntry *e = dict->wordEntry(index);
+        WordEntry *e = dict->wordEntry(wordindex);
         common = ZKanji::commons.findWord(e->kanji.data(), e->kana.data(), e->romaji.data());
         if (common == nullptr || common->examples.empty())
-            index = -1;
+            wordindex = -1;
         else
         {
             block = common->examples[current].block;
@@ -947,7 +947,7 @@ void ZExampleStrip::updateSentence()
 
     contentsReset();
 
-    if (index != -1)
+    if (wordindex != -1)
     {
         QMouseEvent e = QMouseEvent(QEvent::MouseMove, mapFromGlobal(QCursor::pos()), Qt::NoButton, Qt::NoButton, Qt::KeyboardModifiers());
         if (rect().contains(e.pos()))
@@ -962,7 +962,7 @@ void ZExampleStrip::updateSentence()
 
 void ZExampleStrip::fillWordRects()
 {
-    if (!wordrect.empty() || index == -1 || (display != ExampleDisplay::Japanese && display != ExampleDisplay::Both))
+    if (!wordrect.empty() || wordindex == -1 || (display != ExampleDisplay::Japanese && display != ExampleDisplay::Both))
         return;
     hovered = -1;
 
@@ -1043,7 +1043,7 @@ void ZExampleStrip::fillWordRects()
 
 void ZExampleStrip::paintJapanese(QPainter *p, QFontMetrics &fm, int y)
 {
-    if (index == -1)
+    if (wordindex == -1)
         return;
 
     bool fillrects = wordrect.empty();
@@ -1191,7 +1191,7 @@ void ZExampleStrip::selectForm(int form, int wpos)
     {
         ExampleWordsData::Form &dat = sentence.words[wordpos].forms[form];
         int windex = dict->findKanjiKanaWord(dat.kanji, dat.kana);
-        if (windex == index)
+        if (windex == wordindex)
             return;
     }
 

@@ -454,7 +454,7 @@ void Dictionary::loadBaseLegacy(QDataStream &stream, int version)
     ZKanji::radlist.loadLegacy(stream, version);
 }
 
-void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, bool skiporiginals)
+void Dictionary::loadLegacy(QDataStream &stream, int version, bool maindict, bool skiporiginals)
 {
     // Usually prgversion is loaded with the base dictionary, but if we use legacy code here,
     // that means the base dictionary is for the new version. In that case loadBaseLegacy is
@@ -663,9 +663,9 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
     QFileInfo fi;
     QFile f2;
 
-    if (basedict)
+    if (maindict)
         f2.setFileName(qApp->applicationDirPath() + "/tempkanadata.temp");
-    if (basedict && fi.exists(qApp->applicationDirPath() + "/tempkanadata.temp"))
+    if (maindict && fi.exists(qApp->applicationDirPath() + "/tempkanadata.temp"))
     {
         kanadata_exists = true;
         f2.open(QIODevice::ReadOnly);
@@ -709,7 +709,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
     }
 
 
-    if (!basedict || !kanadata_exists)
+    if (!maindict || !kanadata_exists)
     {
 #endif
         for (auto ix = 0, siz = tosigned(words.size()); ix != siz; ++ix)
@@ -733,7 +733,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
         }
 #ifdef _DEBUG
 
-        if (basedict)
+        if (maindict)
         {
             f2.open(QIODevice::WriteOnly);
 
@@ -830,7 +830,7 @@ void Dictionary::loadLegacy(QDataStream &stream, int version, bool basedict, boo
     if (stream.atEnd())
         throw ZException("Unexpected end of legacy dictionary file.");
 
-    if (basedict)
+    if (maindict)
     {
         if (!skiporiginals)
         {

@@ -163,6 +163,7 @@ private slots:
     void dictionaryToBeRemoved(int index, int orderindex, Dictionary *dict);
     void dictionaryRenamed(const QString &oldname, int index, int orderindex);
     void dictionaryFlagChanged(int index, int order);
+    void dictionaryReplaced(Dictionary *olddict, Dictionary *newdict, int index);
 private:
     WordEditorForm(QWidget *parent = nullptr);
 
