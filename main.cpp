@@ -297,91 +297,91 @@ namespace
 
     void importOldData()
     {
-        if (!ZKanji::noData())
+        if (ZKanji::noData())
+            return;
+
+        // If the zkg and zkd files are found at the default user load location, old user
+        // data will be imported automatically. Otherwise ask the user to browse there.
+
+        bool found = false;
+        if (QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkd") || QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkg"))
         {
-            // If the zkg and zkd files are found at the default user load location, old user
-            // data will be imported automatically. Otherwise ask the user to browse there.
+            NTFSPermissionGuard permissionguard;
 
-            bool found = false;
-            if (QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkd") || QFileInfo::exists(ZKanji::userFolder() + "/data/English.zkg"))
+            found = true;
+            QFileInfo finf(ZKanji::userFolder() + "/data/English.zkd");
+            if (!finf.isReadable())
+                found = false;
+            if (found)
             {
-                NTFSPermissionGuard permissionguard;
-
-                found = true;
-                QFileInfo finf(ZKanji::userFolder() + "/data/English.zkd");
+                finf.setFile(ZKanji::userFolder() + "/data/English.zkg");
                 if (!finf.isReadable())
                     found = false;
-                if (found)
-                {
-                    finf.setFile(ZKanji::userFolder() + "/data/English.zkg");
-                    if (!finf.isReadable())
-                        found = false;
-                }
-
-                if (found)
-                    showSimpleDialog("zkanji", qApp->translate("", "Old dictionary and user data were found at the user data folder. zkanji will attempt to import them."));
             }
 
-            if (!found)
-            {
-                int result = showAndReturn(qApp->translate("", "Running for the first time."),
-                    qApp->translate("", "Zkanji can import user data written by the previous version of the program."),
-                    qApp->translate("", "\"%1\" for the location of the old version (the folder containing the \"data\" folder), or \"%2\" without importing.").arg(qApp->translate("", "Browse...")).arg(qApp->translate("", "Continue")),
-                    {
-                        { qApp->translate("", "Browse..."), QMessageBox::AcceptRole },
-                        { qApp->translate("", "Continue"), QMessageBox::AcceptRole },
-                        { qApp->translate("", "Quit"), QMessageBox::RejectRole }
-                    });
-                if (result == 2)
-                    exit(0);
+            if (found)
+                showSimpleDialog("zkanji", qApp->translate("", "Old dictionary and user data were found at the user data folder. zkanji will attempt to import them."));
+        }
 
-                while (result == 0)
+        if (!found)
+        {
+            int result = showAndReturn(qApp->translate("", "Running for the first time."),
+                qApp->translate("", "Zkanji can import user data written by the previous version of the program."),
+                qApp->translate("", "\"%1\" for the location of the old version (the folder containing the \"data\" folder), or \"%2\" without importing.").arg(qApp->translate("", "Browse...")).arg(qApp->translate("", "Continue")),
                 {
-                    result = 1;
-                    QString str;
-                    str = QFileDialog::getExistingDirectory(nullptr, (qApp->translate("", "Browse...")));
-                    if (!str.isEmpty())
+                    { qApp->translate("", "Browse..."), QMessageBox::AcceptRole },
+                    { qApp->translate("", "Continue"), QMessageBox::AcceptRole },
+                    { qApp->translate("", "Quit"), QMessageBox::RejectRole }
+                });
+            if (result == 2)
+                exit(0);
+
+            while (result == 0)
+            {
+                result = 1;
+                QString str;
+                str = QFileDialog::getExistingDirectory(nullptr, (qApp->translate("", "Browse...")));
+                if (!str.isEmpty())
+                {
+                    bool fail = false;
+                    if (!QFileInfo::exists(str + "/data/English.zkd") || !QFileInfo::exists(str + "/data/English.zkg"))
+                        fail = true;
+                    else
                     {
-                        bool fail = false;
-                        if (!QFileInfo::exists(str + "/data/English.zkd") || !QFileInfo::exists(str + "/data/English.zkg"))
+                        NTFSPermissionGuard permissionguard;
+
+                        QFileInfo finf(str + "/data/English.zkd");
+                        if (!finf.isReadable())
                             fail = true;
-                        else
-                        {
-                            NTFSPermissionGuard permissionguard;
+                        finf.setFile(str + "/data/English.zkg");
+                        if (!finf.isReadable())
+                            fail = true;
+                    }
 
-                            QFileInfo finf(str + "/data/English.zkd");
-                            if (!finf.isReadable())
-                                fail = true;
-                            finf.setFile(str + "/data/English.zkg");
-                            if (!finf.isReadable())
-                                fail = true;
-                        }
-
-                        if (!fail)
-                        {
-                            //str = str.left(str.length() - 5);
-                            ZKanji::setLoadFolder(str);
-                            found = true;
-                        }
-                        else
-                        {
-                            result = showAndReturn(qApp->translate("", "Error"),
-                                qApp->translate("", "The selected folder is not valid."),
-                                qApp->translate("", "Would you like to \"%1\" to select a different folder, \"%2\" without importing or \"%3\" zkanji?").arg(qApp->translate("", "Try again...")).arg(qApp->translate("", "Continue")).arg(qApp->translate("", "Quit")),
-                                {
-                                    { qApp->translate("", "Try again..."), QMessageBox::AcceptRole },
-                                    { qApp->translate("", "Continue"), QMessageBox::AcceptRole },
-                                    { qApp->translate("", "Quit"), QMessageBox::RejectRole }
-                                });
-                            if (result == 2)
-                                exit(0);
-                        }
+                    if (!fail)
+                    {
+                        //str = str.left(str.length() - 5);
+                        ZKanji::setLoadFolder(str);
+                        found = true;
+                    }
+                    else
+                    {
+                        result = showAndReturn(qApp->translate("", "Error"),
+                            qApp->translate("", "The selected folder is not valid."),
+                            qApp->translate("", "Would you like to \"%1\" to select a different folder, \"%2\" without importing or \"%3\" zkanji?").arg(qApp->translate("", "Try again...")).arg(qApp->translate("", "Continue")).arg(qApp->translate("", "Quit")),
+                            {
+                                { qApp->translate("", "Try again..."), QMessageBox::AcceptRole },
+                                { qApp->translate("", "Continue"), QMessageBox::AcceptRole },
+                                { qApp->translate("", "Quit"), QMessageBox::RejectRole }
+                            });
+                        if (result == 2)
+                            exit(0);
                     }
                 }
             }
-
-            importolddata = found;
         }
+
+        importolddata = found;
     }
 
     void loadDictionaries()

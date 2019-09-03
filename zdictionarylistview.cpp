@@ -2029,7 +2029,7 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
     // In case only a single definition is drawn on the line, the number is omitted.
     // (Unless using multiple table lines.)
 
-    bool multidef = e->defs.size() > 1;
+    //bool multidef = e->defs.size() > 1;
 
     if (selected)
         painter->setPen(textcolor);
@@ -2124,15 +2124,25 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
 
     QString separator = qApp->translate("Dictionary", ", ");
 
+    int ix;
+    int siz;
+    if (defix < 0)
+    {
+        ix = 0;
+        siz = tosigned(e->defs.size());
+    }
+    else
+    {
+        ix = defix;
+        siz = defix + 1;
+    }
+
     // Definitions.
 
-    for (int ix = 0, siz = tosigned(e->defs.size()); ix != siz; ++ix)
+    for (; ix != siz; ++ix)
     {
-        if (defix != -1)
-            ix = defix;
-
         painter->setFont(fsf);
-        if (multidef)
+        if (siz > 1 || defix != -1)
         {
             str = QStringLiteral("%1.").arg(ix + 1);
             if (!selected)
@@ -2215,9 +2225,6 @@ void DictionaryListDelegate::paintDefinition(QPainter *painter, QColor textcolor
         r.setLeft(r.left() + spacewidth);
 
         if (r.left() > r.right())
-            break;
-
-        if (defix != -1)
             break;
     }
 }
