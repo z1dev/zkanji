@@ -269,6 +269,7 @@ void KanjiInfoForm::restoreState(const KanjiInfoData &dat)
         wordsmodel->setKanji(dict, kindex, readingCBox->currentIndex() - 1);
         exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
         ui->dictWidget->setModel(wordsmodel.get());
+        ui->dictWidget->resetScrollPosition();
         connect(ui->splitter, &QSplitter::splitterMoved, this, &KanjiInfoForm::restrictKanjiViewSize);
     }
 
@@ -1040,6 +1041,7 @@ void KanjiInfoForm::on_wordsButton_clicked(bool checked)
             wordsmodel.reset(new KanjiWordsItemModel(this));
         wordsmodel->setKanji(dict, ui->kanjiView->kanjiIndex(), readingCBox->currentIndex() - 1);
         ui->dictWidget->setModel(wordsmodel.get());
+        ui->dictWidget->resetScrollPosition();
         exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
 
         int toph = ui->dataWidget->height();
@@ -1116,6 +1118,7 @@ void KanjiInfoForm::readingFilterClicked(bool checked)
         wordsmodel->setShowOnlyExamples(checked);
         exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
     }
+    ui->dictWidget->resetScrollPosition();
 }
 
 void KanjiInfoForm::readingBoxChanged(int /*index*/)
@@ -1123,6 +1126,7 @@ void KanjiInfoForm::readingBoxChanged(int /*index*/)
     if (wordsmodel != nullptr && ui->kanjiView->kanjiIndex() >= 0)
     {
         wordsmodel->setKanji(dict, ui->kanjiView->kanjiIndex(), readingCBox->currentIndex() - 1);
+        ui->dictWidget->resetScrollPosition();
         exampleSelButton->setEnabled(wordsmodel->rowCount() != 0);
     }
 }

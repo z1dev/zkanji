@@ -279,6 +279,11 @@ public:
     // the populating of the displayed model once even while the widget is hidden. Does not
     // update the model by itself.
     void forceUpdate();
+
+    // Scrolls back to the start of the words list.
+    void resetScrollPosition();
+    // Scrolls horizontally back to the start of the words list.
+    void resetHorizontalScroll();
 protected:
     virtual void showEvent(QShowEvent *e) override;
     virtual void timerEvent(QTimerEvent *e) override;
@@ -345,7 +350,8 @@ private:
     void updateSearchMode();
 
     // Updates the words displayed in the table. If the widget is hidden, only updates the
-    // words if updateforced is set to true, otherwise sets updatepending to true and returns.
+    // words if updateforced is true (set elsewhere, e.g. by calling forceUpdate()), otherwise
+    // sets updatepending to true and returns.
     void updateWords();
 
     // Multi-line dictionary button was toggled. Updates the table.

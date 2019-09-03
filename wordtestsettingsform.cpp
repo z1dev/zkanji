@@ -1203,6 +1203,7 @@ void WordTestSettingsForm::on_displayBox_currentIndexChanged(int index)
     else
         ui->dictWidget->setSortFunction(nullptr);
     model->setDisplayed(TestWordsDisplay(index));
+    ui->dictWidget->resetScrollPosition();
 }
 
 void WordTestSettingsForm::on_excludedButton_clicked()

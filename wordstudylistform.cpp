@@ -985,6 +985,7 @@ void WordStudyListForm::modeButtonClicked(bool checked)
 
     ui->dictWidget->setSortIndicator(s.column, s.order);
     ui->dictWidget->sortByIndicator();
+    ui->dictWidget->resetScrollPosition();
 }
 
 void WordStudyListForm::partButtonClicked()

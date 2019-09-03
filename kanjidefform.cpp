@@ -183,6 +183,7 @@ void KanjiDefinitionForm::updateKanji()
 void KanjiDefinitionForm::updateDictionary()
 {
     ui->dictWidget->setDictionary(ZKanji::dictionaryPosition(ui->dictCBox->currentIndex()));
+    ui->dictWidget->resetScrollPosition();
 
     if (model == nullptr)
         return;

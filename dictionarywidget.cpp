@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QScrollBar>
 
 #include "dictionarywidget.h"
 #include "ui_dictionarywidget.h"
@@ -1043,6 +1044,17 @@ void DictionaryWidget::forceUpdate()
     updateforced = true;
 }
 
+void DictionaryWidget::resetScrollPosition()
+{
+    ui->wordsTable->verticalScrollBar()->setValue(0);
+    ui->wordsTable->horizontalScrollBar()->setValue(0);
+}
+
+void DictionaryWidget::resetHorizontalScroll()
+{
+    ui->wordsTable->horizontalScrollBar()->setValue(0);
+}
+
 void DictionaryWidget::showEvent(QShowEvent *e)
 {
     if (updatepending)
@@ -1705,6 +1717,8 @@ void DictionaryWidget::updateWords()
     }
 
     //WordResultList result(dictionary());
+
+    resetHorizontalScroll();
 
     if (listmode == DictSearch)
     {
