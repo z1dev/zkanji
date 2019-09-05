@@ -637,7 +637,7 @@ namespace ZKanji
         case 30:
             return JIStoKuten(k->jis);
         case 31:
-            return "0x" + QString::number(JIStoEUC(k->jis));
+            return "0x" + QString::number(JIStoEUC(k->jis), 16);
         case 32:
             return "0x" + QString::number(JIStoShiftJIS(k->jis), 16);
         default:
