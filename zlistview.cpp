@@ -15,6 +15,7 @@
 #include <QStringBuilder>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QPainterPath>
 
 #include "zlistview.h"
 #include "zstatusbar.h"

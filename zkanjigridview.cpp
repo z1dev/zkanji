@@ -13,6 +13,7 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QPixmap>
+#include <QPainterPath>
 
 #include <cmath>
 

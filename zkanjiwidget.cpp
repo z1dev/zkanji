@@ -11,6 +11,7 @@
 #include <QStylePainter>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QPainterPath>
 
 #include "zkanjiwidget.h"
 #include "ui_zkanjiwidget.h"

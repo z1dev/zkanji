@@ -15,7 +15,6 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QPainter>
-#include <QPainterPath>
 #include <QByteArray>
 #include <QSvgRenderer>
 

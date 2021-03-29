@@ -8,6 +8,7 @@
 #include <QDataStream>
 #include <QMessageBox>
 #include <QApplication>
+#include <QPainterPath>
 
 #include <cmath>
 #include <set>
