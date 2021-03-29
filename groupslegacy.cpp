@@ -45,7 +45,7 @@ void WordGroup::loadLegacy(QDataStream &stream, bool isstudy, int version)
         // Check whether we have a duplicate because another meaning of the
         // same word was added to the group.
         bool duplicate = 0;
-        std::forward_list<WordGroup*> &wg = *owner().groupsOfWord(index);
+        std::forward_list<WordGroup*> wg = owner().groupsOfWord(index);
         for (WordGroup *g : wg)
         {
             if (g == this)

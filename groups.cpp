@@ -1037,7 +1037,7 @@ void WordGroup::load(QDataStream &stream)
     stream >> make_zvec<qint32, qint32>(list);
     for (int ix = 0, siz = tosigned(list.size()); ix != siz; ++ix)
     {
-        owner().groupsOfWord(list[ix])->push_front(this);
+        owner().groupsOfWord(list[ix]).push_front(this);
         dictionary()->wordEntry(list[ix])->dat |= (1 << (int)WordRuntimeData::InGroup);
     }
 
@@ -1115,22 +1115,32 @@ void WordGroup::clear()
 {
     for (int ix = 0, siz = tosigned(size()); ix != siz; ++ix)
     {
-        auto &g = *owner().groupsOfWord(list[ix]);
-        auto it = g.before_begin();
-        auto itn = std::next(it);
-        while (itn != g.end())
+        int wix = list[ix];
+        if (owner().wordHasGroups(wix))
         {
-            if (*itn == this)
-            {
-                g.erase_after(it);
-                break;
-            }
-            ++it;
-            ++itn;
-        }
+            auto g = owner().groupsOfWord(wix);
 
-        if (g.empty())
-            owner().checkGroupsOfWord(list[ix]);
+            // Opening a scope here, to make sure `it` and `itn` are freed before their
+            // parent list gets deleted in checkGroupsOfWord below, to satisfy the
+            // VS' dumb debug version of the STL.
+            {
+                auto it = g.before_begin();
+                auto itn = std::next(it);
+                while (itn != g.end())
+                {
+                    if (*itn == this)
+                    {
+                        g.erase_after(it);
+                        break;
+                    }
+                    ++it;
+                    ++itn;
+                }
+            }
+
+            if (g.empty())
+                owner().checkGroupsOfWord(wix);
+        }
     }
     list.clear();
 }
@@ -1318,7 +1328,7 @@ int WordGroup::insert(int windex, int pos)
 
     // Check whether the entry is already added to this group to not add it again.
 
-    std::forward_list<WordGroup*> &wg = *owner().groupsOfWord(windex);
+    std::forward_list<WordGroup*> wg = owner().groupsOfWord(windex);
     auto git = std::find(wg.begin(), wg.end(), this);
     if (git != wg.end())
     {
@@ -1456,7 +1466,7 @@ int WordGroup::insert(const std::vector<int> &windexes, int pos, std::vector<int
         list[pos + aix] = val;
 
         // The list that holds which groups have the word entry must be updated.
-        std::forward_list<WordGroup*> &wg = *owner().groupsOfWord(val);
+        std::forward_list<WordGroup*> wg = owner().groupsOfWord(val);
         wg.push_front(this);
 
         if (positions != nullptr)
@@ -1626,7 +1636,7 @@ void WordGroup::removeFromGroup(int index)
 
     // Check whether the word is added to this group first, and erase it from the list of
     // groups for this word.
-    std::forward_list<WordGroup*> &wg = *owner().groupsOfWord(windex);
+    std::forward_list<WordGroup*> wg = owner().groupsOfWord(windex);
     bool found = false;
 
     if (!wg.empty())
@@ -2059,17 +2069,19 @@ const Dictionary* WordGroups::dictionary() const
     return owner->dictionary();
 }
 
-std::forward_list<WordGroup*>* WordGroups::groupsOfWord(int windex, bool creation)
+std::forward_list<WordGroup*>& WordGroups::groupsOfWord(int windex)
 {
-    auto it = wordsgroups.find(windex);
+    //auto it = wordsgroups.find(windex);
 
-    if (it != wordsgroups.end())
-        return &it->second;
+    //if (it != wordsgroups.end())
+    //    return it->second;
 
-    if (!creation)
-        return nullptr;
+    return wordsgroups[windex];
+}
 
-    return &wordsgroups[windex];
+bool WordGroups::wordHasGroups(int windex) const
+{
+    return wordsgroups.find(windex) != wordsgroups.end();
 }
 
 int WordGroups::wordsInGroups() const
@@ -2151,7 +2163,7 @@ void WordGroups::fixWordsGroups()
             WordGroup *g = cat->items(ix);
             for (int iy = 0, siy = tosigned(g->size()); iy != siy; ++iy)
             {
-                auto &wg = *groupsOfWord(g->indexes(iy), true);
+                auto wg = groupsOfWord(g->indexes(iy));
                 wg.push_front(g);
             }
         }
@@ -2381,12 +2393,12 @@ void KanjiGroup::remove(const smartvector<Range> &ranges)
 
         list.erase(list.begin() + r->first, list.begin() + r->last + 1);
 
-    //for (int pos = sorted.size() - 1, prev = pos - 1; pos != -1; --prev)
-    //{
-    //    if (prev == -1 || sorted[prev + 1] - sorted[prev] != 1)
-    //    {
-    //        list.erase(list.begin() + (prev + 1), list.begin() + (pos + 1));
-    //        pos = prev;
+        //for (int pos = sorted.size() - 1, prev = pos - 1; pos != -1; --prev)
+        //{
+        //    if (prev == -1 || sorted[prev + 1] - sorted[prev] != 1)
+        //    {
+        //        list.erase(list.begin() + (prev + 1), list.begin() + (pos + 1));
+        //        pos = prev;
     }
 
     dictionary()->setToUserModified();

@@ -89,7 +89,7 @@ private:
 class GroupCategoryBase : public GroupBase
 {
     Q_OBJECT
-signals:
+        signals:
     void groupsReseted();
     // Signaled when a category has been added to a parent category. Index is its new position
     // in the parent category list.
@@ -441,7 +441,7 @@ public:
     void indexOf(const std::vector<int> &windexes, std::vector<int> &positions) const;
 
     //void setStudyMethod(WordStudy::Method method);
-    
+
     // Adds a word to the group if it's not already added. Returns its current position.
     int add(int windex);
 
@@ -562,9 +562,12 @@ public:
     virtual const Dictionary* dictionary() const override;
 
     // Returns the list of groups a word is placed in. If the word was not added to a group,
-    // by default an empty list is returned that can be used for expanding. To avoid creating
-    // this list for words not in a group, set creation to false.
-    std::forward_list<WordGroup*>* groupsOfWord(int windex, bool creation = true);
+    // an empty list is created and returned that can be used for expanding. To avoid creating
+    // this list for words not in a group, check first with wordHasGroups().
+    std::forward_list<WordGroup*>& groupsOfWord(int windex);
+    // Returns whether a word is placed in any group.
+    bool wordHasGroups(int windex) const;
+
 
     // Returns the total number of words added to a group.
     int wordsInGroups() const;
