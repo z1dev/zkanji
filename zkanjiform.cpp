@@ -1640,7 +1640,7 @@ void ZKanjiForm::retranslateMainMenu()
 
         // inmenu action 5 is separator
 
-        a = datamenu->menu()->actions().at(6);
+        a = inmenu->menu()->actions().at(6);
         a->setText(tr("Import &legacy user data..."));
 
         // filemenu action 2 is separator
